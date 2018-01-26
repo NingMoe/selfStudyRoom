@@ -29,6 +29,7 @@
     <http pattern="/user/rankclasses/**" security="none"/>
     <http pattern="/jzbTest/jpConfig/view_phone.html" security="none"/>
     <http pattern="/activity/**" security="none" />
+    <http pattern="/wxCustomer/**" security="none"/>
 	<!--
 		use-expressions="true" 的意思是开启表达式
 		access-denied-page的意思是，当验证权限失败后会跳转到的页面

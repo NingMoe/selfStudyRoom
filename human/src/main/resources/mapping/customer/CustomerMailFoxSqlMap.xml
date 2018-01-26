@@ -13,7 +13,8 @@
 	<result column="type4" property="type4" jdbcType="VARCHAR" />
 	<result column="title" property="title" jdbcType="VARCHAR" />
 	<result column="desc" property="desc" jdbcType="VARCHAR" />
-	<result column="openId" property="openId" jdbcType="VARCHAR" />
+	<result column="open_id" property="openId" jdbcType="VARCHAR" />
+	<result column="student_code" property="studentCode" jdbcType="VARCHAR" />
 	<result column="name" property="name" jdbcType="VARCHAR" />
 	<result column="telPhone" property="telPhone" jdbcType="VARCHAR" />
 	<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -74,7 +75,8 @@
 	cmb.`type4`,
 	cmb.`title`,
 	cmb.`desc`,
-	cmb.`openId`,
+	cmb.`open_id`,
+	cmb.`student_code`,
 	cmb.`name`,
 	cmb.`telphone`,
 	cmb.`create_time`,
@@ -152,7 +154,8 @@
 	cmb.`type4`,
 	cmb.`title`,
 	cmb.`desc`,
-	cmb.`openId`,
+	cmb.`open_id`,
+	cmb.`student_code`,
 	cmb.`name`,
 	cmb.`telphone`,
 	cmb.`create_time`,
@@ -203,7 +206,7 @@
 	LEFT JOIN customer_mailfox_base_photo cmbp ON cmbp.`record_id`=cmb.`id`
 	where cmb.`id`=#{id,jdbcType=BIGINT} 
 	<if test="openId !=null and openId !=''">
-			AND cmb.`openId`=#{openId,jdbcType=VARCHAR}
+			AND cmb.`open_id`=#{openId,jdbcType=VARCHAR}
    </if>
    <if test="solUser!=null and solUser!=''">
 		 AND cmb.`sol_user`=#{solUser,jdbcType=VARCHAR}
@@ -224,7 +227,8 @@
 	cmb.`type4`,
 	cmb.`title`,
 	cmb.`desc`,
-	cmb.`openId`,
+	cmb.`open_id`,
+	cmb.`student_code`,
 	cmb.`name`,
 	cmb.`telphone`,
 	cmb.`create_time`,
@@ -371,9 +375,9 @@ update customer_mailfox_base
 <insert id="addMail" useGeneratedKeys="true" keyProperty="id"
 	parameterType="com.human.customer.entity.CustomerMailFox">
 	INSERT INTO customer_mailfox_base
-	(acctype,grade,`desc`,`type`,state,create_time,openid)
+	(acctype,grade,`desc`,`type`,state,create_time,open_id,student_code,name,telphone)
 	VALUES
-	(#{acctype,jdbcType=VARCHAR},#{grade,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},0,now(),#{openId,jdbcType=VARCHAR})
+	(#{acctype,jdbcType=VARCHAR},#{grade,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},0,now(),#{openId,jdbcType=VARCHAR},#{studentCode,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR})
 </insert>
 
 	<insert id="addMailfoxRecord" useGeneratedKeys="true"
@@ -410,7 +414,8 @@ update customer_mailfox_base
 	cmb.`type4`,
 	cmb.`title`,
 	cmb.`desc`,
-	cmb.`openId`,
+	cmb.`open_id`,
+	cmb.`student_code`,
 	cmb.`name`,
 	cmb.`telphone`,
 	cmb.`create_time`,
@@ -430,7 +435,7 @@ update customer_mailfox_base
 	customer_mailfox_base cmb
 	where 1=1
 	<if test="openId !=null and openId !=''">
-			AND cmb.`openId`=#{openId,jdbcType=VARCHAR} 
+			AND cmb.`open_id`=#{openId,jdbcType=VARCHAR} 
    </if>
    <if test="solUser!=null and solUser!=''">
 		 AND cmb.`sol_user`=#{solUser,jdbcType=VARCHAR}
@@ -469,7 +474,8 @@ update customer_mailfox_base
 	cmb.`type4`,
 	cmb.`title`,
 	cmb.`desc`,
-	cmb.`openId`,
+	cmb.`open_id`,
+	cmb.`student_code`,
 	cmb.`name`,
 	cmb.`telphone`,
 	cmb.`create_time`,
@@ -488,7 +494,7 @@ update customer_mailfox_base
   <trim prefix="WHERE" prefixOverrides="AND | OR">
 		<if test="queryType==1">
 			 and cmb.`state`=1 
-		</if>
+		</if> 
 		<if test="queryType==2">
 			 and cmb.`state` >1 and cmb.`state` &lt;5 and cmb.`sol_user`=#{solUser}
 		</if>

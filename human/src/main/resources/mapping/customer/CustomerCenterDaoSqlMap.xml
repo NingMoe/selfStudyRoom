@@ -58,7 +58,7 @@
         url = #{url,jdbcType=VARCHAR},
 	    filter = #{filter,jdbcType=INTEGER},
 	    sort = #{sort,jdbcType=INTEGER},
-	    modelId = #{modelId,jdbcType=BIGINT},
+	    model_id = #{modelId,jdbcType=BIGINT},
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -83,22 +83,10 @@
   </select>
   
 	
-	<select id="getAllMenus" resultMap="BaseResultMap" parameterType="java.lang.String">
-	SELECT me.* FROM customer_student_menu  me 
-	JOIN customer_menu_dept wm ON me.`ID` = wm.`MENU_ID`
-	JOIN hr_user u ON u.`dept_id` = wm.`DEPT_ID` AND u.`email_addr` = #{email,jdbcType=VARCHAR} 
-	WHERE me.`filter`=2 and me.status = 1 
-	UNION ALL
-	SELECT me.* FROM wechat_teacher_menu  me 
-	JOIN wx_menu_user wu ON wu.MENU_ID = me.`ID` AND wu.user_id = #{email,jdbcType=VARCHAR} 
-	WHERE me.`filter`=3 and me.status = 1
-	UNION ALL
-	SELECT me.* FROM wechat_teacher_menu  me  
-	JOIN hr_user u ON u.`company` = me.`company` AND u.`email_addr` = #{email,jdbcType=VARCHAR} 
-	WHERE me.`filter` =1 and me.status = 1
-	</select>
-  
-  <select id="getAllModules" resultType="com.human.front.entity.WxTeacherModule">
-    SELECT * from wx_teacher_module order by sort 
-  </select>
+	<select id="getAllMenus" resultMap="BaseResultMap"
+	parameterType="java.lang.String">
+	SELECT me.* FROM customer_student_menu me
+	WHERE me.status =0
+</select>
+ 
 </mapper>

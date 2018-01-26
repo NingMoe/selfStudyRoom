@@ -116,5 +116,9 @@
 			<mvc:mapping path="/wechat/binding/**/*.html" />
 			<bean class="com.human.utils.BindingInterceptor" />
 		</mvc:interceptor>
+		 <mvc:interceptor>
+        	<mvc:mapping path="/wxCustomer/**/*.html"/>
+        	 <bean class="com.human.utils.CustomerStuInterceptor"/>
+        </mvc:interceptor>
 	</mvc:interceptors>
 </beans> 

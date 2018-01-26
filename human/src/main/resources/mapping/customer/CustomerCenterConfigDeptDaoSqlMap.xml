@@ -41,4 +41,44 @@ update customer_center_dept  set dept_name=#{deptName,jdbcType=VARCHAR} ,baner_u
 	WHERE 
 	is_del=0 
 </select>
+
+
+<resultMap id="BaseResultMap" type="com.human.customer.entity.CenterDept">
+	<id column="DEPT_ID" property="id" jdbcType="BIGINT" />
+	<result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+	<result column="baner_url" property="banerUrl" jdbcType="VARCHAR" />
+	<collection property="cmList" ofType="com.human.customer.entity.CenterModel">
+		<id column="csm1id" property="id" jdbcType="BIGINT" />
+		<result column="model_name" property="modelName" jdbcType="VARCHAR" />
+		<result column="csm1sort" property="sort" jdbcType="INTEGER" />
+		<collection property="ccmList"
+			ofType="com.human.customer.entity.CustomerCenterMenu">
+			<id column="csmid" property="id" jdbcType="BIGINT" />
+			<result column="icon" property="icon" jdbcType="VARCHAR" />
+			<result column="name" property="name" jdbcType="VARCHAR" />
+			<result column="url" property="url" jdbcType="VARCHAR" />
+			<result column="filter" property="filter" jdbcType="INTEGER" />
+			<result column="csmsort" property="sort" jdbcType="INTEGER" />
+		</collection>
+	</collection>
+</resultMap>
+
+<select id="getAllDeptMenu" resultMap="BaseResultMap">
+	SELECT * FROM (
+	SELECT cs1.`DEPT_ID`,csd.`dept_name`,csd.`baner_url`,csm1.id
+	csm1id,csm1.`model_name`,csm1.`sort`
+	csm1sort,csm.`ID`csmid,csm.`filter`,csm.`name`,csm.`sort`
+	csmsort,csm.`url`,csm.`icon` FROM customer_student_menudept cs1
+	INNER JOIN customer_center_dept csd ON cs1.`DEPT_ID`=cs1.`MENU_ID`
+	INNER JOIN customer_student_menu csm ON csm.`ID`=cs1.`MENU_ID`
+	INNER JOIN customer_student_model csm1 ON csm1.`ID`=csm.`model_id`
+	WHERE csd.`is_del`=0 AND csm.`status`=0 AND csm.`filter`=2 AND
+	csm1.`is_del`=0
+	UNION ALL
+	SELECT '-1','','',csm1.`ID` csm1id,csm1.`model_name`,csm1.`sort`
+	csm1sort,csm.`ID` csmid,csm.`filter`,csm.`name`,csm.`sort`
+	csmsort,csm.`url`,csm.`icon` FROM customer_student_model csm1
+	INNER JOIN customer_student_menu csm ON csm1.`ID`=csm.`model_id` WHERE
+	csm.filter=1 AND csm.`status`=0) a ORDER BY a.csm1sort,a.csmsort
+</select>
 </mapper>
