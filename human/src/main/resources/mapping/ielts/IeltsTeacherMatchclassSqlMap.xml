@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsTeacherMatchclassDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsTeacherMatchclass" >
+  	<id column="id" property="id" jdbcType="INTEGER" />
+    <result column="teacher_id" property="teacher_id" jdbcType="INTEGER" />
+    <result column="matchclass_name" property="matchclass_name" jdbcType="VARCHAR" />
+    <result column="matchclass_type" property="matchclass_type" jdbcType="INTEGER" />
+    <result column="matchclass_grade" property="matchclass_grade" jdbcType="INTEGER" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <!-- 分页获取 -->
+  <select id="query" resultType="com.human.ielts.entity.IeltsTeacherMatchclass" parameterType="java.util.HashMap">
+  	select * from ielts_teacher_matchclass
+  	where teacher_id = #{t.teacher_id,jdbcType=INTEGER}
+  	and create_time &gt; #{t.left_integral_time,jdbcType=TIMESTAMP}
+  	and create_time &lt; #{t.right_integral_time,jdbcType=TIMESTAMP}
+  	<if test="t.matchclass_type != null" >
+      and matchclass_type = #{t.matchclass_type,jdbcType=INTEGER}
+    </if>
+  </select>
+  
+  <select id="selectByTeacherId" resultType="com.human.ielts.entity.IeltsTeacherMatchclass" parameterType="java.util.HashMap">
+  	select * from ielts_teacher_matchclass
+  	where teacher_id = #{teacher_id,jdbcType=INTEGER} and create_time &gt;= #{left_integral_time,jdbcType=TIMESTAMP}
+  	and create_time &lt;= #{right_integral_time,jdbcType=TIMESTAMP}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_teacher_matchclass
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByTeacherId" parameterType="java.lang.Integer" >
+    delete from ielts_teacher_matchclass
+    where teacher_id = #{teacher_id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsTeacherMatchclass" >
+    insert into ielts_teacher_matchclass (teacher_id, matchclass_name, matchclass_type, 
+      matchclass_grade, create_time)
+    values (#{teacher_id,jdbcType=INTEGER}, #{matchclass_name,jdbcType=VARCHAR}, #{matchclass_type,jdbcType=INTEGER}, 
+      #{matchclass_grade,jdbcType=INTEGER}, #{create_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.ielts.entity.IeltsTeacherMatchclass" >
+    insert into ielts_teacher_matchclass
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="teacher_id != null" >
+        teacher_id,
+      </if>
+      <if test="matchclass_name != null" >
+        matchclass_name,
+      </if>
+      <if test="matchclass_type != null" >
+        matchclass_type,
+      </if>
+      <if test="matchclass_grade != null" >
+        matchclass_grade,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="teacher_id != null" >
+        #{teacher_id,jdbcType=INTEGER},
+      </if>
+      <if test="matchclass_name != null" >
+        #{matchclass_name,jdbcType=VARCHAR},
+      </if>
+      <if test="matchclass_type != null" >
+        #{matchclass_type,jdbcType=INTEGER},
+      </if>
+      <if test="matchclass_grade != null" >
+        #{matchclass_grade,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsTeacherMatchclass" >
+    update ielts_teacher_matchclass
+    <set >
+      <if test="teacher_id != null" >
+        teacher_id = #{teacher_id,jdbcType=INTEGER},
+      </if>
+      <if test="matchclass_name != null" >
+        matchclass_name = #{matchclass_name,jdbcType=VARCHAR},
+      </if>
+      <if test="matchclass_type != null" >
+        matchclass_type = #{matchclass_type,jdbcType=INTEGER},
+      </if>
+      <if test="matchclass_grade != null" >
+        matchclass_grade = #{matchclass_grade,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

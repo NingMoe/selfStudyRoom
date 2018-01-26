@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.resume.dao.ResumeCertificateDao" >
+  <resultMap id="BaseResultMap" type="com.human.resume.entity.ResumeCertificate" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resume_id" property="resumeId" jdbcType="BIGINT" />
+    <result column="gain_time" property="gainTime" jdbcType="TIMESTAMP" />
+    <result column="certificate_name" property="certificateName" jdbcType="VARCHAR" />
+    <result column="describes" property="describes" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, resume_id, gain_time, certificate_name, describes, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_certificate
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_certificate
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.resume.entity.ResumeCertificate" >
+    insert into resume_certificate (resume_id, gain_time, 
+      certificate_name, describes, is_valid
+      )
+    values (#{resumeId,jdbcType=BIGINT}, #{gainTime,jdbcType=TIMESTAMP}, 
+      #{certificateName,jdbcType=VARCHAR}, #{describes,jdbcType=VARCHAR}, #{isValid,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.resume.entity.ResumeCertificate" >
+    insert into resume_certificate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="resumeId != null" >
+        resume_id,
+      </if>
+      <if test="gainTime != null" >
+        gain_time,
+      </if>
+      <if test="certificateName != null" >
+        certificate_name,
+      </if>
+      <if test="describes != null" >
+        describes,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resumeId != null" >
+        #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="gainTime != null" >
+        #{gainTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="certificateName != null" >
+        #{certificateName,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null" >
+        #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.resume.entity.ResumeCertificate" >
+    update resume_certificate
+    <set >
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="gainTime != null" >
+        gain_time = #{gainTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="certificateName != null" >
+        certificate_name = #{certificateName,jdbcType=VARCHAR},
+      </if>
+      <if test="describes != null" >
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.resume.entity.ResumeCertificate" >
+    update resume_certificate
+    set resume_id = #{resumeId,jdbcType=BIGINT},
+      gain_time = #{gainTime,jdbcType=TIMESTAMP},
+      certificate_name = #{certificateName,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

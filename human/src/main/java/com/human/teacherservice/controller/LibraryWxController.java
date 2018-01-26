@@ -1,0 +1,226 @@
+package com.human.teacherservice.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import com.human.teacherservice.entity.LibBook;
+import com.human.teacherservice.entity.LibBookBuy;
+import com.human.teacherservice.entity.LibBorrowList;
+import com.human.teacherservice.service.LibBookBuyService;
+import com.human.teacherservice.service.LibraryBookErrorService;
+import com.human.teacherservice.service.LibraryService;
+import com.human.teacherservice.service.LibraryTypeService;
+import com.human.teacherservice.service.LibraryWxService;
+
+/**
+ * 
+ * @author zx
+ * 教师服务-微图书馆
+ */
+@Controller
+@RequestMapping(value="/wechat/binding/library/")
+public class LibraryWxController {
+    
+    private final Logger logger = LogManager.getLogger(LibraryWxController.class);
+        
+    @Resource
+    private LibraryService libraryService;
+    
+    @Resource
+    private LibraryWxService libraryWxService;
+    
+    @Resource
+    private LibraryTypeService libraryTypeService;
+    
+    @Resource
+    private LibraryBookErrorService LibraryBookErrorService;
+        
+    @Resource
+    private LibBookBuyService libBookBuyService;
+    
+    /**
+     * 微信主页
+     * @return
+     */
+    @RequestMapping(value="wxview")
+    public ModelAndView indexview(HttpServletRequest request,HttpServletResponse response){
+        ModelAndView  mav = new ModelAndView("/teacherservice/weixin/index");
+        HttpSession session = request.getSession();
+        String openid = (String) session.getAttribute("binding_openid");
+        mav.addObject("openid", openid);
+        return mav;
+    }
+    
+    /**
+     *
+     * @return
+     */
+    @RequestMapping(value="categoryview")
+    public ModelAndView categoryview(HttpServletRequest request,HttpServletResponse response){
+        ModelAndView  mav = new ModelAndView("/teacherservice/weixin/category");
+        HttpSession session = request.getSession();
+        String openid = (String) session.getAttribute("binding_openid");
+        mav.addObject("openid", openid);
+        return mav;
+    }
+    
+    /**
+     * 借书页面
+     * @return
+     */
+    @RequestMapping(value="borrowview")
+    public ModelAndView borrowview(HttpServletRequest request,HttpServletResponse response){
+        ModelAndView  mav = new ModelAndView("/teacherservice/weixin/borrow");
+        HttpSession session = request.getSession();
+        String openid = (String) session.getAttribute("binding_openid");
+        mav.addObject("openid", openid);
+        return mav;
+    }
+    
+    /**
+     * 图书馆须知页面
+     * @return
+     */
+    @RequestMapping(value="lawview")
+    public ModelAndView gview(HttpServletRequest request,HttpServletResponse response){
+        ModelAndView  mav = new ModelAndView("/teacherservice/weixin/law");
+        return mav;
+    }
+    
+    /**
+     * 获取所有分类
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="gettype")
+    public Map<String, Object> getType(HttpServletRequest request,HttpServletResponse response){
+        return libraryWxService.getType(request, response);
+    }
+    
+    /**
+     * 通过分类获取分类下的图书
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="getbooktype")
+    public Map<String, Object> getBookBype(HttpServletRequest request,HttpServletResponse response){
+        return libraryWxService.getBookBype(request, response);
+    }
+    
+    /**
+     * 图书报错
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="errorbook")
+    public Map<String, Object> errorbook(HttpServletRequest request,HttpServletResponse response, LibBook libBook){
+        return libraryWxService.errorbook(request, response, libBook);
+    }
+    
+    /**
+     * 获取所有图书信息
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="getbookinfo")
+    public Map<String, Object> getBookInfo(HttpServletRequest request,HttpServletResponse response){
+        return libraryWxService.getBookInfo(request, response);
+    }
+    
+    /**
+     * 借书
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="borrowbook")
+    public Map<String, Object> borrowbook(HttpServletRequest request,HttpServletResponse response, LibBook LibBook){
+        return libraryWxService.borrowbook(request, response, LibBook);
+    }
+    
+    
+    /**
+     * 通过id查询书籍
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="queryById")
+    public Map<String, Object> queryById(HttpServletRequest request,HttpServletResponse response, LibBook libBook){
+        return libraryService.queryById(request, response, libBook);
+    }
+    
+    /**
+     * 获取本人已借图书信息
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="getborrowbook")
+    public Map<String, Object> getborrowbook(HttpServletRequest request,HttpServletResponse response){
+        return libraryWxService.getborrowbook(request, response);
+    }
+    
+    /**
+     * 还书
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="returnbook")
+    public Map<String, Object> returnbook(HttpServletRequest request,HttpServletResponse response, LibBorrowList libBorrowList){
+        return libraryWxService.returnbook(request, response, libBorrowList);
+    }
+
+    /**
+     * spring接收date参数
+     * @param teacherActManager
+     * @param pageView
+     * @return
+     */
+    @org.springframework.web.bind.annotation.InitBinder  
+    public void InitBinder(WebDataBinder dataBinder) {  
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+        dateFormat.setLenient(false);  
+        dataBinder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));  
+    }
+    
+    /**
+     * 反馈页面(想买的书籍)
+     * @return
+     */
+    @RequestMapping(value="ToMyFeedBack")
+    public ModelAndView ToMyFeedBack(HttpServletRequest request,HttpServletResponse response){
+        ModelAndView  mav = new ModelAndView("/teacherservice/weixin/myFeedBack");        
+        return mav;
+    }
+    
+    /**
+     * 保存我的反馈
+     * @return
+     */  
+    @RequestMapping(value="saveMyFeedBack")
+    @ResponseBody
+    public Map<String, Object> saveMyFeedBack(HttpServletRequest request,LibBookBuy info){
+        logger.info("保存我的反馈");
+        Map<String,Object> map = new ConcurrentHashMap<String, Object>();
+        try {            
+            map=libBookBuyService.saveMyFeedBack(request,info);
+        }catch (Exception e) {
+            e.printStackTrace();
+            logger.error("保存我的反馈失败！",e.getMessage());
+            map.put("flag", false);
+            map.put("msg", "保存我的反馈失败！");
+        }
+        return map;
+    }
+}

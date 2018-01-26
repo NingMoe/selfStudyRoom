@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuedClass.dao.RecommendClassDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuedClass.entity.RecommendClass" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="school_area_name" property="schoolAreaName" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="subject" property="subject" jdbcType="VARCHAR" />
+    <result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rule_id, name, code,class_code, class_name, school_area_name, grade, subject, teacher_name, 
+    create_time, create_user, update_time, update_user
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recommend_class
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recommend_class
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <!-- 批量插入 -->
+  <insert id="insertByBatch" parameterType="java.util.List" >
+    insert into recommend_class (rule_id,name, code,class_code, 
+      class_name, school_area_name, grade, 
+      subject, teacher_name, create_time
+      )
+    values 
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.ruleId,jdbcType=BIGINT}, #{item.name,jdbcType=VARCHAR},
+      #{item.code,jdbcType=VARCHAR}, #{item.classCode,jdbcType=VARCHAR}, 
+      #{item.className,jdbcType=VARCHAR}, #{item.schoolAreaName,jdbcType=VARCHAR}, #{item.grade,jdbcType=VARCHAR}, 
+      #{item.subject,jdbcType=VARCHAR}, #{item.teacherName,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP})
+    </foreach>  
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.continuedClass.entity.RecommendClass" >
+    insert into recommend_class
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ruleId != null" >
+        rule_id,
+      </if>     
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="schoolAreaName != null" >
+        school_area_name,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="subject != null" >
+        subject,
+      </if>
+      <if test="teacherName != null" >
+        teacher_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ruleId != null" >
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolAreaName != null" >
+        #{schoolAreaName,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuedClass.entity.RecommendClass" >
+    update recommend_class
+    <set >
+      <if test="ruleId != null" >
+        rule_id = #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolAreaName != null" >
+        school_area_name = #{schoolAreaName,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        subject = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        teacher_name = #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 根据规则删除学员-推荐班级数据 -->
+   <delete id="deleteByRuleId" parameterType="java.lang.Long" >
+    delete from recommend_class
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </delete>
+ 
+  <!--批量删除学员-推荐班级数据-->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from recommend_class
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>        
+  </delete>
+
+   <!-- 查询学员推荐班级 -->
+  <select id="selectRecommendClass" resultMap="BaseResultMap"  parameterType="java.util.HashMap">
+    SELECT 
+	c.id, c.rule_id, c.class_code, c.class_name, c.school_area_name, c.grade, c.subject, c.teacher_name, 
+    DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS create_time
+	FROM continued_class c,
+	(SELECT o.school_area_name,o.grade,o.subject
+	FROM 
+	orginal_class o
+	WHERE  o.rule_id=#{t.ruleId,jdbcType=BIGINT} 
+	AND o.school_area_name IN 
+	 <foreach collection="oSchoolAreaNames" item="oSchoolAreaName" index="index" open="(" separator="," close=")">
+		#{oSchoolAreaName,jdbcType=VARCHAR}
+	</foreach>
+	AND o.grade IN 
+	<foreach collection="oGrades" item="oGrade" index="index" open="(" separator="," close=")">
+		#{oGrade,jdbcType=VARCHAR}
+	</foreach>
+	AND o.subject NOT IN (
+	SELECT  DISTINCT o.subject
+	FROM class_students  s
+	LEFT JOIN orginal_class o
+	ON s.class_code=o.class_code
+	WHERE s.code=#{t.code,jdbcType=VARCHAR} AND s.rule_id=#{t.ruleId,jdbcType=BIGINT} AND o.rule_id=#{t.ruleId,jdbcType=BIGINT})
+	GROUP BY o.school_area_name,o.grade,o.subject
+	)k
+	WHERE c.rule_id=#{t.ruleId,jdbcType=BIGINT} 
+	AND c.school_area_name=k.school_area_name 
+	AND c.grade=k.grade
+	AND c.subject=k.subject
+	AND c.kuoke_flag=0
+  </select>
+  
+  <!-- 查询学员推荐班级 -->
+  <select id="selectRecommendClass2" resultMap="BaseResultMap"  parameterType="java.util.HashMap">
+    SELECT 
+	c.rule_id, c.class_code, c.class_name, c.school_area_name, c.grade, c.subject, c.teacher_name, 
+    DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS create_time
+    FROM continued_class c
+	WHERE c.rule_id=#{t.ruleId,jdbcType=BIGINT}
+	AND c.school_area_name=#{t.cSchoolAreaName,jdbcType=VARCHAR}
+	AND c.grade=#{t.cGrade,jdbcType=VARCHAR}
+	AND c.class_code IN 
+	<foreach collection="classCodes" item="cClassCode" index="index" open="(" separator="," close=")">
+		#{cClassCode,jdbcType=VARCHAR}
+	</foreach>
+	AND c.subject NOT IN 
+	(
+	SELECT  DISTINCT o.subject
+	FROM class_students  s
+	LEFT JOIN orginal_class o
+	ON s.class_code=o.class_code
+	WHERE s.code=#{t.code,jdbcType=VARCHAR} AND s.rule_id=#{t.ruleId,jdbcType=BIGINT} AND o.rule_id=#{t.ruleId,jdbcType=BIGINT} 
+	AND o.school_area_name=#{t.oSchoolAreaName,jdbcType=VARCHAR} AND o.grade=#{t.oGrade,jdbcType=VARCHAR}
+	) 
+	AND c.kuoke_flag=0	
+  </select>
+  
+  
+  <!-- 查询学员推荐班总数 -->
+  <select id="selectCountOfRecommendClass" resultType="java.lang.Long"  parameterType="com.human.continuedClass.entity.ClassMatch">
+    SELECT COUNT(k.id)
+    FROM recommend_class k
+    WHERE k.rule_id= #{ruleId,jdbcType=BIGINT} AND k.code=#{code,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 分页查询学员-推荐班级明细数据 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    m.id, m.rule_id, m.name, m.code,m.class_code, m.class_name, m.school_area_name, 
+    m.grade, m.subject, m.teacher_name, 
+    m.create_time
+	FROM 
+	recommend_class  m
+	WHERE m.rule_id=#{t.ruleId,jdbcType=BIGINT}  
+	AND m.name= #{t.name,jdbcType=VARCHAR}
+	AND m.code=#{t.code,jdbcType=VARCHAR} 
+	<if test="t.classCode != null and t.classCode  !=''">
+	   AND m.class_code like CONCAT(CONCAT('%', #{t.classCode ,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.schoolAreaName != null and t.schoolAreaName !=''">
+	   AND m.school_area_name like CONCAT(CONCAT('%', #{t.schoolAreaName,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.subject != null and t.subject !=''">
+	   AND m.subject like CONCAT(CONCAT('%', #{t.subject,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.teacherName != null and t.teacherName !=''">
+	   AND m.teacher_name like CONCAT(CONCAT('%', #{t.teacherName,jdbcType=VARCHAR}), '%') 
+	</if>
+    <if test="t.className != null and t.className !=''">
+	   AND m.class_name like CONCAT(CONCAT('%', #{t.className,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.grade != null and t.grade !=''">
+	   AND m.grade like CONCAT(CONCAT('%', #{t.grade,jdbcType=VARCHAR}), '%') 
+	</if>
+	ORDER BY m.id DESC 
+  </select>
+  
+  <!--导出学员-推荐班级数据 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+    SELECT 
+    m.name, m.code,m.class_code as classCode, m.class_name as className, m.school_area_name as schoolAreaName, 
+    m.grade, m.subject, m.teacher_name as teacherName
+	from recommend_class  m
+	WHERE m.rule_id=#{ruleId,jdbcType=BIGINT}
+    <if test="s != null">
+		AND m.code IN
+		<foreach collection="s" item="code" index="index" open="(" separator="," close=")">
+			#{code,jdbcType=INTEGER}
+	    </foreach>
+	 </if>
+	 ORDER BY m.id DESC
+   </select>
+  
+  <!--导出班级-推荐班级数据 -->
+   <select id="exportSelectByRuleId" resultType="java.util.HashMap"  parameterType="java.lang.Long">
+	   SELECT t1.class_code AS oClassCode,
+	   t2.class_code AS rClassCode,t2.school_area_name AS rSchoolAreaName,
+       t2.grade AS rGrade,t2.subject AS rSubject
+	   FROM  class_students t1,recommend_class t2,orginal_class t3 
+	   WHERE t1.rule_id=#{ruleId,jdbcType=BIGINT} 
+	   AND t2.rule_id=#{ruleId,jdbcType=BIGINT} 
+	   AND t3.rule_id=#{ruleId,jdbcType=BIGINT}
+	   AND t1.name=t2.name
+	   AND t1.code=t2.code
+	   AND t3.school_area_name=t2.school_area_name
+	   AND t1.class_code=t3.class_code
+   </select>
+  
+  
+</mapper>

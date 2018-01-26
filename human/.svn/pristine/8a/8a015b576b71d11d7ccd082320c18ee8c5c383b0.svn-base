@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbGradeDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbGrade" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="grade_code" property="gradeCode" jdbcType="VARCHAR" />
+    <result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+    <result column="school_type" property="schoolType" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="dept_id" property="deptId" jdbcType="BIGINT" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="ids" property="ids" jdbcType="VARCHAR" />
+    <result column="is_valid" jdbcType="BIT" property="isValid" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, grade_code, grade_name, school_type, sort, dept_id, create_time, create_user, 
+    update_time, update_user, is_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+     SELECT g.id, g.grade_code,g.grade_name, g.school_type, g.sort, g.dept_id,d.NAME AS dept_name
+     FROM jzb_grade g
+     LEFT JOIN  jzb_dept d ON g.dept_id=d.ID
+     where g.id = #{id,jdbcType=BIGINT}
+  </select>
+  
+   <select id="selectByDeptId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+     SELECT g.id, g.grade_code,g.grade_name, g.school_type, g.sort, g.dept_id,d.NAME AS dept_name
+     FROM jzb_grade g
+     LEFT JOIN  jzb_dept d ON g.dept_id=d.ID
+     where g.is_valid=0 and g.dept_id = #{deptId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByCompanyId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT g.grade_name,GROUP_CONCAT(g.id) ids,MIN(g.sort) sort FROM jzb_grade g 
+	JOIN jzb_dept d ON d.`ID` = g.`dept_id` AND d.`COMPANY` = #{companyId,jdbcType=VARCHAR}
+	where exists (select 1 from jzb_question where q_grade = g.id)
+	GROUP BY g.grade_name	
+	ORDER BY d.dsort,g.sort 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from jzb_grade
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbGrade" >
+    insert into jzb_grade
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="gradeCode != null" >
+        grade_code,
+      </if>
+      <if test="gradeName != null" >
+        grade_name,
+      </if>
+      <if test="schoolType != null" >
+        school_type,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="deptId != null" >
+        dept_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gradeCode != null" >
+        #{gradeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gradeName != null" >
+        #{gradeName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolType != null" >
+        #{schoolType,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="deptId != null" >
+        #{deptId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbGrade" >
+    update jzb_grade
+    <set >
+      <if test="gradeCode != null" >
+        grade_code = #{gradeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gradeName != null" >
+        grade_name = #{gradeName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolType != null" >
+        school_type = #{schoolType,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="deptId != null" >
+        dept_id = #{deptId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+   <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+     SELECT g.id, g.grade_code,g.grade_name, g.school_type, g.sort, g.dept_id,d.NAME AS dept_name
+     FROM jzb_grade g
+     LEFT JOIN  jzb_dept d ON g.dept_id=d.ID
+     WHERE g.is_valid=0
+	<if test="s != null">
+		AND g.dept_id  IN
+		<foreach collection="s" item="deptId" index="index" open="(" separator="," close=")">
+			#{deptId,jdbcType=BIGINT}
+	    </foreach>
+	</if>
+	<if test="t.deptId != null">
+			and g.dept_id = #{t.deptId,jdbcType=BIGINT}
+	</if>
+	<if test="t.gradeName!= null and t.gradeName !=''">
+			and g.grade_name like CONCAT('%',#{t.gradeName,jdbcType=VARCHAR},'%')
+	</if>	
+  </select>
+  
+   <!--批量删除 -->
+  <update id="deleteByIds" parameterType="java.util.HashMap" >
+    update jzb_grade set is_valid=1
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>        
+  </update>
+  
+  <select id="selectValidGrade" resultMap="BaseResultMap" parameterType="java.lang.String" >
+     SELECT g.grade_name,GROUP_CONCAT(DISTINCT g.id) ids,MIN(g.sort) sort FROM jzb_grade g 
+	JOIN jzb_paper_main_config c ON  g.id = c.grade  
+	JOIN jzb_dept d ON d.id = c.`DEPT` AND d.`COMPANY` = #{companyId,jdbcType=VARCHAR}
+	WHERE EXISTS(SELECT 1 FROM jzb_paper_month_config mc   
+		JOIN jzb_paper_main_config ac   ON mc.`MAIN_CONFIG_ID` = ac.id 
+		WHERE mc.status=2 and ac.grade = g.id and ac.`DEPT` = c.`DEPT` AND mc.`MONTH` = #{month,jdbcType=VARCHAR}   
+	) 
+	GROUP BY g.grade_name 
+	ORDER BY  d.dsort,g.sort
+  </select>
+</mapper>

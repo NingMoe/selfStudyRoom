@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.questionnaire.dao.QformDao" >
+	<resultMap id="BaseResultMap" type="com.human.questionnaire.entity.Qform">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="desc" property="desc" jdbcType="VARCHAR" />
+		<result column="collectDesc" property="collectDesc" jdbcType="VARCHAR" />
+		<result column="success_url" property="successUrl" jdbcType="VARCHAR" />
+		<result column="fail_url" property="failUrl" jdbcType="VARCHAR" />
+		<result column="collectCount" property="collectCount" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="BIGINT" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<collection property="paramList"  ofType="com.human.questionnaire.entity.FormParam">
+		<id property="formId" column="form_id" jdbcType="BIGINT" />
+		<id property="paramId" column="param_id" jdbcType="BIGINT" />
+		<result column="required" property="required" jdbcType="VARCHAR" />
+		<result column="name" property="paramName" jdbcType="VARCHAR" />
+	</collection>
+	</resultMap> 
+
+<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+	SELECT
+	qf.id,qf.title,qf.desc,qf.create_time,qf.start_time,qf.end_time,qf.create_user,u.name userName,IFNULL(a.collectCount,0)
+	collectCount,b.collectDesc FROM q_form qf
+	LEFT JOIN (
+	SELECT form_id,COUNT(DISTINCT `uuid`) collectCount FROM q_form_collect GROUP BY
+	form_id) a ON a.form_id=qf.id
+	LEFT JOIN (SELECT qfp.`form_id`,GROUP_CONCAT(`key`) collectDesc FROM
+	q_form_param qfp
+	INNER JOIN q_param q ON qfp.`param_id`=q.id
+	GROUP BY qfp.`form_id`) b ON b.form_id=qf.id
+	LEFT JOIN users u ON u.`ID`=qf.create_user
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.title!= null and t.title !=''">
+			AND qf.`title` like CONCAT(CONCAT('%', #{t.title,jdbcType=VARCHAR}),
+			'%')
+		</if>
+			and qf.state=1
+	</trim>
+</select>
+
+<insert id="insert" parameterType="com.human.questionnaire.entity.Qform" useGeneratedKeys="true" keyProperty="id">
+		insert into q_form(`title`,`desc`,create_user,success_url,fail_url,start_time,end_time) values
+		(#{title,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{createUser,jdbcType=BIGINT},#{successUrl,jdbcType=VARCHAR},#{failUrl,jdbcType=VARCHAR},#{startTime,jdbcType=TIMESTAMP},#{endTime,jdbcType=TIMESTAMP})
+	</insert>
+
+<insert id="insertFormParam" parameterType="com.human.questionnaire.entity.FormParam">
+	insert into q_form_param(form_id,param_id<if test="required != null" >
+        ,required
+      </if>) values
+	(#{formId,jdbcType=BIGINT},#{paramId,jdbcType=BIGINT}<if test="required != null" >
+        ,#{required,jdbcType=TINYINT}
+      </if>)
+</insert>
+
+<select id="queryDisableIP" parameterType="com.human.questionnaire.entity.DisableIP" resultType="com.human.questionnaire.entity.DisableIP">
+	select id,form_id formId,ip_addr ipAddr from q_disable_ip q
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="formId!= null">
+			AND q.form_id=#{formId,jdbcType=BIGINT}
+		</if>
+		<if test="ipAddr!= null and ipAddr !=''">
+			AND q.ip_addr=#{ipAddr,jdbcType=VARCHAR}
+		</if>
+	</trim>
+</select>
+
+
+<select id="queryNoPage" resultMap="BaseResultMap"
+		parameterType="com.human.questionnaire.entity.Qform">
+		SELECT * FROM q_form qf
+LEFT JOIN q_form_param qfp ON qfp.`form_id`=qf.`ID`
+LEFT JOIN q_param qp ON qp.`id`=qfp.`param_id`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="id!= null">
+				AND qf.`id` =#{id,jdbcType=BIGINT}
+			</if>
+			 <if test="isCollect !=null and isCollect==true">
+			   AND DATE_FORMAT(qf.`start_time`,'%Y-%m%-%d %H:%i:%S') &lt;=DATE_FORMAT(NOW(),'%Y-%m%-%d %H:%i:%S')AND DATE_FORMAT(qf.`end_time`,'%Y-%m%-%d %H:%i:%S') &gt;=DATE_FORMAT(NOW(),'%Y-%m%-%d %H:%i:%S')
+			 </if>
+			 <if test="state!= null">
+				AND qf.`state` =#{state,jdbcType=INTEGER}
+			</if>
+		</trim>
+	</select>
+
+	<update id="updateForm" parameterType="com.human.questionnaire.entity.Qform">
+		update q_form
+		set `title` =
+		#{title,jdbcType=VARCHAR},
+		`desc` = #{desc,jdbcType=VARCHAR},
+		`create_user` = #{createUser,jdbcType=BIGINT},
+		success_url=#{successUrl,jdbcType=VARCHAR},
+		fail_url=#{failUrl,jdbcType=VARCHAR},
+		start_time=#{startTime,jdbcType=TIMESTAMP},
+		end_time=#{endTime,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=BIGINT}
+	</update> 
+	
+	<delete id="deleteFormParam" parameterType="com.human.questionnaire.entity.Qform">
+	DELETE FROM
+	q_form_param WHERE form_id=#{id,jdbcType=BIGINT}
+</delete>
+	
+	<select id="queryResult" parameterType="java.lang.Long" resultType="java.util.Map" statementType="CALLABLE">
+	{
+	call p_collect(
+	#{id,jdbcType=BIGINT,mode=IN}
+	)
+	}
+</select>
+
+<delete id="delCollect" parameterType="java.lang.String">
+	delete from q_form_collect where `uuid`  in <foreach collection="ids" item="id" index="index" open="("
+		separator="," close=")">
+		#{id,jdbcType=VARCHAR}
+	</foreach>
+</delete>
+
+<select id="queryDisableIpList" resultType="com.human.questionnaire.entity.DisableIP" parameterType="java.util.HashMap">
+	SELECT q.`id`,q.`form_id` formId,q.`ip_addr` ipAddr,q.`op_time` opTime,u.`name` userName  FROM q_disable_ip q
+	LEFT JOIN users u ON u.`ID`=q.`op_user`
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.formId!= null">
+			AND q.`form_id`=#{t.formId,jdbcType=BIGINT}
+		</if>
+	</trim>
+</select>
+
+<delete id="delIpById" parameterType="java.util.HashMap">
+	delete from q_disable_ip where id in
+	<foreach collection="ids" item="id" index="index" open="("
+		separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>
+</delete>
+
+<update id="deleteFormById"  parameterType="java.lang.Long">
+UPDATE q_form SET state=0 WHERE id in <foreach collection="ids" item="id" index="index" open="("
+		separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>
+</update>
+
+
+<insert id="addDisableIp" parameterType="com.human.questionnaire.entity.DisableIP">
+	insert into q_disable_ip (form_id,ip_addr,op_user) values(#{formId,jdbcType=BIGINT},#{ipAddr,jdbcType=VARCHAR},#{opUser,jdbcType=BIGINT})
+</insert>
+
+  <!-- <sql id="Base_Column_List" >
+    `id`, `name`, `key`, `sort`, `status`
+  </sql>
+	
+
+	<select id="queryParam" resultMap="BaseResultMap"
+		parameterType="com.human.questionnaire.entity.ParamBean">
+		select
+		<include refid="Base_Column_List" />
+		from q_param q
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="name!= null and name !=''">
+				AND q.`name` =#{name,jdbcType=VARCHAR}
+			</if>
+			<if test="key != null and key != ''">
+				AND q.`key`= #{key,jdbcType=VARCHAR}
+			</if>
+			<if test="status!= null">
+				AND q.`status` =#{status,jdbcType=INTEGER}
+			</if>
+			<if test="id!= null">
+				AND q.`id` =#{id,jdbcType=BIGINT}
+			</if>
+		</trim>
+	</select>
+
+	
+
+	
+	
+	更新状态
+	<update id="updateByIds" parameterType="java.util.HashMap">
+		update q_param set status=#{status,jdbcType=INTEGER} where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update> -->
+	
+</mapper>

@@ -1,0 +1,81 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="renderer" content="webkit">	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<%@include file="/WEB-INF/view/common/taglib.jsp" %>
+	<%@include file="/WEB-INF/view/common/bootstrapTable.jsp" %>    
+</head>	
+<body>
+ <div class="main-wrap">
+  <fieldset class="layui-elem-field" style="padding: 15px;" id="serachFrom">
+	<legend data-toggle="collapse" data-parent="serachFrom" href="#collapseOne"  style="color: #1AA094;">检索&nbsp;<li class="fa fa-angle-double-down" id="ic"></li></legend>
+	 <form class="layui-form" >
+	  <input type="hidden" name="activityId" id="activityId" value="${activityId}">
+	  <div class="layui-form-item collapse in" id="collapseOne">
+		<div class="layui-form-item"  style="margin-bottom:5px;">
+		    <label class="layui-form-label" style="width:10%;">姓名</label>
+    		<div class="layui-input-inline" style="width:10%;">
+    			<input type="text" id="name"  autocomplete="off" class="layui-input">    
+    		</div>
+    		
+    		<label class="layui-form-label" style="width:10%;">手机号码</label>
+    		<div class="layui-input-inline" style="width:10%;">
+    			  <input type="text" id="telephone"  autocomplete="off" class="layui-input">   
+    		</div>
+    		
+		    <label class="layui-form-label" style="width:10%;">是否签到</label>
+			<div class="layui-input-inline" style="width:10%;">
+				<select name="isSign" id="isSign">
+          				<option value="">请选择</option>
+          				<option value="1">是</option>
+          				<option value="2">否</option>
+        	    </select>		
+			</div>
+							
+			<div class="layui-inline">
+				<button onClick="initTable()" type="button"
+				class="layui-btn"><li class="fa fa-search"></li>
+				&nbsp;搜索
+			    </button>
+			</div>
+		</div>
+	</div>
+		</form>
+		</fieldset>
+		<div class="y-role">
+            <!--工具栏-->
+             <div id="toolbar">
+			   <button onClick="return  add()" type="button"
+				class="layui-btn"><li class="fa fa-plus-square"></li>
+				&nbsp;添加人员
+			   </button>
+			   <button onClick="return  fastSign()" type="button"
+				class="layui-btn"><li class="fa fa-plus-square"></li>
+				&nbsp;快速签到
+			   </button>
+			   <button onClick="return  updateAndChange()" type="button"
+				class="layui-btn"><li class="fa fa-plus-square"></li>
+				&nbsp;更新转化
+			   </button>
+			   <button onClick="return  importData()" type="button"
+				class="layui-btn"><li class="fa fa-plus-square"></li>
+				&nbsp;导入名单
+			   </button>
+			   <button onClick="return  exportData()" type="button"
+				class="layui-btn"><li class="fa fa-plus-square"></li>
+				&nbsp;导出数据
+			   </button>
+            </div>
+            <!--/工具栏-->
+            <!--文字列表-->
+            <table class="tableList"  id="activityTable">
+            </table>
+        </div>
+    </div>    
+</body>
+<script type="text/javascript" src="<%=basePath %>/static/sign/signInfoDetailslist.js"></script>
+</html>

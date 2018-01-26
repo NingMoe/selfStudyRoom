@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.teacherservice.dao.LibBookTypeDao" >
+  <resultMap id="BaseResultMap" type="com.human.teacherservice.entity.LibBookType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type_name" property="type_name" jdbcType="VARCHAR" />
+    <result column="type_cover_url" property="type_cover_url" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="school_id" property="school_id" jdbcType="VARCHAR" />
+    <result column="valid" property="valid" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="BookMap" type="com.human.teacherservice.entity.LibBookType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type_name" property="type_name" jdbcType="VARCHAR" />
+    <result column="type_cover_url" property="type_cover_url" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="school_id" property="school_id" jdbcType="VARCHAR" />
+    <result column="valid" property="valid" jdbcType="INTEGER" />
+    <collection property="libBook" ofType="com.human.teacherservice.entity.LibBook">
+    	<id column="book_id" property="id" jdbcType="INTEGER" />
+    	<result column="book_name" property="book_name" jdbcType="VARCHAR" />
+    	<result column="book_code" property="book_code" jdbcType="VARCHAR" />
+	    <result column="book_author" property="book_author" jdbcType="VARCHAR" />
+	    <result column="book_publishing" property="book_publishing" jdbcType="VARCHAR" />
+	    <result column="book_info" property="book_info" jdbcType="VARCHAR" />
+	    <result column="book_cover" property="book_cover" jdbcType="VARCHAR" />
+	    <result column="book_count" property="book_count" jdbcType="INTEGER" />
+	    <result column="book_price" property="book_price" jdbcType="BIGINT" />
+	    <result column="book_type" property="book_type" jdbcType="INTEGER" />
+	    <result column="book_address" property="book_address" jdbcType="VARCHAR" />
+	    <result column="book_valid" property="valid" jdbcType="INTEGER" />
+	    <result column="num" property="num" jdbcType="INTEGER" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type_name, type_cover_url, weight, school_id, valid
+  </sql>
+  
+  <select id="selectBookById" resultMap="BookMap" parameterType="java.util.HashMap">
+  	 SELECT t.id, t.type_name, t.type_cover_url, t.weight, t.school_id, t.valid, b.id book_id, b.book_name, b.book_author,
+     b.book_publishing, b.book_info, b.book_cover,b.book_count,(SELECT COUNT(1) FROM lib_borrow_list l WHERE l.`book_id` = b.id AND l.`return_time` IS NULL) num, b.book_price, b.book_type,
+     b.book_address, b.book_school, b.create_time, b.valid book_valid
+     FROM lib_book_type t
+     LEFT JOIN lib_book b ON t.id = b.book_type
+     WHERE t.valid = 1 and b.valid = 1
+     <if test="id != null">
+      and t.id = #{id,jdbcType=INTEGER}
+     </if>
+     <if test="book_info != null and book_info != ''">
+      and b.book_name like CONCAT(CONCAT('%', #{book_info,jdbcType=VARCHAR}), '%')
+      or b.book_author like CONCAT(CONCAT('%', #{book_info,jdbcType=VARCHAR}), '%')
+     </if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lib_book_type
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="queryByTypeName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select * from lib_book_type where school_id = #{school_id,jdbcType=VARCHAR} and valid = 1
+  	order by weight
+  </select>
+  
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+  	select * from lib_book_type where school_id = #{t.school_id,jdbcType=VARCHAR}
+  	 <if test="t.type_name != null and t.type_name != ''" >
+        and type_name = #{t.type_name,jdbcType=VARCHAR}
+     </if>
+     <if test="t.valid != null">
+     	and valid = #{t.valid,jdbcType=INTEGER}
+     </if>
+     order by weight
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lib_book_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.teacherservice.entity.LibBookType" >
+    insert into lib_book_type (id, type_name, type_cover_url, 
+      weight, school_id, valid
+      )
+    values (#{id,jdbcType=INTEGER}, #{type_name,jdbcType=VARCHAR}, #{type_cover_url,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=INTEGER}, #{school_id,jdbcType=VARCHAR}, #{valid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.teacherservice.entity.LibBookType" >
+    insert into lib_book_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type_name != null" >
+        type_name,
+      </if>
+      <if test="type_cover_url != null" >
+        type_cover_url,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="school_id != null" >
+        school_id,
+      </if>
+      <if test="valid != null" >
+        valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="type_name != null" >
+        #{type_name,jdbcType=VARCHAR},
+      </if>
+      <if test="type_cover_url != null" >
+        #{type_cover_url,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="school_id != null" >
+        #{school_id,jdbcType=VARCHAR},
+      </if>
+      <if test="valid != null" >
+        #{valid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.teacherservice.entity.LibBookType" >
+    update lib_book_type
+    <set >
+      <if test="type_name != null" >
+        type_name = #{type_name,jdbcType=VARCHAR},
+      </if>
+      <if test="type_cover_url != null" >
+        type_cover_url = #{type_cover_url,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="school_id != null" >
+        school_id = #{school_id,jdbcType=VARCHAR},
+      </if>
+      <if test="valid != null" >
+        valid = #{valid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.teacherservice.entity.LibBookType" >
+    update lib_book_type
+    set type_name = #{type_name,jdbcType=VARCHAR},
+      type_cover_url = #{type_cover_url,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      school_id = #{school_id,jdbcType=VARCHAR},
+      valid = #{valid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

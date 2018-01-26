@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuedClass.dao.SendcardMailRecordDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuedClass.entity.SendcardMailRecord" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+    <result column="rule_name" property="ruleName" jdbcType="VARCHAR" />
+    <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+    <result column="sender" property="sender" jdbcType="VARCHAR" />
+    <result column="recipients_to" property="recipientsTo" jdbcType="VARCHAR" />
+    <result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />  
+    <result column="attchment" property="attchment" jdbcType="VARCHAR" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="send_comment" property="sendComment" jdbcType="VARCHAR" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="result_desc" property="resultDesc" jdbcType="VARCHAR" />    
+    <result column="school_area_name" property="schoolAreaName" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="subject" property="subject" jdbcType="VARCHAR" />   
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rule_id, company_id, sender, recipients_to,teacher_name, attchment, send_time, send_comment, 
+    class_code, state, result_desc, school_area_name, grade, subject
+  </sql>    
+  <insert id="insertSelective" parameterType="com.human.continuedClass.entity.SendcardMailRecord" >
+    insert into sendcard_mail_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ruleId != null" >
+        rule_id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="sender != null" >
+        sender,
+      </if>
+      <if test="recipientsTo != null" >
+        recipients_to,
+      </if>
+      <if test="teacherName != null" >
+        teacher_name,
+      </if>
+      <if test="attchment != null" >
+        attchment,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+      <if test="sendComment != null" >
+        send_comment,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="resultDesc != null" >
+        result_desc,
+      </if>
+      <if test="schoolAreaName != null" >
+        school_area_name,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="subject != null" >
+        subject,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ruleId != null" >
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="sender != null" >
+        #{sender,jdbcType=VARCHAR},
+      </if>
+      <if test="recipientsTo != null" >
+        #{recipientsTo,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="attchment != null" >
+        #{attchment,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendComment != null" >
+        #{sendComment,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="resultDesc != null" >
+        #{resultDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolAreaName != null" >
+        #{schoolAreaName,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuedClass.entity.SendcardMailRecord" >
+    update sendcard_mail_record
+    <set >
+      <if test="ruleId != null" >
+        rule_id = #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="sender != null" >
+        sender = #{sender,jdbcType=VARCHAR},
+      </if>
+      <if test="recipientsTo != null" >
+        recipients_to = #{recipientsTo,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        teacher_name = #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="attchment != null" >
+        attchment = #{attchment,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null" >
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendComment != null" >
+        send_comment = #{sendComment,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="resultDesc != null" >
+        result_desc = #{resultDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 分页查询续班卡邮件发送日志数据 -->
+   <select id="queryClassCardMail" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+	SELECT 
+    r.id, r.rule_id,t1.rule_name, r.sender, r.recipients_to,r.teacher_name, r.attchment, r.send_time, r.send_comment, 
+    r.class_code, r.state, r.result_desc
+    FROM sendcard_mail_record r
+    LEFT JOIN continued_class_rule t1 ON r.rule_id=t1.id		 
+	WHERE 1=1	 		 
+		<if test="t.state =='0'.toString()">
+			AND r.state=0
+		</if>
+		<if test="t.state =='1'.toString()">
+			AND r.state=1
+		</if>
+		<if test="t.ruleName != null and t.ruleName !=''">
+			AND t1.rule_name like CONCAT(CONCAT('%', #{t.ruleName,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.recipientsTo != null and t.recipientsTo !=''">
+			AND r.recipients_to like CONCAT(CONCAT('%', #{t.recipientsTo,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.teacherName != null and t.teacherName !=''">
+			AND r.teacher_name  like CONCAT(CONCAT('%', #{t.teacherName,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.classCode != null and t.classCode !=''">
+			AND r.class_code  like CONCAT(CONCAT('%', #{t.classCode,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.sender != null and t.sender !=''">
+			AND r.sender  like CONCAT(CONCAT('%', #{t.sender,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.startTime != null and t.startTime !=''">
+			AND r.send_time >= #{t.startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.endTime != null and t.endTime !=''">
+			 <![CDATA[AND r.send_time<=#{t.endTime,jdbcType=TIMESTAMP}]]> 
+		</if>
+		ORDER BY r.send_time DESC,r.state DESC
+	</select>
+  
+  <!--查询某规则下发送失败的续班卡班号-->
+   <select id="queryFailClassCode" resultMap="BaseResultMap" parameterType="java.lang.Long">
+     SELECT DISTINCT r.class_code,r.school_area_name,r.grade,r.subject
+     FROM sendcard_mail_record r
+     WHERE r.rule_id=#{ruleId,jdbcType=BIGINT}
+     AND r.state=1   
+   </select>
+   
+  <!--更新某规则下发送失败的续班卡发送日志-->
+   <update id="updateFailClassCode" parameterType="com.human.continuedClass.entity.SendcardMailRecord">
+     update sendcard_mail_record
+    <set>      
+      <if test="sender != null" >
+        sender = #{sender,jdbcType=VARCHAR},
+      </if>      
+      <if test="sendTime != null" >
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>      
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="resultDesc != null" >
+        result_desc = #{resultDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE rule_id= #{ruleId,jdbcType=BIGINT}
+    AND school_area_name= #{schoolAreaName,jdbcType=VARCHAR}
+    AND grade= #{grade,jdbcType=VARCHAR}
+    AND subject= #{subject,jdbcType=VARCHAR}
+    AND class_code= #{classCode,jdbcType=VARCHAR}
+    AND state=1      
+   </update>
+  
+</mapper>

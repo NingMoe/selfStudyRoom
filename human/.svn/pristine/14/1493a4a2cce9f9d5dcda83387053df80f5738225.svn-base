@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.rank.dao.RankInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.rank.entity.RankInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="school_id" property="school_id" jdbcType="VARCHAR" />
+    <result column="dept_name" property="dept_name" jdbcType="VARCHAR" />
+    <result column="rank_name" property="rank_name" jdbcType="VARCHAR" />
+    <result column="ranke_num" property="ranke_num" jdbcType="INTEGER" />
+    <result column="ranke_lastnum" property="ranke_lastnum" jdbcType="INTEGER" />
+    <result column="link_name" property="link_name" jdbcType="VARCHAR" />
+    <result column="link_access" property="link_access" jdbcType="VARCHAR" />
+    <result column="refresh_time" property="refresh_time" jdbcType="INTEGER" />
+    <result column="b_color_code" property="b_color_code" jdbcType="VARCHAR" />
+    <result column="font_color" property="font_color" jdbcType="VARCHAR" />
+    <result column="create_user" property="create_user" jdbcType="VARCHAR" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="is_valid" jdbcType="INTEGER" />
+    <result column="head_img" property="head_img" jdbcType="VARCHAR" />
+    <result column="foot_img" property="foot_img" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, school_id, dept_name, rank_name, ranke_num, ranke_lastnum, link_name, 
+    link_access, refresh_time, b_color_code, font_color, create_user, create_time, is_valid, head_img, foot_img
+  </sql>
+  
+  <!-- 分页获取排行榜 -->
+  <select id="query" resultType="com.human.rank.entity.RankInfo" parameterType="java.util.HashMap">
+  	select * from rank_info
+  	where school_id = #{t.school_id,jdbcType=VARCHAR}
+  	<if test="t.dept_name != null and t.dept_name != ''">
+  		and dept_name like CONCAT(CONCAT('%', #{t.dept_name,jdbcType=VARCHAR}), '%')
+  	</if>
+  	<if test="t.rank_name != null and t.rank_name != ''">
+  		and rank_name like CONCAT(CONCAT('%', #{t.rank_name,jdbcType=VARCHAR}), '%')
+  	</if>
+  	<if test="t.is_valid != null">
+  		and is_valid = #{t.is_valid,jdbcType=INTEGER}
+  	</if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rank_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rank_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.rank.entity.RankInfo" >
+    insert into rank_info (id, school_id,
+      dept_name, rank_name, 
+      ranke_num, ranke_lastnum, link_name, link_access,
+      refresh_time, b_color_code, font_color, create_user, 
+      create_time, is_valid, head_img, foot_img)
+    values (#{id,jdbcType=INTEGER}, #{school_id,jdbcType=VARCHAR}, #{dept_name,jdbcType=VARCHAR}, 
+      #{rank_name,jdbcType=VARCHAR}, #{ranke_num,jdbcType=INTEGER}, #{ranke_lastnum,jdbcType=INTEGER},
+      #{link_name,jdbcType=VARCHAR}, #{link_access,jdbcType=VARCHAR}, #{refresh_time,jdbcType=INTEGER},
+      #{b_color_code,jdbcType=VARCHAR}, #{font_color,jdbcType=VARCHAR}, #{create_user,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP}, 
+      #{is_valid,jdbcType=INTEGER}, #{head_img,jdbcType=VARCHAR}, #{foot_img,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.rank.entity.RankInfo" >
+    insert into rank_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="school_id != null" >
+        school_id,
+      </if>
+      <if test="dept_name != null" >
+        dept_name,
+      </if>
+      <if test="rank_name != null" >
+        rank_name,
+      </if>
+      <if test="ranke_num != null" >
+        ranke_num,
+      </if>
+      <if test="ranke_lastnum != null" >
+        ranke_lastnum,
+      </if>
+      <if test="link_name != null" >
+        link_name,
+      </if>
+      <if test="refresh_time != null" >
+        refresh_time,
+      </if>
+      <if test="link_access != null" >
+        link_access,
+      </if>
+      <if test="b_color_code != null" >
+        b_color_code,
+      </if>
+      <if test="font_color != null" >
+        font_color,
+      </if>
+      <if test="create_user != null" >
+        create_user,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+      <if test="is_valid != null" >
+        is_valid,
+      </if>
+      <if test="head_img != null" >
+        head_img,
+      </if>
+      <if test="foot_img != null" >
+        foot_img,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="school_id != null" >
+        #{school_id,jdbcType=VARCHAR},
+      </if>
+      <if test="dept_name != null" >
+        #{dept_name,jdbcType=VARCHAR},
+      </if>
+      <if test="rank_name != null" >
+        #{rank_name,jdbcType=VARCHAR},
+      </if>
+      <if test="ranke_num != null" >
+        #{ranke_num,jdbcType=INTEGER},
+      </if>
+      <if test="ranke_lastnum != null" >
+        #{ranke_lastnum,jdbcType=INTEGER},
+      </if>
+      <if test="link_name != null" >
+        #{link_name,jdbcType=VARCHAR},
+      </if>
+      <if test="refresh_time != null" >
+        #{refresh_time,jdbcType=INTEGER},
+      </if>
+      <if test="link_access != null" >
+        #{link_access,jdbcType=VARCHAR},
+      </if>
+      <if test="b_color_code != null" >
+        #{b_color_code,jdbcType=VARCHAR},
+      </if>
+      <if test="font_color != null" >
+        #{font_color,jdbcType=VARCHAR},
+      </if>
+      <if test="create_user != null" >
+        #{create_user,jdbcType=VARCHAR},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="is_valid != null" >
+        #{is_valid,jdbcType=INTEGER},
+      </if>
+      <if test="head_img != null" >
+        #{head_img,jdbcType=VARCHAR},
+      </if>
+      <if test="foot_img != null" >
+        #{foot_img,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.rank.entity.RankInfo" >
+    update rank_info
+    <set >
+      <if test="school_id != null" >
+        school_id = #{school_id,jdbcType=VARCHAR},
+      </if>
+      <if test="dept_name != null" >
+        dept_name = #{dept_name,jdbcType=VARCHAR},
+      </if>
+      <if test="rank_name != null" >
+        rank_name = #{rank_name,jdbcType=VARCHAR},
+      </if>
+      <if test="ranke_num != null" >
+        ranke_num = #{ranke_num,jdbcType=INTEGER},
+      </if>
+      <if test="ranke_lastnum != null" >
+        ranke_lastnum = #{ranke_lastnum,jdbcType=INTEGER},
+      </if>
+      <if test="link_name != null" >
+        link_name = #{link_name,jdbcType=VARCHAR},
+      </if>
+      <if test="link_access != null" >
+        link_access = #{link_access,jdbcType=VARCHAR},
+      </if>
+      <if test="refresh_time != null" >
+        refresh_time = #{refresh_time,jdbcType=INTEGER},
+      </if>
+      <if test="b_color_code != null" >
+        b_color_code = #{b_color_code,jdbcType=VARCHAR},
+      </if>
+      <if test="font_color != null" >
+        font_color = #{font_color,jdbcType=VARCHAR},
+      </if>
+      <if test="create_user != null" >
+        create_user = #{create_user,jdbcType=VARCHAR},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="is_valid != null" >
+        is_valid = #{is_valid,jdbcType=INTEGER},
+      </if>
+      <if test="head_img != null" >
+        head_img = #{head_img,jdbcType=VARCHAR},
+      </if>
+      <if test="foot_img != null" >
+        foot_img = #{foot_img,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.rank.entity.RankInfo" >
+    update rank_info
+    set school_id = #{school_id,jdbcType=VARCHAR},
+      dept_name = #{dept_name,jdbcType=VARCHAR},
+      rank_name = #{rank_name,jdbcType=VARCHAR},
+      ranke_num = #{ranke_num,jdbcType=INTEGER},
+      ranke_lastnum = #{ranke_lastnum,jdbcType=INTEGER},
+      link_name = #{link_name,jdbcType=VARCHAR},
+      link_access = #{link_access,jdbcType=VARCHAR},
+      refresh_time = #{refresh_time,jdbcType=INTEGER},
+      b_color_code = #{b_color_code,jdbcType=VARCHAR},
+      font_color = #{font_color,jdbcType=VARCHAR},
+      create_user = #{create_user,jdbcType=VARCHAR},
+      create_time = #{create_time,jdbcType=TIMESTAMP},
+      is_valid = #{is_valid,jdbcType=INTEGER},
+      head_img = #{head_img,jdbcType=VARCHAR},
+      foot_img = #{foot_img,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

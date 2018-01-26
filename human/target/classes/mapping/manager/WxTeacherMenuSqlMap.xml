@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.front.dao.WxTeacherMenuDao">
+	<resultMap id="BaseResultMap" type="com.human.front.entity.WxTeacherMenu">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="ICON" property="icon" jdbcType="VARCHAR" />
+		<result column="URL" property="url" jdbcType="VARCHAR" />
+		<result column="FILTER" property="filter" jdbcType="INTEGER" />
+		<result column="SORT" property="sort" jdbcType="INTEGER" />
+		<result column="CATEGORY" property="category" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="COMPANY" property="company" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    ID,NAME,ICON,URL,FILTER,SORT,CATEGORY,STATUS,COMPANY
+  	</sql>
+
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select <include refid="Base_Column_List" /> 
+		from wechat_teacher_menu o where 1=1 
+		<if test="t.category != null and t.category !=''">
+			and o.category = #{t.category,jdbcType=VARCHAR}
+		</if>
+		<if test="t.name != null and t.name !=''">
+			and o.name like CONCAT('%',#{t.name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="t.company != null and t.company !=''">
+			and o.company = #{t.company,jdbcType=VARCHAR} 
+		</if>
+	</select>
+	
+	<select id="getAllMenus" resultMap="BaseResultMap" parameterType="java.lang.String">
+	SELECT me.* FROM wechat_teacher_menu  me 
+	JOIN wx_menu_dept wm ON me.`ID` = wm.`MENU_ID`
+	JOIN hr_user u ON u.`dept_id` = wm.`DEPT_ID` AND u.`email_addr` = #{email,jdbcType=VARCHAR} 
+	WHERE me.`filter`=2 and me.status = 1 
+	UNION ALL
+	SELECT me.* FROM wechat_teacher_menu  me 
+	JOIN wx_menu_user wu ON wu.MENU_ID = me.`ID` AND wu.user_id = #{email,jdbcType=VARCHAR} 
+	WHERE me.`filter`=3 and me.status = 1
+	UNION ALL
+	SELECT me.* FROM wechat_teacher_menu  me  
+	JOIN hr_user u ON u.`company` = me.`company` AND u.`email_addr` = #{email,jdbcType=VARCHAR} 
+	WHERE me.`filter` =1 and me.status = 1
+
+	</select>
+	
+	<select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select <include refid="Base_Column_List" /> 
+		from wechat_teacher_menu o 
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getMenuUserCnt" resultType="java.lang.Integer" parameterType="com.human.front.entity.MenuUser">
+		select count(1) 
+		from wx_menu_user 
+		where menu_id = #{menuId,jdbcType=INTEGER} and  user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insert" parameterType="com.human.front.entity.WxTeacherMenu" >
+    	insert into wechat_teacher_menu(name,icon,url,filter,sort,category,status,company) 
+    	values (#{name,jdbcType=VARCHAR},#{icon,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},#{filter,jdbcType=INTEGER}, 
+    		#{sort,jdbcType=INTEGER},#{category,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{company,jdbcType=VARCHAR}) 
+  	</insert>
+  	
+  	<update id="updateByPrimaryKeySelective" parameterType="com.human.front.entity.WxTeacherMenu"  >
+    update wechat_teacher_menu
+    <set>
+    	<if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      	</if>
+      	<if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      	</if>
+      	<if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      	</if>
+      	<if test="filter != null" >
+	    filter = #{filter,jdbcType=INTEGER},
+	    </if>
+	    <if test="sort != null" >
+	    sort = #{sort,jdbcType=INTEGER},
+	    </if>
+	    <if test="category != null" >
+	    category = #{category,jdbcType=VARCHAR},
+	    </if>
+	    <if test="status != null" >
+	    status = #{status,jdbcType=VARCHAR},
+	    </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <delete id="delDeptByMenuId" parameterType="java.lang.Integer" >
+    delete from wx_menu_dept 
+    where MENU_ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+   <insert id="insertMenuDept" parameterType="java.util.List">
+        insert into wx_menu_dept(menu_id,dept_id) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.menuId},#{item.deptId})
+        </foreach>
+  </insert>
+  
+   <delete id="delMenuUser" parameterType="com.human.front.entity.MenuUser">
+    delete from wx_menu_user 
+    where MENU_ID = #{menuId,jdbcType=BIGINT} and USER_ID=#{userId,jdbcType=VARCHAR}
+  </delete>
+  
+   <insert id="insertMenuUser" parameterType="com.human.front.entity.MenuUser">
+        insert into wx_menu_user(menu_id,user_id) values(#{menuId},#{userId})
+  </insert>
+  
+  <select id="getDeptsByMenuId" resultType="com.human.front.entity.MenuDept" parameterType="java.lang.Integer" >
+		select menu_id menuId,dept_id deptId 
+		from  wx_menu_dept 
+		where menu_id = #{menuId,jdbcType=INTEGER} 
+  </select>
+  
+  <select id="getUsersByMenuId" resultType="com.human.front.entity.MenuUser" parameterType="java.lang.Integer" >
+		select menu_id menuId,user_id userId, users.name userName 
+		from  wx_menu_user 
+		join users on users.user_name = wx_menu_user.user_id 
+		where menu_id = #{menuId,jdbcType=INTEGER} 
+  </select>
+  
+  <select id="getAllModules" resultType="com.human.front.entity.WxTeacherModule">
+    SELECT * from wx_teacher_module order by sort 
+  </select>
+</mapper>

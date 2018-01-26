@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.resume.dao.ResumePhotoDao" >
+  <resultMap id="BaseResultMap" type="com.human.resume.entity.ResumePhoto" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resume_id" property="resumeId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+    <result column="fast_flag" property="fastFlag" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, resume_id, name, path, is_valid,fast_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_photo
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_photo
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.resume.entity.ResumePhoto" >
+    insert into resume_photo (resume_id, name, 
+      path, is_valid,fast_flag)
+    values (#{resumeId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{path,jdbcType=VARCHAR}, #{isValid,jdbcType=BIT},#{fastFlag,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.resume.entity.ResumePhoto" >
+    insert into resume_photo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="resumeId != null" >
+        resume_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="path != null" >
+        path,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="fastFlag != null" >
+        fast_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resumeId != null" >
+        #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+      <if test="fastFlag != null" >
+        #{fastFlag,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.resume.entity.ResumePhoto" >
+    update resume_photo
+    <set >
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        path = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="fastFlag != null" >
+        fast_flag = #{fastFlag,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.resume.entity.ResumePhoto" >
+    update resume_photo
+    set resume_id = #{resumeId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      path = #{path,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT},
+      fast_flag = #{fastFlag,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByResumeId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_photo
+    where resume_id = #{resumeId,jdbcType=BIGINT} AND is_valid=0
+  </select>
+  
+  <update id="updateById" parameterType="java.lang.Long" >
+    update resume_photo
+    set is_valid = 1
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询快速投递的图片简历 -->
+  <select id="selectFastRp" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_photo
+    where resume_id = #{resumeId,jdbcType=BIGINT} AND is_valid=0 AND fast_flag=1
+  </select>
+  <insert id="insertActPhoto" parameterType="com.human.bpm.entity.ActCustomPhoto" >
+  	insert into act_custom_photo(flow_code,node_id,approver,photo_url)values (#{flowCode,jdbcType=VARCHAR},#{nodeId,jdbcType=VARCHAR},#{approver,jdbcType=VARCHAR},#{photoUrl,jdbcType=VARCHAR})
+  </insert>
+  <delete id="delActPhoto" parameterType="java.lang.Long" >
+    delete from act_custom_photo
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+</mapper>

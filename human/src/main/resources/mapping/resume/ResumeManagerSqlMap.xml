@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.resume.dao.ResumeManagerDao" >
+	<!-- 更新简历基础表 -->
+  <update id="updateBaseByKey" parameterType="com.human.resume.entity.EditBase" >
+    update resume_base
+    set name = #{name,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      nationality = #{nationality,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      nation = #{nation,jdbcType=VARCHAR},
+      working_time = #{workingTime,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      location_city = #{locationCity,jdbcType=VARCHAR},
+      household_register = #{householdRegister,jdbcType=VARCHAR},
+      political_status = #{politicalStatus,jdbcType=VARCHAR},
+      certificates_type = #{certificatesType,jdbcType=VARCHAR},
+      certificates_number = #{certificatesNumber,jdbcType=VARCHAR},
+      post_adjustment = #{postAdjustment,jdbcType=VARCHAR},
+      phone_back = #{phoneBack,jdbcType=VARCHAR},
+      delivery_date = #{deliveryDate,jdbcType=VARCHAR},
+      inside_recommend = #{insideRecommend,jdbcType=VARCHAR},
+      evaluation = #{evaluation,jdbcType=VARCHAR},
+      gra_school = #{graSchool,jdbcType=VARCHAR},
+      major = #{major,jdbcType=VARCHAR},
+      graduation_date = #{graduationDate,jdbcType=VARCHAR},
+      high_edu = #{highEdu,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新求职意向 -->
+ <update id="editIntentionByKey" parameterType="com.human.resume.entity.ResumeIntention" >
+    update resume_intention
+    set expect_work_place = #{expectWorkPlace,jdbcType=VARCHAR},
+      expect_work_property = #{expectWorkProperty,jdbcType=VARCHAR},
+      expect_work_job = #{expectWorkJob,jdbcType=VARCHAR},
+      expect_work_salary = #{expectWorkSalary,jdbcType=VARCHAR},
+      current_status = #{currentStatus,jdbcType=VARCHAR},
+      expect_arrival_time = #{expectArrivalTime,jdbcType=VARCHAR},
+      expect_work_industry = #{expectWorkIndustry,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新专业技能 -->
+ <update id="editMajorByKey"  parameterType="com.human.resume.entity.ResumeMajorSkill" >
+    update resume_major_skill
+    set skill_name = #{skillName,jdbcType=VARCHAR},
+      use_time = #{useTime,jdbcType=VARCHAR},
+      master_degree = #{masterDegree,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新语言能力 -->
+ <update id="editLanguageByKey"  parameterType="com.human.resume.entity.ResumeLanguage" >
+  update resume_language
+    set name = #{name,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR}<!-- ,
+      photo = #{photo,jdbcType=VARCHAR} -->
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新工作经历 -->
+<update id="editWorkHistoryKey" parameterType="com.human.resume.entity.ResumeWorkHistory" >
+    update resume_work_history
+    set 
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      company_name = #{companyName,jdbcType=VARCHAR},
+    <!--   work_time = #{workTime,jdbcType=VARCHAR},
+      work_property = #{workProperty,jdbcType=VARCHAR}, -->
+      company_scale = #{companyScale,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      salary = #{salary,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR},
+      leave_reason = #{leaveReason,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新教育经历 -->
+<update id="editEducationHistoryKey" parameterType="com.human.resume.entity.ResumeEducationHistory" >
+    update resume_education_history
+    <set >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+        school_name = #{schoolName,jdbcType=VARCHAR},
+      <if test="is211 != null" >
+        is_211 = #{is211,jdbcType=BIT},
+      </if>
+      <if test="is985 != null" >
+        is_985 = #{is985,jdbcType=BIT},
+      </if>
+        education = #{education,jdbcType=VARCHAR},
+        major = #{major,jdbcType=VARCHAR},
+        describes = #{describes,jdbcType=VARCHAR},
+      <if test="entranceType != null" >
+        entrance_type = #{entranceType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新校内职务 -->
+<update id="editSchoolPosKey" parameterType="com.human.resume.entity.ResumeSchoolPost" >
+    update resume_school_post
+    set 
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      post_name = #{postName,jdbcType=VARCHAR},
+      describes = #{describes,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+<!-- 更新培训经历 -->
+<update id="editTrainHistoryKey" parameterType="com.human.resume.entity.ResumeTrainHistory" >
+	update resume_train_history
+	set
+	start_time = #{startTime,jdbcType=TIMESTAMP},
+	end_time = #{endTime,jdbcType=TIMESTAMP},
+	train_company = #{trainCompany,jdbcType=VARCHAR},
+	place = #{place,jdbcType=VARCHAR},
+	train_time = #{trainTime,jdbcType=INTEGER},
+	train_name = #{trainName,jdbcType=VARCHAR},
+	certificate = #{certificate,jdbcType=VARCHAR},
+	describes = #{describes,jdbcType=VARCHAR}
+	where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新项目经验 -->
+<update id="editProjectHistoryKey" parameterType="com.human.resume.entity.ResumeProjectExperience" >
+    update resume_project_experience
+    set 
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      responsibility_describe = #{responsibilityDescribe,jdbcType=VARCHAR},
+      project_describe = #{projectDescribe,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 更新实践经验 -->
+ <update id="editPracticeHistoryKey" parameterType="com.human.resume.entity.ResumePracticeExperience" >
+    update resume_practice_experience
+    set 
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      practice_name = #{practiceName,jdbcType=VARCHAR},
+      practice_describe = #{practiceDescribe,jdbcType=VARCHAR},
+      practice_position = #{practicePosition,jdbcType=VARCHAR},
+      practice_company = #{practiceCompany,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+	<!-- 根据flowCode获取打分项目 -->
+	<select id="getItemScoreByFlowCode" parameterType="java.lang.String"
+		resultType="com.human.recruitment.entity.PositionProcessScoreItem">
+		SELECT ppsi.`score_item` scoreItem,ppsi.`item_value` itemValue FROM `hr_resume_flow` hrf
+		INNER JOIN position_process_score_item ppsi
+		ON ppsi.`node_id`=hrf.`current_node` AND
+		ppsi.`position_process_id`=hrf.`position_process_id`
+		WHERE hrf.`flow_code`=#{flowCode,jdbcType=VARCHAR}
+		ORDER BY ppsi.`id`
+	</select>
+
+	<resultMap id="CommentMap" type="com.human.bpm.entity.ActCustomComment">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="flow_code" property="flowCode" jdbcType="VARCHAR" />
+		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+		<result column="custom_node_name" property="nodeName" jdbcType="VARCHAR" />
+		<result column="result" property="result" jdbcType="INTEGER" />
+		<result column="comment" property="comment" jdbcType="VARCHAR" />
+		<result column="back_reason" property="backReason" jdbcType="VARCHAR" />
+		<result column="approver" property="approver" jdbcType="VARCHAR" />
+		<result column="name" property="approverName" jdbcType="VARCHAR" />
+		<result column="approve_time" property="approveTime" jdbcType="TIMESTAMP" />
+		<collection property="scorceList" ofType="com.human.bpm.entity.ActCustomScorce">
+			<id column="acsId" property="id" jdbcType="BIGINT" />
+			<result column="score_item" property="scoreItem" jdbcType="VARCHAR" />
+			<result column="item_value" property="itemValue" jdbcType="DOUBLE" />
+		</collection>   
+	</resultMap>
+	
+	<resultMap id="RecordMap" type="com.human.resume.entity.ActFlow">
+	<id column="ID" property="id" jdbcType="INTEGER" />
+	<result column="flow_code" property="flowCode" jdbcType="VARCHAR" />
+	<result column="START_TIME_" property="nodeStartTime" jdbcType="TIMESTAMP" />
+	<result column="company_name" property="companyName" jdbcType="VARCHAR" />
+	<result column="proName" property="positionName" jdbcType="VARCHAR" />
+	<collection property="actComment" ofType="com.human.resume.entity.ActComent">
+		<id column="accId" property="actId" jdbcType="INTEGER" />
+		<result column="result" property="result" jdbcType="INTEGER" />
+		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+		<result column="custom_node_name" property="nodeName" jdbcType="VARCHAR" />
+		<result column="comment" property="comment" jdbcType="VARCHAR" />
+		<result column="back_reason" property="backReason" jdbcType="VARCHAR" />
+		<result column="approver" property="approver" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="approve_time" property="approveTime" jdbcType="TIMESTAMP" />
+		<collection property="actPhoto" ofType="com.human.bpm.entity.ActCustomPhoto">
+			<id column="acpId" property="id" jdbcType="BIGINT" />
+			<result column="photo_url" property="photoUrl" jdbcType="VARCHAR" />
+		</collection>
+		<collection property="actScore" ofType="com.human.bpm.entity.ActCustomScorce">
+			<id column="acsId" property="id" jdbcType="BIGINT" />
+			<result column="score_item" property="scoreItem" jdbcType="VARCHAR" />
+			<result column="item_value" property="itemValue" jdbcType="DOUBLE" />
+		</collection>
+	</collection>
+</resultMap>
+	<select id="getGtRecord" resultMap="RecordMap" parameterType="java.lang.String">
+	SELECT
+	hrf.id,
+	hrf.`flow_code`,
+	ahp.`START_TIME_` ,
+	acc.`node_id`,
+	hc.`company_name`,
+	hp.`NAME` proName,
+	(case acc.node_id when 'rlqrTask' then '人力确认' else ppnc.`custom_node_name` end ) custom_node_name,
+	acc.id accId,
+	acc.`result`,
+	acc.`comment`,
+	acc.`back_reason`,
+	acc.`approver`,
+	u.`name`,
+	acc.`approve_time`,
+	acp.id acpId,
+	acp.`photo_url`,
+	acs1.`id` acsId,
+	acs1.`score_item`,
+	acs1.`item_value`
+	FROM
+	hr_resume_flow hrf
+	LEFT JOIN act_custom_comment acc
+	ON acc.`flow_code` = hrf.`flow_code`
+	LEFT JOIN act_custom_photo acp ON acp.`approver`=acc.`approver` AND acp.`flow_code`=acc.`flow_code` AND acp.`node_id`=acc.`node_id` 
+	LEFT JOIN act_custom_scorce acs1
+	ON acs1.`comment_id` = acc.id
+	LEFT JOIN users u
+	ON u.`user_name` = acc.`approver`
+	LEFT JOIN position_process_node_config ppnc
+	ON ppnc.`position_process_id` = hrf.`position_process_id`
+	AND ppnc.`node_id` = acc.`node_id`
+	LEFT JOIN position_process pp ON pp.`ID`=hrf.`position_process_id`
+	LEFT JOIN hr_position hp ON hp.`ID`=pp.`POSITION_ID`
+	LEFT JOIN hr_company hc ON hc.`company_id`=hp.`COMID`
+	LEFT JOIN act_hi_procinst ahp ON ahp.`ID_`=hrf.`process_instance_id`
+	WHERE hrf.`resume_id` =#{resumeId,jdbcType=INTEGER}
+	ORDER BY hrf.`ID` ASC,
+	acc.id ASC 
+</select>
+	
+	<select id="selectComment" parameterType="com.human.bpm.entity.ActCustomComment"
+	resultMap="CommentMap">
+	SELECT
+	acc.`ID`,acc.`approver`,acc.`approve_time`,acc.`back_reason`,acc.`comment`,acc.`flow_code`,acc.`node_id`,acc.`result`,acs.`id`
+	acsId,acs.`score_item`,acs.`item_value` FROM act_custom_comment acc
+	LEFT JOIN act_custom_scorce acs  ON acs.`comment_id` = acc.id
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="flowCode != null and flowCode!=''">
+			AND acc.`flow_code`=#{flowCode,jdbcType=VARCHAR}
+		</if>
+		<if test="approver !=null and approver !=''">
+			AND acc.`approver`=#{approver,jdbcType=VARCHAR}
+		</if>
+		<if test="nodeId != null and nodeId != ''">
+			AND acc.`node_id`=#{nodeId,jdbcType=VARCHAR}
+		</if>
+	</trim>
+	ORDER BY acc.`approve_time` DESC
+</select>
+
+<select id="queryToAppr" resultType="com.human.resume.entity.InterAppr"
+	parameterType="java.util.HashMap">
+	SELECT rb.`id` resumeId,art.`PROC_INST_ID_` procInstId,art.`NAME_`
+	nodeName,hrf.`flow_code` flowCode,art.`CREATE_TIME_` receiveTime,rb.`name` resumeName,rb.`sex`
+	sex,rb.`telephone` telePhone,rb.`email` email,rb.`working_time`
+	workTime,rb.`gra_school` graSchool,rb.`high_edu` highEdu,hp.`NAME`
+	workName,hc.`company_name` companyName,ho.`NAME` deptName FROM
+	act_ru_task art
+	INNER JOIN hr_resume_flow hrf ON
+	hrf.`process_instance_id`=art.`PROC_INST_ID_`
+	INNER JOIN resume_base rb
+	ON rb.`id`=hrf.`resume_id`
+	LEFT JOIN position_process pp ON
+	pp.`ID`=hrf.`position_process_id`
+	LEFT JOIN hr_position hp ON
+	hp.`ID`=pp.`POSITION_ID`
+	LEFT JOIN hr_company hc ON
+	hc.`company_id`=hp.`COMID`
+	LEFT JOIN hr_organization ho ON
+	ho.`ID`=hp.`DEPT`
+	WHERE art.`ASSIGNEE_`=#{t.apprUser,jdbcType=VARCHAR}
+	<if test="t.resumeName!=null and t.resumeName!=''">
+		AND rb.`name` LIKE CONCAT('%', #{t.resumeName,jdbcType=VARCHAR}, '%')
+	</if>
+	<if test="t.telePhone != null and t.telePhone !=''">
+		AND rb.`telephone`=#{t.telePhone,jdbcType=VARCHAR}
+	</if>
+	ORDER BY art.`CREATE_TIME_`
+</select>
+	
+	<select id="queryEndAppr" resultType="com.human.resume.entity.InterAppr"
+	parameterType="java.util.HashMap">
+	SELECT * FROM (SELECT rb.`id` resumeId,art.`PROC_INST_ID_` procInstId,hrf.`flow_code` flowCode,rb.`name` resumeName,rb.`sex`
+	sex,rb.`telephone` telePhone,rb.`email` email,rb.`working_time`
+	workTime,rb.`gra_school` graSchool,rb.`high_edu` highEdu,hp.`NAME`
+	workName,hc.`company_name` companyName,ho.`NAME` deptName,MAX(art.`START_TIME_`) receiveTime,MAX(art.`END_TIME_`) endTime FROM
+	act_hi_taskinst art
+	INNER JOIN hr_resume_flow hrf ON
+	hrf.`process_instance_id`=art.`PROC_INST_ID_`
+	INNER JOIN resume_base rb
+	ON rb.`id`=hrf.`resume_id`
+	LEFT JOIN position_process pp ON
+	pp.`ID`=hrf.`position_process_id`
+	LEFT JOIN hr_position hp ON
+	hp.`ID`=pp.`POSITION_ID`
+	LEFT JOIN hr_company hc ON
+	hc.`company_id`=hp.`COMID`
+	LEFT JOIN hr_organization ho ON
+	ho.`ID`=hp.`DEPT`
+	WHERE art.`ASSIGNEE_`=#{t.apprUser,jdbcType=VARCHAR}
+	<if test="t.resumeName!=null and t.resumeName!=''">
+		AND rb.`name` LIKE CONCAT('%', #{t.resumeName,jdbcType=VARCHAR}, '%')
+	</if>
+	<if test="t.telePhone != null and t.telePhone !=''">
+		AND rb.`telephone`=#{t.telePhone,jdbcType=VARCHAR}
+	</if>
+	AND art.`END_TIME_` IS NOT NULL
+	GROUP BY rb.`id`,art.`PROC_INST_ID_` ,hrf.`flow_code`,rb.`name`,rb.`sex`,rb.`telephone`,rb.`email`,rb.`working_time`,rb.`gra_school`,rb.`high_edu`,hp.`NAME`,hc.`company_name`,ho.`NAME`
+	) a ORDER BY a.endTime DESC
+</select>
+</mapper>

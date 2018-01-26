@@ -1,0 +1,66 @@
+body{
+ margin: 0;
+ width: 100%;
+ background-color: #F0F0F0;
+}
+
+.main_body{
+	margin: 0;
+	width: 100%;
+	
+}
+
+.main_head_logo_img{
+	width: 6rem;
+	height: 6rem;
+}
+
+.main_head_title{
+	height: 4rem;
+	float: left;
+	line-height: 4rem;
+}
+
+.main_head_l_img{
+	width: 100%;
+}
+
+.main_body_div{
+	background-color: #fff;
+	height: 2.6rem;
+	margin-top: 10px;
+	border-radius:6px;
+	line-height: 2.6rem;
+}
+
+.main_body_div_left{
+	float: left;
+	width: 27%;
+	text-align: right;
+}
+
+.main_body_div_right{
+	float: left;
+	width: 70%;
+}
+
+.main_body_input{
+	width: 100%;
+	height: 2.4rem;
+	background-color: transparent;
+	border: none;
+}
+
+.main_body_select{
+	width: 100%;
+	height: 2.4rem;
+	background-color: transparent;
+	border: none;
+	/*很关键：将默认的select选择框样式清除*/
+	appearance:none;
+	-moz-appearance:none;
+	-webkit-appearance:none;
+	/*在选择框的最右侧中间显示小箭头图片*/
+	background: url("http://ourjs.github.io/static/2015/arrow.png") no-repeat scroll right center transparent;
+	padding-right: 14px;
+}

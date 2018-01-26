@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsStudentBookDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsStudentBook" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="INTEGER" />
+    <result column="book_id" property="book_id" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, book_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ielts_student_book
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAllBook" resultType="com.human.ielts.entity.IeltsStudentBook">
+  	select * from ielts_student_book
+  </select>
+  
+  <!-- 通过学员id删除书籍关联信息 -->
+  <delete id="deleteByStudentId" parameterType="java.lang.Integer">
+  	delete from ielts_student_book
+    where student_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 通过book_id删除书籍关联信息 -->
+  <delete id="deleteByBookId" parameterType="java.lang.Integer">
+  	delete from ielts_student_book
+    where book_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_student_book
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsStudentBook" >
+    insert into ielts_student_book (id, student_id, book_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{student_id,jdbcType=INTEGER}, #{book_id,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.ielts.entity.IeltsStudentBook" >
+    insert into ielts_student_book
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="book_id != null" >
+        book_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="book_id != null" >
+        #{book_id,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsStudentBook" >
+    update ielts_student_book
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="book_id != null" >
+        book_id = #{book_id,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.ielts.entity.IeltsStudentBook" >
+    update ielts_student_book
+    set student_id = #{student_id,jdbcType=INTEGER},
+      book_id = #{book_id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

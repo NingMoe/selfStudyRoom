@@ -1,0 +1,39 @@
+.cm_c3 {
+    height: 100%;
+    overflow: hidden;
+    padding: 25px 0px;
+    padding-left:15px;
+    width: 600px;
+    background-color: #fff;
+}
+
+.cm_c3 ul{
+	float: left;
+    width: 50%;
+}	
+
+.city{
+  font: 14px/28px microsoft yahei; 
+  list-style: none;
+  display: list-item;
+  text-align: -webkit-match-parent;
+ 
+}
+.a{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -46px;}
+.b{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -76px;}
+.c{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -106px;}
+.d{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -136px;}
+.f{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -166px;} 
+.g{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -196px;}
+.h{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -226px;}
+.j{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -256px;}
+.k{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -286px;}
+.l{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -316px;}
+.n{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -346px;}
+.q{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -376px;}
+.s{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -406px;}
+.t{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -436px;}
+.w{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -466px;}
+.x{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -496px;}
+.y{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -526px;}
+.z{ background: url(../image/city_img.png) no-repeat scroll 0 -46px transparent;background-position: 0 -556px;}

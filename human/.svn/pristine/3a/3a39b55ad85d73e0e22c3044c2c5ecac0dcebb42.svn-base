@@ -1,0 +1,7 @@
+@charset "utf-8";
+/* CSS Document */
+*{border:none;margin:0;padding:0;font-family:'微软雅黑'}
+.message-imgbox{width:200px;}
+.message-imgbox input{width:30%;background:#1aa094;color:#ffffff;margin-top:10px;padding:5px 10px;border-radius:5px}
+.message-late{margin-left:15%}
+.mess-logo{color:#ffffff !important;background:#1aa094 !important;padding:2px 3px;border-radius:2px;margin-left:5px;cursor:pointer}

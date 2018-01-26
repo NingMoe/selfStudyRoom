@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.examineelist.dao.AddExcleDao" >
+  <resultMap id="BaseResultMap" type="com.human.examineelist.entity.ExamineeList2" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="class_Code" property="classCode" jdbcType="VARCHAR" />
+    <result column="tk_tearcher" property="tkTearcher" jdbcType="VARCHAR" />
+    <result column="d_tearcher" property="DTearcher" jdbcType="VARCHAR" />
+    <result column="yf_tearcher" property="yfTearcher" jdbcType="VARCHAR" />
+    <result column="R_tearcher" property="RTearcher" jdbcType="VARCHAR" />
+    <result column="L_tearcher" property="LTearcher" jdbcType="VARCHAR" />
+    <result column="S_tearcher" property="STearcher" jdbcType="VARCHAR" />
+    <result column="W_tearcher" property="WTearcher" jdbcType="VARCHAR" />
+     <result column="frequency" property="frequency" jdbcType="VARCHAR" />
+      <result column="cice" property="cice" jdbcType="VARCHAR" />
+     <result column="detp_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, class_Code,tkTearcher, DTearcher, yfTearcher, RTearcher, LTearcher, STearcher, WTearcher,gender,name,code,frequency
+  </sql>
+   
+    <insert id="insertInto" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.examineelist.entity.ExamineeList2" >
+    insert into examinee_grade (  class_Code,code,tkTearcher, dTearcher,  yfTearcher, rTearcher,lTearcher,sTearcher,WTearcher ,frequency,type,stage,cice,time,dept_name)
+    values (#{classCode,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},#{tkTearcher,jdbcType=VARCHAR}, #{DTearcher,jdbcType=VARCHAR}, #{yfTearcher,jdbcType=VARCHAR},
+     #{RTearcher,jdbcType=VARCHAR}, #{LTearcher,jdbcType=VARCHAR}, #{STearcher,jdbcType=VARCHAR},#{WTearcher,jdbcType=VARCHAR},#{frequency,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},#{stage,jdbcType=VARCHAR}
+     ,#{cice,jdbcType=VARCHAR},#{time,jdbcType=VARCHAR},#{deptName,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="queryTime" resultType="java.lang.String" parameterType="com.human.examineelist.entity.ExamineeList2"> 
+    SELECT  time
+    from stu_class  
+    where stclass_no=#{classCode,jdbcType=VARCHAR} and  stage=#{stage,jdbcType=VARCHAR} and type=#{type,jdbcType=VARCHAR} and exam_name=#{frequency,jdbcType=VARCHAR}
+  </select>
+</mapper>

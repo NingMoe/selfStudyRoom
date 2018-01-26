@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuation.dao.TeacherContinuationTeachernameDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuation.entity.TeacherContinuationTeachername" >
+    <id column="s_class_code" property="class_code" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="VARCHAR"/>
+    <result column="class_code" property="class_code" jdbcType="VARCHAR"/>
+    <result column="class_name" property="class_name" jdbcType="VARCHAR"/>
+    <result column="all_teacher_name" property="all_teacher_name" jdbcType="VARCHAR" />
+    <result column="teacher_name" property="teacher_name" jdbcType="VARCHAR" />
+    <result column="email_addr" property="email_addr" jdbcType="VARCHAR" />
+    <collection property="teacher_name_list" ofType="java.lang.String" >  
+         <!--这一个很重要，如果不配置的话，拿不到productname的值，有兴趣的话可以试一试 -->
+         <result column="teacher_name_l"/>
+      </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, class_code, teacher_name
+  </sql>
+  
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	select x.s_class_code s_class_code, x.s_class_name class_name, x.s_all_teacher_name all_teacher_name, h.name teacher_name_l, t.email_addr
+  	from xdf_class_info x
+  	left join teacher_continuation_teachername t
+  	on x.s_class_code = t.class_code
+  	left join hr_user h
+  	on t.email_addr = h.email_addr
+  	where 1 = 1
+  	<if test="t.class_code != null and t.class_code != ''">
+  		and x.s_class_code like CONCAT(CONCAT('%', #{t.class_code,jdbcType=VARCHAR}, '%'))
+  	</if>
+  	<if test="t.class_name != null and t.class_name != ''">
+  		and x.s_class_name like CONCAT(CONCAT('%', #{t.class_name,jdbcType=VARCHAR}, '%'))
+  	</if>
+  	<if test="t.teacher_name != null and t.teacher_name != ''">
+  		and h.name like CONCAT(CONCAT('%', #{t.teacher_name,jdbcType=VARCHAR}, '%'))
+  	</if>
+  	<if test="t.is_add != null and t.is_add != '' and t.is_add == '0'.toString()">
+  		and t.email_addr is null
+  	</if>
+  	<if test="t.is_add != null and t.is_add != '' and t.is_add == '1'.toString()">
+  		and t.email_addr is not null
+  	</if>
+  </select>
+  
+  <select id="classesquery" resultType="com.human.continuation.entity.TeacherContinuationTeachername" parameterType="java.util.HashMap">
+  	select t.id, t.class_code class_code, t.email_addr, h.name teacher_name
+  	from teacher_continuation_teachername t
+  	left join hr_user h
+  	on t.email_addr = h.email_addr
+  	where t.class_code = #{t.class_code,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectTeacherStartClassesOnByEmrilAddr" resultType="com.human.basic.entity.XdfClassInfo" parameterType="java.util.HashMap">
+  	SELECT c.s_class_code sClassCode, c.s_class_name sClassName, c.dt_begin_date dtBeginDate, c.dt_end_date dtEndDate, c.d_fee dFee, c.s_class_type_name sClassTypeName,
+  	c.s_area_address sAreaAddress, c.s_print_address sPrintAddress, c.s_print_time sPrintTime, c.s_all_teacher_name sAllTeacherName
+	FROM teacher_continuation_teachername t
+	LEFT JOIN xdf_class_info c
+	ON t.class_code = c.s_class_code
+	WHERE t.email_addr = #{email_addr,jdbcType=VARCHAR}
+  	<if test="begin_date_left != null and begin_date_left != ''">
+  		and left(c.dt_begin_date, 10) &lt;= #{begin_date_left,jdbcType=VARCHAR}
+  	</if>
+  	<if test="begin_date_right != null and begin_date_right != ''">
+  		and left(c.dt_begin_date, 10) &gt;= #{begin_date_right,jdbcType=VARCHAR}
+  	</if>
+  	<if test="end_date != null and end_date != ''">
+  		and left(c.dt_end_date, 10) &gt;= #{end_date,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  <!-- 获取班级名称 -->
+  <select id="getclassname" resultType="com.human.continuation.entity.TeacherContinuationTeachername" parameterType="com.human.continuation.entity.TeacherContinuationTeachername">
+  	select s_class_code class_code, s_class_name class_name from xdf_class_info
+  	where s_class_code = #{class_code,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 获取教师名称 -->
+  <select id="getteachername" resultType="com.human.continuation.entity.TeacherContinuationTeachername" parameterType="com.human.continuation.entity.TeacherContinuationTeachername">
+  	select name teacher_name from hr_user
+  	where email_addr = #{email_addr,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from teacher_continuation_teachername
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from teacher_continuation_teachername
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.continuation.entity.TeacherContinuationTeachername" >
+    insert into teacher_continuation_teachername (id, class_code, teacher_name
+      )
+    values (#{id,jdbcType=INTEGER}, #{class_code,jdbcType=VARCHAR}, #{teacher_name,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.continuation.entity.TeacherContinuationTeachername" >
+    insert into teacher_continuation_teachername
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="class_code != null" >
+        class_code,
+      </if>
+      <if test="teacher_name != null" >
+        teacher_name,
+      </if>
+      <if test="email_addr != null" >
+        email_addr,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null" >
+        #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="email_addr != null" >
+        #{email_addr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuation.entity.TeacherContinuationTeachername" >
+    update teacher_continuation_teachername
+    <set >
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null" >
+        teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="email_addr != null" >
+        email_addr = #{email_addr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.continuation.entity.TeacherContinuationTeachername" >
+    update teacher_continuation_teachername
+    set class_code = #{class_code,jdbcType=VARCHAR},
+      teacher_name = #{teacher_name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

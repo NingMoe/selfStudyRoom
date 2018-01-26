@@ -1,0 +1,95 @@
+body{
+ margin: 0;
+ width: 100%;
+}
+
+.main_body{
+	margin: 0;
+	width: 100%;
+}
+
+.main_head{
+	width: 100%;
+}
+
+.main_head_background_img{
+	width: 100%;
+}
+
+.main_head_tig{
+	position: relative;
+	width: 100%;
+	margin-top: -14%;
+}
+
+.main_head_tig_name{
+	position: absolute;
+	margin-top: 3.5%;
+	margin-left: 6%;
+	font-size: 0.6rem;
+	color: #fff;
+}
+
+.main_head_tig_img{
+	width: 100%;
+}
+
+.main_head_tig_panel{
+	font-size: 0.7rem;
+	width: 94%;
+	left: 5%;
+	position: absolute;
+	margin-top: -23%;
+}
+
+.main_tap{
+	width: 100%;
+}
+
+.main_tap_table{
+	width: 100%;
+	background-color: #fff;
+	border-radius: 7px;
+}
+
+.main_tap_tig{
+	height: 2rem;
+}
+
+.main_tap_tig_img{
+	float: left;
+	width: 1.5rem;
+}
+
+.main_tap_tip_btn{
+	float: right;
+	background-color: #ff9800;
+	width: 80px;
+	font-size: 0.8rem;
+	text-align: center;
+	color: #fff;
+	border-radius: 3px;
+}
+
+.main_tap_select{
+	width: 30%;
+	border-style: solid;
+	border-color: #40c1b0;
+	border-radius: 3px;
+	float: left;
+	border-width: 1px;
+	text-align: center;
+	margin: 4px 4px 4px 4px;
+	height: 10px;
+	height: 1.6rem;
+	line-height: 1.6rem;
+	font-size: 1rem;
+}
+
+.main_foot{
+	position: fixed;
+	bottom: 0px;
+	color: #adadad;
+	font-size: 0.8rem;
+	text-align: center;
+}

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.ResumeTalentDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.ResumeTalent" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="resume_id" property="resumeId" jdbcType="INTEGER" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  
+   <resultMap id="TalentMap" type="com.human.recruitment.entity.ResumeTalent" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="hrCompanyId" property="hrCompanyId" jdbcType="VARCHAR" />
+    <result column="companyName" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="deptName" property="deptName" jdbcType="VARCHAR" />
+    <result column="position" property="position" jdbcType="INTEGER" />
+    <result column="positionName" property="positionName" jdbcType="VARCHAR" />
+    <result column="resume_id" property="resumeId" jdbcType="INTEGER" /> 
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="circulationName" property="circulationName" jdbcType="VARCHAR" />
+    <result column="seekerName" property="seekerName" jdbcType="VARCHAR" />    
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="gra_school" property="graSchool" jdbcType="VARCHAR" />
+    <result column="high_edu" property="highEdu" jdbcType="VARCHAR" />
+    <result column="major" property="major" jdbcType="VARCHAR" />
+    <result column="applyPosition" property="applyPosition" jdbcType="VARCHAR" />
+    <result column="flowCode" property="flowCode" jdbcType="VARCHAR" />
+    <result column="seeker_id" property="seekerId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  
+  <sql id="Base_Column_List" >
+    ID, resume_id, dept, position, create_time, create_user, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_talent
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.ResumeTalent" >
+    update resume_talent
+    <set >
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=INTEGER},
+      </if>
+      <if test="dept != null" >
+        dept = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insertOrUpdate" parameterType="com.human.resume.entity.ResumeOperRecord" >
+  	INSERT INTO resume_talent (resume_id, dept, position, create_time, create_user) VALUES(
+  	#{resumeId,jdbcType=INTEGER},#{dept,jdbcType=VARCHAR},#{position,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR}) 
+  	ON DUPLICATE KEY  
+    UPDATE dept = #{dept,jdbcType=VARCHAR},position=#{position,jdbcType=INTEGER},create_time = #{createTime,jdbcType=TIMESTAMP},create_user = #{createUser,jdbcType=VARCHAR}   
+  </insert>
+  
+  <delete id="deleteByResumeId" parameterType="java.lang.Integer" >
+    delete from resume_talent
+    where resume_id = #{resumeId,jdbcType=INTEGER}
+  </delete>
+  
+  
+  
+  <!-- 分页查询人才库 -->
+   <select id="query" resultMap="TalentMap" parameterType="java.util.HashMap">
+		SELECT t.id,m.company_id AS hrCompanyId,t.dept,t.position,t.resume_id AS resumeId,
+		m.company_name AS companyName,o.NAME AS deptName,hp.name AS positionName,
+		t.create_time,b.name AS seekerName,b.telephone,b.gra_school,b.high_edu,b.major,
+		IFNULL (g.custom_node_name,c.custom_node_name) AS circulationName,
+		b.apply_position AS applyPosition,h.flow_code AS flowCode,b.`resume_seeker_id` seeker_id 
+		FROM resume_talent t
+		LEFT JOIN hr_organization o ON t.dept=o.ID
+		LEFT JOIN hr_company m ON o.COMPANY=m.company_id
+		LEFT JOIN hr_position hp ON t.position=hp.ID
+		LEFT JOIN resume_base b ON t.resume_id=b.id
+		LEFT JOIN hr_resume_flow h ON t.resume_id=h.resume_id
+		LEFT JOIN position_process_node_config g ON h.position_process_id=g.position_process_id AND h.lose_node=g.node_id
+		LEFT JOIN position_process_node_config c ON h.position_process_id=c.position_process_id AND h.current_node=c.node_id
+		WHERE t.status=0 AND  b.flow_status=3
+		AND  t.dept IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT} )		
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND o.COMPANY=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			AND t.dept=#{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.position != null and t.position !=''">
+			AND t.position=#{t.position,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="t.highEdu != null and t.highEdu !=''">
+			AND b.high_edu like  CONCAT(CONCAT('%', #{t.highEdu,jdbcType=VARCHAR}), '%')
+		</if>
+		
+		<if test="t.circulationName != null and t.circulationName !=''">
+			AND IFNULL (g.custom_node_name,c.custom_node_name) like CONCAT(CONCAT('%', #{t.circulationName,jdbcType=VARCHAR}), '%') 
+		</if>
+		
+	    <if test="t.seekerName != null and t.seekerName !=''">
+			AND b.name like CONCAT(CONCAT('%', #{t.seekerName,jdbcType=VARCHAR}), '%') 
+		</if>
+		
+		<if test="t.telephone != null and t.telephone !=''">
+			AND b.telephone like  CONCAT(CONCAT('%', #{t.telephone,jdbcType=VARCHAR}), '%') 
+		</if>
+		
+		<if test="t.graSchool != null and t.graSchool !=''">
+			AND b.gra_school like  CONCAT(CONCAT('%', #{t.graSchool,jdbcType=VARCHAR}), '%')
+		</if>
+			
+		<if test="t.talentTimeStart != null and t.talentTimeStart !=''">
+			AND t.create_time >= #{t.talentTimeStart,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.talentTimeEnd != null and t.talentTimeEnd !=''">
+			<![CDATA[AND t.create_time <= #{t.talentTimeEnd,jdbcType=TIMESTAMP}]]> 
+		</if>		
+		ORDER BY t.id DESC
+	</select>
+	
+		
+	<!--人才库导出本页 -->
+   <select id="exporThisPage" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+        SELECT t.id,m.company_id AS hrCompanyId,t.dept,t.position,t.resume_id AS resumeId,
+		m.company_name AS companyName,o.NAME AS deptName,hp.name AS positionName,
+		t.create_time AS createTime,b.name AS seekerName,b.telephone,b.gra_school AS graSchool,
+		b.high_edu AS highEdu,b.major,
+		IFNULL (g.custom_node_name,c.custom_node_name) AS circulationName,b.apply_position AS applyPosition
+		FROM resume_talent t
+		LEFT JOIN hr_organization o ON t.dept=o.ID
+		LEFT JOIN hr_company m ON o.COMPANY=m.company_id
+		LEFT JOIN hr_position hp ON t.position=hp.ID
+		LEFT JOIN resume_base b ON t.resume_id=b.id
+		LEFT JOIN hr_resume_flow h ON t.resume_id=h.resume_id
+		LEFT JOIN position_process_node_config g ON h.position_process_id=g.position_process_id AND h.lose_node=g.node_id
+		LEFT JOIN position_process_node_config c ON h.position_process_id=c.position_process_id AND h.current_node=c.node_id
+		WHERE t.status=0 AND  b.flow_status=3
+		AND  t.dept IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT} )		
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND o.COMPANY=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			AND t.dept=#{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.position != null and t.position !=''">
+			AND t.position=#{t.position,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="t.highEdu != null and t.highEdu !=''">
+			AND b.high_edu like  CONCAT(CONCAT('%', #{t.highEdu,jdbcType=VARCHAR}), '%')
+		</if>
+		
+		<if test="t.circulationName != null and t.circulationName !=''">
+			AND IFNULL (g.custom_node_name,c.custom_node_name) like CONCAT(CONCAT('%', #{t.circulationName,jdbcType=VARCHAR}), '%') 
+		</if>
+		
+	    <if test="t.seekerName != null and t.seekerName !=''">
+			AND b.name like CONCAT(CONCAT('%', #{t.seekerName,jdbcType=VARCHAR}), '%') 
+		</if>
+		
+		<if test="t.telephone != null and t.telephone !=''">
+			AND b.telephone like  CONCAT(CONCAT('%', #{t.telephone,jdbcType=VARCHAR}), '%') 
+		</if>
+		
+		<if test="t.graSchool != null and t.graSchool !=''">
+			AND b.gra_school like  CONCAT(CONCAT('%', #{t.graSchool,jdbcType=VARCHAR}), '%')
+		</if>
+			
+		<if test="t.talentTimeStart != null and t.talentTimeStart !=''">
+			AND t.create_time >= #{t.talentTimeStart,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.talentTimeEnd != null and t.talentTimeEnd !=''">
+			<![CDATA[AND t.create_time <= #{t.talentTimeEnd,jdbcType=TIMESTAMP}]]> 
+		</if>		
+		ORDER BY t.id DESC
+	</select>
+	
+	<!--导出选择的人才库 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+		SELECT t.id,m.company_id AS hrCompanyId,t.dept,t.position,t.resume_id AS resumeId,
+		m.company_name AS companyName,o.NAME AS deptName,hp.name AS positionName,
+		t.create_time AS createTime,b.name AS seekerName,b.telephone,b.gra_school AS graSchool,
+		b.high_edu AS highEdu,b.major,
+		IFNULL (g.custom_node_name,c.custom_node_name) AS circulationName,b.apply_position AS applyPosition
+		FROM resume_talent t
+		LEFT JOIN hr_organization o ON t.dept=o.ID
+		LEFT JOIN hr_company m ON o.COMPANY=m.company_id
+		LEFT JOIN hr_position hp ON t.position=hp.ID
+		LEFT JOIN resume_base b ON t.resume_id=b.id
+		LEFT JOIN hr_resume_flow h ON t.resume_id=h.resume_id
+		LEFT JOIN position_process_node_config g ON h.position_process_id=g.position_process_id AND h.lose_node=g.node_id
+		LEFT JOIN position_process_node_config c ON h.position_process_id=c.position_process_id AND h.current_node=c.node_id
+		WHERE t.status=0 AND  b.flow_status=3
+		AND  t.dept IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT} )
+		<if test="s != null">
+		AND t.id IN
+		<foreach collection="s" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+	    </foreach>
+	    </if>			
+		order By t.id DESC
+	</select>
+	
+  <!-- 移出人才库-->
+	<delete id="deleteByIds" parameterType="java.util.HashMap">
+		 DELETE FROM resume_talent WHERE id IN
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+		</foreach>
+	</delete>
+	
+	<update id="updateByIds" parameterType="java.util.HashMap">
+		UPDATE resume_base SET flow_status =0 
+	    WHERE id IN (SELECT resume_id FROM resume_talent WHERE id IN
+		    <foreach collection="ids" item="id" index="index"
+				open="(" separator="," close=")">
+				#{id,jdbcType=INTEGER}
+			</foreach>
+	    )
+	    AND flow_status=3
+	</update>
+	
+</mapper>

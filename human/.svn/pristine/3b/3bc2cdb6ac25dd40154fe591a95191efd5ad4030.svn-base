@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.HrPositionDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.HrPosition" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="COMID" property="comid" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="DEPT" property="dept" jdbcType="VARCHAR" />
+    <result column="DEPT_NAME" property="deptName" jdbcType="VARCHAR" />
+    <result column="position_nature" property="positionNature" jdbcType="VARCHAR" />
+    <result column="position_attribute" property="positionAttribute" jdbcType="VARCHAR" />
+    <result column="postion_classification" property="postionClassification" jdbcType="VARCHAR" />
+    <result column="ob_content" property="obContent" jdbcType="VARCHAR" />
+    <result column="qualifications" property="qualifications" jdbcType="VARCHAR" />
+    <result column="recruitment_number" property="recruitmentNumber" jdbcType="VARCHAR" />
+    <result column="require_degree" property="requireDegree" jdbcType="VARCHAR" />
+    <result column="working_month" property="workingMonth" jdbcType="VARCHAR" />
+    <result column="salary_type" property="salaryType" jdbcType="VARCHAR" />
+    <result column="position_salary_range" property="positionSalaryRange" jdbcType="VARCHAR" />
+    <result column="salary0" property="salary0" jdbcType="DECIMAL" />
+    <result column="salary1" property="salary1" jdbcType="DECIMAL" />
+    <result column="is_release" property="isRelease" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="effective_date" property="effectiveDate" jdbcType="TIMESTAMP" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="is_aotusub" property="isAotusub" jdbcType="INTEGER" />
+    <result column="mailbox" property="mailbox" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="is_feedback" property="isFeedback" jdbcType="INTEGER" />
+    <result column="text_task" property="textTask" jdbcType="VARCHAR" />
+    <result column="picture_task" property="pictureTask" jdbcType="VARCHAR" />
+    <result column="video_task" property="videoTask" jdbcType="VARCHAR" />
+    <result column="is_long_effective" property="isLongEffective" jdbcType="INTEGER" />
+    <result column="job_addr" property="jobAddr" jdbcType="VARCHAR" />
+    <result column="probation_period" property="probationPeriod" jdbcType="INTEGER" />
+    <result column="mail_type" property="mailType" jdbcType="VARCHAR" />
+    <result column="tel_type" property="telType" jdbcType="VARCHAR" />
+    <result column="is_inner_allow" property="isInnerAllow" jdbcType="INTEGER" />
+    <result column="is_ds_allow" property="isDsAllow" jdbcType="INTEGER" />
+    <result column="is_ms_allow" property="isMsAllow" jdbcType="INTEGER" />
+    <result column="alias_desc" property="aliasDesc" jdbcType="VARCHAR" />
+    <result column="nodegree_desc" property="nodegreeDesc" jdbcType="VARCHAR" />
+    <result column="release_time" property="releaseTime" jdbcType="TIMESTAMP" />
+    <result column="salary_desc" property="salaryDesc" jdbcType="VARCHAR" />
+    <result column="work_citys" property="workCitys" jdbcType="VARCHAR" />
+    
+    <collection property="jobCity" resultMap="positionAreaMap" columnPrefix="area_"/>
+    <collection property="positionAlias" resultMap="positionAliasMap" columnPrefix="alias_"/>
+    <collection property="highLight" resultMap="positionHighLightMap" columnPrefix="high_"/>
+  </resultMap>
+  
+  
+  <resultMap id="FrontResultMap" type="com.human.recruitment.entity.HrPosition" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="COMID" property="comid" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="DEPT" property="dept" jdbcType="VARCHAR" />
+    <result column="DEPT_NAME" property="deptName" jdbcType="VARCHAR" />
+    <result column="position_nature" property="positionNature" jdbcType="VARCHAR" />
+    <result column="position_attribute" property="positionAttribute" jdbcType="VARCHAR" />
+    <result column="postion_classification" property="postionClassification" jdbcType="VARCHAR" />
+    <result column="ob_content" property="obContent" jdbcType="VARCHAR" />
+    <result column="qualifications" property="qualifications" jdbcType="VARCHAR" />
+    <result column="recruitment_number" property="recruitmentNumber" jdbcType="VARCHAR" />
+    <result column="require_degree" property="requireDegree" jdbcType="VARCHAR" />
+    <result column="working_month" property="workingMonth" jdbcType="VARCHAR" />
+    <result column="salary_type" property="salaryType" jdbcType="VARCHAR" />
+    <result column="position_salary_range" property="positionSalaryRange" jdbcType="VARCHAR" />
+    <result column="salary0" property="salary0" jdbcType="DECIMAL" />
+    <result column="salary1" property="salary1" jdbcType="DECIMAL" />
+    <result column="is_release" property="isRelease" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="effective_date" property="effectiveDate" jdbcType="TIMESTAMP" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="is_aotusub" property="isAotusub" jdbcType="INTEGER" />
+    <result column="mailbox" property="mailbox" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="is_feedback" property="isFeedback" jdbcType="INTEGER" />
+    <result column="text_task" property="textTask" jdbcType="VARCHAR" />
+    <result column="picture_task" property="pictureTask" jdbcType="VARCHAR" />
+    <result column="video_task" property="videoTask" jdbcType="VARCHAR" />
+    <result column="is_long_effective" property="isLongEffective" jdbcType="INTEGER" />
+    <result column="job_addr" property="jobAddr" jdbcType="VARCHAR" />
+    <result column="probation_period" property="probationPeriod" jdbcType="INTEGER" />
+    <result column="mail_type" property="mailType" jdbcType="VARCHAR" />
+    <result column="tel_type" property="telType" jdbcType="VARCHAR" />
+    <result column="is_inner_allow" property="isInnerAllow" jdbcType="INTEGER" />
+    <result column="is_ds_allow" property="isDsAllow" jdbcType="INTEGER" />
+    <result column="is_ms_allow" property="isMsAllow" jdbcType="INTEGER" />
+    <result column="alias_desc" property="aliasDesc" jdbcType="VARCHAR" />
+    <result column="release_time" property="releaseTime" jdbcType="TIMESTAMP" />
+    <result column="salary_desc" property="salaryDesc" jdbcType="VARCHAR" />
+    <result column="work_citys" property="workCitys" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <resultMap id="PositionDetailMap" type="com.human.recruitment.entity.HrPosition" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="COMID" property="comid" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="position_nature" property="positionNature" jdbcType="VARCHAR" />
+    <result column="position_attribute" property="positionAttribute" jdbcType="VARCHAR" />
+    <result column="postion_classification" property="postionClassification" jdbcType="VARCHAR" />
+    <result column="ob_content" property="obContent" jdbcType="VARCHAR" />
+    <result column="recruitment_number" property="recruitmentNumber" jdbcType="VARCHAR" />
+    <result column="require_degree" property="requireDegree" jdbcType="VARCHAR" />
+    <result column="working_month" property="workingMonth" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="job_addr" property="jobAddr" jdbcType="VARCHAR" />
+    <result column="release_time" property="releaseTime" jdbcType="TIMESTAMP" />
+    <result column="salary_desc" property="salaryDesc" jdbcType="VARCHAR" />
+    <result column="work_citys" property="workCitys" jdbcType="VARCHAR" />
+    <result column="profile" property="profile" jdbcType="VARCHAR" />
+    <result column="qualifications" property="qualifications" jdbcType="VARCHAR" />
+    <collection property="highLight" resultMap="positionHighLightMap" columnPrefix="high_"/>
+  </resultMap>
+  
+  
+  <resultMap id="positionAliasMap" type="com.human.recruitment.entity.PositionAlias">
+  	<result column="POSITION_ID" property="positionId" jdbcType="VARCHAR"  />
+  	<result column="ALIAS_NAME" property="aliasName" jdbcType="VARCHAR"  />
+  </resultMap>
+  
+  <resultMap id="positionAreaMap" type="com.human.recruitment.entity.PositionJobCity">
+  	<result column="POSITION_ID" property="positionId" jdbcType="VARCHAR"  />
+  	<result column="AREA_ID" property="jobCity" jdbcType="VARCHAR"  />
+  	<result column="AREA_NAME" property="areaName" jdbcType="VARCHAR"  />
+  </resultMap>
+  
+   <resultMap id="positionHighLightMap" type="com.human.recruitment.entity.PositionHighLight">
+  	<result column="POSITION_ID" property="positionId" jdbcType="VARCHAR"  />
+  	<result column="high_light" property="highLight" jdbcType="VARCHAR"  />
+  	<result column="high_light_value" property="highLightVal" jdbcType="VARCHAR"  />
+  </resultMap> 
+
+  <sql id="Base_Column_List" >
+    ID, NAME, COMID, DEPT, position_nature, position_attribute, postion_classification, 
+    ob_content, qualifications, recruitment_number, require_degree, working_month, salary_type, 
+    position_salary_range, salary0, salary1, is_release, status, effective_date, priority, 
+    is_aotusub, mailbox, telephone, is_feedback,nodegree_desc,
+    is_long_effective, job_addr, probation_period,mail_type,tel_type,is_inner_allow,is_ds_allow,is_ms_allow,alias_desc,release_time 
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_position
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectDetailById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select t.ID, t.NAME, t.COMID, t.DEPT, t.position_nature, t.position_attribute, t.postion_classification,nodegree_desc, 
+    t.ob_content, t.qualifications, t.recruitment_number, t.require_degree, t.working_month, t.salary_type, 
+    t.position_salary_range, t.salary0, t.salary1, t.is_release, t.status, t.effective_date, t.priority, 
+    t.is_aotusub, t.mailbox, t.telephone, t.is_feedback,t.alias_desc,t.release_time,
+    t.is_long_effective, t.job_addr, t.probation_period,t.mail_type,t.tel_type,
+    a.position_id alias_position_id,a.alias_name alias_alias_name,
+    ar.position_id area_position_id,ar.area_id area_area_id,ai.area_name area_area_name,
+    h.position_id high_position_id,h.high_light high_high_light
+    from hr_position t
+    left join position_alias a on t.id = a.position_id
+    left join position_area ar on t.id = ar.position_id
+    left join position_highlignts h on t.id = h.position_id
+    left join area_info ai on ar.area_id = ai.id
+ 	    
+    where t.ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hr_position
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.recruitment.entity.HrPosition" >
+    insert into hr_position (ID, NAME, COMID, 
+      DEPT, position_nature, position_attribute, 
+      postion_classification, ob_content, qualifications, 
+      recruitment_number, require_degree, working_month, 
+      salary_type, position_salary_range, salary0, 
+      salary1, is_release, status, 
+      effective_date, priority, is_aotusub, 
+      mailbox, telephone, is_feedback, 
+      is_long_effective, job_addr, 
+      probation_period,mail_type,tel_type,release_time)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{comid,jdbcType=VARCHAR}, 
+      #{dept,jdbcType=VARCHAR}, #{positionNature,jdbcType=VARCHAR}, #{positionAttribute,jdbcType=VARCHAR}, 
+      #{postionClassification,jdbcType=VARCHAR}, #{obContent,jdbcType=VARCHAR}, #{qualifications,jdbcType=VARCHAR}, 
+      #{recruitmentNumber,jdbcType=VARCHAR}, #{requireDegree,jdbcType=VARCHAR}, #{workingMonth,jdbcType=VARCHAR}, 
+      #{salaryType,jdbcType=VARCHAR}, #{positionSalaryRange,jdbcType=VARCHAR}, #{salary0,jdbcType=DECIMAL}, 
+      #{salary1,jdbcType=DECIMAL}, #{isRelease,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{effectiveDate,jdbcType=TIMESTAMP}, #{priority,jdbcType=INTEGER}, #{isAotusub,jdbcType=INTEGER}, 
+      #{mailbox,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{isFeedback,jdbcType=INTEGER}, 
+      #{isLongEffective,jdbcType=INTEGER}, #{jobAddr,jdbcType=VARCHAR}, 
+      #{probationPeriod,jdbcType=INTEGER},#{mailType,jdbcType=VARCHAR},#{telType,jdbcType=VARCHAR},#{releaseTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.HrPosition" >
+    update hr_position
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="comid != null" >
+        COMID = #{comid,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null" >
+        DEPT = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="positionNature != null" >
+        position_nature = #{positionNature,jdbcType=VARCHAR},
+      </if>
+      <if test="positionAttribute != null" >
+        position_attribute = #{positionAttribute,jdbcType=VARCHAR},
+      </if>
+      <if test="postionClassification != null" >
+        postion_classification = #{postionClassification,jdbcType=VARCHAR},
+      </if>
+      <if test="obContent != null" >
+        ob_content = #{obContent,jdbcType=VARCHAR},
+      </if>
+      <if test="qualifications != null" >
+        qualifications = #{qualifications,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitmentNumber != null" >
+        recruitment_number = #{recruitmentNumber},
+      </if>
+      <if test="requireDegree != null" >
+        require_degree = #{requireDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="workingMonth != null" >
+        working_month = #{workingMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="salaryType != null" >
+        salary_type = #{salaryType,jdbcType=VARCHAR},
+      </if>
+      <if test="positionSalaryRange != null" >
+        position_salary_range = #{positionSalaryRange,jdbcType=VARCHAR},
+      </if>
+      <if test="salary0 != null" >
+        salary0 = #{salary0,jdbcType=DECIMAL},
+      </if>
+      <if test="salary1 != null" >
+        salary1 = #{salary1,jdbcType=DECIMAL},
+      </if>
+      <if test="isRelease != null" >
+        is_release = #{isRelease,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="effectiveDate != null" >
+        effective_date = #{effectiveDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="isAotusub != null" >
+        is_aotusub = #{isAotusub,jdbcType=INTEGER},
+      </if>
+      <if test="mailbox != null" >
+        mailbox = #{mailbox,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="isFeedback != null" >
+        is_feedback = #{isFeedback,jdbcType=INTEGER},
+      </if>
+      <if test="isLongEffective != null" >
+        is_long_effective = #{isLongEffective,jdbcType=INTEGER},
+      </if>
+      <if test="isLongEffective == '1'.toString() ">
+      	effective_date = null ,
+      </if>
+      <if test="jobAddr != null" >
+        job_addr = #{jobAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="probationPeriod != null" >
+        probation_period = #{probationPeriod,jdbcType=INTEGER},
+      </if>
+      <if test="mailType != null" >
+        mail_type = #{mailType,jdbcType=VARCHAR},
+      </if>
+      <if test="telType != null" >
+        tel_type = #{telType,jdbcType=VARCHAR},
+      </if>
+      <if test="isInnerAllow != null" >
+        is_inner_allow = #{isInnerAllow,jdbcType=VARCHAR},
+      </if>
+      <if test="isDsAllow != null" >
+        is_ds_allow = #{isDsAllow,jdbcType=VARCHAR},
+      </if>
+      <if test="isMsAllow != null" >
+        is_ms_allow = #{isMsAllow,jdbcType=VARCHAR},
+      </if>
+      <if test="aliasDesc != null" >
+        alias_desc = #{aliasDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="nodegreeDesc != null" >
+        nodegree_desc = #{nodegreeDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="releaseTime != null" >
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectPositionPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT p.ID, p.NAME, p.COMID, p.DEPT,p.is_release,p.status, 
+    c.company_name,o.name dept_name FROM hr_position p 
+    left join hr_company c on p.comid = c.company_id 
+    left join hr_organization o on p.dept = o.id 
+    where 1=1
+   	 	<if test="t.comid != null and t.comid !=''">
+			and p.comid = #{t.comid,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			and p.dept = #{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.status != null">
+			and p.status = #{t.status,jdbcType=INTEGER}
+		</if>
+		<if test="t.isRelease != null">
+			and p.is_release = #{t.isRelease,jdbcType=INTEGER}
+		</if>
+		<if test="t.loginId != null">
+			AND EXISTS (
+				SELECT 1 FROM user_dept WHERE userId = #{t.loginId} AND deptId = p.`DEPT`
+  			)  
+		</if>
+  </select>
+  
+  
+  <select id="getValidPositionList" resultMap="BaseResultMap" parameterType="com.human.recruitment.entity.HrPosition">
+    SELECT p.ID, p.NAME, p.COMID, p.DEPT,p.is_release,p.status, 
+    c.company_name,o.name dept_name FROM hr_position p 
+    left join hr_company c on p.comid = c.company_id 
+    left join hr_organization o on p.dept = o.id 
+    where p.status = 1 and (
+    	p.is_long_effective = 1 OR p.effective_date > CURDATE() 
+    )
+  	<if test="comid != null and comid !=''">
+		and p.comid = #{comid,jdbcType=VARCHAR}
+	</if>
+	<if test="dept != null and dept !=''">
+		and p.dept = #{dept,jdbcType=VARCHAR}
+	</if>
+	<if test="loginId != null">
+		AND EXISTS (
+			SELECT 1 FROM user_dept WHERE userId = #{loginId} AND deptId = p.`DEPT`
+ 			)  
+	</if>
+  </select>
+  
+  <insert id="insertJobCitys" parameterType="java.util.List">
+        insert into position_area(position_id,area_id) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.positionId},#{item.jobCity})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteJobCityByPositionId" parameterType="java.lang.Integer" >
+    delete from position_area where position_id = #{positionId}
+  </delete>
+  
+  <delete id="deleteAliasByPositionId" parameterType="java.lang.Integer" >
+    delete from position_alias where position_id = #{positionId}
+  </delete>
+  
+  
+  
+  <insert id="insertHighLight" parameterType="java.util.List">
+        insert into position_highlignts(position_id,high_light) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.positionId},#{item.highLight})
+        </foreach>
+  </insert>
+  
+  <insert id="insertPositionAlias" parameterType="java.util.List">
+        insert into position_alias(position_id,alias_name) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.positionId},#{item.aliasName})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteNoaccDegreesByPositionId" parameterType="java.lang.Integer" >
+    delete from position_nodegree where position_id = #{positionId}
+  </delete>
+  
+   <insert id="insertNoaccDegrees" parameterType="java.util.List">
+        insert into position_nodegree(position_id,degree_name) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.positionId},#{item.degreeName})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteHighLightByPositionId" parameterType="java.lang.Integer" >
+    delete from position_highlignts where position_id = #{positionId}
+  </delete>
+  
+  <select id="getPositionHrUsers" resultType="com.human.recruitment.entity.PositionHrUser" parameterType="java.lang.Integer" >
+    select 
+    position_id positionId,user_id userId,user_name userName 
+    from position_hr_user
+    where POSITION_ID = #{positionId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getPositionAliases" resultType="com.human.recruitment.entity.PositionAlias" parameterType="java.lang.Integer" >
+    select 
+    position_id positionId,alias_name aliasName
+    from position_alias 
+    where POSITION_ID = #{positionId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getPositionNogrees" resultType="com.human.recruitment.entity.NoAccDegree" parameterType="java.lang.Integer" >
+    select 
+    position_id positionId,degree_name degreeName
+    from position_nodegree 
+    where POSITION_ID = #{positionId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="getHrUserByUserId" resultType="com.human.recruitment.entity.PositionHrUser" parameterType="com.human.recruitment.entity.PositionHrUser" >
+    select 
+    position_id positionId,user_id userId,user_name userName 
+    from position_hr_user
+    where POSITION_ID = #{positionId,jdbcType=INTEGER} and user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insertPositionHrUser" parameterType="com.human.recruitment.entity.PositionHrUser">
+        insert into position_hr_user(position_id,user_id,user_name) values
+        (#{positionId},#{userId},#{userName})
+  </insert>
+  
+  <delete id="deleteHrUser" parameterType="com.human.recruitment.entity.PositionHrUser" >
+    delete from position_hr_user where position_id = #{positionId} and user_id = #{userId}
+  </delete>
+  
+  <select id="getPositionWatchers" resultType="com.human.recruitment.entity.PositionWatcher" parameterType="java.lang.Integer" >
+    select 
+    position_id positionId,watcher_id watcherId,watcher_name watcherName 
+    from postion_watcher 
+    where POSITION_ID = #{positionId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getWatcherByWatcherId" resultType="com.human.recruitment.entity.PositionWatcher" parameterType="com.human.recruitment.entity.PositionWatcher" >
+    select 
+    position_id positionId,watcher_id watcherId,watcher_name watcherName 
+    from postion_watcher
+    where POSITION_ID = #{positionId,jdbcType=INTEGER} and watcher_id = #{watcherId,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insertPositionWatcher" parameterType="com.human.recruitment.entity.PositionWatcher">
+        insert into postion_watcher(position_id,watcher_id,watcher_name) values
+        (#{positionId},#{watcherId},#{watcherName})
+  </insert>
+  
+  <delete id="deleteWatcher" parameterType="com.human.recruitment.entity.PositionWatcher" >
+    delete from postion_watcher where position_id = #{positionId} and watcher_id = #{watcherId}
+  </delete>
+  
+  <select id="getPositionMsUsers" resultType="com.human.recruitment.entity.PositionMsUser" parameterType="java.lang.Integer" >
+    select 
+    position_id positionId,ms_id msId,ms_name msName  
+    from position_msuser 
+    where POSITION_ID = #{positionId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getMsUserByMsId" resultType="com.human.recruitment.entity.PositionMsUser" parameterType="com.human.recruitment.entity.PositionMsUser" >
+    select 
+    position_id positionId,ms_id msId,ms_name msName  
+    from position_msuser
+    where POSITION_ID = #{positionId,jdbcType=INTEGER} and ms_id = #{msId,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insertPositionMsUser" parameterType="com.human.recruitment.entity.PositionMsUser">
+        insert into position_msuser(position_id,ms_id,ms_name) values
+        (#{positionId},#{msId},#{msName})
+  </insert>
+  
+  <delete id="deleteMsUser" parameterType="com.human.recruitment.entity.PositionMsUser" >
+    delete from position_msuser where position_id = #{positionId} and ms_id = #{msId}
+  </delete>
+  
+  
+  <!-- 根据应聘职位匹配流程职位 -->
+  <select id="getPositionId" resultType="java.util.HashMap" parameterType="java.lang.String">
+		SELECT IFNULL(p.position_id,0) AS positionId
+		FROM position_match_name p ,hr_position h ,recruit_mail r
+		WHERE p.position_id=h.ID
+		AND h.COMID=r.hr_company_id
+		AND r.status=0
+		AND r.id=#{recruitMailId,jdbcType=VARCHAR}
+		AND #{applyPosition,jdbcType=VARCHAR} LIKE CONCAT(CONCAT('%',p.name), '%')
+		GROUP BY p.position_id limit 1
+  </select>
+  
+  <select id="getPositionForFrontByCompany" resultMap="FrontResultMap" parameterType="java.lang.String">
+		SELECT * from v_hr_position where comid = #{companyId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getPositionForFrontById" resultMap="PositionDetailMap" parameterType="java.lang.Integer">
+		SELECT
+		  p.id,	
+		  p.position_attribute,
+		  p.COMID,
+		  p.NAME,
+		  c.company_name,
+		  a.area_name,
+		  p.postion_classification,
+		  p.working_month,
+		  p.require_degree,
+		  p.release_time,
+		  p.recruitment_number,
+		  p.ob_content,
+		  p.job_addr,
+		  p.qualifications,
+		  position_highlignts.high_light high_high_light,
+		  dd.DATA_VALUE high_high_light_value,
+		  (SELECT GROUP_CONCAT(ar.area_name) FROM area_info ar,position_area pa WHERE ar.id = pa.area_id AND pa.position_id = p.id 
+		  ) AS work_citys,
+		  (CASE p.salary_type 
+			WHEN '自定义' THEN CONCAT(p.salary0,'-',p.salary1) 
+			WHEN '标准' THEN p.position_salary_range ELSE '面议' 
+			END
+		   ) AS salary_desc 
+		   FROM hr_position p
+		    LEFT JOIN hr_company c
+		      ON p.COMID = c.company_id
+		   LEFT JOIN area_info a
+		     ON c.province_code = a.id
+		   LEFT JOIN position_highlignts ON position_highlignts.`position_id` = p.id 
+		   join dic_data dd on dd.dic_code = 'position_highlight' and dd.name = position_highlignts.high_light
+		  WHERE p.id = #{id,jdbcType=INTEGER}
+  </select>
+
+	<select id="getMyPosition" resultType="map"
+	parameterType="com.human.manager.entity.HomeSearchBean">
+	SELECT
+	hr_position.id,
+	acc.`node_id`,
+	CASE
+	p.`type`
+	WHEN 0
+	THEN CONCAT(
+	hr_position.positionName,
+	'(标准)'
+	)
+	WHEN 1
+	THEN CONCAT(
+	hr_position.positionName,
+	'(绿色)'
+	)
+	ELSE hr_position.positionName
+	END positionName,
+	rb.`source`,
+	COUNT(1) coum
+	FROM
+	(SELECT DISTINCT
+	flow_code,
+	node_id
+	FROM
+	act_custom_comment
+	UNION ALL
+	SELECT hrf.flow_code,hrf.current_node FROM hr_resume_flow hrf WHERE
+	hrf.current_node IN( SELECT DISTINCT node_id FROM act_node_config WHERE
+	node_type=3)) acc
+	JOIN hr_resume_flow
+	ON acc.`flow_code` = hr_resume_flow.`flow_code`
+	JOIN position_process p
+	ON p.`ID` = hr_resume_flow.`position_process_id`
+	JOIN
+	(SELECT DISTINCT
+	hrp.`ID`,
+	hrp.`NAME` positionName
+	FROM
+	hr_position hrp
+	LEFT JOIN position_process pp
+	ON pp.`POSITION_ID` = hrp.`ID`
+	WHERE hrp.`DEPT` IN
+	(SELECT
+	ud.`deptId`
+	FROM
+	user_dept ud
+	WHERE ud.`userId` =#{userId,jdbcType=BIGINT}
+	AND NOT EXISTS
+	(SELECT
+	ho.id
+	FROM
+	hr_organization ho
+	WHERE ho.`EFF_STATUS` = 'I'
+	AND ud.deptId = ho.id))
+	AND pp.`ID` IS NOT NULL) hr_position
+	ON hr_position.`ID` = p.`POSITION_ID`
+	JOIN resume_base rb
+	ON rb.`id` = hr_resume_flow.`resume_id`
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="startDate != null and startDate!=''">
+			AND DATE_FORMAT(hr_resume_flow.`create_time`, '%Y-%m-%d' )
+			&gt;= DATE_FORMAT(#{startDate,jdbcType=VARCHAR},'%Y-%m-%d')
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			AND DATE_FORMAT(hr_resume_flow.`create_time`, '%Y-%m-%d' )
+			&lt;= DATE_FORMAT(#{endDate,jdbcType=VARCHAR},'%Y-%m-%d')
+		</if>
+	</trim>
+	GROUP BY hr_position.id,
+	acc.`node_id`,
+	hr_position.positionName,
+	p.`ID`,
+	rb.`source`
+	ORDER BY id,
+	node_id,
+	positionName
+</select>
+</mapper>

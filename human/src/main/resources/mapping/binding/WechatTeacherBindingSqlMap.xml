@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.binding.dao.WechatTeacherBindingDao" >
+  <resultMap id="BaseResultMap" type="com.human.binding.entity.WechatTeacherBinding" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="email_addr" property="email_addr" jdbcType="VARCHAR" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, email_addr, openid
+  </sql>
+  <select id="selectByOpenid" resultType="com.human.binding.entity.WechatTeacherBinding" parameterType="java.lang.String" >
+    select t.*
+    from wechat_teacher_binding t
+    where t.openid = #{openid,jdbcType=VARCHAR} and exists (select 1 from hr_user where email_addr = t.email_addr)
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wechat_teacher_binding
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wechat_teacher_binding
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+    <delete id="deleteByOpenid"  parameterType="java.lang.String" >
+    delete from wechat_teacher_binding
+    where openid = #{openid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.binding.entity.WechatTeacherBinding" >
+    insert into wechat_teacher_binding (id, email_addr, openid
+      )
+    values (#{id,jdbcType=INTEGER}, #{email_addr,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.binding.entity.WechatTeacherBinding" >
+    insert into wechat_teacher_binding
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="email_addr != null" >
+        email_addr,
+      </if>
+      <if test="openid != null" >
+        openid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="email_addr != null" >
+        #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null" >
+        #{openid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.binding.entity.WechatTeacherBinding" >
+    update wechat_teacher_binding
+    <set >
+      <if test="email_addr != null" >
+        email_addr = #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null" >
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.binding.entity.WechatTeacherBinding" >
+    update wechat_teacher_binding
+    set email_addr = #{email_addr,jdbcType=VARCHAR},
+      openid = #{openid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectUserByOpenid" resultType="com.human.binding.entity.WechatTeacherBinding" parameterType="java.lang.String" >
+    SELECT w.*,u.`dept_id` dept 
+    FROM wechat_teacher_binding w JOIN users u ON u.`user_name` = w.`email_addr` where openid = #{openid,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.HrResumeEntryhandlerDao" >
+   <resultMap id="BaseResultMap" type="com.human.recruitment.entity.HrResumeEntryhandler" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="RESUME_ID" property="resumeId" jdbcType="INTEGER" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="position_id" property="positionId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="mail_status" property="mailStatus" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+    <result column="is_mail" property="isMail" jdbcType="INTEGER" />
+    <result column="seeker_name" property="seekerName" jdbcType="VARCHAR" />
+    <result column="entry_time" property="entryTime" jdbcType="TIMESTAMP" />
+    <result column="entry_handler_addr" property="entryHandlerAddr" jdbcType="VARCHAR" />
+    <result column="entry_dept" property="entryDept" jdbcType="VARCHAR" />
+    <result column="entry_handler" property="entryHandler" jdbcType="VARCHAR" />
+    <result column="entry_position" property="entryPosition" jdbcType="INTEGER" />
+    <result column="service_phone" property="servicePhone" jdbcType="VARCHAR" />
+    <result column="contract_type" property="contractType" jdbcType="VARCHAR" />
+    <result column="offer" property="offer" jdbcType="VARCHAR" />
+    <result column="offer_name" property="offerName" jdbcType="VARCHAR" />
+    <result column="work_addr" property="workAddr" jdbcType="VARCHAR" />
+    <result column="head_pic" property="headPic" jdbcType="VARCHAR" />
+    <result column="refuse_reason" property="refuseReason" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <resultMap id="PageMap" type="com.human.recruitment.entity.HrResumeEntryhandler" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="RESUME_ID" property="resumeId" jdbcType="INTEGER" />
+    <result column="flow_code" property="flowCode" jdbcType="VARCHAR" />
+	<result column="comid" property="comid" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="position_id" property="positionId" jdbcType="INTEGER" />
+    <result column="position_name" property="positionName" jdbcType="VARCHAR" />
+    <result column="inside_recommend" property="insideRecommend" jdbcType="VARCHAR" />
+    <result column="delivery_date" property="deliveryDate" jdbcType="TIMESTAMP" />
+    <result column="seeker_id" property="seekerId" jdbcType="VARCHAR" />
+    <result column="seeker_name" property="seekerName" jdbcType="VARCHAR" />
+    <result column="high_edu" property="highEdu" jdbcType="VARCHAR" />
+    <result column="gra_school" property="graSchool" jdbcType="VARCHAR" />
+    <result column="major" property="major" jdbcType="VARCHAR" />
+    <result column="flow_code" property="flowCode" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="mail_status" property="mailStatus" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+    <result column="recommend_name" property="recommendName" jdbcType="VARCHAR" />
+    <result column="process_end_time" property="processEndTime" jdbcType="TIMESTAMP" />
+    <result column="is_mail" property="isMail" jdbcType="INTEGER" />
+    <result column="refuse_reason" property="refuseReason" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, RESUME_ID, flow_code, status, phone, email, id_card,is_mail
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    SELECT hre.id,hre.refuse_reason,hr_resume_flow.`dept`,hre.`entry_dept`,hre.`entry_time`,hre.`entry_handler_addr`,hre.`entry_handler`,
+	hre.`entry_position`,position_process.`POSITION_ID`, hre.`service_phone`,hre.`contract_type`,hre.`offer`,hre.`offer_name`,
+	hre.`work_addr`,hre.`status`,hre.`mail_status`,hre.`phone`,hre.`email`,hre.`id_card`,hre.`is_mail`
+	FROM hr_resume_entryhandler hre
+	LEFT JOIN hr_resume_flow ON hr_resume_flow.`flow_code` = hre.`flow_code` AND hr_resume_flow.`status` = 0 
+	LEFT JOIN position_process ON position_process.`ID` = hr_resume_flow.`position_process_id` 
+    where hre.ID = #{id,jdbcType=INTEGER} 
+  </select>
+  
+  <select id="selectByIdCard" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    SELECT hre.id,hre.refuse_reason,hr_resume_flow.`dept`,hre.`entry_dept`,hre.`entry_time`,hre.`entry_handler_addr`,hre.`entry_handler`,
+	hre.`entry_position`,position_process.`POSITION_ID`, hre.`service_phone`,hre.`contract_type`,hre.`offer`,hre.`offer_name`,
+	hre.`work_addr`,hre.`status`,hre.`mail_status`,hre.`phone`,hre.`email`,hre.`id_card`,hre.`is_mail`
+	FROM hr_resume_entryhandler hre
+	LEFT JOIN hr_resume_flow ON hr_resume_flow.`flow_code` = hre.`flow_code` AND hr_resume_flow.`status` = 0 
+	LEFT JOIN position_process ON position_process.`ID` = hr_resume_flow.`position_process_id` 
+    where hre.id_card = #{idCard,jdbcType=INTEGER} order by hre.id desc 
+  </select>
+  
+  <insert id="initResumeEntry" parameterType="java.lang.String" >
+  	insert into hr_resume_entryhandler(RESUME_ID,flow_code,phone,email,id_card)
+	select f.resume_id,f.flow_code,b.telephone,b.email, b.certificates_number from hr_resume_flow f left join resume_base b on f.resume_id = b.id
+	where flow_code = #{flowCode,jdbcType=VARCHAR} 
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.HrResumeEntryhandler" >
+    update hr_resume_entryhandler
+    <set >
+      <if test="resumeId != null" >
+        RESUME_ID = #{resumeId,jdbcType=INTEGER},
+      </if>
+      <if test="flowCode != null" >
+        flow_code = #{flowCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="mailStatus != null" >
+        mail_status = #{mailStatus,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null" >
+        id_card = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="isMail != null" >
+        is_mail = #{isMail,jdbcType=INTEGER},
+      </if>
+      <if test="entryTime != null" >
+        entry_time = #{entryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="entryHandlerAddr != null" >
+        entry_handler_addr = #{entryHandlerAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="entryHandler != null" >
+        entry_handler = #{entryHandler,jdbcType=VARCHAR},
+      </if>
+      <if test="entryPosition != null" >
+        entry_position = #{entryPosition,jdbcType=INTEGER},
+      </if>
+      <if test="servicePhone != null" >
+        service_phone = #{servicePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="contractType != null" >
+        contract_type = #{contractType,jdbcType=VARCHAR},
+      </if>
+      <if test="offer != null" >
+        offer = #{offer,jdbcType=VARCHAR},
+      </if>
+      <if test="offerName != null" >
+        offer_name = #{offerName,jdbcType=VARCHAR},
+      </if>
+      <if test="workAddr != null" >
+        work_addr = #{workAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="headPic != null" >
+        head_pic = #{headPic,jdbcType=VARCHAR},
+      </if>
+      <if test="refuseReason != null" >
+        refuse_reason = #{refuseReason,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateStatusToPisitive" parameterType="java.util.List">
+    update hr_resume_entryhandler set status = 9 
+    where id_card in 
+	<foreach collection="list" item="idCard" index="index" open="(" close=")" separator=",">
+		#{idCard}
+    </foreach>
+  </update>
+  
+  <select id="selectEntryPage" resultMap="PageMap" parameterType="java.util.Map">
+         SELECT hre.id,hre.refuse_reason,hf.`comid`,hre.`flow_code`,hre.`RESUME_ID`,hr_company.`company_name`,hf.`dept`,hr_organization.`NAME` dept_name,hr_position.id position_id,
+    hr_position.`NAME` position_name,hf.process_end_time, 
+	hre.`status`,hre.`mail_status`,resume_base.`inside_recommend`,hr_user.name recommend_name, resume_base.`delivery_date`,
+	resume_base.`name` seeker_name,hre.`phone`, 
+	resume_base.`high_edu`,resume_base.`gra_school`,resume_base.`major`,resume_base.resume_seeker_id seeker_id 
+	FROM hr_resume_entryhandler hre
+	JOIN hr_resume_flow hf ON hre.`flow_code` = hf.`flow_code`
+	LEFT JOIN hr_company ON hr_company.`company_id` = hf.`comid`
+	LEFT JOIN hr_organization ON hr_organization.`ID` = hf.`dept`
+	LEFT JOIN position_process ON position_process.id = hf.`position_process_id`
+	LEFT JOIN hr_position ON hr_position.id = position_process.`POSITION_ID`
+	LEFT JOIN resume_base ON resume_base.id = hre.`RESUME_ID` 
+	LEFT JOIN hr_user ON hr_user.email_addr = resume_base.inside_recommend 
+    WHERE hf.status = 0 and hf.comid = #{u.companyId,jdbcType=INTEGER}
+   	 	<if test="t.comid != null and t.comid !=''">
+			and hf.comid = #{t.comid,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			and hf.dept = #{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.positionId != null and t.positionId !=''">
+			and hr_position.id = #{t.positionId,jdbcType=INTEGER}
+		</if>
+		<if test="t.status != null and t.status !=''">
+			and hre.status = #{t.status,jdbcType=INTEGER}
+		</if>
+		<if test="t.insideRecommend == '1'.toString() ">
+			and resume_base.inside_recommend is not null 
+		</if>
+		<if test="t.deliveryDate0 != null and t.deliveryDate0 !=''">
+			and resume_base.delivery_date >= #{t.deliveryDate0,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.deliveryDate1 != null and t.deliveryDate1 !=''">
+			<![CDATA[and resume_base.delivery_date <= #{t.deliveryDate1,jdbcType=TIMESTAMP}]]> 
+		</if>
+		<if test="t.seekerName != null and t.seekerName !=''">
+			and resume_base.name LIKE CONCAT('%', #{t.seekerName,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.phone != null and t.phone !=''">
+			and hre.phone LIKE CONCAT('%', #{t.phone,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.highEdu != null and t.highEdu !=''">
+			and resume_base.high_edu = #{t.highEdu,jdbcType=VARCHAR}
+		</if>
+		<if test="t.graSchool != null and t.graSchool !=''">
+			and resume_base.gra_school LIKE CONCAT('%', #{t.graSchool,jdbcType=VARCHAR}, '%') 
+		</if>
+  </select>
+</mapper>

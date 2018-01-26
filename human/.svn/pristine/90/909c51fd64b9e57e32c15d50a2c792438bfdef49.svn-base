@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jw.dao.JwDao" >
+  <resultMap id="BaseResultMap" type="com.human.jw.entity.JwTeacherInfo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="TEACHER_CODE" property="teacherCode" jdbcType="VARCHAR" />
+    <result column="TEACHER_NAME" property="teacherName" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="CHAR" />
+    <result column="DKSX" property="dksx" jdbcType="VARCHAR" />
+    <result column="JYZ" property="jyz" jdbcType="VARCHAR" />
+    <result column="SCHOOL" property="school" jdbcType="VARCHAR" />
+    <result column="SCHOOL_NAME" property="schoolName" jdbcType="VARCHAR" />
+    <result column="ORG" property="org" jdbcType="VARCHAR" />
+    <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+    <result column="DEPT" property="dept" jdbcType="VARCHAR" />
+    <result column="SUBJECT" property="subject" jdbcType="VARCHAR" />
+    <result column="ONE_SX" property="oneSx" jdbcType="INTEGER" />
+    <result column="SEX_CURR" property="sexCurr" jdbcType="INTEGER" />
+    <result column="ONE_CURR" property="oneCurr" jdbcType="INTEGER" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="LOCK_STATE" property="lockState" jdbcType="VARCHAR" />
+    <result column="LOCK_USER" property="lockUser" jdbcType="VARCHAR" />
+    
+    <result column="grades" property="grades" jdbcType="VARCHAR" />
+    <result column="sites" property="sites" jdbcType="VARCHAR" />
+    <result column="CN_HOURS" property="cnHours" jdbcType="VARCHAR" />
+    <result column="SZ_SJ" property="szSj" jdbcType="VARCHAR" />
+    <result column="SY_SJ" property="sySj" jdbcType="VARCHAR" />
+    <result column="XY_SJ" property="xySj" jdbcType="VARCHAR" />
+    <result column="CN_SJ" property="cnSj" jdbcType="VARCHAR" />
+    <result column="YJ_SJ" property="yjSj" jdbcType="VARCHAR" />
+    <result column="WS_SJ" property="wsSj" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, TEACHER_CODE, TEACHER_NAME, SEX, DKSX, JYZ, SCHOOL, SCHOOL_NAME, ORG, ORG_NAME,CN_HOURS,YJ_SJ,WS_SJ, 
+    DEPT, SUBJECT, ONE_SX, SEX_CURR, ONE_CURR, REMARK, PHONE ,EMAIL,LOCK_STATE,LOCK_USER
+  </sql>
+  
+  
+  <select id="getBaseMsgByEmail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT NAME teacher_name,email_addr EMAIL,DEPT_NAME ORG_NAME,SEX,company school,company_name school_name FROM hr_user where email_addr = #{email,jdbcType=VARCHAR} 
+  </select>
+  
+  <select id="getTeacherInfoById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+     select o.ID, o.TEACHER_CODE, o.TEACHER_NAME, o.SEX, o.DKSX, o.JYZ, o.SCHOOL, o.SCHOOL_NAME, o.ORG, o.ORG_NAME, o.CN_HOURS,o.sz_sj,o.sy_sj,o.xy_sj,o.cn_sj,o.yj_sj,o.WS_SJ,
+    o.DEPT, o.SUBJECT, o.ONE_SX, o.SEX_CURR, o.ONE_CURR, o.REMARK, o.PHONE ,o.EMAIL,o.LOCK_USER,o.LOCK_STATE,
+    (select group_concat(g.JW_GRADE) from jw_teacher_grade g where g.TEACHER_CODE = o.TEACHER_CODE) grades,
+    (select group_concat(s.JW_SITE) from jw_teacher_site s where s.TEACHER_CODE = o.TEACHER_CODE) sites 
+    from jw_teacher o 
+    where o.id =  #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectTeacherPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select o.ID, o.TEACHER_CODE, o.TEACHER_NAME, o.SEX, o.DKSX, o.JYZ, o.SCHOOL, o.SCHOOL_NAME, o.ORG, o.ORG_NAME, o.CN_HOURS,o.sz_sj,o.sy_sj,o.xy_sj,o.cn_sj,o.yj_sj,o.WS_SJ,
+    o.DEPT, o.SUBJECT, o.ONE_SX, o.SEX_CURR, o.ONE_CURR, o.REMARK, o.PHONE ,o.EMAIL,o.LOCK_USER,o.LOCK_STATE,
+    (select group_concat(g.JW_GRADE) from jw_teacher_grade g where g.TEACHER_CODE = o.TEACHER_CODE) grades,
+    (select group_concat(s.JW_SITE) from jw_teacher_site s where s.TEACHER_CODE = o.TEACHER_CODE) sites,
+    (case when o.ONE_SX is null then 0 else o.ONE_SX - o.ONE_CURR end) one_qk 
+    from jw_teacher o 
+    where 1=1
+		<if test="t.teacherName != null and t.teacherName !=''">
+			and o.TEACHER_NAME like CONCAT('%',#{t.teacherName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="t.sex != null and t.sex !=''">
+			and o.SEX = #{t.sex,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dksx != null and t.dksx !=''">
+			and o.DKSX = #{t.dksx,jdbcType=VARCHAR}
+		</if>
+		<if test="t.jyz != null and t.jyz !=''">
+			and INSTR(#{t.jyz,jdbcType=VARCHAR},o.JYZ)>0
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			and o.DEPT = #{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.grades != null and t.grades !=''">
+			and exists(select 1 from jw_teacher_grade where JW_GRADE = #{t.grades,jdbcType=VARCHAR} and TEACHER_CODE = o.TEACHER_CODE)
+		</if>
+		<if test="t.sites != null and t.sites !=''">
+			and exists(select 1 from jw_teacher_site where JW_SITE = #{t.sites,jdbcType=VARCHAR} and TEACHER_CODE = o.TEACHER_CODE)
+		</if>
+		<if test="t.subject != null and t.subject !=''">
+			and o.SUBJECT = #{t.subject,jdbcType=VARCHAR}
+		</if>
+		<if test="t.sexCurr != null and t.sexCurr !=''">
+			and o.SEX_CURR = #{t.sexCurr,jdbcType=INTEGER}
+		</if>
+		<if test="t.oneCurr != null and t.oneCurr !=''">
+			and o.ONE_CURR = #{t.oneCurr,jdbcType=INTEGER}
+		</if>
+		<if test="t.oneSx != null and t.oneSx !=''">
+			and o.ONE_SX = #{t.oneSx,jdbcType=INTEGER}
+		</if>
+		<if test="t.oneQk != null and t.oneQk == 0">
+			and (o.ONE_SX - o.ONE_CURR = 0 or o.ONE_SX is null) 
+		</if>
+		<if test="t.oneQk != null and t.oneQk != 0">
+			and o.ONE_SX - o.ONE_CURR = #{t.oneQk,jdbcType=INTEGER}
+		</if>
+		<if test="t.roleName != null and t.roleName != ''">
+			and o.JYZ like CONCAT(#{t.roleName,jdbcType=VARCHAR},'%')
+		</if>
+		order by one_qk desc 
+  </select>
+  
+  <select id="getCnSj" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT SUM(IFNULL(o.cn_sj,0)) cn_sj,SUM(IFNULL(o.cn_hours,0)) cn_hours, SUM(IFNULL(o.ws_sj,0)) ws_sj 
+    from jw_teacher o 
+    where 1=1
+		<if test="t.teacherName != null and t.teacherName !=''">
+			and o.TEACHER_NAME like CONCAT('%',#{t.teacherName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="t.sex != null and t.sex !=''">
+			and o.SEX = #{t.sex,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dksx != null and t.dksx !=''">
+			and o.DKSX = #{t.dksx,jdbcType=VARCHAR}
+		</if>
+		<if test="t.jyz != null and t.jyz !=''">
+			and INSTR(#{t.jyz,jdbcType=VARCHAR},o.JYZ)>0
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			and o.DEPT = #{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.grades != null and t.grades !=''">
+			and exists(select 1 from jw_teacher_grade where JW_GRADE = #{t.grades,jdbcType=VARCHAR} and TEACHER_CODE = o.TEACHER_CODE)
+		</if>
+		<if test="t.sites != null and t.sites !=''">
+			and exists(select 1 from jw_teacher_site where JW_SITE = #{t.sites,jdbcType=VARCHAR} and TEACHER_CODE = o.TEACHER_CODE)
+		</if>
+		<if test="t.subject != null and t.subject !=''">
+			and o.SUBJECT = #{t.subject,jdbcType=VARCHAR}
+		</if>
+		<if test="t.sexCurr != null and t.sexCurr !=''">
+			and o.SEX_CURR = #{t.sexCurr,jdbcType=INTEGER}
+		</if>
+		<if test="t.oneCurr != null and t.oneCurr !=''">
+			and o.ONE_CURR = #{t.oneCurr,jdbcType=INTEGER}
+		</if>
+		<if test="t.oneSx != null and t.oneSx !=''">
+			and o.ONE_SX = #{t.oneSx,jdbcType=INTEGER}
+		</if>
+		<if test="t.oneQk != null and t.oneQk == 0">
+			and (o.ONE_SX - o.ONE_CURR = 0 or o.ONE_SX is null) 
+		</if>
+		<if test="t.oneQk != null and t.oneQk != 0">
+			and o.ONE_SX - o.ONE_CURR = #{t.oneQk,jdbcType=INTEGER}
+		</if>
+		<if test="t.roleName != null and t.roleName != ''">
+			and o.JYZ like CONCAT(#{t.roleName,jdbcType=VARCHAR},'%')
+		</if>
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jw_teacher
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByEmail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from jw_teacher
+    where EMAIL = #{email,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getAllTeacherIds" resultType="java.lang.String">
+    SELECT GROUP_CONCAT(id) FROM jw_teacher 
+  </select>
+  
+  <select id="getAllTeacher" resultMap="BaseResultMap">
+    SELECT * FROM jw_teacher 
+  </select>
+  
+  
+  <select id="getTeacherIdsByCondition" resultType="java.lang.String" parameterType="com.human.jw.entity.JwTeacherInfo" >
+    	SELECT GROUP_CONCAT(id) FROM jw_teacher where 1=1 
+    	<if test="jyz != null and jyz !=''">
+			and INSTR(#{jyz,jdbcType=VARCHAR},JYZ)>0
+		</if>
+		<if test="roleName != null and roleName != ''">
+			and JYZ like CONCAT(#{roleName,jdbcType=VARCHAR},'%')
+		</if>
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jw_teacher
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="delTeacherByCode" parameterType="java.lang.String" >
+    delete from jw_teacher
+    where TEACHER_CODE = #{teacherCode,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  
+  <insert id="insert" parameterType="com.human.jw.entity.JwTeacherInfo" >
+    insert into jw_teacher (ID, TEACHER_CODE, TEACHER_NAME, 
+      SEX, DKSX, JYZ, SCHOOL, 
+      SCHOOL_NAME, ORG, ORG_NAME, 
+      DEPT, SUBJECT, ONE_SX, 
+      SEX_CURR, ONE_CURR, REMARK, 
+      PHONE,EMAIL)
+    values (#{id,jdbcType=INTEGER}, #{teacherCode,jdbcType=VARCHAR}, #{teacherName,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=CHAR}, #{dksx,jdbcType=VARCHAR}, #{jyz,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, 
+      #{schoolName,jdbcType=VARCHAR}, #{org,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, 
+      #{dept,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR}, #{oneSx,jdbcType=INTEGER}, 
+      #{sexCurr,jdbcType=INTEGER}, #{oneCurr,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jw.entity.JwTeacherInfo" >
+    update jw_teacher
+    <set >
+      <if test="teacherCode != null" >
+        TEACHER_CODE = #{teacherCode,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        TEACHER_NAME = #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="dksx != null" >
+        DKSX = #{dksx,jdbcType=VARCHAR},
+      </if>
+      <if test="jyz != null" >
+        JYZ = #{jyz,jdbcType=VARCHAR},
+      </if>
+      <if test="school != null" >
+        SCHOOL = #{school,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolName != null" >
+        SCHOOL_NAME = #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="org != null" >
+        ORG = #{org,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null" >
+        DEPT = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        SUBJECT = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="oneSx != null" >
+        ONE_SX = #{oneSx,jdbcType=INTEGER},
+      </if>
+      <if test="sexCurr != null" >
+        SEX_CURR = #{sexCurr,jdbcType=INTEGER},
+      </if>
+      <if test="oneCurr != null" >
+        ONE_CURR = #{oneCurr,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="cnHours != null" >
+        CN_HOURS = #{cnHours,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="lockState != null" >
+        LOCK_STATE = #{lockState,jdbcType=VARCHAR},
+      </if>
+      <if test="lockUser != null" >
+        LOCK_USER = #{lockUser,jdbcType=VARCHAR},
+      </if>
+      <if test="szSj != null" >
+        sz_sj = #{szSj,jdbcType=VARCHAR},
+      </if>
+      <if test="sySj != null" >
+        sy_sj = #{sySj,jdbcType=VARCHAR},
+      </if>
+      <if test="xySj != null" >
+        xy_sj = #{xySj,jdbcType=VARCHAR},
+      </if>
+      <if test="cnSj != null" >
+        cn_sj = #{cnSj,jdbcType=VARCHAR},
+      </if>
+       <if test="yjSj != null" >
+        yj_sj = #{yjSj,jdbcType=VARCHAR},
+      </if>
+      <if test="wsSj != null" >
+        ws_sj = #{wsSj,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.human.jw.entity.JwTeacherInfo" >
+    update jw_teacher
+    set TEACHER_CODE = #{teacherCode,jdbcType=VARCHAR},
+      TEACHER_NAME = #{teacherName,jdbcType=VARCHAR},
+      SEX = #{sex,jdbcType=CHAR},
+      DKSX = #{dksx,jdbcType=VARCHAR},
+      JYZ = #{jyz,jdbcType=VARCHAR},
+      SCHOOL = #{school,jdbcType=VARCHAR},
+      SCHOOL_NAME = #{schoolName,jdbcType=VARCHAR},
+      ORG = #{org,jdbcType=VARCHAR},
+      ORG_NAME = #{orgName,jdbcType=VARCHAR},
+      DEPT = #{dept,jdbcType=VARCHAR},
+      SUBJECT = #{subject,jdbcType=VARCHAR},
+      ONE_SX = #{oneSx,jdbcType=INTEGER},
+      SEX_CURR = #{sexCurr,jdbcType=INTEGER},
+      ONE_CURR = #{oneCurr,jdbcType=INTEGER},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delGradeByTeacherCode" parameterType="java.lang.String" >
+    delete from jw_teacher_grade
+    where TEACHER_CODE = #{teacherCode,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="delSitesByTeacherCode" parameterType="java.lang.String" >
+    delete from jw_teacher_site
+    where TEACHER_CODE = #{teacherCode,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertGrades" parameterType="java.util.List">
+        insert into jw_teacher_grade(TEACHER_CODE,JW_GRADE) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.teacherCode},#{item.grade})
+        </foreach>
+  </insert>
+  
+  <insert id="insertSites" parameterType="java.util.List">
+        insert into jw_teacher_site(TEACHER_CODE,JW_SITE) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.teacherCode},#{item.site})
+        </foreach>
+  </insert>
+  
+  <select id="isHasEditAu" resultType="java.lang.Integer" parameterType="java.lang.String">
+    SELECT COUNT(1) FROM user_role ur 
+	JOIN users u ON u.id = ur.user_id AND u.user_name = #{email,jdbcType=VARCHAR}
+	JOIN role r ON r.id = ur.role_id AND r.name IN('教研组长','教务管理员','高中数学管理员') 
+  </select>
+  
+  <select id="isGaozhongManager" resultType="java.lang.Integer" parameterType="java.lang.String">
+    SELECT COUNT(1) FROM user_role ur 
+	JOIN users u ON u.id = ur.user_id AND u.user_name = #{email,jdbcType=VARCHAR}
+	JOIN role r ON r.id = ur.role_id AND r.name ='高中数学管理员'  
+  </select>
+</mapper>

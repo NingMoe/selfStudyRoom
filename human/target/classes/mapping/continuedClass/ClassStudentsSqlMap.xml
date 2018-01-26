@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuedClass.dao.ClassStudentsDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuedClass.entity.ClassStudents" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="school_id" property="schoolId" jdbcType="INTEGER" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="s_card_code" property="sCardCode" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+  </resultMap>
+  
+   <resultMap id="MatchResultMap" type="com.human.continuedClass.entity.ClassMatch" >
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="oSchoolAreaName" property="oSchoolAreaName" jdbcType="VARCHAR" />
+    <result column="oGrade" property="oGrade" jdbcType="VARCHAR" />
+  </resultMap>
+   
+  <sql id="Base_Column_List" >
+    id, school_id, class_code, name, code, s_card_code, create_time, create_user, update_time, 
+    update_user,rule_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from class_students
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insertSelective" parameterType="com.human.continuedClass.entity.ClassStudents" >
+    insert into class_students
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="schoolId != null" >
+        school_id,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="sCardCode != null" >
+        s_card_code,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="ruleId != null" >
+        rule_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="schoolId != null" >
+        #{schoolId,jdbcType=INTEGER},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="sCardCode != null" >
+        #{sCardCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleId != null" >
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuedClass.entity.ClassStudents" >
+    update class_students
+    <set >
+      <if test="schoolId != null" >
+        school_id = #{schoolId,jdbcType=INTEGER},
+      </if>
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="sCardCode != null" >
+        s_card_code = #{sCardCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 批量插入 -->
+  <insert id="insertByBatch" parameterType="java.util.List">
+        insert into class_students (school_id, class_code, name, code, s_card_code, create_time, create_user,rule_id)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+           (#{item.schoolId,jdbcType=INTEGER}, #{item.classCode,jdbcType=VARCHAR}, 
+      #{item.name,jdbcType=VARCHAR}, #{item.code,jdbcType=VARCHAR}, #{item.sCardCode,jdbcType=VARCHAR}, 
+      #{item.createTime,jdbcType=TIMESTAMP}, #{item.createUser,jdbcType=VARCHAR},#{item.ruleId,jdbcType=BIGINT})
+        </foreach>
+  </insert>
+  
+  <!-- 批量更新 -->
+  <update id="updateBatch" parameterType="java.util.List">
+	  update class_students set
+	    name=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.name,jdbcType=VARCHAR}
+	  </foreach>
+	  ,s_card_code=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.sCardCode,jdbcType=VARCHAR}
+	  </foreach>
+	  ,update_time=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.updateTime,jdbcType=TIMESTAMP}
+	  </foreach>
+	  ,update_user=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.updateUser,jdbcType=VARCHAR}
+	  </foreach>
+	  where ID in
+	  <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+	      #{item.id,jdbcType=BIGINT}
+	  </foreach>
+ </update>
+ 
+  <!-- 通过班号和学员号查询学员 -->
+  <select id="select" resultMap="BaseResultMap" parameterType="com.human.continuedClass.entity.ClassStudents">
+    select 
+    <include refid="Base_Column_List" />
+    from  class_students
+    where class_code = #{classCode,jdbcType=VARCHAR}
+    and   code = #{code,jdbcType=VARCHAR}
+    and rule_id= #{ruleId,jdbcType=BIGINT}
+    
+  </select>
+  
+   <!-- 匹配同教师 -->
+   <select id="exportSelectByTeacher" resultType="java.util.HashMap"  parameterType="java.lang.Long">
+    SELECT s.name, s.code ,
+	k.oClassCode,k.oClassName,k.oSchoolAreaName,k.oTeacherName,k.oSubject,
+	k.cClassCode,k.cClassName,k.cSchoolAreaName,k.cGrade,k.cSubject,k.cTeacherName,
+	k.createTime,k.cKuokeFlag
+	FROM class_students  s
+	LEFT JOIN 
+	(
+		SELECT 
+		o.class_code AS oClassCode,o.class_name AS oClassName,
+		o.school_area_name AS oSchoolAreaName,
+		o.teacher_name AS oTeacherName,
+		o.subject AS oSubject,
+		c.class_code AS cClassCode,c. class_name AS cClassName,
+		c.school_area_name  AS cSchoolAreaName ,c.grade AS cGrade,
+		c.subject AS cSubject, c.teacher_name  AS cTeacherName,
+		DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+		(CASE WHEN c.kuoke_flag=0 THEN '是' WHEN c.kuoke_flag=1 THEN '否' END) AS cKuokeFlag
+		FROM orginal_class o , continued_class c
+		WHERE o.school_area_name=c.school_area_name
+		AND o.grade=c.grade
+		AND o.subject=c.subject
+		AND o.teacher_name=c.teacher_name
+		AND (CASE WHEN o.top_flag=0 THEN c.top_flag IN(0,1) WHEN o.top_flag=1 THEN c.top_flag=1 WHEN o.top_flag=2 THEN c.top_flag=2 END)	
+		AND o.rule_id=#{ruleId,jdbcType=BIGINT} AND c.rule_id=#{ruleId,jdbcType=BIGINT}
+		UNION ALL
+		SELECT o.class_code AS oClassCode,o.class_name AS oClassName,
+		o.school_area_name AS oSchoolAreaName,
+		o.teacher_name AS oTeacherName,
+		o.subject AS oSubject,
+		NULL AS cClassCode,NULL AS cClassName,
+		NULL  AS cSchoolAreaName ,NULL AS cGrade,
+		NULL AS cSubject, NULL AS cTeacherName,
+		DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+		NULL AS cKuokeFlag
+		FROM orginal_class o 
+		WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND o.class_code NOT IN (
+			SELECT DISTINCT o1.class_code 
+			FROM orginal_class o1, continued_class c1
+			WHERE o1.school_area_name=c1.school_area_name
+			AND o1.grade=c1.grade
+			AND o1.subject=c1.subject
+			AND o1.teacher_name=c1.teacher_name
+			AND (CASE WHEN o1.top_flag=0 THEN c1.top_flag IN(0,1) WHEN o1.top_flag=1 THEN c1.top_flag=1 WHEN o1.top_flag=2 THEN c1.top_flag=2 END)
+			AND o1.rule_id=#{ruleId,jdbcType=BIGINT} AND c1.rule_id=#{ruleId,jdbcType=BIGINT}
+		)
+	)k ON s.class_code=k.oClassCode
+	WHERE s.rule_id=#{ruleId,jdbcType=BIGINT}
+   </select>
+  
+  <!-- 匹配同科目 -->
+  <select id="exportSelectBySubject" resultType="java.util.HashMap"  parameterType="java.lang.Long">
+  SELECT s.name, s.code ,
+k.oClassCode,k.oClassName,k.oSchoolAreaName,k.oTeacherName,k.oSubject,
+k.cClassCode,k.cClassName,k.cSchoolAreaName,k.cGrade,k.cSubject,k.cTeacherName,
+k.createTime,k.cKuokeFlag
+FROM class_students  s
+LEFT JOIN 
+(
+SELECT 
+	o.class_code AS oClassCode,o.class_name AS oClassName,
+	o.school_area_name AS oSchoolAreaName,
+	o.teacher_name AS oTeacherName,
+	o.subject AS oSubject,
+	c.class_code AS cClassCode,c. class_name AS cClassName,
+	c.school_area_name  AS cSchoolAreaName ,c.grade AS cGrade,
+	c.subject AS cSubject, c.teacher_name  AS cTeacherName,
+	DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+	(CASE WHEN c.kuoke_flag=0 THEN '是' WHEN c.kuoke_flag=1 THEN '否' END) AS cKuokeFlag
+	FROM orginal_class o , continued_class c
+	WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND c.rule_id=#{ruleId,jdbcType=BIGINT}
+	AND o.school_area_name=c.school_area_name
+	AND o.grade=c.grade
+	AND o.subject=c.subject
+	AND o.teacher_name=c.teacher_name
+	AND (CASE WHEN o.top_flag=0 THEN c.top_flag IN(0,1) WHEN o.top_flag=1 THEN c.top_flag=1 WHEN o.top_flag=2 THEN c.top_flag=2 END)	
+	
+    UNION ALL
+    
+	SELECT 
+	o.class_code AS oClassCode,o.class_name AS oClassName,
+	o.school_area_name AS oSchoolAreaName,
+	o.teacher_name AS oTeacherName,
+	o.subject AS oSubject,
+	c.class_code AS cClassCode,c. class_name AS cClassName,
+	c.school_area_name  AS cSchoolAreaName ,c.grade AS cGrade,
+	c.subject AS cSubject, c.teacher_name  AS cTeacherName,
+	DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+	(CASE WHEN c.kuoke_flag=0 THEN '是' WHEN c.kuoke_flag=1 THEN '否' END) AS cKuokeFlag
+	FROM orginal_class o , continued_class c
+	WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND c.rule_id=#{ruleId,jdbcType=BIGINT}
+	AND o.school_area_name=c.school_area_name
+	AND o.grade=c.grade
+	AND o.subject=c.subject
+	AND o.teacher_name!=c.teacher_name
+	AND (CASE WHEN o.top_flag=0 THEN c.top_flag IN(0,1) WHEN o.top_flag=1 THEN c.top_flag=1 WHEN o.top_flag=2 THEN c.top_flag=2 END)		
+	AND o.class_code NOT IN (
+		SELECT DISTINCT o1.class_code 
+		FROM orginal_class o1, continued_class c1
+		WHERE o1.rule_id=#{ruleId,jdbcType=BIGINT} AND c1.rule_id=#{ruleId,jdbcType=BIGINT}
+		AND o1.school_area_name=c1.school_area_name
+		AND o1.grade=c1.grade
+		AND o1.subject=c1.subject
+		AND o1.teacher_name=c1.teacher_name
+		AND (CASE WHEN o1.top_flag=0 THEN c1.top_flag IN(0,1) WHEN o1.top_flag=1 THEN c1.top_flag=1 WHEN o1.top_flag=2 THEN c1.top_flag=2 END)		
+	)
+		
+    UNION ALL
+  
+	SELECT o.class_code AS oClassCode,o.class_name AS oClassName,
+	o.school_area_name AS oSchoolAreaName,
+	o.teacher_name AS oTeacherName,
+	o.subject AS oSubject,
+	NULL AS cClassCode,NULL AS cClassName,
+	NULL  AS cSchoolAreaName ,NULL AS cGrade,
+	NULL AS cSubject, NULL AS cTeacherName,
+	DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+	NULL AS cKuokeFlag
+	FROM orginal_class o 
+	WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND o.class_code NOT IN (
+		SELECT DISTINCT o1.class_code 
+		FROM orginal_class o1, continued_class c1
+		WHERE o1.rule_id=#{ruleId,jdbcType=BIGINT} AND c1.rule_id=#{ruleId,jdbcType=BIGINT}
+		AND o1.school_area_name=c1.school_area_name
+		AND o1.grade=c1.grade
+		AND o1.subject=c1.subject
+		AND (CASE WHEN o1.top_flag=0 THEN c1.top_flag IN(0,1) WHEN o1.top_flag=1 THEN c1.top_flag=1 WHEN o1.top_flag=2 THEN c1.top_flag=2 END)		 
+	) 	
+ )k ON s.class_code=k.oClassCode
+ WHERE  s.rule_id=#{ruleId,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 匹配临近校区 -->
+  <select id="exportSelectBySchoolArea" resultType="java.util.HashMap"  parameterType="java.lang.Long">
+   SELECT s.name, s.code ,
+k.oClassCode,k.oClassName,k.oSchoolAreaName,k.oTeacherName,k.oSubject,
+k.cClassCode,k.cClassName,k.cSchoolAreaName,k.cGrade,k.cSubject,k.cTeacherName,
+k.createTime,k.cKuokeFlag
+FROM class_students  s
+LEFT JOIN 
+(
+ SELECT 
+	o.class_code AS oClassCode,o.class_name AS oClassName,
+	o.school_area_name AS oSchoolAreaName,
+	o.teacher_name AS oTeacherName,
+	o.subject AS oSubject,
+	c.class_code AS cClassCode,c. class_name AS cClassName,
+	c.school_area_name  AS cSchoolAreaName ,c.grade AS cGrade,
+	c.subject AS cSubject, c.teacher_name  AS cTeacherName,
+	DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+	(CASE WHEN c.kuoke_flag=0 THEN '是' WHEN c.kuoke_flag=1 THEN '否' END) AS cKuokeFlag
+	FROM orginal_class o , continued_class c
+	WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND c.rule_id=#{ruleId,jdbcType=BIGINT}
+	AND o.school_area_name=c.school_area_name
+	AND o.grade=c.grade
+	AND o.subject=c.subject
+	AND o.teacher_name=c.teacher_name
+	AND (CASE WHEN o.top_flag=0 THEN c.top_flag IN(0,1) WHEN o.top_flag=1 THEN c.top_flag=1 WHEN o.top_flag=2 THEN c.top_flag=2 END)	
+	
+    UNION ALL
+    
+	SELECT 
+	o.class_code AS oClassCode,o.class_name AS oClassName,
+	o.school_area_name AS oSchoolAreaName,
+	o.teacher_name AS oTeacherName,
+	o.subject AS oSubject,
+	c.class_code AS cClassCode,c. class_name AS cClassName,
+	c.school_area_name  AS cSchoolAreaName ,c.grade AS cGrade,
+	c.subject AS cSubject, c.teacher_name  AS cTeacherName,
+	DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+	(CASE WHEN c.kuoke_flag=0 THEN '是' WHEN c.kuoke_flag=1 THEN '否' END) AS cKuokeFlag
+	FROM orginal_class o , continued_class c
+	WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND c.rule_id=#{ruleId,jdbcType=BIGINT}
+	AND o.school_area_name=c.school_area_name
+	AND o.grade=c.grade
+	AND o.subject=c.subject
+	AND o.teacher_name!=c.teacher_name
+	AND (CASE WHEN o.top_flag=0 THEN c.top_flag IN(0,1) WHEN o.top_flag=1 THEN c.top_flag=1 WHEN o.top_flag=2 THEN c.top_flag=2 END)		
+	AND o.class_code NOT IN (
+		SELECT DISTINCT o1.class_code 
+		FROM orginal_class o1, continued_class c1
+		WHERE o1.rule_id=#{ruleId,jdbcType=BIGINT} AND c1.rule_id=#{ruleId,jdbcType=BIGINT}
+		AND o1.school_area_name=c1.school_area_name
+		AND o1.grade=c1.grade
+		AND o1.subject=c1.subject
+		AND o1.teacher_name=c1.teacher_name
+		AND (CASE WHEN o1.top_flag=0 THEN c1.top_flag IN(0,1) WHEN o1.top_flag=1 THEN c1.top_flag=1 WHEN o1.top_flag=2 THEN c1.top_flag=2 END)		
+	)
+
+UNION ALL
+
+SELECT 
+    h.class_code AS oClassCode,h.class_name AS oClassName,
+	h.school_area_name AS oSchoolAreaName,
+	h.teacher_name AS oTeacherName,
+	h.subject AS oSubject,
+	c.class_code AS cClassCode,c. class_name AS cClassName,
+	c.school_area_name  AS cSchoolAreaName ,c.grade AS cGrade,
+	c.subject AS cSubject, c.teacher_name  AS cTeacherName,
+	DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+	(CASE WHEN c.kuoke_flag=0 THEN '是' WHEN c.kuoke_flag=1 THEN '否' END) AS cKuokeFlag   
+        FROM                
+        (SELECT  
+	 o.rule_id, o.class_code, o.class_name, o.school_area_name, o.grade, o.subject, o.teacher_name, 
+         o.dept_name, o.kuoke_flag, o.top_flag,
+	 s.name
+	FROM orginal_class o 
+	LEFT JOIN school_area t ON o.school_area_name=t.name
+	LEFT JOIN school_area_match  m ON t.id=m.school_area_id
+	LEFT JOIN school_area s ON  s.id=m.match_id
+	WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND m.rule_id=#{ruleId,jdbcType=BIGINT} AND o.class_code NOT IN (
+		SELECT DISTINCT o1.class_code 
+		FROM orginal_class o1, continued_class c1
+		WHERE o1.rule_id=#{ruleId,jdbcType=BIGINT} AND c1.rule_id=#{ruleId,jdbcType=BIGINT}
+		AND o1.school_area_name=c1.school_area_name
+		AND o1.grade=c1.grade
+		AND o1.subject=c1.subject
+		AND (CASE WHEN o1.top_flag=0 THEN c1.top_flag IN(0,1) WHEN o1.top_flag=1 THEN c1.top_flag=1 WHEN o1.top_flag=2 THEN c1.top_flag=2 END))
+	)h, continued_class c
+	WHERE h.rule_id=#{ruleId,jdbcType=BIGINT} AND c.rule_id=#{ruleId,jdbcType=BIGINT}	
+	AND h.school_area_name!=c.school_area_name
+	AND h.name=c.school_area_name
+	AND h.teacher_name!=c.teacher_name
+	AND h.grade=c.grade
+	AND h.subject=c.subject
+	AND (CASE WHEN h.top_flag=0 THEN c.top_flag IN(0,1) WHEN h.top_flag=1 THEN c.top_flag=1 WHEN h.top_flag=2 THEN c.top_flag=2 END)
+	
+	
+UNION ALL 
+
+SELECT o.class_code AS oClassCode,o.class_name AS oClassName,
+	o.school_area_name AS oSchoolAreaName,
+	o.teacher_name AS oTeacherName,
+	o.subject AS oSubject,
+	NULL AS cClassCode,NULL AS cClassName,
+	NULL  AS cSchoolAreaName ,NULL AS cGrade,
+	NULL AS cSubject, NULL AS cTeacherName,
+	DATE_FORMAT(NOW(),'%Y-%m-%d %T') AS createTime,
+	NULL AS cKuokeFlag
+	FROM orginal_class o 
+	WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND o.class_code NOT IN (
+		SELECT DISTINCT o1.class_code 
+		FROM 
+		(SELECT  
+		 o.rule_id, o.class_code, o.class_name, o.school_area_name, o.grade, o.subject, o.teacher_name, 
+		 o.dept_name, o.kuoke_flag, o.top_flag,
+		 s.name
+		FROM orginal_class o 
+		LEFT JOIN school_area t ON o.school_area_name=t.name
+		LEFT JOIN school_area_match  m ON t.id=m.school_area_id
+		LEFT JOIN school_area s ON  s.id=m.match_id WHERE o.rule_id=#{ruleId,jdbcType=BIGINT} AND m.rule_id=#{ruleId,jdbcType=BIGINT}
+		
+        UNION ALL
+		SELECT  
+		 o.rule_id, o.class_code, o.class_name, o.school_area_name, o.grade, o.subject, o.teacher_name, 
+		 o.dept_name, o.kuoke_flag, o.top_flag,NULL AS NAME
+		FROM orginal_class o 
+		WHERE o.rule_id=#{ruleId,jdbcType=BIGINT}
+		) o1,continued_class c1
+		WHERE o1.rule_id=#{ruleId,jdbcType=BIGINT} AND c1.rule_id=#{ruleId,jdbcType=BIGINT}
+		AND o1.grade=c1.grade
+		AND o1.subject=c1.subject
+		AND (o1.school_area_name=c1.school_area_name OR o1.name=c1.school_area_name)
+		AND (CASE WHEN o1.top_flag=0 THEN c1.top_flag IN(0,1) WHEN o1.top_flag=1 THEN c1.top_flag=1 WHEN o1.top_flag=2 THEN c1.top_flag=2 END)		 
+	)    	
+)k ON s.class_code=k.oClassCode
+WHERE  s.rule_id=#{ruleId,jdbcType=BIGINT} 
+  </select>
+
+  <!-- 分页查询匹配数据 -->
+  <select id="query" resultMap="MatchResultMap" parameterType="java.util.HashMap">
+	SELECT
+	p.code,p.name,GROUP_CONCAT(p.oSchoolAreaName) AS oSchoolAreaName,GROUP_CONCAT(p.grade) AS oGrade
+	FROM
+	(
+	SELECT h.code,h.name,h.oSchoolAreaName,GROUP_CONCAT(h.grade) AS grade
+	FROM
+	(
+	SELECT
+	k.code,k.name,k.grade,GROUP_CONCAT(k.school_area_name)AS oSchoolAreaName
+	FROM
+	(
+	SELECT o.school_area_name,o.grade,s.code,s.name
+	FROM class_students s
+	LEFT JOIN orginal_class o
+	ON s.class_code=o.class_code
+	WHERE s.rule_id=#{t.ruleId,jdbcType=BIGINT} AND o.rule_id=#{t.ruleId,jdbcType=BIGINT} AND s.del_falg =0
+	<if test="t.code != null and t.code !=''">
+	   AND s.code like CONCAT(CONCAT('%', #{t.code,jdbcType=VARCHAR}), '%') 
+	</if>
+    <if test="t.name != null and t.name !=''">
+	   AND s.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+	</if>
+	GROUP BY o.school_area_name,o.grade,s.CODE,s.NAME
+	ORDER BY s.CODE
+	)k
+	GROUP BY k.code,k.name,k.grade
+	)h
+	GROUP BY h.code,h.name,h.oSchoolAreaName
+	)p
+	GROUP BY p.code,p.name 
+  </select>
+
+  <!-- 删除全部学员 -->
+   <delete id="deleteByRuleId" parameterType="java.lang.Long" >
+    delete from class_students
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="queryList" resultType="java.util.HashMap" parameterType="java.lang.Long">
+  SELECT
+	p.code,p.name,GROUP_CONCAT(p.oSchoolAreaName) AS oSchoolAreaName,GROUP_CONCAT(p.grade) AS oGrade
+	FROM
+	(
+	SELECT h.code,h.name,h.oSchoolAreaName,GROUP_CONCAT(h.grade) AS grade
+	FROM
+	(
+	SELECT
+	k.code,k.name,k.grade,GROUP_CONCAT(k.school_area_name)AS oSchoolAreaName
+	FROM
+	(
+	SELECT o.school_area_name,o.grade,s.code,s.name
+	FROM class_students s
+	LEFT JOIN orginal_class o
+	ON s.class_code=o.class_code
+	WHERE s.rule_id=#{ruleId,jdbcType=BIGINT} AND o.rule_id=#{ruleId,jdbcType=BIGINT} AND s.del_falg =0
+	GROUP BY o.school_area_name,o.grade,s.CODE,s.NAME
+	ORDER BY s.CODE
+	)k
+	GROUP BY k.code,k.name,k.grade
+	)h
+	GROUP BY h.code,h.name,h.oSchoolAreaName
+	)p
+	GROUP BY p.code,p.name 
+  </select>
+  
+  <!--获取某规则下所有原班学员  -->
+  <select id="getStudentCode" resultType="java.lang.String" parameterType="java.lang.Long">
+	  SELECT DISTINCT CODE
+	  FROM class_students 
+	  WHERE rule_id = #{ruleId,jdbcType=BIGINT}
+	  AND del_falg=0
+  </select>
+  
+  <!--查询学员所有的原班记录  -->
+  <select id="getAllClass" resultMap="BaseResultMap" parameterType="com.human.continuedClass.entity.ClassStudents">
+    SELECT id,class_code,name,code
+	FROM class_students 
+	WHERE rule_id = #{ruleId,jdbcType=BIGINT}
+	AND code = #{code,jdbcType=VARCHAR}
+	AND del_falg=0
+  </select>
+  
+  <!--批量更新学员删除标志  -->
+  <update id="updateStudentByIds" parameterType="java.util.HashMap">
+	UPDATE class_students SET del_falg=1
+	WHERE id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>   
+  </update>
+</mapper>

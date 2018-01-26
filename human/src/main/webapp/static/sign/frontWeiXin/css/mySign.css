@@ -1,0 +1,74 @@
+html,body{
+	background: white;
+	position: relative;
+	height:100%;
+}
+.content1{
+ background: linear-gradient(#FB7F5B,#FC6655);
+ padding-top: .1rem;
+ padding-bottom:0.1rem;
+ color: white;
+ min-height: 3rem;
+}
+.content1 h3{
+	color: white;
+	height: 0.6rem;
+	font-size: 0.18rem;
+	line-height: 0.6rem;
+	padding-left: 0.16rem;
+	letter-spacing: 0.01rem;
+}
+
+.list1 li{
+  padding: 0  0.16rem;
+}
+.list1 li:nth-child(1)>.border{
+	 padding-top: 0 !important;
+}
+.list1 li:last-child>.border{
+	border:none !important;
+}
+.border{  
+	padding: 0.12rem 0;
+	border-bottom: 1px  solid rgba(255,255,255,0.1);
+}
+.content1  .list1Left{
+   float: left;
+   width: 60%;
+}
+.list1Left p{
+	font-size:0.16rem;
+	height: 0.2rem;
+	line-height: 0.2rem;
+}
+.content1  button{
+   float: right;
+   color:#FB7F5B ;
+   width: 23%;
+   background: white;
+   height: 0.3rem;
+   border-radius: .04rem;
+   font-size: 0.14rem;
+   text-align: center;
+}
+.content2{
+ background: white;
+ padding-bottom:0.2rem;
+ color:#666;
+ min-height: 3rem;	
+ font-size: 0.15rem
+}
+.content2 li{
+	padding: 0  0.16rem;
+}
+.content2 .border{
+	padding: 0.12rem 0;
+	border: none;
+}
+.content2 .border>p{
+	font-size: 0.14rem;
+	color: #ccc;
+}
+.list2Right  p{
+	text-align: right;
+}

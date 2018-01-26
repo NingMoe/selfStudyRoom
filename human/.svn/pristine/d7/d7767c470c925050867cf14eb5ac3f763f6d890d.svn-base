@@ -1,0 +1,29 @@
+body{
+ margin: 0;
+ width: 100%;
+ background-color: #F0F0F0;
+}
+
+.main_body{
+	margin: 0;
+	width: 100%;
+}
+
+.main_body_ans{
+	border-radius: 6px;
+	border: 1px solid #f0f0f0;
+	padding: 5px 5px 5px 15px;
+	background-color: #fff;
+}
+
+.activity{
+	background-color: #ff9800;
+	color: #fff;
+}
+
+.tk{
+	width:100px;
+	border:0;
+	border-bottom:1px solid #000;
+	text-align:center;
+}

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.InsideRecommendManagerDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.InsideRecommendManagerEntity" >
+    <result column="hr_company_id" property="hrCompanyId" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept_id" property="deptId" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="inside_recommend" property="insideRecommend" jdbcType="VARCHAR" />
+    <result column="totalCount" property="totalCount" jdbcType="BIGINT" />
+    <result column="noDealCount" property="noDealCount" jdbcType="BIGINT" />
+    <result column="interviewCount" property="interviewCount" jdbcType="BIGINT" />
+    <result column="eliminateCount" property="eliminateCount" jdbcType="BIGINT" />
+    <result column="entryCount" property="entryCount" jdbcType="BIGINT" />
+   <result column="propagandaLink" property="propagandaLink" jdbcType="VARCHAR" />
+  </resultMap>
+   
+<!-- 分页查询内推管理-->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select r.hr_company_id,c.company_name ,u.dept_id,u.dept_name,u.name,r.inside_recommend,COUNT(r.inside_recommend) as totalCount
+		from resume_base r,hr_user u,hr_company c
+		where r.inside_recommend=u.email_addr
+		and u.company=c.company_id
+		and u.hr_status='A'
+		AND r.original_flag IN ('0','2')
+		and u.company IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT}) AND u.dept_id IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT})
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND u.company=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND u.dept_id=#{t.deptId,jdbcType=VARCHAR}
+		</if>		
+		<if test="t.name != null and t.name !=''">
+			AND u.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+		GROUP BY u.name,r.hr_company_id,c.company_name ,u.dept_id,u.dept_name,r.inside_recommend
+	</select>
+	
+<!--统计简历不同状态的数量 -->	
+	<select id="getNumberHashMap" resultType="java.util.HashMap" parameterType="java.lang.String">
+		SELECT t.inside_recommend,t.flow_status,COUNT(t.flow_status) AS totalNumber
+		FROM resume_base t,hr_user u
+		WHERE t.inside_recommend=u.email_addr
+		AND t.inside_recommend=#{insideRecommend,jdbcType=VARCHAR}
+		AND t.original_flag IN ('0','2')
+		GROUP BY t.flow_status,t.inside_recommend
+	</select>
+<!--统计入职简历的数量 -->	
+	<select id="getEntryNumberMap" resultType="java.lang.Long" parameterType="java.lang.String">
+		SELECT COUNT(t.id) AS entryCount
+		FROM resume_base t,hr_resume_entryhandler h
+		WHERE t.id=h.RESUME_ID
+		AND h.status=9
+		AND t.original_flag IN ('0','2')
+		AND t.inside_recommend=#{insideRecommend,jdbcType=VARCHAR}
+	</select>	
+			
+<!--导出选择的内推管理信息 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+	    select r.hr_company_id AS hrCompanyId,c.company_name AS companyName,
+	    u.dept_id AS deptId,u.dept_name AS deptName,u.name,
+	    r.inside_recommend AS insideRecommend,COUNT(r.inside_recommend) as totalCount
+		from resume_base r,hr_user u,hr_company c
+		where r.inside_recommend=u.email_addr
+		and u.company=c.company_id
+		and u.hr_status='A'
+		and r.original_flag IN ('0','2')
+		and u.company IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT}) 
+		AND u.dept_id IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT})
+		<if test="s != null">
+		AND r.inside_recommend IN
+		<foreach collection="s" item="insideRecommend" index="index"
+			open="(" separator="," close=")">
+			#{insideRecommend,jdbcType=VARCHAR}
+	    </foreach>
+	    </if>		
+		GROUP BY u.name,r.hr_company_id,c.company_name ,u.dept_id,u.dept_name,r.inside_recommend
+	</select>
+	
+<!--导出本页的内推管理信息 -->
+   <select id="exporThisPage" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+	    select r.hr_company_id AS hrCompanyId,c.company_name AS companyName,
+	    u.dept_id AS deptId,u.dept_name AS deptName,u.name,
+	    r.inside_recommend AS insideRecommend,COUNT(r.inside_recommend) as totalCount
+		from resume_base r,hr_user u,hr_company c
+		where r.inside_recommend=u.email_addr
+		and u.company=c.company_id
+		and u.hr_status='A'
+		and r.original_flag IN ('0','2')
+		and u.company IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT}) 
+		AND u.dept_id IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT})
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND u.company=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND u.dept_id=#{t.deptId,jdbcType=VARCHAR}
+		</if>		
+		<if test="t.name != null and t.name !=''">
+			AND u.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+		GROUP BY u.name,r.hr_company_id,c.company_name ,u.dept_id,u.dept_name,r.inside_recommend
+	</select>	
+	
+	
+   
+</mapper>

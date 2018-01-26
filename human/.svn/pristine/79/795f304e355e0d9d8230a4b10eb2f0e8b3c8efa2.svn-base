@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.MailNoticeTypeDao" >
+  <resultMap id="BaseResultMap" type="com.human.basic.entity.MailNoticeType" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+    <result column="dept_id" property="deptId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, dept_id, name, create_user, create_time, update_user, update_time, 
+    is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mail_notice_type
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mail_notice_type
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.human.basic.entity.MailNoticeType" >
+    insert into mail_notice_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="deptId != null" >
+        dept_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null" >
+        #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.basic.entity.MailNoticeType" >
+    update mail_notice_type
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null" >
+        dept_id = #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      update_time =NOW()
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+ 
+ <!-- 分页查询邮件通知类型 -->
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		m.id, m.company_id,hc.company_name,m.dept_id,ho.NAME AS dept_name, m.name, 
+		m.create_user, m.create_time, m.update_user, m.update_time, 
+        m.is_valid
+		FROM mail_notice_type m
+		LEFT JOIN hr_company hc ON hc.company_id=m.company_id
+		LEFT JOIN hr_organization ho ON ho.ID=m.dept_id
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.companyId !=null and t.companyId !=''">
+				AND m.company_id=#{t.companyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.name!=null and t.name!=''">
+				AND m.name LIKE CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%')
+		</if>
+		<if test="t.isValid !=null and  t.isValid=='1'.toString()">
+				AND m.is_valid=1
+		</if>
+		<if test="t.isValid !=null and t.isValid!='1'.toString()">
+				AND m.is_valid=0
+		</if>
+		<if test="t.deptIds !=null  and t.deptIds.length>0">
+				AND m.dept_id IN 
+				<foreach collection="t.deptIds" item="deptId" index="index"
+			open="(" separator="," close=")">
+			#{deptId,jdbcType=VARCHAR}
+		</foreach>
+		</if>
+		<if test="t.userId!=null">
+				AND m.company_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId=#{t.userId,jdbcType=BIGINT}) AND m.dept_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId=#{t.userId,jdbcType=BIGINT})
+		</if>
+		</trim>
+		order By m.id DESC
+	</select>
+  
+  <!--禁用邮件通知类型-->
+	<update id="delTemp" parameterType="java.util.HashMap">
+		update mail_notice_type set is_valid=1,update_user=#{updateUser,jdbcType=VARCHAR} ,update_time=NOW() 
+		where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>	
+	
+	<select id="queryByParams" resultMap="BaseResultMap" parameterType="com.human.basic.entity.MailNoticeType">
+		 select 
+	     <include refid="Base_Column_List" />
+	     from mail_notice_type
+	     <trim prefix="WHERE" prefixOverrides="AND | OR">
+		     <if test="companyId != null" >
+		       AND  company_id = #{companyId,jdbcType=VARCHAR}
+		      </if>
+		     <if test="deptId != null" >
+		        AND  dept_id = #{deptId,jdbcType=VARCHAR}
+		     </if>
+		     AND is_valid=0
+	     </trim>  
+	</select>
+
+</mapper>

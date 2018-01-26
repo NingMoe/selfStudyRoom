@@ -1,0 +1,9 @@
+rb.client_id=WPWeb
+rb.client_secret=987514345678754164987
+rb.username=WPApi
+rb.password=A@123xdf
+rb.tokenUrl=http://xubanbm.staff.xdf.cn/Token
+rb.queryUrl=http://xubanbm.staff.xdf.cn/Api/LimitWP/GetWindowPeriod
+rb.addUrl=http://xubanbm.staff.xdf.cn/Api/WindowPeriod_StudentPackageApi/Save
+rb.delUrl=http://xubanbm.staff.xdf.cn/api/DeleteStudentPackageForApi/ApiBatchDelete
+rb.qrUrl=http://sw.hf.xdf.cn

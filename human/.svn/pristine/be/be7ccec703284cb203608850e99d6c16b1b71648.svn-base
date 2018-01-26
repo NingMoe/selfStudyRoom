@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.DicDataDao" >
+  <resultMap id="BaseResultMap" type="com.human.basic.entity.DicData" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="DIC_CODE" property="dicCode" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="FILTER" property="filter" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+     <result column="DATA_VALUE" property="dataValue" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, DIC_CODE, NAME, FILTER, STATUS,DATA_VALUE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dic_data
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from dic_data
+    where  NAME = #{name,jdbcType=VARCHAR} and DIC_CODE='resume_source' 
+    limit 1
+  </select>
+  
+  <select id="selectByDicCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from dic_data
+    where DIC_CODE = #{dicCode,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dic_data
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByDicCode" parameterType="java.lang.String" >
+    delete from dic_data
+    where DIC_CODE = #{dicCode,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.basic.entity.DicData" >
+    insert into dic_data (DIC_CODE, NAME, FILTER, STATUS,DATA_VALUE)
+    values (#{dicCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{filter,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{dataValue,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.basic.entity.DicData" >
+    update dic_data
+    <set >
+      <if test="dicCode != null" >
+        DIC_CODE = #{dicCode,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="group != null" >
+        FILTER = #{filter,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="dataValue != null" >
+        DATA_VALUE = #{dataValue,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.basic.entity.DicData" >
+    update dic_data
+    set DIC_CODE = #{dicCode,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      FILTER = #{filter,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER},
+      DATA_VALUE = #{dataValue,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getDataPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+   SELECT o.ID, o.DIC_CODE, o.NAME, o.FILTER, o.STATUS,o.DATA_VALUE FROM dic_data o
+    where o.DIC_CODE = #{key,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 根据字典内容模糊查询 -->
+  <select id="queryByDataValue" resultType="java.lang.Integer"  parameterType="java.lang.String">
+
+   select count(d.ID) from dic_data d  where d.DATA_VALUE like CONCAT(CONCAT('%', #{dataValue,jdbcType=VARCHAR}),'%')
+   
+  </select>
+  
+  <!-- 根据字典编码及公司ID查询 -->
+  <select id="selectByDicCodeAndCompany" resultMap="BaseResultMap" parameterType="com.human.basic.entity.DicData" >
+    select 
+    <include refid="Base_Column_List" />
+    from dic_data
+    where DIC_CODE = #{dicCode,jdbcType=VARCHAR}
+    and FILTER= #{filter,jdbcType=VARCHAR}
+  </select>
+  
+  
+  
+  
+</mapper>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.stuexam.dao.StuExamDao" >
+  <resultMap id="BaseResultMap" type="com.human.stuexam.entity.StuExam" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="stclass_no" property="stclassNo" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="stage" property="stage" jdbcType="VARCHAR" />
+    <result column="tk_tearcher" property="tkTearcher" jdbcType="VARCHAR" />
+    <result column="d_tearcher" property="dTearcher" jdbcType="VARCHAR" />
+    <result column="yf_tearcher" property="yfTearcher" jdbcType="VARCHAR" />
+    <result column="R_tearcher" property="rTearcher" jdbcType="VARCHAR" />
+    <result column="L_tearcher" property="lTearcher" jdbcType="VARCHAR" />
+    <result column="S_tearcher" property="sTearcher" jdbcType="VARCHAR" />
+    <result column="W_tearcher" property="wTearcher" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="exam_name" property="examName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, stclass_no,type, stage, tk_tearcher, d_tearcher, yf_tearcher, R_tearcher, L_tearcher,S_tearcher,W_tearcher,time,exam_name
+  </sql>
+  <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    <include refid="Base_Column_List" />
+    from stu_class
+    where 1=1
+    <if test="t.stclassNo != null and t.stclassNo !=''">
+	   AND stclass_no like CONCAT(CONCAT('%', #{t.stclassNo,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.examStart != null and t.examStart !=''">
+		<![CDATA[AND time >= #{t.examStart,jdbcType=VARCHAR}]]> 
+	</if>
+	<if test="t.examEnd != null and t.examEnd !=''">
+		<![CDATA[AND time <= #{t.examEnd,jdbcType=VARCHAR}]]> 
+	</if>
+  </select>
+  
+  <!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from stu_class
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+  <!--插入--> 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.stuexam.entity.StuExam" >
+    insert into stu_class (  stclass_no,type, stage, tk_tearcher, d_tearcher, yf_tearcher, R_tearcher, L_tearcher,S_tearcher,W_tearcher,time,exam_name)
+    values (#{stclassNo,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{stage,jdbcType=VARCHAR}, #{tkTearcher,jdbcType=VARCHAR},
+      #{dTearcher,jdbcType=VARCHAR},#{yfTearcher,jdbcType=VARCHAR},#{rTearcher,jdbcType=VARCHAR},#{lTearcher,jdbcType=VARCHAR},#{sTearcher,jdbcType=VARCHAR},#{wTearcher,jdbcType=VARCHAR}
+      ,#{time,jdbcType=VARCHAR},#{examName,jdbcType=VARCHAR})
+  </insert>
+   <!--更新 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.stuexam.entity.StuExam"  >
+    update stu_class
+    <set >
+      <if test="stclassNo != null" >
+        stclass_no = #{stclassNo,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="stage != null" >
+        stage = #{stage,jdbcType=VARCHAR},
+      </if>
+      <if test="tkTearcher != null" >
+        tk_tearcher = #{tkTearcher,jdbcType=VARCHAR},
+      </if>
+      <if test="dTearcher != null" >
+        d_tearcher = #{dTearcher,jdbcType=VARCHAR},
+      </if>
+      <if test="yfTearcher != null" >
+        yf_tearcher = #{yfTearcher,jdbcType=VARCHAR},
+      </if>
+      <if test="rTearcher != null" >
+        R_tearcher = #{rTearcher,jdbcType=VARCHAR},
+      </if>
+       <if test="lTearcher != null" >
+        L_tearcher = #{lTearcher,jdbcType=VARCHAR},
+      </if>
+       <if test="lTearcher != null" >
+        S_tearcher = #{sTearcher,jdbcType=VARCHAR},
+      </if>
+      <if test="wTearcher != null" >
+        W_tearcher = #{wTearcher,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="examName != null" >
+        exam_name = #{examName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+   <!--根据主键查询 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from stu_class
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+   <!--根据班号查询 -->
+  <select id="queryInfoByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT DISTINCT sc.stclass_no, sc.stage as stage,sc.tk_tearcher as tkTearcher ,sc.d_tearcher as dTearcher ,sc.yf_tearcher as yfTearcher   ,
+    sc.R_tearcher as rTearcher  ,sc.L_tearcher as lTearcher ,sc.S_tearcher as sTearcher ,sc.W_tearcher as wTearcher FROM stu_class sc
+		LEFT JOIN studentInfo	s ON sc.stclass_no=s.class_code
+         WHERE stclass_no IN (SELECT DISTINCT sc.stclass_no FROM stu_class sc
+        LEFT JOIN studentInfo s ON sc.stclass_no =s.class_Code) AND sc.`type` not in('词测') AND s.code=#{code}
+  </select>
+<!--   根据班号、阶段查询老师 -->
+	<select id="lookforTearcher" resultMap="BaseResultMap" parameterType="com.human.stuexam.entity.StuExam" >
+	    select 
+	    <include refid="Base_Column_List" />
+	    from stu_class
+	    where stclass_no = #{stclassNo,jdbcType=VARCHAR} and stage=#{stage,jdbcType=VARCHAR}
+	  </select>
+	  
+	  <select id="getBeginAndEndTime" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+	        SELECT   LEFT(dt_begin_date,10) AS startTime,LEFT(dt_end_date,10) AS endTime FROM xdf_class_info WHERE s_class_code=#{classCode,jdbcType=VARCHAR}
+	  </select>
+  
+</mapper>

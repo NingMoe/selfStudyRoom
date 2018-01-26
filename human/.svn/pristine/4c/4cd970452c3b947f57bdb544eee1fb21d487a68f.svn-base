@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.bpm.dao.ActCustomCommentDao" >
+  <resultMap id="BaseResultMap" type="com.human.bpm.entity.ActCustomComment" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="flow_code" property="flowCode" jdbcType="VARCHAR" />
+    <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+    <result column="node_name" property="nodeName" jdbcType="VARCHAR" />
+    <result column="result" property="result" jdbcType="INTEGER" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    <result column="back_reason" property="backReason" jdbcType="VARCHAR" />
+    <result column="approver" property="approver" jdbcType="VARCHAR" />
+    <result column="approve_time" property="approveTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, flow_code, node_id, result, comment,back_reason, approver, approve_time
+  </sql>
+  <insert id="insert" parameterType="com.human.bpm.entity.ActCustomComment"  useGeneratedKeys="true" keyProperty="id" >
+    insert into act_custom_comment (flow_code, node_id, 
+      result, comment,back_reason, approver, 
+      approve_time)
+    values (#{flowCode,jdbcType=VARCHAR}, #{nodeId,jdbcType=VARCHAR}, 
+      #{result,jdbcType=INTEGER}, #{comment,jdbcType=VARCHAR},#{backReason,jdbcType=VARCHAR}, #{approver,jdbcType=VARCHAR}, 
+      now())
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.bpm.entity.ActCustomComment" >
+    update act_custom_comment
+    <set >
+      <if test="flowCode != null" >
+        flow_code = #{flowCode,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeId != null" >
+        node_id = #{nodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="backReason != null" >
+        back_reason = #{backReason,jdbcType=VARCHAR},
+      </if>
+      <if test="approver != null" >
+        approver = #{approver,jdbcType=VARCHAR},
+      </if>
+      <if test="approveTime != null" >
+        approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <select id="getLoseComment" parameterType="String" resultMap="BaseResultMap">
+   		SELECT pc.`custom_node_name` node_name,GROUP_CONCAT(CONCAT(u.name,':',a.back_reason) SEPARATOR '|') back_reason FROM act_custom_comment a,hr_resume_flow f,users u, position_process_node_config pc
+ 		WHERE a.`node_id` = pc.`node_id` AND f.`position_process_id` = pc.`position_process_id`
+		AND a.approver = u.user_name AND a.flow_code = f.flow_code AND a.node_id = f.lose_node AND a.flow_code = #{flowCode,jdbcType=VARCHAR} AND a.result='0' 
+ 		GROUP BY a.`node_id`,pc.`custom_node_name`
+  </select>
+  
+  <select id="getLoseNodeComments" parameterType="String" resultMap="BaseResultMap">
+		select ac.ID, ac.flow_code, ac.node_id,ac.back_reason, ac.approve_time,c.custom_node_name node_name 
+		from act_custom_comment ac 
+		join position_process_node_config c on ac.`node_id` = c.`node_id` 
+		where ac.`flow_code` = #{flowCode,jdbcType=VARCHAR} and ac.node_id = #{loseNode,jdbcType=VARCHAR} 
+  </select>
+  
+  
+</mapper>

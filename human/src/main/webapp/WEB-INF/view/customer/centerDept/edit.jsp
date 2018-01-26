@@ -1,0 +1,95 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<%@include file="/WEB-INF/view/common/taglib.jsp" %>
+</head>
+	<body style="padding:10px;">
+		<div class="alertFrom">
+			<div class="layui-form">
+				<input name="id" id="id" type="hidden" value="${dept.id }">
+				<div class="layui-form-item">
+					<label class="layui-form-label" style="width: 84px;">部门名称:</label>
+					<div class="layui-input-inline" style="width: 180px;">
+						<input name="name" id="name" type="text" placeholder="请输入部门名称" class="layui-input" lay-verify="required" value="${dept.deptName }">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label" style="width: 84px;">baner图:</label>
+					<div class="layui-input-inline"  style="width: 180px;">
+						<img style="width: 150px; height: 150px; border-radius: 100%;" id="file_img" src="${fileurl }${dept.banerUrl }">
+					  	<div class="site-demo-upbar" style="position: absolute; top: 40%; left: 20%;">
+					    	<input name="iconFile" lay-type="file" lay-title="选择图片" class="layui-upload-file" id="iconFile" type="file">
+					    	<input name="icon" id="icon" type="hidden" value="${dept.banerUrl }">
+					  	</div>
+					</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<div class="layui-input-block" >
+						<button id="tj" class="layui-btn">立即提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary" id="res">重置</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- layui.use -->
+	    <script type="text/javascript">
+	    	layui.use(['form', 'layedit','upload'], function(){
+	    		var form = layui.form(),layer = layui.layer;
+	    	  
+	    	  var getObjectURL = function(file) {
+		  			var url = null;
+		  			if (window.createObjectURL != undefined) {
+		  				url = window.createObjectURL(file)
+		  			} else if (window.URL != undefined) {
+		  				url = window.URL.createObjectURL(file)
+		  			} else if (window.webkitURL != undefined) {
+		  				url = window.webkitURL.createObjectURL(file)
+		  			}
+		  			return url
+	  			};
+	    	  
+	    	  //监听提交
+	    	  var s = layui.upload({
+	    			url: jsBasePath+'/customer/centerDept/edit.html',
+	    			isAuto : false,
+	    			change : function(file){
+	    				var id = $(file).attr("id");
+	    				$("#file_img").attr('src',getObjectURL(file.files[0])).show();
+	    			},	    			
+	    			success: function(res){ //上传成功后的回调
+	    				if(!res.flag){
+	    					layer.alert(res.msg,{icon:2});
+	    				}else{
+	    					layer.alert(res.msg,{icon:1},function(){
+	    						parent.initTable();
+	    						closeFrame();
+	    					});
+	    				}
+	    			}
+	    		});
+	    	  
+	    	  $("#tj").bind("click",function(){
+		  		  var files = [];
+		  		  files.push($("#iconFile")[0]);
+		  		  var data = {
+		  			"id" : $.trim($("#id").val()),
+		  			"deptName" : $.trim($("#name").val()),
+		  			"banerUrl" : $.trim($("#icon").val())
+		  		  };
+		  		  s.action(files,"file",data);
+		  	  });
+	    	  
+	    	});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuedClass.dao.SchoolAreaMatchDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuedClass.entity.SchoolAreaMatch" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+    <result column="school_area_id" property="schoolAreaId" jdbcType="BIGINT" />
+    <result column="match_id" property="matchId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="matchName" property="matchName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rule_id,school_area_id, match_id, create_time, create_user, update_time, update_user
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from school_area_match
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from school_area_match
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.human.continuedClass.entity.SchoolAreaMatch" >
+    insert into school_area_match
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ruleId != null" >
+        rule_id,
+      </if>
+      <if test="schoolAreaId != null" >
+        school_area_id,
+      </if>
+      <if test="matchId != null" >
+        match_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ruleId != null" >
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="schoolAreaId != null" >
+        #{schoolAreaId,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null" >
+        #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuedClass.entity.SchoolAreaMatch" >
+    update school_area_match
+    <set >
+      <if test="ruleId != null" >
+        rule_id = #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="schoolAreaId != null" >
+        school_area_id = #{schoolAreaId,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null" >
+        match_id = #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+	SELECT k.rule_id,k.school_area_id,k.name,GROUP_CONCAT(k.matchName)AS matchName,k.create_time,k.create_user, k.update_time, k.update_user
+	FROM 
+	(
+		SELECT m.rule_id,m.school_area_id,r1.name, r2.name AS matchName, m.create_time, u.name AS create_user, m.update_time, s.name AS update_user
+		FROM school_area_match m
+		LEFT JOIN school_area r1 ON m.school_area_id=r1.id 
+		LEFT JOIN school_area r2 ON m.match_id=r2.id 
+		LEFT JOIN users u ON m.create_user=u.user_name
+		LEFT JOIN users s ON m.update_user=s.user_name
+		WHERE m.rule_id = #{t.ruleId,jdbcType=BIGINT}
+		<if test="t.schoolAreaId != null and t.schoolAreaId !=''">
+	      AND m.school_area_id = #{t.schoolAreaId,jdbcType=BIGINT}
+	    </if>
+		<if test="t.createUser != null and t.createUser !=''">
+	      AND u.name like CONCAT(CONCAT('%', #{t.createUser,jdbcType=VARCHAR}), '%') 
+	    </if>
+	    <if test="t.deliveryDateStart != null and t.deliveryDateStart !=''">
+	      AND m.create_time >= #{t.deliveryDateStart,jdbcType=TIMESTAMP}
+	    </if>
+	    <if test="t.deliveryDateEnd != null and t.deliveryDateEnd !=''">
+		   <![CDATA[AND m.create_time <= #{t.deliveryDateEnd,jdbcType=TIMESTAMP}]]> 
+	    </if>
+		ORDER BY m.id DESC 
+	)k
+	GROUP BY k.rule_id,k.school_area_id,k.name,k.create_time,k.create_user, k.update_time, k.update_user
+  </select>
+  
+  <!--通过校区ID查询其相邻校区  -->
+  <select id="selectBySmId" resultMap="BaseResultMap" parameterType="com.human.continuedClass.entity.SchoolAreaMatch" >
+    select id, rule_id,school_area_id, match_id
+    from school_area_match
+    where rule_id= #{ruleId,jdbcType=BIGINT} and school_area_id = #{schoolAreaId,jdbcType=BIGINT}
+  </select>
+  
+  <!--通过校区ID删除其相邻校区  -->
+  <delete id="deleteBySmId" parameterType="com.human.continuedClass.entity.SchoolAreaMatch" >
+    delete from school_area_match
+    where rule_id= #{ruleId,jdbcType=BIGINT} and school_area_id = #{schoolAreaId,jdbcType=BIGINT}
+  </delete>
+  
+  <!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from school_area_match
+    where rule_id= #{ruleId,jdbcType=BIGINT} and school_area_id in
+        <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+  
+  <!-- 全部删除 -->
+  <delete id="deleteAll" parameterType="java.lang.Long" >
+    delete from school_area_match
+    where rule_id= #{ruleId,jdbcType=BIGINT}
+  </delete>
+  
+</mapper>

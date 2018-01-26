@@ -1,0 +1,14 @@
+#http://smsapi.xdf.cn/ 正式地址
+#sms.rootUrl=http://smsapi.xdf.cn/
+#sms.apiUrl=http\://smsapi.xdf.cn/api/apis/ApiV5.ashx  
+#sms.method=SendSmsV6
+#sms.appId=90166
+#sms.appKey=u2-sp@\#$_v
+
+#测试地址
+#发送部门
+sms.rootUrl=http://testapi.staff.xdf.cn/
+sms.apiUrl=http://testapi.staff.xdf.cn/apis/ApiV5.ashx
+sms.method=SendSmsV6
+sms.appId=101
+sms.appKey=test_@#$_v

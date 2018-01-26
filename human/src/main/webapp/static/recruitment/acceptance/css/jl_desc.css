@@ -1,0 +1,176 @@
+.layui-layer-content{
+	overflow: auto !important;
+}
+.layui-layer-imgprev{
+	position: fixed !important;
+	left:21%;
+}
+.layui-layer-imgnext{
+	position: fixed !important;
+	right:21%;
+}
+.layui-layer-imgbar{
+	position: fixed !important;
+	bottom: 5%;
+}
+.titleDiv {
+	color: white;
+	padding-left: 10px;
+	height: 30px;
+	line-height: 30px;
+	background: #1AA094;
+	border-bottom: 1px solid #eee;
+}
+
+.row {
+	margin:5px 0px ;
+}
+
+.imgs{
+height: 200px;
+overflow-y:hidden;
+}
+.imgs img{
+height: 200px;
+}
+
+.imgs img:HOVER{
+border: 2px solid #1E9FFF; 
+}
+
+.imgsfeedback{
+height: 50px;
+overflow-y:hidden;
+}
+.imgsfeedback img{
+height: 50px;
+margin: 0 2px;
+}
+
+.imgsfeedback img:HOVER{
+border: 2px solid #1E9FFF; 
+}
+
+.layui-form-label {
+	width: 110px !important;
+}
+
+.layui-form-select {
+	width: 182px !important;
+}
+
+
+#collapseOne input{
+	width:182px;
+}
+
+.layui-input-inline {
+	margin-bottom: 5px;
+}
+
+.linktitle {
+	margin-bottom: 0px;
+	border-bottom: 1px solid #34A8FF;
+	color: #34A8FF;
+	background: #F2F2F2;
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+.linkdesc {
+	padding-bottom: 5px;
+	padding-left: 5px;
+	margin-bottom: 5px;
+	background: #F2F2F2;
+}
+
+.layui-disabled {
+	color: black !important;
+	background: #eee;
+}
+
+.input-disabled {
+	background: #eee;
+}
+
+.inlineHidden {
+	display: none;
+}
+
+.disnone {
+	display: none;
+}
+
+.titleDiv_Btn {
+	margin-top: 4px;
+	float: right;
+}
+
+.layui-upload-button {
+	font-size: 12px;
+	line-height: 22px;
+	height: 22px;
+	background-color: #1E9FFF;
+	border: 0px;
+	color: white;
+}
+
+.layui-upload-icon {
+	margin: 0 5px;
+}
+
+.layui-upload-icon i {
+	color: white;
+	font-size: 14px;
+}
+
+.layui-upload-button:hover {
+	opacity: 0.8;
+	border: 0px;
+	color: white;
+}
+
+.selected {
+	color: red;
+}
+.layui-form-item{
+	margin-bottom: -10px;
+}
+#fixDiv button{
+	width: 100px;
+	margin-left: 0px;
+	border-radius: 0px;
+	border: 1px solid #C9C9C9';
+}
+
+#layer-photos .layui-upload-button{
+	background-color:#1AA094;
+	width:120px;
+	opacity: 0.5;
+	height: 200px;
+	line-height: 200px;
+}
+
+#layer-photos .layui-upload-button:hover {
+	opacity: 0.6;
+	color: white;
+}
+#collapseImg{
+	overflow-x: auto;
+}
+
+.gtTable{
+width: 98%;
+margin: 0 auto;
+margin-top: 10px;
+}
+.gtTable td:nth-child(2n+1){
+font-weight: bold;
+width: 80px;
+}
+.gtTable td:nth-child(2n){
+text-align: left;
+}
+.gtTable tr{
+height: 20px;
+}

@@ -1,0 +1,917 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.northamerica.dao.MentionInfoDao">
+	<resultMap id="BaseResultMap" type="com.human.northamerica.entity.MentionInfo">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="exam_type" property="examType" jdbcType="INTEGER" />
+		<result column="student_code" property="studentCode" jdbcType="VARCHAR" />
+		<result column="student_name" property="studentName" jdbcType="VARCHAR" />
+		<result column="total_score" property="totalScore" jdbcType="VARCHAR" />
+		<result column="listen_score" property="listenScore" jdbcType="VARCHAR" />
+		<result column="speak_score" property="speakScore" jdbcType="VARCHAR" />
+		<result column="read_score" property="readScore" jdbcType="VARCHAR" />
+		<result column="write_score" property="writeScore" jdbcType="VARCHAR" />
+		<result column="guide_teach" property="guideTeach" jdbcType="VARCHAR" />
+		<result column="is_college" property="isCollege" jdbcType="BIT" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		<result column="is_first" property="isFirst" jdbcType="BIT" />
+		<result column="join_toefl" property="joinToefl" jdbcType="VARCHAR" />
+		<result column="grammar_score" property="grammarScore" jdbcType="VARCHAR" />
+		<result column="mathe_score" property="matheScore" jdbcType="VARCHAR" />
+		<result column="reason_score" property="reasonScore" jdbcType="VARCHAR" />
+		
+		<result column="pre_exam_date" property="preExamDate" jdbcType="VARCHAR" />
+		<result column="pre_total_score" property="preTotalScore" jdbcType="VARCHAR" />
+		<result column="pre_listen_score" property="preListenScore" jdbcType="VARCHAR" />
+		<result column="pre_speak_score" property="preSpeakScore" jdbcType="VARCHAR" />
+		<result column="pre_read_score" property="preReadScore" jdbcType="VARCHAR" />
+		<result column="pre_write_score" property="preWriteScore" jdbcType="VARCHAR" />
+		
+		<result column="pre_grammar_score" property="preGrammarScore" jdbcType="VARCHAR" />
+		<result column="pre_mathe_score" property="preMatheScore" jdbcType="VARCHAR" />
+		<result column="pre_reason_score" property="preReasonScore" jdbcType="VARCHAR" />
+		
+		<result column="manager_teach" property="managerTeach" jdbcType="VARCHAR" />
+		<result column="exam_date" property="examDate" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="upload_user" property="uploadUser" jdbcType="BIGINT" />
+		<result column="name" property="uploadUserName" jdbcType="VARCHAR" />
+		<collection property="classList" ofType="com.human.northamerica.entity.MentionInfoClass">
+			<result property="id" column="aicId" />
+			<result property="roomCode" column="room_code" />
+			<result property="type" column="type" />
+			<result property="startTime" column="start_time" />
+			<result property="endTime" column="end_time" />
+			<collection property="ctList" ofType="com.human.northamerica.entity.ClassTeach">
+				<result property="id" column="ctId" />
+				<result property="teachCode" column="teach_code" />
+				<result property="teachName" column="teach_name" />
+				<result property="teachSub" column="teach_sub" />
+			</collection>
+		</collection>
+	</resultMap>
+
+<resultMap id="BaseInfoMap" type="com.human.northamerica.entity.MentionInfo">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="exam_type" property="examType" jdbcType="INTEGER" />
+		<result column="student_code" property="studentCode" jdbcType="VARCHAR" />
+		<result column="student_name" property="studentName" jdbcType="VARCHAR" />
+		<result column="total_score" property="totalScore" jdbcType="VARCHAR" />
+		<result column="listen_score" property="listenScore" jdbcType="VARCHAR" />
+		<result column="speak_score" property="speakScore" jdbcType="VARCHAR" />
+		<result column="read_score" property="readScore" jdbcType="VARCHAR" />
+		<result column="write_score" property="writeScore" jdbcType="VARCHAR" />
+		<result column="guide_teach" property="guideTeach" jdbcType="VARCHAR" />
+		<result column="is_college" property="isCollege" jdbcType="BIT" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		<result column="is_first" property="isFirst" jdbcType="BIT" />
+		<result column="join_toefl" property="joinToefl" jdbcType="VARCHAR" />
+		<result column="grammar_score" property="grammarScore" jdbcType="VARCHAR" />
+		<result column="mathe_score" property="matheScore" jdbcType="VARCHAR" />
+		<result column="reason_score" property="reasonScore" jdbcType="VARCHAR" />
+		<result column="manager_teach" property="managerTeach" jdbcType="VARCHAR" />
+		<result column="exam_date" property="examDate" jdbcType="VARCHAR" />
+		<collection property="classList" ofType="com.human.northamerica.entity.MentionInfoClass">
+			<result property="id" column="aicId" />
+			<result property="roomCode" column="room_code" />
+			<result property="type" column="type" />
+			<result property="startTime" column="start_time" />
+			<result property="endTime" column="end_time" />
+			<collection property="ctList" ofType="com.human.northamerica.entity.ClassTeach">
+				<result property="id" column="ctId" />
+				<result property="teachCode" column="teach_code" />
+				<result property="teachName" column="teach_name" />
+				<result property="teachSub" column="teach_sub" />
+			</collection>
+		</collection>
+	</resultMap>
+<select id="queryMentionInfoList"  resultMap="BaseInfoMap"  parameterType="com.human.northamerica.entity.MentionInfo">
+SELECT 
+  ami.`id`,
+  ami.`manager_teach`,
+  ami.`exam_type`,
+  ami.`exam_date`,
+  ami.`student_code`,
+  ami.`student_name`,
+  ami.`is_college`,
+  ami.`school_name`,
+  ami.`is_first`,
+  ami.`join_toefl`,
+  ami.`guide_teach`,
+  ami.`total_score`,
+  ami.`read_score`,
+  ami.`listen_score`,
+  ami.`speak_score`,
+  ami.`write_score`,
+  ami.`grammar_score`,
+  ami.`reason_score`,
+  ami.`mathe_score`,
+  aic.id aicId,
+  aic.`room_code`,
+  aic.`type`,
+  ac.`start_time`,
+  ac.`end_time`,
+  act.id ctId,
+  act.`teach_code`,
+  act.`teach_name`,
+  act.`teach_sub`
+FROM
+  america_mention_info ami 
+  <if test="onlyOne ">
+		INNER JOIN 
+(SELECT `exam_type`,`student_code` FROM america_mention_info  GROUP BY `exam_type`,`student_code` HAVING COUNT(*)=1) ad
+ON ad.exam_type=ami.`exam_type` AND ad.student_code=ami.`student_code`
+		</if>
+ LEFT JOIN america_info_class aic ON aic.`info_id`=ami.`id` 
+ LEFT JOIN america_class ac ON ac.`class_code`=aic.`room_code`
+ LEFT JOIN america_class_teach act ON act.`class_code`=ac.`class_code`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="examType !=null">
+				AND ami.`exam_type`=#{examType,jdbcType=INTEGER}
+			</if>
+			<if test="studentCode !=null and studentCode !=''">
+				AND ami.`student_code`=#{studentCode,jdbcType=VARCHAR}
+			</if>
+			<if test="studentName!=null and studentName!=''">
+				AND ami.`student_name` LIKE CONCAT('%',
+				#{studentName,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="managerTeach!=null and managerTeach!=''">
+				AND ami.`manager_teach` LIKE CONCAT('%',
+				#{managerTeach,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="queryClassCode!=null and queryClassCode!=''">
+				AND ami.`id` IN (SELECT DISTINCT a1.id FROM america_mention_info a1,america_info_class a2 WHERE a1.`id`=a2.`info_id` AND a2.`room_code`=#{queryClassCode,jdbcType=VARCHAR}) 
+			</if>
+			<if test="managerTeach!=null and managerTeach!=''">
+				AND ami.`manager_teach` LIKE CONCAT('%',
+				#{managerTeach,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="teachName!=null and teachName!=''">
+			  AND	ami.`id` IN(SELECT DISTINCT a1.id FROM america_mention_info a1,america_info_class a2,america_class_teach a3 WHERE a1.`id`=a2.`info_id` AND a2.`room_code`=a3.`class_code` AND a3.`teach_name`  LIKE CONCAT('%',
+				#{teachName,jdbcType=VARCHAR}, '%'))  
+			</if>
+			<if test="examStartDate!=null and examStartDate!=''">
+				AND ami.`exam_date`
+				&gt;=#{examStartDate,jdbcType=VARCHAR}
+			</if>
+			<if test="examEndDate!=null and examEndDate!=''">
+				AND ami.`exam_date`
+				&lt;=#{examEndDate,jdbcType=VARCHAR}
+			</if>
+		</trim>
+		ORDER BY ami.exam_date DESC,ami.`id`
+</select>
+
+	<insert id="saveMentionInfo" parameterType="com.human.northamerica.entity.MentionInfo">
+	insert into america_mention_info
+	<trim prefix="(" suffix=")" suffixOverrides=",">
+		exam_type,student_code,total_score,upload_user,exam_date,
+		<if test="guideTeach != null and guideTeach!=''">
+			guide_teach,
+		</if>
+		<if test="isCollege != null">
+			is_college,
+		</if>
+		<if test="schoolName != null and schoolName!=''">
+			school_name,
+		</if>
+		<if test="isFirst != null">
+			is_first,
+		</if>
+		<if test="joinToefl != null and joinToefl !=''">
+			join_toefl,
+		</if>
+		<if test="grammarScore != null and grammarScore !=''">
+			grammar_score,
+		</if>
+		<if test="matheScore != null and matheScore !=''">
+			mathe_score,
+		</if>
+		<if test="reasonScore != null and reasonScore !=''">
+			reason_score,
+		</if>
+		<if test="managerTeach != null and managerTeach !=''">
+			manager_teach,
+		</if>
+		<if test="studentName != null and studentName !=''">
+			student_name,
+		</if>
+		<if test="listenScore != null and listenScore !=''">
+			listen_score,
+		</if>
+		<if test="speakScore != null and speakScore !=''">
+			speak_score,
+		</if>
+		<if test="readScore != null and readScore !=''">
+			read_score,
+		</if>
+		<if test="writeScore != null and writeScore !=''">
+			write_score,
+		</if>
+	</trim>
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		#{examType,jdbcType=INTEGER},
+		#{studentCode,jdbcType=VARCHAR},
+		#{totalScore,jdbcType=VARCHAR},
+		#{uploadUser,jdbcType=BIGINT},
+		#{examDate,jdbcType=VARCHAR},
+		<if test="guideTeach != null and guideTeach!=''">
+			#{guideTeach,jdbcType=VARCHAR},
+		</if>
+		<if test="isCollege != null">
+			#{isCollege,jdbcType=BIT},
+		</if>
+		<if test="schoolName != null and schoolName!=''">
+			#{schoolName,jdbcType=VARCHAR},
+		</if>
+		<if test="isFirst != null">
+			#{isFirst,jdbcType=BIT},
+		</if>
+		<if test="joinToefl != null and joinToefl !=''">
+			#{joinToefl,jdbcType=VARCHAR},
+		</if>
+		<if test="grammarScore != null and grammarScore !=''">
+			#{grammarScore,jdbcType=VARCHAR},
+		</if>
+		<if test="matheScore != null and matheScore !=''">
+			#{matheScore,jdbcType=VARCHAR},
+		</if>
+		<if test="reasonScore != null and reasonScore !=''">
+			#{reasonScore,jdbcType=VARCHAR},
+		</if>
+		<if test="managerTeach != null and managerTeach !=''">
+			#{managerTeach,jdbcType=VARCHAR},
+		</if>
+		<if test="studentName != null and studentName !=''">
+			#{studentName,jdbcType=VARCHAR},
+		</if>
+		<if test="listenScore != null and listenScore !=''">
+			#{listenScore,jdbcType=VARCHAR},
+		</if>
+		<if test="speakScore != null and speakScore !=''">
+			#{speakScore,jdbcType=VARCHAR},
+		</if>
+		<if test="readScore != null and readScore !=''">
+			#{readScore,jdbcType=VARCHAR},
+		</if>
+		<if test="writeScore != null and writeScore !=''">
+			#{writeScore,jdbcType=VARCHAR},
+		</if>
+	</trim>
+</insert>
+
+	<select id="queryById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select * from america_mention_info where id=#{id,jdbcType=BIGINT}
+	</select>
+
+	<update id="editMention" parameterType="com.human.northamerica.entity.MentionInfo">
+		update america_mention_info
+		set manager_teach=#{managerTeach,jdbcType=VARCHAR},
+		exam_type=#{examType,jdbcType=INTEGER},
+		student_code=#{studentCode,jdbcType=VARCHAR},
+		student_name=#{studentName,jdbcType=VARCHAR},
+		total_score=#{totalScore,jdbcType=VARCHAR},
+		listen_score=#{listenScore,jdbcType=VARCHAR},
+		speak_score=#{speakScore,jdbcType=VARCHAR},
+		read_score=#{readScore,jdbcType=VARCHAR},
+		write_score=#{writeScore,jdbcType=VARCHAR},
+		exam_date=#{examDate,jdbcType=VARCHAR},
+		upload_user=#{uploadUser,jdbcType=BIGINT},
+		guide_teach=#{guideTeach,jdbcType=VARCHAR},
+		is_college=#{isCollege,jdbcType=BIT},
+		school_name=#{schoolName,jdbcType=VARCHAR},
+		is_first=#{isFirst,jdbcType=BIT},
+		join_toefl=#{joinToefl,jdbcType=VARCHAR},
+		grammar_score=#{grammarScore,jdbcType=VARCHAR},
+		mathe_score=#{matheScore,jdbcType=VARCHAR},
+		reason_score=#{reasonScore,jdbcType=VARCHAR},
+		update_time=now()
+		where
+		id=#{id,jdbcType=BIGINT}
+	</update>
+		<update id="editMentionStudentName" parameterType="com.human.northamerica.entity.MentionInfo">
+	update america_mention_info
+	<set>
+		<if test="studentName != null and studentName!=''">
+			student_name = #{studentName,jdbcType=VARCHAR},
+		</if>
+	</set>
+	where
+	id=#{id,jdbcType=BIGINT}
+</update>
+<select id="queryRefreshRows" resultMap="BaseResultMap">
+			SELECT ai.`id`,ai.`student_code`,ai.`exam_date`,ai.`exam_type` FROM america_mention_info  ai
+WHERE ai.`id` NOT IN (SELECT DISTINCT info_id FROM america_info_class)
+</select>
+
+	<delete id="delMentionByIds" parameterType="java.lang.String">
+		delete from america_mention_info
+		where id in
+		<foreach collection="ids" item="id" index="index" open="("
+			separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</delete> 
+	
+	<resultMap id="BaseTeachRoportMap"
+	type="com.human.northamerica.entity.MentionTeachInfo">
+	<id column="id" property="infoId" jdbcType="BIGINT" />
+	<id property="teacherCode" column="actTeachCode" />
+	<result property="teacherName" column="actClassName" />
+	<result property="sub" column="actSub" />
+	<association  property="mi"
+		javaType="com.human.northamerica.entity.MentionInfo">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="exam_type" property="examType" jdbcType="INTEGER" />
+		<result column="student_code" property="studentCode" jdbcType="VARCHAR" />
+		<result column="student_name" property="studentName" jdbcType="VARCHAR" />
+		<result column="total_score" property="totalScore" jdbcType="VARCHAR" />
+		<result column="listen_score" property="listenScore" jdbcType="VARCHAR" />
+		<result column="speak_score" property="speakScore" jdbcType="VARCHAR" />
+		<result column="read_score" property="readScore" jdbcType="VARCHAR" />
+		<result column="write_score" property="writeScore" jdbcType="VARCHAR" />
+		<result column="guide_teach" property="guideTeach" jdbcType="VARCHAR" />
+		<result column="is_college" property="isCollege" jdbcType="BIT" />
+		<result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+		<result column="is_first" property="isFirst" jdbcType="BIT" />
+		<result column="join_toefl" property="joinToefl" jdbcType="VARCHAR" />
+		<result column="grammar_score" property="grammarScore"
+			jdbcType="VARCHAR" />
+		<result column="mathe_score" property="matheScore" jdbcType="VARCHAR" />
+		<result column="reason_score" property="reasonScore" jdbcType="VARCHAR" />
+		<result column="pre_exam_date" property="preExamDate" jdbcType="VARCHAR" />
+		<result column="pre_total_score" property="preTotalScore"
+			jdbcType="VARCHAR" />
+		<result column="pre_listen_score" property="preListenScore"
+			jdbcType="VARCHAR" />
+		<result column="pre_speak_score" property="preSpeakScore"
+			jdbcType="VARCHAR" />
+		<result column="pre_read_score" property="preReadScore"
+			jdbcType="VARCHAR" />
+		<result column="pre_write_score" property="preWriteScore"
+			jdbcType="VARCHAR" />
+		<result column="pre_grammar_score" property="preGrammarScore"
+			jdbcType="VARCHAR" />
+		<result column="pre_mathe_score" property="preMatheScore"
+			jdbcType="VARCHAR" />
+		<result column="pre_reason_score" property="preReasonScore"
+			jdbcType="VARCHAR" />
+		<result column="manager_teach" property="managerTeach"
+			jdbcType="VARCHAR" />
+		<result column="exam_date" property="examDate" jdbcType="VARCHAR" />
+		<collection property="classList"
+			ofType="com.human.northamerica.entity.MentionInfoClass">
+			<result property="id" column="aicId" />
+			<result property="roomCode" column="room_code" />
+			<result property="type" column="type" />
+			<result property="startTime" column="start_time" />
+			<result property="endTime" column="end_time" />
+			<collection property="ctList"
+				ofType="com.human.northamerica.entity.ClassTeach">
+				<result property="id" column="ctId" />
+				<result property="teachCode" column="teach_code" />
+				<result property="teachName" column="teach_name" />
+				<result property="teachSub" column="teach_sub" />
+			</collection>
+		</collection>
+	</association>
+</resultMap>
+	
+	<select id="queryMentionTeachReport" parameterType="com.human.northamerica.entity.MentionTeachInfo"
+	resultMap="BaseTeachRoportMap">
+	SELECT act.`id` infoId ,act.`teach_code` actTeachCode,act.`teach_name` actClassName,act.`teach_sub` actSub,a3.* FROM america_class_teach act
+  INNER JOIN america_info_class aic ON act.`class_code`=aic.`room_code`
+  INNER JOIN (SELECT 
+  aa1.id,
+  aa1.`manager_teach`,
+  aa1.student_code,
+  aa1.exam_date,
+  aa1.exam_type,
+  aa1.`student_name`,
+  aa1.`is_college`,
+  aa1.`school_name`,
+  aa1.`is_first`,
+  aa1.`join_toefl`,
+  aa1.`guide_teach`,
+  aa1.total_score,
+  aa1.listen_score,
+  aa1.speak_score,
+  aa1.read_score,
+  aa1.write_score,
+  aa2.exam_date pre_exam_date,
+  aa2.total_score pre_total_score,
+  aa2.listen_score pre_listen_score,
+  aa2.speak_score pre_speak_score,
+  aa2.read_score pre_read_score,
+  aa2.write_score pre_write_score,
+  aa1.`grammar_score`,
+  aa1.`reason_score`,
+  aa1.`mathe_score`,
+  aa2.`grammar_score` pre_grammar_score,
+  aa2.`reason_score` pre_reason_score,
+  aa2.`mathe_score` pre_mathe_score,
+  aic.id aicId,
+  aic.`room_code`,
+  aic.`type`,
+  ac.`start_time`,
+  ac.`end_time`,
+  act1.id ctId,
+  act1.`teach_code`,
+  act1.`teach_name`,
+  act1.`teach_sub` 
+FROM
+  (SELECT 
+    (
+      @i := 
+      CASE
+        WHEN @pre_exam_type = exam_type 
+        AND @pre_student_code = student_code 
+        THEN @i + 1 
+        ELSE 1 
+      END
+    ) AS i,
+    (@pre_exam_type := exam_type),
+    (
+      @pre_student_code := student_code
+    ),
+    aa.id,
+    aa.`manager_teach`,
+    aa.exam_type,
+    aa.student_code,
+    aa.`exam_date`,
+    aa.`student_name`,
+    aa.`is_college`,
+    aa.`school_name`,
+    aa.`is_first`,
+    aa.`join_toefl`,
+    aa.`guide_teach`,
+    aa.total_score,
+    aa.listen_score,
+    aa.speak_score,
+    aa.read_score,
+    aa.write_score,
+    aa.`grammar_score`,
+    aa.`reason_score`,
+    aa.`mathe_score` 
+  FROM
+    america_mention_info aa,
+    (SELECT 
+      @i := 0,
+      @pre_exam_type := '',
+      @pre_student_code := '') AS it 
+  ORDER BY aa.`exam_type`,
+    aa.`student_code`,
+    aa.`exam_date` DESC) aa1 
+  INNER JOIN 
+    (SELECT 
+      (
+        @i := 
+        CASE
+          WHEN @pre_exam_type = exam_type 
+          AND @pre_student_code = student_code 
+          THEN @i + 1 
+          ELSE 1 
+        END
+      ) AS i,
+      (@pre_exam_type := exam_type),
+      (
+        @pre_student_code := student_code
+      ),
+      aa.exam_type,
+      aa.student_code,
+      aa.`exam_date`,
+      aa.`student_name`,
+      aa.total_score,
+      aa.listen_score,
+      aa.speak_score,
+      aa.read_score,
+      aa.write_score,
+      aa.`grammar_score`,
+      aa.`reason_score`,
+      aa.`mathe_score` 
+    FROM
+      america_mention_info aa,
+      (SELECT 
+        @i := 0,
+        @pre_exam_type := '',
+        @pre_student_code := '') AS it 
+    ORDER BY aa.`exam_type`,
+      aa.`student_code`,
+      aa.`exam_date` DESC) aa2 
+    ON aa1.i = (aa2.i - 1) 
+    AND aa2.i > 1 
+    AND aa1.student_code = aa2.student_code 
+    AND aa1.exam_type = aa2.exam_type 
+  LEFT JOIN america_info_class aic 
+    ON aic.`info_id` = aa1.`id` 
+  LEFT JOIN america_class ac 
+    ON ac.`class_code` = aic.`room_code` 
+  LEFT JOIN america_class_teach act1 
+    ON act1.`class_code` = ac.`class_code` 
+ORDER BY aa1.student_code,
+  aa1.exam_date DESC 
+  ) a3 ON a3.id=aic.`info_id` 
+  <trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="examType !=null">
+			AND a3.`exam_type`=#{examType,jdbcType=INTEGER}
+		</if>
+		<if test="studentCode !=null and studentCode !=''">
+			AND a3.`student_code`=#{studentCode,jdbcType=VARCHAR}
+		</if>
+		<if test="studentName!=null and studentName!=''">
+			AND a3.`student_name` LIKE CONCAT('%',
+			#{studentName,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="managerTeach!=null and managerTeach!=''">
+				AND a3.`manager_teach` LIKE CONCAT('%',
+				#{managerTeach,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="queryClassCode!=null and queryClassCode!=''">
+				AND act.`class_code` =#{queryClassCode,jdbcType=VARCHAR}
+			</if>
+		<if test="teachName!=null and teachName!=''">
+			  AND	act.`teach_name`  LIKE CONCAT('%',
+				#{teachName,jdbcType=VARCHAR}, '%')  
+		</if>
+		<if test="startScore!=null or endScore!=null">
+			<if test="mentionType!=null or mentionType==1">
+				<if test="startScore!=null">
+					AND a3.`pre_total_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND  a3.`total_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==2">
+				<if test="startScore!=null">
+					AND a3.`pre_listen_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND a3.`listen_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==3">
+				<if test="startScore!=null">
+					AND a3.`pre_speak_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND a3.`speak_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==4">
+				<if test="startScore!=null">
+					AND a3.`pre_read_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND a3.`read_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==5">
+				<if test="startScore!=null">
+					AND a3.`pre_write_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND a3.`write_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			
+			<if test="mentionType==6">
+				<if test="startScore!=null">
+					AND a3.`pre_grammar_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND a3.`grammar_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			
+			<if test="mentionType==7">
+				<if test="startScore!=null">
+					AND a3.`pre_mathe_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND a3.`mathe_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			
+			<if test="mentionType==8">
+				<if test="startScore!=null">
+					AND a3.`pre_reason_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND a3.`reason_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+		</if>
+		<if test="examStartDate!=null and examStartDate!=''">
+			AND a3.`exam_date`
+			&gt;=#{examStartDate,jdbcType=VARCHAR}
+		</if>
+		<if test="examEndDate!=null and examEndDate!=''">
+			AND a3.`exam_date`
+			&lt;=#{examEndDate,jdbcType=VARCHAR}
+		</if>
+	</trim>
+  ORDER BY act.`teach_code`
+	</select>
+	
+	<select id="queryReportList" parameterType="com.human.northamerica.entity.MentionInfo"
+	resultMap="BaseResultMap">
+	SELECT 
+  aa1.id,
+  aa1.`manager_teach`,
+  aa1.student_code,
+  aa1.exam_date,
+  aa1.exam_type,
+  aa1.`student_name`,
+  aa1.`is_college`,
+  aa1.`school_name`,
+  aa1.`is_first`,
+  aa1.`join_toefl`,
+  aa1.`guide_teach`,
+  aa1.total_score,
+  aa1.listen_score,
+  aa1.speak_score,
+  aa1.read_score,
+  aa1.write_score,
+  aa2.exam_date pre_exam_date,
+  aa2.total_score pre_total_score,
+  aa2.listen_score pre_listen_score,
+  aa2.speak_score pre_speak_score,
+  aa2.read_score pre_read_score,
+  aa2.write_score pre_write_score,
+  aa1.`grammar_score`,
+  aa1.`reason_score`,
+  aa1.`mathe_score`,
+  aa2.`grammar_score` pre_grammar_score,
+  aa2.`reason_score` pre_reason_score,
+  aa2.`mathe_score` pre_mathe_score,
+  aic.id aicId,
+  aic.`room_code`,
+  aic.`type`,
+  ac.`start_time`,
+  ac.`end_time`,
+  act.id,
+  act.`teach_code`,
+  act.`teach_name`,
+  act.`teach_sub` 
+FROM
+  (SELECT 
+    (
+      @i := 
+      CASE
+        WHEN @pre_exam_type = exam_type 
+        AND @pre_student_code = student_code 
+        THEN @i + 1 
+        ELSE 1 
+      END
+    ) AS i,
+    (@pre_exam_type := exam_type),
+    (
+      @pre_student_code := student_code
+    ),
+    aa.id,
+    aa.`manager_teach`,
+    aa.exam_type,
+    aa.student_code,
+    aa.`exam_date`,
+    aa.`student_name`,
+    aa.`is_college`,
+    aa.`school_name`,
+    aa.`is_first`,
+    aa.`join_toefl`,
+    aa.`guide_teach`,
+    aa.total_score,
+    aa.listen_score,
+    aa.speak_score,
+    aa.read_score,
+    aa.write_score,
+    aa.`grammar_score`,
+    aa.`reason_score`,
+    aa.`mathe_score` 
+  FROM
+    america_mention_info aa,
+    (SELECT 
+      @i := 0,
+      @pre_exam_type := '',
+      @pre_student_code := '') AS it 
+  ORDER BY aa.`exam_type`,
+    aa.`student_code`,
+    aa.`exam_date` DESC) aa1 
+  INNER JOIN 
+    (SELECT 
+      (
+        @i := 
+        CASE
+          WHEN @pre_exam_type = exam_type 
+          AND @pre_student_code = student_code 
+          THEN @i + 1 
+          ELSE 1 
+        END
+      ) AS i,
+      (@pre_exam_type := exam_type),
+      (
+        @pre_student_code := student_code
+      ),
+      aa.exam_type,
+      aa.student_code,
+      aa.`exam_date`,
+      aa.`student_name`,
+      aa.total_score,
+      aa.listen_score,
+      aa.speak_score,
+      aa.read_score,
+      aa.write_score,
+      aa.`grammar_score`,
+      aa.`reason_score`,
+      aa.`mathe_score` 
+    FROM
+      america_mention_info aa,
+      (SELECT 
+        @i := 0,
+        @pre_exam_type := '',
+        @pre_student_code := '') AS it 
+    ORDER BY aa.`exam_type`,
+      aa.`student_code`,
+      aa.`exam_date` DESC) aa2 
+    ON aa1.i = (aa2.i - 1) 
+    AND aa2.i > 1 
+    AND aa1.student_code = aa2.student_code 
+    AND aa1.exam_type = aa2.exam_type 
+  LEFT JOIN america_info_class aic 
+    ON aic.`info_id` = aa1.`id` 
+  LEFT JOIN america_class ac 
+    ON ac.`class_code` = aic.`room_code` 
+  LEFT JOIN america_class_teach act 
+    ON act.`class_code` = ac.`class_code` 
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="examType !=null">
+			AND aa1.`exam_type`=#{examType,jdbcType=INTEGER}
+		</if>
+		<if test="studentCode !=null and studentCode !=''">
+			AND aa1.`student_code`=#{studentCode,jdbcType=VARCHAR}
+		</if>
+		<if test="studentName!=null and studentName!=''">
+			AND aa1.`student_name` LIKE CONCAT('%',
+			#{studentName,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="managerTeach!=null and managerTeach!=''">
+				AND aa1.`manager_teach` LIKE CONCAT('%',
+				#{managerTeach,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="queryClassCode!=null and queryClassCode!=''">
+				AND aa1.`id` IN (SELECT DISTINCT a1.id FROM america_mention_info a1,america_info_class a2 WHERE a1.`id`=a2.`info_id` AND a2.`room_code`=#{queryClassCode,jdbcType=VARCHAR}) 
+			</if>
+		<if test="teachName!=null and teachName!=''">
+			  AND	aa1.`id` IN(SELECT DISTINCT a1.id FROM america_mention_info a1,america_info_class a2,america_class_teach a3 WHERE a1.`id`=a2.`info_id` AND a2.`room_code`=a3.`class_code` AND a3.`teach_name`  LIKE CONCAT('%',
+				#{teachName,jdbcType=VARCHAR}, '%'))  
+		</if>
+		<if test="startScore!=null or endScore!=null">
+			<if test="mentionType!=null or mentionType==1">
+				<if test="startScore!=null">
+					AND aa2.`total_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`total_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==2">
+				<if test="startScore!=null">
+					AND aa2.`listen_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`listen_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==3">
+				<if test="startScore!=null">
+					AND aa2.`speak_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`speak_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==4">
+				<if test="startScore!=null">
+					AND aa2.`read_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`read_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			<if test="mentionType==5">
+				<if test="startScore!=null">
+					AND aa2.`write_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`write_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			
+			<if test="mentionType==6">
+				<if test="startScore!=null">
+					AND aa2.`grammar_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`grammar_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			
+			<if test="mentionType==7">
+				<if test="startScore!=null">
+					AND aa2.`mathe_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`mathe_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+			
+			<if test="mentionType==8">
+				<if test="startScore!=null">
+					AND aa2.`reason_score`
+					&gt;=#{startScore,jdbcType=DOUBLE}
+				</if>
+				<if test="endScore!=null">
+					AND aa1.`reason_score`
+					&lt;=#{endScore,jdbcType=DOUBLE}
+				</if>
+			</if>
+		</if>
+		<if test="examStartDate!=null and examStartDate!=''">
+			AND aa1.`exam_date`
+			&gt;=#{examStartDate,jdbcType=VARCHAR}
+		</if>
+		<if test="examEndDate!=null and examEndDate!=''">
+			AND aa1.`exam_date`
+			&lt;=#{examEndDate,jdbcType=VARCHAR}
+		</if>
+	</trim>
+ORDER BY aa1.student_code,
+  aa1.exam_date DESC 
+</select>
+<select id="queryMentionInfo"  parameterType="com.human.northamerica.entity.MentionInfo" resultMap="BaseResultMap">
+SELECT ami.* FROM america_mention_info ami
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="examType !=null">
+				AND ami.`exam_type`=#{examType,jdbcType=INTEGER}
+			</if>
+			<if test="studentCode !=null and studentCode !=''">
+				AND ami.`student_code`=#{studentCode,jdbcType=VARCHAR}
+			</if>
+		<!-- 	<if test="studentName!=null and studentName!=''">
+				AND ami.`student_name`  =#{studentName,jdbcType=VARCHAR}
+			</if> -->
+			<if test="examDate!=null and examDate!=''">
+				AND ami.`exam_date`=#{examDate,jdbcType=VARCHAR}
+			</if>
+		</trim>
+		order By ami.exam_date asc
+</select>
+
+<insert id="insertInfoClass" parameterType="com.human.northamerica.entity.MentionInfoClass">
+	insert IGNORE into america_info_class(info_id,room_code,type)
+	values(#{infoId,jdbcType=BIGINT},#{roomCode,jdbcType=VARCHAR},#{type,jdbcType=INTEGER})
+</insert>
+
+<insert id="insertClass" parameterType="com.human.northamerica.entity.USAClassInfo">
+	insert IGNORE into
+	america_class(class_code,start_time,end_time,class_type)
+	values(#{classCode,jdbcType=VARCHAR},#{startTime,jdbcType=VARCHAR},#{endTime,jdbcType=VARCHAR},#{classType,jdbcType=INTEGER})
+</insert>
+
+<insert id="insertClassTeach" parameterType="com.human.northamerica.entity.ClassTeach">
+	insert IGNORE into
+	america_class_teach(class_code,teach_code,teach_name,teach_sub)
+	values(#{classCode,jdbcType=VARCHAR},#{teachCode,jdbcType=VARCHAR},#{teachName,jdbcType=VARCHAR},#{teachSub,jdbcType=INTEGER})
+</insert>
+</mapper>

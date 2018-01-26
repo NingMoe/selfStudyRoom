@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.rank.dao.RankClassesDao" >
+  <resultMap id="BaseResultMap" type="com.human.rank.entity.RankClasses" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="rankinfo_id" property="rankinfo_id" jdbcType="INTEGER" />
+    <result column="class_code" property="class_code" jdbcType="VARCHAR" />
+    <result column="class_name" property="class_name" jdbcType="VARCHAR" />
+    <result column="teacher_name" property="teacher_name" jdbcType="VARCHAR" />
+    <result column="now_count" property="now_count" jdbcType="INTEGER" />
+    <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rankinfo_id, class_code, class_name, teacher_name, now_count
+  </sql>
+  
+  <!-- 分页获取排行榜 -->
+  <select id="query" resultType="com.human.rank.entity.RankClasses" parameterType="java.util.HashMap">
+  	select * from rank_classes
+  	where rankinfo_id = #{t.rankinfo_id,jdbcType=INTEGER}
+  	<if test="t.class_code != null and t.class_code != ''">
+  		and class_code like CONCAT(CONCAT('%', #{t.class_code,jdbcType=VARCHAR}), '%')
+  	</if>
+  	<if test="t.class_name != null and t.class_name != ''">
+  		and class_name like CONCAT(CONCAT('%', #{t.class_name,jdbcType=VARCHAR}), '%')
+  	</if>
+  	<if test="t.teacher_name != null and t.teacher_name != ''">
+  		and teacher_name like CONCAT(CONCAT('%', #{t.teacher_name,jdbcType=VARCHAR}), '%')
+  	</if>
+  </select>
+  
+  <!-- 通过rankinfo_id获取班级信息 -->
+  <select id="selectByRankinfoId" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+  	select class_code, class_name, teacher_name from rank_classes
+  	where rankinfo_id = #{rankinfo_id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 前端刷新获取班级信息 -->
+  <select id="selectclasses" resultType="com.human.rank.entity.RankClasses" parameterType="java.util.HashMap">
+  	select x.s_class_code class_code, x.s_class_name class_name, x.s_all_teacher_name teacher_name, x.s_class_type_name class_type_name,
+  	d.NAME subject, x.s_quarter `quarter`, x.s_project_name grade, x.n_max_count max_count, c.now_count current_count,
+  	(x.n_max_count - c.now_count) last_count
+  	from rank_classes c
+  	left join xdf_class_info `x`
+  	on c.class_code = x.s_class_code
+  	left join dic_data d
+  	on x.s_class_subject = d.DATA_VALUE and d.DIC_CODE = 'subject'
+  	where c.rankinfo_id = #{rankinfo_id,jdbcType=INTEGER}
+  	and (x.n_max_count - c.now_count) &lt;= #{rank_lastnum,jdbcType=INTEGER}
+  	ORDER BY (x.n_max_count - c.now_count)
+  	limit #{rank_num,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rank_classes
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectClassesInfo" resultType="com.human.rank.entity.RankClasses">
+  	SELECT c.class_code
+	FROM rank_classes c
+	LEFT JOIN rank_info r
+	ON r.id = c.rankinfo_id AND r.is_valid = 1
+	ORDER BY update_time
+	LIMIT 30
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rank_classes
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 通过id批量删除 -->
+ <delete id="deleteSelectById" parameterType="java.util.ArrayList">
+    delete from rank_classes
+    where id in
+    <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+	</foreach>
+  </delete>
+  
+  <!-- 通过规则id批量删除 -->
+ <delete id="deleteSelectByRankinfoId" parameterType="java.lang.Integer">
+    delete from rank_classes
+    where rankinfo_id = #{rankinfo_id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.rank.entity.RankClasses" >
+    insert into rank_classes (id, rankinfo_id, class_code, 
+      class_name, teacher_name
+      )
+    values (#{id,jdbcType=INTEGER}, #{rankinfo_id,jdbcType=INTEGER}, #{class_code,jdbcType=VARCHAR}, 
+      #{class_name,jdbcType=VARCHAR}, #{teacher_name,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.rank.entity.RankClasses" >
+    insert into rank_classes
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="rankinfo_id != null" >
+        rankinfo_id,
+      </if>
+      <if test="class_code != null" >
+        class_code,
+      </if>
+      <if test="class_name != null" >
+        class_name,
+      </if>
+      <if test="teacher_name != null" >
+        teacher_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="rankinfo_id != null" >
+        #{rankinfo_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null" >
+        #{teacher_name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.rank.entity.RankClasses" >
+    update rank_classes
+    <set >
+      <if test="rankinfo_id != null" >
+        rankinfo_id = #{rankinfo_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        class_name = #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null" >
+        teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByClasscode" parameterType="com.human.rank.entity.RankClasses" >
+    update rank_classes
+    <set >
+      <if test="rankinfo_id != null" >
+        rankinfo_id = #{rankinfo_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        class_name = #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null" >
+        teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="now_count != null" >
+        now_count = #{now_count,jdbcType=INTEGER},
+      </if>
+      <if test="update_time != null" >
+        update_time = #{update_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where class_code = #{class_code,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.human.rank.entity.RankClasses" >
+    update rank_classes
+    set rankinfo_id = #{rankinfo_id,jdbcType=INTEGER},
+      class_code = #{class_code,jdbcType=VARCHAR},
+      class_name = #{class_name,jdbcType=VARCHAR},
+      teacher_name = #{teacher_name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

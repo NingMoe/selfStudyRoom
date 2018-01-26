@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbPaperMonthConfigDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="MAIN_CONFIG_ID" property="mainConfigId" jdbcType="INTEGER" />
+    <result column="MONTH" property="month" jdbcType="VARCHAR" />
+    <result column="PAPER_TIME" property="paperTime" jdbcType="INTEGER" />
+    <result column="TOTAL_Q_NUM" property="totalQNum" jdbcType="INTEGER" />
+	<result column="PRE_CODE" property="preCode" jdbcType="VARCHAR" />
+    <result column="EXAM_NAME" property="examName" jdbcType="INTEGER" />
+    <result column="TK_MONTH" property="tkMonth" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+     <result column="MIN_TIME" property="minTime" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, MAIN_CONFIG_ID, MONTH, PAPER_TIME, TOTAL_Q_NUM,EXAM_NAME,PRE_CODE,TK_MONTH,STATUS,MIN_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_paper_month_config
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jzb_paper_month_config
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    insert into jzb_paper_month_config (ID, MAIN_CONFIG_ID, MONTH, 
+      PAPER_TIME, TOTAL_Q_NUM, MIN_TIME,PRE_CODE,EXAM_NAME,TK_MONTH
+      )
+    values (#{id,jdbcType=INTEGER}, #{mainConfigId,jdbcType=INTEGER}, #{month,jdbcType=VARCHAR}, 
+      #{paperTime,jdbcType=INTEGER}, #{totalQNum,jdbcType=INTEGER}, #{minTime,jdbcType=INTEGER}, #{preCode,jdbcType=VARCHAR}, #{examName,jdbcType=VARCHAR},#{tkMonth,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    insert into jzb_paper_month_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="mainConfigId != null" >
+        MAIN_CONFIG_ID,
+      </if>
+      <if test="month != null" >
+        MONTH,
+      </if>
+      <if test="paperTime != null" >
+        PAPER_TIME,
+      </if>
+      <if test="totalQNum != null" >
+        TOTAL_Q_NUM,
+      </if>
+      <if test="preCode != null" >
+        PRE_CODE,
+      </if>
+      <if test="examName != null" >
+        EXAM_NAME,
+      </if>
+      <if test="tkMonth != null" >
+        TK_MONTH,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="mainConfigId != null" >
+        #{mainConfigId,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        #{month,jdbcType=INTEGER},
+      </if>
+      <if test="paperTime != null" >
+        #{paperTime,jdbcType=INTEGER},
+      </if>
+      <if test="totalQNum != null" >
+        #{totalQNum,jdbcType=INTEGER},
+      </if>
+      <if test="preCode != null" >
+        #{preCode,jdbcType=VARCHAR},
+      </if>
+      <if test="examName != null" >
+        #{examName,jdbcType=VARCHAR},
+      </if>
+       <if test="tkMonth != null" >
+        #{tkMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    update jzb_paper_month_config
+    <set >
+      <if test="mainConfigId != null" >
+        MAIN_CONFIG_ID = #{mainConfigId,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        MONTH = #{month,jdbcType=VARCHAR},
+      </if>
+      <if test="paperTime != null" >
+        PAPER_TIME = #{paperTime,jdbcType=INTEGER},
+      </if>
+      <if test="totalQNum != null" >
+        TOTAL_Q_NUM = #{totalQNum,jdbcType=INTEGER},
+      </if>
+      <if test="preCode != null" >
+        PRE_CODE = #{preCode,jdbcType=VARCHAR},
+      </if>
+      <if test="examName != null" >
+        EXAM_NAME = #{examName,jdbcType=VARCHAR},
+      </if>
+      <if test="tkMonth != null" >
+        TK_MONTH = #{tkMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="status !=null">
+      	STATUS =#{status,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    update jzb_paper_month_config
+    set MAIN_CONFIG_ID = #{mainConfigId,jdbcType=INTEGER},
+      MONTH = #{month,jdbcType=VARCHAR},
+      PAPER_TIME = #{paperTime,jdbcType=INTEGER},
+      TOTAL_Q_NUM = #{totalQNum,jdbcType=INTEGER},
+      PRE_CODE = #{preCode,jdbcType=VARCHAR}
+      EXAM_NAME = #{examName,jdbcType=VARCHAR}
+      TK_MONTH = #{tkMonth,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByMainId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+     select 
+    <include refid="Base_Column_List" />
+    from jzb_paper_month_config
+    where MAIN_CONFIG_ID = #{id,jdbcType=INTEGER} order by month asc
+  </select>
+<!--   根据主id 及月份查询 -->
+    <select id="selectByMonthAndId" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+     select 
+    <include refid="Base_Column_List" />
+    from jzb_paper_month_config
+    where MAIN_CONFIG_ID = #{id,jdbcType=INTEGER} and month=#{month,jdbcType=VARCHAR}
+  </select>
+   <delete id="delete" parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    delete from jzb_paper_month_config
+    where MAIN_CONFIG_ID = #{mainConfigId,jdbcType=INTEGER} and month= #{month,jdbcType=VARCHAR}
+  </delete>
+  <select id="getPaperMonthConfig" resultMap="BaseResultMap" parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    SELECT * from jzb_paper_month_config
+    where MAIN_CONFIG_ID = #{mainConfigId,jdbcType=INTEGER}
+    and  MONTH = #{month,jdbcType=VARCHAR}
+  </select>
+  <select id="selectExamName" resultType="java.util.HashMap" parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    SELECT CONCAT(hc.company_name,d.grade_name,sub.name,ct.name,'入班测试') as examName
+	FROM jzb_paper_main_config c
+	JOIN jzb_grade d ON d.id = c.grade
+	JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'class_type') ct ON ct.DATA_VALUE = c.`CLASS_TYPE`
+	JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'subject') sub ON sub.DATA_VALUE = c.`SUBJECT`
+	JOIN jzb_dept dept ON dept.id = c.dept 
+	JOIN hr_company hc ON hc.company_id = dept.company 
+	WHERE c.id =#{mainConfigId,jdbcType=INTEGER}
+  </select>
+  <update id="updateStatus" parameterType="java.util.HashMap">
+  	update jzb_paper_month_config set status=#{status,jdbcType=INTEGER} where id=#{monthConfigId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByPreCodeAndTkMonth" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT c.* FROM jzb_paper_month_config c WHERE c.pre_code = #{preCode,jdbcType=VARCHAR} 
+	AND EXISTS(
+		SELECT 1 FROM jzb_paper_config_detail d WHERE d.`MONTH_CONFIG_ID` = c.`ID` 
+		AND d.`KNOWLEDGE_ID` = #{knowledge,jdbcType=VARCHAR}
+	)
+  </select>
+  <update id="updateByPrimaryKeyS" parameterType="com.human.jzbTest.entity.JzbPaperMonthConfig" >
+    update jzb_paper_month_config
+    <set >
+      <if test="mainConfigId != null" >
+        MAIN_CONFIG_ID = #{mainConfigId,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        MONTH = #{month,jdbcType=VARCHAR},
+      </if>
+      <if test="paperTime != null" >
+        PAPER_TIME = #{paperTime,jdbcType=INTEGER},
+      </if>
+      <if test="totalQNum != null" >
+        TOTAL_Q_NUM = #{totalQNum,jdbcType=INTEGER},
+      </if>
+      <if test="passQNum != null" >
+        PASS_Q_NUM = #{passQNum,jdbcType=INTEGER},
+      </if>
+      <if test="examName != null" >
+        EXAM_NAME = #{examName,jdbcType=VARCHAR},
+      </if>
+      <if test="preCode != null" >
+        PRE_CODE = #{preCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tkMonth != null" >
+        TK_MONTH = #{tkMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="minTime != null" >
+        MIN_TIME = #{minTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

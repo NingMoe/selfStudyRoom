@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuedClass.dao.ClassDetailsDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuedClass.entity.ClassDetails" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="school_id" property="schoolId" jdbcType="INTEGER" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="student_max_count" property="studentMaxCount" jdbcType="INTEGER" />
+    <result column="student_current_count" property="studentCurrentCount" jdbcType="INTEGER" />
+    <result column="teacher_code" property="teacherCode" jdbcType="VARCHAR" />
+    <result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />
+    <result column="class_sprint_time" property="classSprintTime" jdbcType="VARCHAR" />
+    <result column="class_address" property="classAddress" jdbcType="VARCHAR" />
+    <result column="class_start_date" property="classStartDate" jdbcType="VARCHAR" />
+    <result column="class_end_date" property="classEndDate" jdbcType="VARCHAR" />
+    <result column="open_time" property="openTime" jdbcType="VARCHAR" />
+    <result column="room_code" property="roomCode" jdbcType="VARCHAR" />
+    <result column="fee" property="fee" jdbcType="VARCHAR" />
+    <result column="quarter_code" property="quarterCode" jdbcType="VARCHAR" />
+    <result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+    <result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+    <result column="souke" property="souke" jdbcType="INTEGER" />
+    <result column="class_status" property="classStatus" jdbcType="INTEGER" />
+    <result column="IsNet" property="isnet" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, school_id, class_code, class_name, student_max_count, student_current_count, 
+    teacher_code, teacher_name, class_sprint_time, class_address, class_start_date, class_end_date, 
+    open_time, room_code, fee, quarter_code, grade_name, subject_name, souke, class_status, 
+    IsNet, create_time, create_user, update_time, update_user
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from class_details
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <insert id="insertSelective" parameterType="com.human.continuedClass.entity.ClassDetails" >
+    insert into class_details
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="schoolId != null" >
+        school_id,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="studentMaxCount != null" >
+        student_max_count,
+      </if>
+      <if test="studentCurrentCount != null" >
+        student_current_count,
+      </if>
+      <if test="teacherCode != null" >
+        teacher_code,
+      </if>
+      <if test="teacherName != null" >
+        teacher_name,
+      </if>
+      <if test="classSprintTime != null" >
+        class_sprint_time,
+      </if>
+      <if test="classAddress != null" >
+        class_address,
+      </if>
+      <if test="classStartDate != null" >
+        class_start_date,
+      </if>
+      <if test="classEndDate != null" >
+        class_end_date,
+      </if>
+      <if test="openTime != null" >
+        open_time,
+      </if>
+      <if test="roomCode != null" >
+        room_code,
+      </if>
+      <if test="fee != null" >
+        fee,
+      </if>
+      <if test="quarterCode != null" >
+        quarter_code,
+      </if>
+      <if test="gradeName != null" >
+        grade_name,
+      </if>
+      <if test="subjectName != null" >
+        subject_name,
+      </if>
+      <if test="souke != null" >
+        souke,
+      </if>
+      <if test="classStatus != null" >
+        class_status,
+      </if>
+      <if test="isnet != null" >
+        IsNet,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="schoolId != null" >
+        #{schoolId,jdbcType=INTEGER},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="studentMaxCount != null" >
+        #{studentMaxCount,jdbcType=INTEGER},
+      </if>
+      <if test="studentCurrentCount != null" >
+        #{studentCurrentCount,jdbcType=INTEGER},
+      </if>
+      <if test="teacherCode != null" >
+        #{teacherCode,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="classSprintTime != null" >
+        #{classSprintTime,jdbcType=VARCHAR},
+      </if>
+      <if test="classAddress != null" >
+        #{classAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="classStartDate != null" >
+        #{classStartDate,jdbcType=VARCHAR},
+      </if>
+      <if test="classEndDate != null" >
+        #{classEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null" >
+        #{openTime,jdbcType=VARCHAR},
+      </if>
+      <if test="roomCode != null" >
+        #{roomCode,jdbcType=VARCHAR},
+      </if>
+      <if test="fee != null" >
+        #{fee,jdbcType=VARCHAR},
+      </if>
+      <if test="quarterCode != null" >
+        #{quarterCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gradeName != null" >
+        #{gradeName,jdbcType=VARCHAR},
+      </if>
+      <if test="subjectName != null" >
+        #{subjectName,jdbcType=VARCHAR},
+      </if>
+      <if test="souke != null" >
+        #{souke,jdbcType=INTEGER},
+      </if>
+      <if test="classStatus != null" >
+        #{classStatus,jdbcType=INTEGER},
+      </if>
+      <if test="isnet != null" >
+        #{isnet,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuedClass.entity.ClassDetails" >
+    update class_details
+    <set >
+      <if test="schoolId != null" >
+        school_id = #{schoolId,jdbcType=INTEGER},
+      </if>
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="studentMaxCount != null" >
+        student_max_count = #{studentMaxCount,jdbcType=INTEGER},
+      </if>
+      <if test="studentCurrentCount != null" >
+        student_current_count = #{studentCurrentCount,jdbcType=INTEGER},
+      </if>
+      <if test="teacherCode != null" >
+        teacher_code = #{teacherCode,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        teacher_name = #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="classSprintTime != null" >
+        class_sprint_time = #{classSprintTime,jdbcType=VARCHAR},
+      </if>
+      <if test="classAddress != null" >
+        class_address = #{classAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="classStartDate != null" >
+        class_start_date = #{classStartDate,jdbcType=VARCHAR},
+      </if>
+      <if test="classEndDate != null" >
+        class_end_date = #{classEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null" >
+        open_time = #{openTime,jdbcType=VARCHAR},
+      </if>
+      <if test="roomCode != null" >
+        room_code = #{roomCode,jdbcType=VARCHAR},
+      </if>
+      <if test="fee != null" >
+        fee = #{fee,jdbcType=VARCHAR},
+      </if>
+      <if test="quarterCode != null" >
+        quarter_code = #{quarterCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gradeName != null" >
+        grade_name = #{gradeName,jdbcType=VARCHAR},
+      </if>
+      <if test="subjectName != null" >
+        subject_name = #{subjectName,jdbcType=VARCHAR},
+      </if>
+      <if test="souke != null" >
+        souke = #{souke,jdbcType=INTEGER},
+      </if>
+      <if test="classStatus != null" >
+        class_status = #{classStatus,jdbcType=INTEGER},
+      </if>
+      <if test="isnet != null" >
+        IsNet = #{isnet,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 通过班号查询班级详情信息 -->
+  <select id="selectByClassCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from class_details
+    where class_code = #{classCode,jdbcType=VARCHAR}
+    ORDER BY id DESC 
+    LIMIT 1
+  </select>
+  
+    <!-- 批量插入 -->
+  <insert id="insertByBatch" parameterType="java.util.List">
+      insert into class_details (school_id, class_code, class_name, student_max_count, student_current_count, 
+             teacher_code, teacher_name, class_sprint_time, class_address, class_start_date, class_end_date, 
+             open_time, room_code, fee, quarter_code, grade_name, subject_name, souke, class_status, 
+             IsNet, create_time, create_user)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+           (#{item.schoolId,jdbcType=INTEGER}, #{item.classCode,jdbcType=VARCHAR}, 
+      #{item.className,jdbcType=VARCHAR}, #{item.studentMaxCount,jdbcType=INTEGER}, #{item.studentCurrentCount,jdbcType=INTEGER}, 
+      #{item.teacherCode,jdbcType=VARCHAR}, #{item.teacherName,jdbcType=VARCHAR}, #{item.classSprintTime,jdbcType=VARCHAR}, 
+      #{item.classAddress,jdbcType=VARCHAR}, #{item.classStartDate,jdbcType=VARCHAR}, #{item.classEndDate,jdbcType=VARCHAR}, 
+      #{item.openTime,jdbcType=VARCHAR}, #{item.roomCode,jdbcType=VARCHAR}, #{item.fee,jdbcType=VARCHAR}, 
+      #{item.quarterCode,jdbcType=VARCHAR}, #{item.gradeName,jdbcType=VARCHAR}, #{item.subjectName,jdbcType=VARCHAR}, 
+      #{item.souke,jdbcType=INTEGER}, #{item.classStatus,jdbcType=INTEGER}, #{item.isnet,jdbcType=BIT}, 
+      #{item.createTime,jdbcType=TIMESTAMP}, #{item.createUser,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  
+</mapper>

@@ -1,0 +1,632 @@
+package com.human.xdfStudent.service.impl;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.FutureTask;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.multipart.MultipartFile;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.human.jobs.TaskExecutorUtil;
+import com.human.jw.entity.JwCourse;
+import com.human.manager.dao.HrCompanyDao;
+import com.human.manager.entity.HrCompany;
+import com.human.order.utils.MD5Util;
+import com.human.utils.BindingConstants;
+import com.human.utils.Common;
+import com.human.utils.ExcelUtil;
+import com.human.utils.HttpClientUtil;
+import com.human.utils.Md5Tool;
+import com.human.utils.PageView;
+import com.human.utils.TimeUtil;
+import com.human.xdfStudent.dao.XdfStudentInfoDao;
+import com.human.xdfStudent.entity.XdfStudentInfo;
+import com.human.xdfStudent.service.XdfStudentInfoService;
+import com.human.xdfStudent.threadJob.BatchInsertXdfStudentThread;
+
+@Service
+public class XdfStudentServiceInfoImpl implements XdfStudentInfoService {
+    
+    @Resource
+    private XdfStudentInfoDao  xstDao;
+    
+    @Resource
+    private TaskExecutorUtil taskExecutorUtil;
+    
+    @Resource
+    private HrCompanyDao hrCompanyDao;
+    
+    @Value("${cc.getStudentsOfClassUrl}")
+    private String getStudentsOfClassUrl;
+    
+    @Value("${cc.schoolId}")
+    private int schoolId;
+    
+    @Value("${cc.method}")
+    private String method;
+    
+    @Value("${cc.appKey}")
+    private String appKey;
+    
+    @Value("${cc.students.appid}")
+    private int appIdOfStudents;
+    
+    @Value("${jw.appid}")
+    private  String appid;
+    
+    @Value("${jw.appkey}")
+    private  String jwAppkey;
+    
+    @Value("${jw.teacherUrl}")
+    private  String teacherUrl;
+    
+    @Value("${jw.teacherMethod}")
+    private  String teacherMethod;
+            
+    @Value("${jw.kebiaoUrl}")
+    private  String kebiaoUrl;
+    
+    @Value("${jw.kebiaoMethod}")
+    private  String kebiaoMethod;
+        
+    @Override
+    public PageView query(PageView pageView, XdfStudentInfo cf) {
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        map.put("paging", pageView);
+        map.put("t", cf);
+        List<XdfStudentInfo> list = xstDao.query(map);
+        pageView.setRecords(list);
+        return pageView;
+    }
+
+    @Override
+    @Transactional(rollbackFor=Exception.class)
+    public Map<String, Object> add(XdfStudentInfo cf) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            String telephone=cf.getTelephone1();
+            if(StringUtils.isNotEmpty(telephone)){
+                if(!Common.isMobile(telephone)){
+                    map.put("flag", false);
+                    map.put("message", "请输入正确的手机号码1格式!");
+                    return map;
+                }
+            }
+            telephone=cf.getTelephone2();
+            if(StringUtils.isNotEmpty(telephone)){
+                if(!Common.isMobile(telephone)){
+                    map.put("flag", false);
+                    map.put("message", "请输入正确的手机号码2格式!");
+                    return map;
+                }
+            }
+            cf.setCreateUser(Common.getMyUser().getUsername());
+            cf.setCreateTime(new Date());
+            xstDao.insertSelective(cf); 
+            map.put("flag", true);
+            map.put("message", "添加成功!");
+        }catch(DuplicateKeyException e){
+            map.put("flag", false);
+            map.put("message", "该新东方学员已经存在，请输入其它学员号!");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }catch(Exception e){
+            e.printStackTrace();
+            map.put("flag", false);
+            map.put("message", "添加失败，请稍后重试!");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return map;
+    }
+
+    @Override
+    public XdfStudentInfo selectById(long id) {       
+        return xstDao.selectByPrimaryKey(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor=Exception.class)
+    public Map<String, Object> edit(XdfStudentInfo cf) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            String telephone=cf.getTelephone1();
+            if(StringUtils.isNotEmpty(telephone)){
+                if(!Common.isMobile(telephone)){
+                    map.put("flag", false);
+                    map.put("message", "请输入正确的手机号码1格式!");
+                    return map;
+                }
+            }
+            telephone=cf.getTelephone2();
+            if(StringUtils.isNotEmpty(telephone)){
+                if(!Common.isMobile(telephone)){
+                    map.put("flag", false);
+                    map.put("message", "请输入正确的手机号码2格式!");
+                    return map;
+                }
+            }
+            cf.setUpdateUser(Common.getMyUser().getUsername());
+            cf.setUpdateTime(new Date());
+            xstDao.updateByPrimaryKeySelective(cf); 
+            map.put("flag", true);
+            map.put("message", "编辑成功!");
+        }catch(DuplicateKeyException e){
+            map.put("flag", false);
+            map.put("message", "该新东方学员已经存在，请输入其它学员号!");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }catch(Exception e){
+            e.printStackTrace();
+            map.put("flag", false);
+            map.put("message", "编辑失败，请稍后重试!");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return map;
+    }
+
+    @Override
+    @Transactional(rollbackFor=Exception.class)
+    public Map<String, Object> delete(String deleteIds) {
+        Map<String,Object> map=new HashMap<String,Object>();
+        try{
+            String[] ids = deleteIds.split(",");
+            Map<String, Object> paraMap = new HashMap<String, Object>();
+            paraMap.put("ids", ids);
+            xstDao.deleteByIds(paraMap);
+            map.put("flag", true);
+            map.put("message", "删除成功");
+        }catch (Exception e) {
+            e.printStackTrace();
+            map.put("flag", false);
+            map.put("message", "删除失败");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return map;
+    }
+
+    @Override
+    @Transactional(rollbackFor=Exception.class)
+    public Map<String, Object> deleteAll() {
+        Map<String,Object> map=new HashMap<String,Object>();
+        try{
+            xstDao.deleteAll();
+            map.put("flag", true);
+            map.put("message", "全部删除成功");
+        }catch (Exception e) {
+            e.printStackTrace();
+            map.put("flag", false);
+            map.put("message", "全部删除失败");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return map;
+    }
+
+    @Override
+    public void downLoadXdfStudentExcel(HttpServletRequest request, HttpServletResponse response) {
+        String fileTmp = request.getSession().getServletContext().getRealPath("/static/temp/importXdfStudent.xlsx");
+        String fileName = "导入新东方学员数据模板.xlsx";
+        try {
+            File file = new File(fileTmp);
+            response.setContentType("multipart/form-data");
+            response.setHeader("Content-Disposition", "attachment;fileName=" + new String(fileName.getBytes("gbk"), "iso-8859-1"));
+            InputStream inputStream = new FileInputStream(file);
+            OutputStream os = response.getOutputStream();
+            int size = (int) file.length();
+            byte[] b = new byte[size];
+            int length;
+            while ((length = inputStream.read(b)) > 0) {
+                os.write(b, 0, length);
+            }
+            os.close();
+            inputStream.close();
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }        
+    }
+
+    @Override
+    @Transactional(rollbackFor=Exception.class)
+    public Map<String, Object> uploadLoadXdfStudentExcel(MultipartFile file) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        String createUser=Common.getMyUser().getUsername();
+        Date  createTime=new Date();
+        FutureTask<Boolean> dbtask =null;
+        try{
+            ExcelUtil<XdfStudentInfo> ex=new ExcelUtil<XdfStudentInfo>(1,0);
+            Map<String,Object> result=ex.checkAccount(file,XdfStudentInfo.class);
+            if(null!=result&&result.get("flag").toString().equals("true")){
+                @SuppressWarnings("unchecked")
+                List<XdfStudentInfo> list=(List<XdfStudentInfo>)result.get("list");
+                if(list == null || list.size()==0){
+                    map.put("flag", false);
+                    map.put("message", "表格数据不能为空！");
+                    return map;
+                }
+                //第一步：先检验execl表格内容是否符合模板要求，不符合直接导入不成功
+                int z = 1;
+                String telephone="";
+                for(XdfStudentInfo xs:list){
+                    z++;  
+                    //判断学员号是否为空
+                    if(StringUtils.isEmpty(xs.getStudentCode())){
+                        map.put("flag", false);
+                        map.put("message", "表格第"+z+"行学员号为空!");
+                        return map;
+                    }
+                    //判断手机号格式是否正确
+                    telephone=xs.getTelephone1();
+                    if(StringUtils.isNotEmpty(telephone)){
+                        if(!Common.isMobile(telephone)){
+                            map.put("flag", false);
+                            map.put("message", "表格第"+z+"行手机号码1格式不正确!");
+                            return map;
+                        }
+                    }
+                    telephone=xs.getTelephone2();
+                    if(StringUtils.isNotEmpty(telephone)){
+                        if(!Common.isMobile(telephone)){
+                            map.put("flag", false);
+                            map.put("message", "表格第"+z+"行手机号码2格式不正确!");
+                            return map;
+                        }
+                    }  
+                }
+                //第二步:过滤重复学员号的数据
+                HashSet<XdfStudentInfo> ts = new HashSet<XdfStudentInfo>(list);
+                List<XdfStudentInfo> newList= new ArrayList<XdfStudentInfo>(ts);
+                //第三步:查询学员号是否在表中已存在，若存在，则更新
+                List<XdfStudentInfo> addStuList = new ArrayList<XdfStudentInfo>();// 批量插入的学员
+                List<XdfStudentInfo> updateStuList = new ArrayList<XdfStudentInfo>();// 批量更新的学员
+                String studentCode="";
+                for(XdfStudentInfo xs:newList){
+                    studentCode=xs.getStudentCode();
+                    XdfStudentInfo xdfStudentInfo= xstDao.selectByStudentCode(studentCode);
+                    if (xdfStudentInfo == null) {
+                        xs.setCreateUser(createUser);
+                        xs.setCreateTime(createTime);
+                        addStuList.add(xs);
+                    }else{
+                        xs.setUpdateUser(createUser);
+                        xs.setUpdateTime(createTime);
+                        xs.setId(xdfStudentInfo.getId());
+                        updateStuList.add(xs);
+                    }
+                }
+                //第四步:批量更新新东方学员数据
+                if (updateStuList != null && updateStuList.size() > 0) {
+                    xstDao.updateBatch(updateStuList);
+                }
+                //第五步:批量插入新东方学员数据
+                if (addStuList != null && addStuList.size() > 0) {
+                    //开启多个线程
+                    List<FutureTask<Boolean>> taskResults = new ArrayList<FutureTask<Boolean>>(10);
+                    int totalcount=addStuList.size();    
+                    int pagecount=0,pagesize=1000; 
+                    if(totalcount>=5000){
+                        pagesize=2000;
+                    }
+                    int m=totalcount%pagesize;    
+                    if(m>0){    
+                      pagecount=totalcount/pagesize+1;    
+                    }else{    
+                      pagecount=totalcount/pagesize;    
+                    }    
+                    for(int i=1;i<=pagecount;i++){
+                        List<XdfStudentInfo> subList=new ArrayList<XdfStudentInfo>(pagesize);
+                        if(i==pagecount){
+                             subList= addStuList.subList((i-1)*pagesize,totalcount);    
+                        }else{
+                             subList= addStuList.subList((i-1)*pagesize,pagesize*(i));
+                        }
+                        BatchInsertXdfStudentThread at=new BatchInsertXdfStudentThread(xstDao,subList);
+                        dbtask = new FutureTask<Boolean>(at);  
+                        taskResults.add(dbtask);
+                        taskExecutorUtil.getTaskExecutor().submit(dbtask);
+                    }
+                    while(true){
+                        boolean isAllDone = true;
+                        for (FutureTask<Boolean> taskResult : taskResults) {
+                            isAllDone &= ( taskResult.isDone()||taskResult.isCancelled());
+                        }
+                        if(isAllDone){
+                            map.put("flag", true);
+                            map.put("message", "批量插入新东方学员数据成功!");  
+                            break;
+                        }
+                    }
+                }
+                map.put("flag", true);
+                map.put("message", "上传新东方学员数据成功！");  
+            }else{
+                map.put("flag", false);
+                map.put("message",result.get("errorMessage"));    
+            } 
+        }catch(Exception e){
+           e.printStackTrace();
+           map.put("flag", false);
+           map.put("message", "上传新东方学员数据失败!");
+           TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> exportSelect(HttpServletRequest request, HttpServletResponse response) {
+        Map<String,Object> map = new HashMap<String, Object>();
+        try{
+            String ids=ServletRequestUtils.getStringParameter(request, "ids");
+            if(ids!=null && ids.length()>0 ){
+                List<String> list = new ArrayList<String>();
+                String[] idarray = ids.split(",");
+                list=Arrays.asList(idarray);
+                map.put("s", list);
+            }
+            List<Map<String,Object>> maplist =xstDao.exportSelect(map);
+            ExcelUtil<XdfStudentInfo> ex=new ExcelUtil<XdfStudentInfo>();
+            String path = request.getSession().getServletContext().getRealPath("/static/temp/");
+            ex.writeExcel(path+"exportXdfStudent.xlsx", XdfStudentInfo.class, maplist, response, TimeUtil.getCurrTime()+"新东方学员数据信息", 0, 1);
+            map.put("flag", true);
+            map.put("message", "新东方学员数据导出成功!");  
+        }catch(Exception e){
+            e.printStackTrace();
+            map.put("flag", false);
+            map.put("message", "新东方学员数据导出失败!");
+        }
+        return map;
+    }
+
+    @Override
+    public List<XdfStudentInfo> serachXdfStudentByclassCodes(String email,String classCodes) {
+        List<XdfStudentInfo> stuList = new ArrayList<XdfStudentInfo>();
+        try{
+            List<String> list = new ArrayList<String>();
+            String[] codes = classCodes.split(",");
+            list=Arrays.asList(codes);
+            HrCompany hrCompany=hrCompanyDao.selectByEmailAddr(email);
+            int schoolId=25;
+            if(hrCompany!=null){
+                schoolId=Integer.valueOf(hrCompany.getMessageId());
+            }
+            stuList =getStudentsByclassCodes(list,schoolId);          
+            if(CollectionUtils.isNotEmpty(stuList)){
+                String studentCode="";
+                for(XdfStudentInfo xs:stuList){
+                    //通过学员号查询学员信息
+                    studentCode=xs.getStudentCode();
+                    selectByStudentCode(studentCode,schoolId,xs);
+                }
+            } 
+        }catch(Exception e){
+            e.printStackTrace();
+        }  
+        return stuList;
+    }
+    
+    
+    
+    @SuppressWarnings("rawtypes")
+    public void selectByStudentCode(String studentCode,int schoolId,XdfStudentInfo xs){
+        try{
+            String url = "http://wxpay.xdf.cn/xdfturnback/GetStudentInfo.do";
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("date",TimeUtil.getCurrTime());
+            params.put("studentCode", studentCode);
+            params.put("schoolId", schoolId);
+            String result = HttpClientUtil.httpPostRequest(url, null, params);
+            if(StringUtils.isNotEmpty(result)){
+                Map map = (Map) JSON.parse(result);
+                if(map.get("State").toString().equals("1") && map.get("Data")!=null){
+                    String data =  map.get("Data").toString();
+                    Map map1 = (Map) JSON.parse(data);
+                    String schoolName=map1.get("Address").toString();
+                    if(schoolName.startsWith("|")){
+                        schoolName=schoolName.substring(1);
+                    }
+                    schoolName=schoolName.replace("安徽省","").replace("安徽","").replace("合肥市","").replace("合肥","");
+                    String telephone1=map1.get("Mobile").toString();
+                    String telephone2=map1.get("Phone").toString(); 
+                    xs.setSchoolName(schoolName);
+                    xs.setTelephone1(telephone1);
+                    xs.setTelephone2(telephone2);
+                }
+            } 
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 通过班号调用我学接口获取学员
+     * @param list
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<XdfStudentInfo> getStudentsByclassCodes(List<String> list,int schoolId) {
+        List<XdfStudentInfo> stuList = new ArrayList<XdfStudentInfo>();//学员
+        try {
+            String url = getStudentsOfClassUrl;
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("method", method);
+            params.put("appid", appIdOfStudents);
+            params.put("schoolId", schoolId);
+            String result = "";            
+            for (String classCode : list) {
+                params.put("classcode", classCode);
+                String signText = ("Method=" + method + "&Appid=" + appIdOfStudents + "&schoolId=" + schoolId + "&classcode=" + classCode + "&appkey=" + appKey).toLowerCase();
+                String sign = MD5Util.MD5Encode(signText, null).toUpperCase();
+                params.put("sign", sign);
+                result = HttpClientUtil.httpPostRequest(url, null, params);
+                if (result != "") {
+                    Map<String, Object> resultMap = (Map<String, Object>) JSON.parse(result);
+                    if (resultMap != null && resultMap.size() > 0) {
+                        String data = resultMap.get("Data").toString();
+                        JSONArray js = JSONArray.parseArray(data);
+                        if (js != null && js.size() > 0) {
+                            Map<String, Object> classResult = new HashMap<String, Object>();
+                            for (int i = 0, size = js.size(); i < size; i++) {
+                                XdfStudentInfo cs = new XdfStudentInfo();
+                                classResult = (Map<String, Object>) js.get(i);
+                                String name = (String) classResult.get("Name");
+                                String code = (String) classResult.get("Code");                                
+                                cs.setStudentCode(code);
+                                cs.setStudentName(name);  
+                                stuList.add(cs);
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return stuList;
+    }
+
+    @Override
+    public String getTeacherCode(String email){
+        String teacherCode="";
+        try{
+            Map<String,Object> params = new HashMap<String,Object>();
+            HrCompany hrCompany=hrCompanyDao.selectByEmailAddr(email);
+            int schoolId=25;
+            if(hrCompany!=null){
+                schoolId=Integer.valueOf(hrCompany.getMessageId());
+            }
+            params.put("method",teacherMethod);
+            params.put("appid",appid);
+            params.put("schoolId",schoolId);
+            params.put("email",email+"@xdf.cn");        
+            String signText = ("Method="+teacherMethod+"&Appid="+appid+"&schoolId="+schoolId+"&email="+email+"@xdf.cn&appkey="+jwAppkey).toLowerCase();
+            String sign = Md5Tool.get32md5(signText).toUpperCase();
+            params.put("sign",sign);
+            String result = HttpClientUtil.httpPostRequest(teacherUrl, null, params);        
+            Map map = (Map) JSON.parse(result);
+            if(map.get("State").toString().equals("1") && map.get("Data")!=null){
+                String data =  map.get("Data").toString();
+                Map map1 = (Map) JSON.parse(data);
+                teacherCode=map1.get("sCode").toString();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }        
+        return teacherCode;
+    }
+
+    @Override
+    public List<JwCourse> getTeacherJwCourses(String email,String sCode, String start, String end) {
+        List<JwCourse> re = null;
+        try{
+            Map<String,Object> params = new HashMap<String,Object>();
+            HrCompany hrCompany=hrCompanyDao.selectByEmailAddr(email);
+            int schoolId=25;
+            if(hrCompany!=null){
+                schoolId=Integer.valueOf(hrCompany.getMessageId());
+            }
+            params.put("method",kebiaoMethod);
+            params.put("appid",appid);
+            params.put("schoolId",schoolId);
+            params.put("teachercode",sCode);
+            params.put("fromDay",start);
+            params.put("toDay", end);
+            String signText = ("fromDay="+start+"&Method="+kebiaoMethod
+                    + "&Appid="+appid
+                    + "&schoolId="+schoolId
+                    + "&toDay="+end
+                    + "&teachercode="+sCode
+                    + "&appkey="+jwAppkey).toLowerCase();
+            String sign = Md5Tool.get32md5(signText).toUpperCase();
+            params.put("sign",sign);
+            String result = HttpClientUtil.httpPostRequest(kebiaoUrl, null, params);
+            Map map = (Map) JSON.parse(result);
+            if(map.get("State").toString().equals("1")){
+                String data = map.get("Data").toString();
+                re = JSON.parseArray(data, JwCourse.class);
+            }
+        }catch(Exception e ){
+            e.printStackTrace();
+        }        
+        return re;
+    }
+
+    
+    @Override
+    public Map<String, Object> searchPhone(HttpServletRequest request,String studentCode) {
+        Map<String,Object> returnMap = new HashMap<String, Object>();
+        List<XdfStudentInfo>list=new ArrayList<XdfStudentInfo>();
+        try{
+            studentCode=studentCode.replaceAll(" ", "").replaceAll("，", ",");
+            String[] studentCodes=studentCode.split(",");
+            String email = (String) request.getSession().getAttribute(BindingConstants.BINDING_EMAIL_ADDR);
+            HrCompany hrCompany=hrCompanyDao.selectByEmailAddr(email);
+            int schoolId=25;
+            if(hrCompany!=null){
+                schoolId=Integer.valueOf(hrCompany.getMessageId());
+            }
+            String url = "http://wxpay.xdf.cn/xdfturnback/GetStudentInfo.do";
+            for(String code:studentCodes){                
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("date",TimeUtil.getCurrTime());
+                params.put("studentCode", code);
+                params.put("schoolId", schoolId);
+                String result = HttpClientUtil.httpPostRequest(url, null, params);
+                if(StringUtils.isNotEmpty(result)){
+                    Map map = (Map) JSON.parse(result);
+                    if(map.get("State").toString().equals("1") && map.get("Data")!=null){
+                        String data =  map.get("Data").toString();
+                        Map map1 = (Map) JSON.parse(data);
+                        if(map1.containsKey("StudentCode")){
+                            String name=map1.get("StudentName").toString(); 
+                            String sCode=map1.get("StudentCode").toString();
+                            String telephone1=map1.get("Mobile").toString();
+                            String telephone2=map1.get("Phone").toString(); 
+                            XdfStudentInfo xdfs1=new XdfStudentInfo();
+                            xdfs1.setStudentName(name);
+                            xdfs1.setTelephone1(telephone1);
+                            xdfs1.setStudentCode(sCode);
+                            list.add(xdfs1);
+                            if(StringUtils.isNotEmpty(telephone2)){
+                                xdfs1=new XdfStudentInfo();
+                                xdfs1.setStudentName(name);
+                                xdfs1.setTelephone1(telephone2);
+                                xdfs1.setStudentCode(sCode);
+                                list.add(xdfs1);
+                            } 
+                        }                        
+                    }
+                } 
+            }
+            returnMap.put("flag", true);
+            returnMap.put("studentPhoneList", list);  
+        }catch(Exception e){
+            e.printStackTrace();
+            returnMap.put("flag", false);
+            returnMap.put("message", "根据学员号查询学员手机号信息失败!");
+        }
+        return returnMap;
+    }
+    
+    
+
+    
+}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.resume.dao.ResumeMajorSkillDao" >
+  <resultMap id="BaseResultMap" type="com.human.resume.entity.ResumeMajorSkill" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resume_id" property="resumeId" jdbcType="BIGINT" />
+    <result column="skill_name" property="skillName" jdbcType="VARCHAR" />
+    <result column="use_time" property="useTime" jdbcType="VARCHAR" />
+    <result column="master_degree" property="masterDegree" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, resume_id, skill_name, use_time, master_degree, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_major_skill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_major_skill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.resume.entity.ResumeMajorSkill" >
+    insert into resume_major_skill (resume_id, skill_name, 
+      use_time, master_degree, is_valid
+      )
+    values (#{resumeId,jdbcType=BIGINT}, #{skillName,jdbcType=VARCHAR}, 
+      #{useTime,jdbcType=VARCHAR}, #{masterDegree,jdbcType=VARCHAR}, #{isValid,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.resume.entity.ResumeMajorSkill" >
+    insert into resume_major_skill
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="resumeId != null" >
+        resume_id,
+      </if>
+      <if test="skillName != null" >
+        skill_name,
+      </if>
+      <if test="useTime != null" >
+        use_time,
+      </if>
+      <if test="masterDegree != null" >
+        master_degree,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resumeId != null" >
+        #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="skillName != null" >
+        #{skillName,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        #{useTime,jdbcType=VARCHAR},
+      </if>
+      <if test="masterDegree != null" >
+        #{masterDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.resume.entity.ResumeMajorSkill" >
+    update resume_major_skill
+    <set >
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="skillName != null" >
+        skill_name = #{skillName,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        use_time = #{useTime,jdbcType=VARCHAR},
+      </if>
+      <if test="masterDegree != null" >
+        master_degree = #{masterDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.resume.entity.ResumeMajorSkill" >
+    update resume_major_skill
+    set resume_id = #{resumeId,jdbcType=BIGINT},
+      skill_name = #{skillName,jdbcType=VARCHAR},
+      use_time = #{useTime,jdbcType=VARCHAR},
+      master_degree = #{masterDegree,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <delete id="deleteByResumeId"  parameterType="java.lang.Long" >
+	    delete  
+	    from resume_major_skill
+	    where resume_id = #{resumeId,jdbcType=BIGINT} 
+   </delete>
+</mapper>

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.manager.dao.UserDao">
+	<resultMap id="BaseResultMap" type="com.human.manager.entity.Users">
+	<id column="ID" property="id" jdbcType="BIGINT" />
+	<result column="user_name" property="loginName" jdbcType="VARCHAR" />
+	<result column="user_password" property="userPassword" jdbcType="VARCHAR" />
+	<result column="name" property="name" jdbcType="VARCHAR" />
+	<result column="syn_time" property="synTime" jdbcType="TIMESTAMP" />
+	<result column="status" property="status" jdbcType="INTEGER" />
+	<result column="birth_date" property="birthDate" jdbcType="TIMESTAMP" />
+	<result column="busn_phone" property="busPhone" jdbcType="VARCHAR" />
+	<result column="com_name" property="comName" jdbcType="VARCHAR" />
+	<result column="company" property="companyId" jdbcType="VARCHAR" />
+	<result column="company_name" property="companyName" jdbcType="VARCHAR" />
+	<result column="create_name" property="createName" jdbcType="VARCHAR" />
+	<result column="create_user" property="createUser" jdbcType="BIT" />
+	<result column="dept_id" property="deptId" jdbcType="VARCHAR" />
+	<result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+	<result column="email_addr" property="emailAddr" jdbcType="VARCHAR" />
+	<result column="empl_id" property="empId" jdbcType="VARCHAR" />
+	<result column="empl_phone" property="empPhone" jdbcType="VARCHAR" />
+	<result column="ethic" property="ethic" jdbcType="VARCHAR" />
+	<result column="graduage_sch" property="graduageSch" jdbcType="VARCHAR" />
+	<result column="highest_educ" property="highestEduc" jdbcType="VARCHAR" />
+	<result column="hr_status" property="hrStatus" jdbcType="VARCHAR" />
+	<result column="job_code" property="jobCode" jdbcType="VARCHAR" />
+	<result column="join_date" property="joinDate" jdbcType="TIMESTAMP" />
+	<result column="major" property="major" jdbcType="VARCHAR" />
+	<result column="natioanl_descr" property="nationnlDesc" jdbcType="VARCHAR" />
+	<result column="national_id" property="nationalId" jdbcType="VARCHAR" />
+	<result column="xdf_job_zhiji" property="jobZhiji" jdbcType="VARCHAR" />
+	<result column="positive_time" property="positiveTime" jdbcType="VARCHAR" />
+	<result column="sex" property="sex" jdbcType="VARCHAR" />
+	<result column="emp_source" property="empSource" jdbcType="INTEGER" />
+</resultMap>
+
+	<sql id="Base_Column_List">
+	u.`ID`,u.`user_name`,u.`user_password`,u.`name`,u.`syn_time`,u.`status`,u.`birth_date`,u.`busn_phone`,u.`com_name`,u.`company`,u.`company_name`,u.`create_name`,u.`create_user`,u.`dept_id`,u.`dept_name`,u.`email_addr`,u.`empl_id`,u.`empl_phone`,u.`ethic`,u.`graduage_sch`,u.`highest_educ`,u.`hr_status`,u.`job_code`,u.`join_date`,u.`major`,u.`natioanl_descr`,u.`national_id`,u.`sex`,u.`xdf_job_zhiji`,u.`emp_source`
+</sql>
+	
+	<select id="queryUser" resultMap="BaseResultMap"
+	parameterType="com.human.manager.entity.Users">
+	select
+	<include refid="Base_Column_List" />
+	from users u 
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="id != null">
+			AND u.id=#{id,jdbcType=BIGINT}
+		</if>
+		<if test="loginName !=null and loginName !=''">
+			AND u.user_name=#{loginName,jdbcType=VARCHAR}
+		</if>
+		<if test="userPassword != null and userPassword != ''">
+			AND u.user_password=#{userPassword,jdbcType=VARCHAR}
+		</if>
+		<if test="hrStatus != null and hrStatus != ''">
+			AND u.hr_status=#{hrStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="empSource != null" >
+			AND u.emp_source=#{empSource,jdbcType=INTEGER}
+		</if>
+		<if test="status != null ">
+			AND u.status =#{status,jdbcType=INTEGER}
+		</if>
+		<if test="companyId != null ">
+			AND u.company =#{companyId,jdbcType=INTEGER}
+		</if>
+		
+	</trim>
+</select>
+<!-- 分页查询用户信息 -->
+<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		<include refid="Base_Column_List" />
+		 from users u
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		 <if test="t.loginName!= null and t.loginName !=''">
+			AND u.user_name=#{t.loginName,jdbcType=VARCHAR}
+		</if>
+		<if test="t.name != null and t.name != ''">
+			AND u.name  like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.companyId != null and t.companyId != ''">
+			AND u.company =#{t.companyId,jdbcType=VARCHAR}
+		</if>
+		 </trim>
+		order By u.syn_time DESC
+	</select>
+
+	<!-- 更新用户状态 -->
+	<update id="updateByIds" parameterType="java.util.HashMap">
+		update hr_user_extend set status=#{status,jdbcType=INTEGER} where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+	
+<!-- 	插入用户 -->
+	<insert id="insertUser" parameterType="com.human.manager.entity.Users" useGeneratedKeys="true" keyProperty="id" >
+    insert into hr_user_extend
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="loginName != null and loginName !=''" >
+        user_name,
+      </if>
+      <if test="userPassword != null and userPassword !=''" >
+        user_password,
+      </if>
+      <if test="empPhone != null and empPhone !=''" >
+        cell_phone_number,
+      </if>
+        emp_source,
+        syn_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="loginName != null and loginName !=''" >
+        #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPassword != null and userPassword !=''" >
+        #{userPassword,jdbcType=VARCHAR},
+      </if>
+        <if test="empPhone != null and empPhone !=''" >
+          #{empPhone,jdbcType=VARCHAR},
+      </if>
+      2,now()
+    </trim>
+  </insert>
+  
+ <!--  插入用户扩展信息 -->
+  <insert id="inserMkUser" parameterType="com.human.manager.entity.Users" >
+    insert into mk_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        user_id,
+      </if>
+      <if test="name != null and name !=''" >
+        name,
+      </if>
+      <if test="busPhone != null and busPhone !=''" >
+        busn_phone,
+      </if>
+      <if test="companyId != null and companyId !=''" >
+        company,
+      </if>
+      <if test="companyName != null and companyName !=''" >
+        company_name,
+      </if>
+      <if test="deptId != null and deptId !=''" >
+        dept_id,
+      </if>
+      <if test="deptName != null and deptName !=''" >
+        dept_name,
+      </if>
+      <if test="emailAddr != null and emailAddr !=''" >
+        email_addr,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createName != null and createName !=''" >
+        create_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+       <if test="name != null and name !=''" >
+         #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="busPhone != null and busPhone !=''" >
+       #{busPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null and companyId !=''" >
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+       <if test="companyName != null and companyName !=''" >
+         #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null and deptId !=''" >
+         #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null and deptName !=''" >
+         #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="emailAddr != null and emailAddr !=''" >
+         #{emailAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+          #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null and createName !=''" >
+          #{createName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 修改登陆用户信息 -->
+  <update id="editLogInUserById" parameterType="com.human.manager.entity.Users">
+	update hr_user_extend
+	set
+	<trim suffixOverrides=",">
+		<if test="loginName != null and loginName !=''">
+			user_name = #{loginName,jdbcType=VARCHAR},
+		</if>
+		<if test="userPassword != null and userPassword !=''">
+			user_password = #{userPassword,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null ">
+			status = #{status,jdbcType=INTEGER},
+		</if>
+		</trim>
+	where id = #{id,jdbcType=BIGINT}
+</update> 
+
+<!-- 更新用户扩展表 -->
+<update id="editUserExt" parameterType="com.human.manager.entity.Users">
+	update hr_user_extend
+	set  cell_phone_number= #{empPhone,jdbcType=VARCHAR}
+	where id = #{id,jdbcType=BIGINT}
+</update> 
+
+<!-- 更新新建用户资料 -->
+<update id="updateMkUser" parameterType="com.human.manager.entity.Users">
+	update mk_user
+	set busn_phone = #{busPhone,jdbcType=VARCHAR},
+	company = #{companyId,jdbcType=VARCHAR},
+	company_name = #{companyName,jdbcType=VARCHAR},
+	dept_id = #{deptId,jdbcType=VARCHAR},
+	dept_name = #{deptName,jdbcType=VARCHAR},
+	email_addr = #{emailAddr,jdbcType=VARCHAR},
+<!-- 	empl_phone = #{empPhone,jdbcType=VARCHAR}, -->
+	name = #{name,jdbcType=VARCHAR}
+	where user_id = #{id,jdbcType=BIGINT}
+</update> 
+
+  <delete id="delUserRole" parameterType="com.human.manager.entity.UserRole">
+   delete from user_role where
+   <trim  prefixOverrides="AND | OR">
+		<if test="userId != null">
+			AND user_id=#{userId,jdbcType=BIGINT}
+		</if>
+		<if test="roleId != null">
+			AND role_id=#{roleId,jdbcType=BIGINT}
+		</if>
+	</trim>
+  </delete>
+  
+  <insert id="saveUserRole" parameterType="com.human.manager.entity.UserRole" >
+   insert into user_role(user_id,role_id) values (#{userId,jdbcType=BIGINT},#{roleId,jdbcType=BIGINT})
+  </insert>
+  
+  <select id="getUserRole" resultType="com.human.manager.entity.UserRole" parameterType="com.human.manager.entity.UserRole">
+		select
+		 user_id userId,role_id roleId
+		 from user_role u
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		 <if test="userId!= null ">
+			AND user_id=#{userId,jdbcType=BIGINT}
+		</if>
+		<if test="roleId!= null ">
+			AND role_id=#{roleId,jdbcType=BIGINT}
+		</if>
+		 </trim>
+	</select>
+	
+	<select id="getNowPositiveUsers" resultMap="BaseResultMap">
+		SELECT user_name,com_name,dept_name,NAME,empl_phone,users.`national_id`,CURRENT_DATE() positive_time 
+		FROM users 
+		WHERE TO_DAYS(DATE_ADD(join_date, INTERVAL 6 MONTH)) = TO_DAYS(CURRENT_DATE()) AND company = 128 
+	</select>
+  
+</mapper>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.ResumeKeywordDao" >
+  <resultMap id="BaseResultMap" type="com.human.basic.entity.ResumeKeyword" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="website" property="website" jdbcType="VARCHAR" />
+    <result column="modular_id" property="modularId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="modularName" property="modularName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, website, modular_id, create_time, create_user, update_time, update_user
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select r.id, r.name, r.website, r.modular_id,m.name AS modularName
+    from resume_keywrod r
+    LEFT JOIN resume_modular m ON r.modular_id=m.id
+    where r.id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_keywrod
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+<!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from resume_keywrod
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.human.basic.entity.ResumeKeyword" >
+    insert into resume_keywrod
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="website != null" >
+        website,
+      </if>
+      <if test="modularId != null" >
+        modular_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="website != null" >
+        #{website,jdbcType=VARCHAR},
+      </if>
+      <if test="modularId != null" >
+        #{modularId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.basic.entity.ResumeKeyword" >
+    update resume_keywrod
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="website != null" >
+        website = #{website,jdbcType=VARCHAR},
+      </if>
+      <if test="modularId != null" >
+        modular_id = #{modularId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 分页查询简历关键词 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT r.id,r.name,d.NAME AS website, m.name AS modularName,r.create_time,u.name AS create_user
+	FROM resume_keywrod r
+	LEFT JOIN dic_data d ON r.website=d.DATA_VALUE AND d.DIC_CODE='recruitment_website'
+	LEFT JOIN resume_modular m ON r.modular_id=m.id
+	LEFT JOIN users u ON r.create_user=u.user_name
+     <trim prefix="WHERE" prefixOverrides="AND | OR">		 
+		<if test="t.website != null and t.website !=''">
+			AND r.website=#{t.website,jdbcType=VARCHAR}
+		</if>
+		<if test="t.modularId != null and t.modularId !=''">
+			AND r.modular_id=#{t.modularId,jdbcType=BIGINT}
+		</if>
+		<if test="t.name!= null and t.name != ''">
+			AND r.name  like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+	</trim>
+    ORDER BY r.id DESC   
+  </select>
+  
+  
+  <select id="serachByCondition" resultMap="BaseResultMap" parameterType="com.human.basic.entity.ResumeKeyword">
+    SELECT r.id,r.name
+	FROM resume_keywrod r
+	LEFT JOIN resume_modular m ON r.modular_id=m.id
+	WHERE r.website= #{website,jdbcType=VARCHAR}
+	AND m.name= #{name,jdbcType=VARCHAR}
+	ORDER BY r.id
+  </select>
+  
+
+</mapper>

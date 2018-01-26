@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.InterviewObserverDao" >
+  <resultMap id="BaseResultMap" type="com.human.resume.entity.ResumeBase" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="nationality" property="nationality" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="working_time" property="workingTime" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="location_city" property="locationCity" jdbcType="VARCHAR" />
+    <result column="household_register" property="householdRegister" jdbcType="VARCHAR" />
+    <result column="political_status" property="politicalStatus" jdbcType="VARCHAR" />
+    <result column="certificates_type" property="certificatesType" jdbcType="VARCHAR" />
+    <result column="certificates_number" property="certificatesNumber" jdbcType="VARCHAR" />
+    <result column="post_adjustment" property="postAdjustment" jdbcType="VARCHAR" />
+    <result column="phone_back" property="phoneBack" jdbcType="VARCHAR" />
+    <result column="delivery_date" property="deliveryDate" jdbcType="VARCHAR" />
+    <result column="inside_recommend" property="insideRecommend" jdbcType="VARCHAR" />
+    <result column="inside_relation" property="insideRelation" jdbcType="VARCHAR" />
+    <result column="resume_link" property="resumeLink" jdbcType="VARCHAR" />
+    <result column="evaluation" property="evaluation" jdbcType="VARCHAR" />
+    <result column="analysis_mail_id" property="analysisMailId" jdbcType="BIGINT" />
+    <result column="resume_seeker_id" property="resumeSeekerId" jdbcType="BIGINT" />
+    <result column="gra_school" property="graSchool" jdbcType="VARCHAR" />
+    <result column="major" property="major" jdbcType="VARCHAR" />
+    <result column="graduation_date" property="graduationDate" jdbcType="VARCHAR" />
+    <result column="high_edu" property="highEdu" jdbcType="VARCHAR" />
+    <result column="apply_position" property="applyPosition" jdbcType="VARCHAR" />
+    <result column="nodeName" property="nodeName" jdbcType="VARCHAR" />
+    <result column="matching_position" property="matchingPosition" jdbcType="VARCHAR" />
+    <result column="head_url" property="headUrl" jdbcType="VARCHAR" />
+    <result column="hr_company_id" property="hrCompanyId" jdbcType="VARCHAR" />
+    <result column="flow_status" property="flowStatus" jdbcType="VARCHAR" />
+    <result column="companyName" property="companyName" jdbcType="VARCHAR" />
+    <result column="deptName" property="deptName" jdbcType="VARCHAR" />
+    <result column="positionName" property="positionName" jdbcType="VARCHAR" />
+    <result column="resumeStatus" property="resumeStatus" jdbcType="VARCHAR" />
+    <result column="approveTime" property="approveTime" jdbcType="VARCHAR" />
+    <result column="flowCode" property="flowCode" jdbcType="VARCHAR" />
+    <result column="flow_id" property="flowId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+   
+<!-- 分页查询简历 (面试观察员)-->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		SELECT r.id,r.resume_seeker_id,r.hr_company_id,r.flow_status,m.company_name AS companyName,o.NAME AS deptName,
+		h.NAME AS positionName ,r.apply_position,r.name ,r.gra_school,r.high_edu,r.major,
+		(CASE f.current_node WHEN 'endevent' THEN '已归档' WHEN 'rlqrTask' THEN '人力确认' ELSE p.custom_node_name END ) AS resumeStatus,
+		r.source,u.name AS inside_recommend,r.telephone,r.delivery_date ,r.email,
+		(CASE f.current_node WHEN 'endevent' THEN f.process_end_time  WHEN 'rlqrTask' THEN f.lose_time ELSE a.approve_time END )AS approveTime,
+		f.flow_code AS flowCode,f.status,f.id flow_id 
+		FROM resume_base r
+		LEFT JOIN hr_company m ON r.hr_company_id=m.company_id
+		LEFT JOIN hr_position h ON r.matching_position=h.ID
+		LEFT JOIN hr_company c ON h.COMID=c.company_id
+		LEFT JOIN hr_organization o ON h.DEPT=o.ID
+		LEFT JOIN hr_resume_flow f ON r.id=f.resume_id
+		LEFT JOIN position_process_node_config p ON f.current_node=p.node_id and f.position_process_id=p.position_process_id
+		LEFT JOIN (SELECT flow_code,MAX(id) id FROM act_custom_comment GROUP BY flow_code )a1 ON a1.flow_code = f.flow_code 
+        LEFT JOIN act_custom_comment a ON a.id = a1.id AND a.flow_code = a1.flow_code		
+		LEFT JOIN postion_watcher w on r.matching_position=w.position_id
+		LEFT JOIN hr_user u ON r.inside_recommend=u.email_addr
+	 	where  r.original_flag IN('0','2') AND r.save_flag='0'
+	 	AND w.watcher_id=#{userName,jdbcType=VARCHAR}
+	 	<if test="s != null">
+		 	 AND r.hr_company_id in 
+			<foreach collection="s" item="companyId" index="index"
+				open="(" separator="," close=")">
+				#{companyId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND r.hr_company_id=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND o.ID=#{t.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.positionId != null and t.positionId !=''">
+			AND h.ID=#{t.positionId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.source != null and t.source !=''">
+			AND r.source=#{t.source,jdbcType=VARCHAR}
+		</if>
+		<if test="t.isInside !='' and t.isInside =='1'.toString()">
+			AND r.inside_recommend is not null 
+		</if>
+		<if test="t.resumeStatus != null and t.resumeStatus !=''">
+			AND p.custom_node_name like  CONCAT(CONCAT('%', #{t.resumeStatus,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.name != null and t.name !=''">
+			AND r.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.telephone != null and t.telephone !=''">
+			AND r.telephone like  CONCAT(CONCAT('%', #{t.telephone,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.graSchool != null and t.graSchool !=''">
+			AND r.gra_school like  CONCAT(CONCAT('%', #{t.graSchool,jdbcType=VARCHAR}), '%')
+		</if>
+		
+		<if test="t.highEdu != null and t.highEdu !=''">
+			AND r.high_edu like  CONCAT(CONCAT('%', #{t.highEdu,jdbcType=VARCHAR}), '%')
+		</if>
+		<if test="t.applyPosition != null and t.applyPosition !=''">
+			AND r.apply_position like  CONCAT(CONCAT('%', #{t.applyPosition,jdbcType=VARCHAR}), '%')
+		</if>		
+		<if test="t.deliveryDateStart != null and t.deliveryDateStart !=''">
+			AND r.delivery_date >= #{t.deliveryDateStart,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.deliveryDateEnd != null and t.deliveryDateEnd !=''">
+			<![CDATA[AND r.delivery_date <= #{t.deliveryDateEnd,jdbcType=TIMESTAMP}]]> 
+		</if>
+		 order By r.delivery_date DESC
+	</select>
+	
+<!--导出选择的面试观察员信息 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+	    SELECT r.id,r.hr_company_id,r.flow_status,m.company_name AS companyName,
+	    o.NAME AS deptName,h.NAME AS positionName ,r.apply_position AS applyPosition,r.name ,
+	    r.gra_school AS graSchool,r.high_edu AS highEdu,r.major,
+	    (CASE f.current_node WHEN 'endevent' THEN '已归档' WHEN 'rlqrTask' THEN '人力确认' ELSE p.custom_node_name END ) AS resumeStatus,
+		r.source,u.name AS insideRecommend,r.telephone,r.delivery_date AS deliveryDate ,r.email,
+	    (CASE f.current_node WHEN 'endevent' THEN f.process_end_time  WHEN 'rlqrTask' THEN f.lose_time ELSE a.approve_time END )AS approveTime
+		FROM resume_base r
+		LEFT JOIN hr_company m ON r.hr_company_id=m.company_id
+		LEFT JOIN hr_position h ON r.matching_position=h.ID
+		LEFT JOIN hr_company c ON h.COMID=c.company_id
+		LEFT JOIN hr_organization o ON h.DEPT=o.ID
+		LEFT JOIN hr_resume_flow f ON r.id=f.resume_id
+		LEFT JOIN position_process_node_config p ON f.current_node=p.node_id and f.position_process_id=p.position_process_id
+		LEFT JOIN (SELECT flow_code,MAX(id) id FROM act_custom_comment GROUP BY flow_code )a1 ON a1.flow_code = f.flow_code 
+        LEFT JOIN act_custom_comment a ON a.id = a1.id AND a.flow_code = a1.flow_code			
+		LEFT JOIN postion_watcher w on r.matching_position=w.position_id
+		LEFT JOIN hr_user u ON r.inside_recommend=u.email_addr
+	 	where  r.original_flag IN('0','2') AND r.save_flag='0'
+	 	AND w.watcher_id=#{userName,jdbcType=VARCHAR}
+		<if test="s != null">
+		AND r.id IN
+		<foreach collection="s" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+	    </foreach>
+	    </if>		
+		 order By r.delivery_date DESC
+	</select>
+	
+<!--导出本页的面试观察员信息 -->
+   <select id="exporThisPage" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+	    SELECT r.id,r.hr_company_id,r.flow_status,m.company_name AS companyName,
+	    o.NAME AS deptName,h.NAME AS positionName ,r.apply_position AS applyPosition,r.name ,
+	    r.gra_school AS graSchool,r.high_edu AS highEdu,r.major,
+	    (CASE f.current_node WHEN 'endevent' THEN '已归档' WHEN 'rlqrTask' THEN '人力确认' ELSE p.custom_node_name END ) AS resumeStatus,
+		r.source,u.name AS insideRecommend,r.telephone,r.delivery_date AS deliveryDate ,r.email,
+		(CASE f.current_node WHEN 'endevent' THEN f.process_end_time  WHEN 'rlqrTask' THEN f.lose_time ELSE a.approve_time END )AS approveTime
+		FROM resume_base r
+		LEFT JOIN hr_company m ON r.hr_company_id=m.company_id
+		LEFT JOIN hr_position h ON r.matching_position=h.ID
+		LEFT JOIN hr_company c ON h.COMID=c.company_id
+		LEFT JOIN hr_organization o ON h.DEPT=o.ID
+		LEFT JOIN hr_resume_flow f ON r.id=f.resume_id
+		LEFT JOIN position_process_node_config p ON f.current_node=p.node_id and f.position_process_id=p.position_process_id
+		LEFT JOIN (SELECT flow_code,MAX(id) id FROM act_custom_comment GROUP BY flow_code )a1 ON a1.flow_code = f.flow_code 
+        LEFT JOIN act_custom_comment a ON a.id = a1.id AND a.flow_code = a1.flow_code		
+		LEFT JOIN postion_watcher w on r.matching_position=w.position_id
+		LEFT JOIN hr_user u ON r.inside_recommend=u.email_addr
+	 	where r.original_flag IN('0','2') AND r.save_flag='0'
+	 	AND w.watcher_id=#{userName,jdbcType=VARCHAR}
+	 	<if test="s != null">
+		 	 AND r.hr_company_id in 
+			<foreach collection="s" item="companyId" index="index"
+				open="(" separator="," close=")">
+				#{companyId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND r.hr_company_id=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND o.ID=#{t.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.positionId != null and t.positionId !=''">
+			AND h.ID=#{t.positionId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.source != null and t.source !=''">
+			AND r.source=#{t.source,jdbcType=VARCHAR}
+		</if>
+		<if test="t.isInside !='' and t.isInside =='1'.toString()">
+			AND r.inside_recommend is not null 
+		</if>
+		<if test="t.resumeStatus != null and t.resumeStatus !=''">
+			AND p.custom_node_name like  CONCAT(CONCAT('%', #{t.resumeStatus,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.name != null and t.name !=''">
+			AND r.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.telephone != null and t.telephone !=''">
+			AND r.telephone like  CONCAT(CONCAT('%', #{t.telephone,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.graSchool != null and t.graSchool !=''">
+			AND r.gra_school like  CONCAT(CONCAT('%', #{t.graSchool,jdbcType=VARCHAR}), '%')
+		</if>
+		
+		<if test="t.highEdu != null and t.highEdu !=''">
+			AND r.high_edu like  CONCAT(CONCAT('%', #{t.highEdu,jdbcType=VARCHAR}), '%')
+		</if>
+		<if test="t.applyPosition != null and t.applyPosition !=''">
+			AND r.apply_position like  CONCAT(CONCAT('%', #{t.applyPosition,jdbcType=VARCHAR}), '%')
+		</if>		
+		<if test="t.deliveryDateStart != null and t.deliveryDateStart !=''">
+			AND r.delivery_date >= #{t.deliveryDateStart,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.deliveryDateEnd != null and t.deliveryDateEnd !=''">
+			<![CDATA[AND r.delivery_date <= #{t.deliveryDateEnd,jdbcType=TIMESTAMP}]]> 
+		</if>
+		 order By r.delivery_date DESC
+	</select>	
+	
+	
+   
+</mapper>

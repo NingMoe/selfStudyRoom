@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuedClass.dao.CombinationClassDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuedClass.entity.CombinationClass" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+    <result column="school_area_name" property="schoolAreaName" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="combination_data" property="combinationData" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rule_id, school_area_name, grade, combination_data, create_time, create_user, 
+    update_time, update_user
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from combination_class
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from combination_class
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 批量插入 -->
+  <insert id="insertByBatch" parameterType="java.util.List" >
+    insert into combination_class (rule_id, school_area_name, 
+      grade, combination_data, create_time, create_user)
+    values 
+    <foreach collection="list" item="item" index="index" separator=",">
+    (#{item.ruleId,jdbcType=BIGINT}, #{item.schoolAreaName,jdbcType=VARCHAR}, 
+      #{item.grade,jdbcType=VARCHAR}, #{item.combinationData,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+      #{item.createUser,jdbcType=VARCHAR})
+    </foreach>  
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.human.continuedClass.entity.CombinationClass" >
+    insert into combination_class
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ruleId != null" >
+        rule_id,
+      </if>
+      <if test="schoolAreaName != null" >
+        school_area_name,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="combinationData != null" >
+        combination_data,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ruleId != null" >
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="schoolAreaName != null" >
+        #{schoolAreaName,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="combinationData != null" >
+        #{combinationData,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuedClass.entity.CombinationClass" >
+    update combination_class
+    <set >
+      <if test="ruleId != null" >
+        rule_id = #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="schoolAreaName != null" >
+        school_area_name = #{schoolAreaName,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="combinationData != null" >
+        combination_data = #{combinationData,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    r.id, r.rule_id,r.school_area_name, r.grade, r.combination_data,
+    r.create_time, u.name AS create_user, r.update_time, 
+    s.name AS update_user
+	FROM combination_class r
+	LEFT JOIN users u ON r.create_user=u.user_name
+	LEFT JOIN users s ON r.update_user=s.user_name
+	WHERE r.rule_id=#{t.ruleId,jdbcType=BIGINT}	
+	<if test="t.schoolAreaName != null and t.schoolAreaName !=''">
+	   AND r.school_area_name like CONCAT(CONCAT('%', #{t.schoolAreaName,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.grade != null and t.grade !=''">
+	   AND r.grade like CONCAT(CONCAT('%', #{t.grade,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.combinationData != null and t.combinationData !=''">
+	   AND r.combination_data  like CONCAT(CONCAT('%', #{t.combinationData,jdbcType=VARCHAR}), '%')
+	</if>  
+  </select>
+  
+  <!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from combination_class
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>        
+  </delete>
+
+<!--全部删除 -->
+  <delete id="deleteAll" parameterType="com.human.continuedClass.entity.CombinationClass" >
+    delete from combination_class
+    where rule_id = #{ruleId,jdbcType=BIGINT}   
+  </delete>
+  
+  <!--导出选择的套餐数据 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+    SELECT 
+    r.school_area_name AS schoolAreaName, r.grade, r.combination_data AS combinationData
+	FROM combination_class r
+	WHERE r.rule_id=#{ruleId,jdbcType=BIGINT}
+    <if test="s != null">
+		AND r.id IN
+		<foreach collection="s" item="id" index="index" open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+	    </foreach>
+	 </if>
+   </select>
+   
+   <!-- 根据校区及年级、班号查询套餐 -->
+  <select id="queryCombinationClass" resultMap="BaseResultMap" parameterType="com.human.continuedClass.entity.ClassMatch">
+    SELECT t.combination_data
+	FROM combination_class t
+	WHERE t.rule_id=#{ruleId,jdbcType=BIGINT}
+	AND t.school_area_name=#{cSchoolAreaName,jdbcType=VARCHAR}
+	AND t.grade=#{cGrade,jdbcType=VARCHAR} 
+	AND t.combination_data LIKE CONCAT(CONCAT('%', #{cClassCode,jdbcType=VARCHAR}), '%')
+	ORDER BY t.id LIMIT 1 
+  </select>
+   
+   
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.CommunicationSmsDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.CommunicationSms" >
+    <id column="smsid" property="smsId" jdbcType="BIGINT" />
+    <result column="sms_to" property="smsTo" jdbcType="VARCHAR" />
+    <result column="sms_user" property="smsUser" jdbcType="VARCHAR" />
+    <result column="smsUserName" property="smsUserName" jdbcType="VARCHAR" />
+    <result column="sms_comment" property="smsComment" jdbcType="VARCHAR" />
+    <result column="sms_states" property="smsStatus" jdbcType="INTEGER" />
+    <result column="seekerName" property="seekerName" jdbcType="VARCHAR" />
+    <result column="seeker_id" property="seekerId" jdbcType="BIGINT" />
+  	<result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+  	<result column="view_state" property="viewState" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List">
+	cs.`smsid`,cs.`sms_to`,cs.`sms_user`,u.`name` smsUserName,cs.`sms_comment`,cs.`sms_states`,cs.`seeker_id`,rs.`name` seekerName,cs.`send_time`,cs.view_state
+</sql>
+
+<select id="smsQuery" resultMap="BaseResultMap"
+	parameterType="com.human.recruitment.entity.ResumeSeeker">
+	SELECT
+	<include refid="Base_Column_List" />
+	FROM communication_sms cs
+	LEFT JOIN users u ON u.`user_name`=cs.`sms_user`
+	LEFT JOIN resume_seeker rs ON rs.`ID`=cs.`seeker_id`
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="id != null">
+			cs.`seeker_id`=#{id,jdbcType=BIGINT}
+		</if>
+	</trim>
+	ORDER BY cs.`send_time` DESC 
+</select>
+
+<insert id="insertSmsRecord" parameterType="com.human.recruitment.entity.CommunicationSms">
+	INSERT INTO communication_sms
+	(sms_to,sms_user,sms_comment,seeker_id,sms_states,send_time) VALUES(#{smsTo,jdbcType=VARCHAR},#{smsUser,jdbcType=VARCHAR},#{smsComment,jdbcType=VARCHAR},#{seekerId,jdbcType=BIGINT},2,now())
+</insert>
+
+</mapper>

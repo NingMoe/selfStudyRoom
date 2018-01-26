@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.dingding.dao.DingDingDao">
+	<select id="queryLocalFirstDeptList" resultType="com.human.dingding.bean.LocalDeptInfo">
+		SELECT ho.`ID`
+		orgId,hod.`org_dingding_id` dingdingId,ho.`NAME`
+		orgName,ho.`PARENT_ID` parentId,'1'
+		parentDingDingId,IF(ho.`PARENT_ID`='128',1,0) isParent FROM
+		hr_organization ho
+		LEFT JOIN hr_org_dingding hod ON hod.`org_id`=ho.`ID`
+		<!-- LEFT JOIN hr_org_dingding hod1 ON hod1.`org_id`=ho.`PARENT_ID` --> WHERE
+		ho.`COMPANY`=128 AND ho.`EFF_STATUS`='A' AND PARENT_ID =128 AND ho.`ID`!='2200001895'
+	</select>
+	
+		<select id="queryLocalSecDeptList" resultType="com.human.dingding.bean.LocalDeptInfo">
+		SELECT ho.`ID`
+		orgId,hod.`org_dingding_id` dingdingId,ho.`NAME`
+		orgName,ho.`PARENT_ID` parentId,hod1.`org_dingding_id`
+		parentDingDingId,IF(ho.`PARENT_ID`='128',1,0) isParent FROM
+		hr_organization ho
+		LEFT JOIN hr_org_dingding hod ON hod.`org_id`=ho.`ID`
+		LEFT JOIN hr_org_dingding hod1 ON hod1.`org_id`=ho.`PARENT_ID` WHERE
+		ho.`COMPANY`=128 AND ho.`EFF_STATUS`='A' AND PARENT_ID !=128 AND ho.`ID`!='2200001895'
+	</select>
+	
+	<insert id="insertDingdingId" parameterType="com.human.dingding.bean.LocalDeptInfo">
+	INSERT INTO  hr_org_dingding(org_id,org_dingding_id) values( #{orgId,jdbcType=VARCHAR} ,#{dingdingId,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="queryLocalGroup" resultType="com.human.dingding.bean.GroupInfo">
+		SELECT hu.`dept_id` deptId,hod.`org_dingding_id` deptDingId,hu.`dept_name` deptName,
+		hu.`position_name` positionName,hdg.`dingdingId` groupDingId, COUNT(1) num FROM hr_user hu
+		LEFT JOIN hr_org_dingding hod ON hod.`org_id`=hu.`dept_id`
+		LEFT JOIN hr_dingding_group hdg ON hdg.`org_id` =hu.`dept_id` AND
+		hdg.`postionName`=hu.`position_name` WHERE hu.`company`=128 GROUP BY
+		hu.`dept_id`,hod.`org_dingding_id`,hu.`dept_name`,
+		hu.`position_name`,hdg.`dingdingId` HAVING COUNT(1)>1
+	</select>
+	
+	<insert id="insertGroupDingdingId" parameterType="com.human.dingding.bean.GroupInfo">
+	INSERT INTO  hr_dingding_group(postionName,groupName,org_id,dingdingId) values( #{positionName,jdbcType=VARCHAR} ,#{groupName,jdbcType=VARCHAR},#{deptId,jdbcType=VARCHAR} ,#{groupDingId,jdbcType=VARCHAR})
+	</insert>
+	
+		<select id="queryEmpList" resultType="com.human.dingding.bean.LocalEmp">
+				SELECT hu.`empl_id` userid,hu.`name`,hu.`position_name` `position`,hu.`birth_date` birthDay, hue.`cell_phone_number` mobile,hu.`xdf_job_zhiji` xdfJobZhiji,hu.`busn_phone` tel,CONCAT(hu.`email_addr`,'@xdf.cn') email,hu.`empl_id` jobnumber,hu.`join_date` joinDate,hu.`ethic` ethic,hu.`graduage_sch` graduageSch,hu.`highest_educ` highestEdu,hu.`major`,h1.orgId,h1.dingdingId deptDingdingId,h1.parentDingDingId deptParentDingdingId,hdg.`groupName`,hdg.`dingdingId` groupDingdingId  FROM hr_user hu 
+LEFT JOIN hr_user_extend hue ON hue.`empl_id`=hu.`empl_id`
+LEFT JOIN (SELECT ho.`ID` orgId,hod.`org_dingding_id` dingdingId,ho.`NAME` orgName,hod1.`org_dingding_id` parentDingDingId FROM hr_organization ho 
+LEFT JOIN hr_org_dingding hod ON hod.`org_id`=ho.`ID` 
+LEFT JOIN hr_org_dingding hod1 ON hod1.`org_id`=ho.`PARENT_ID` WHERE ho.`COMPANY`=128 AND ho.`EFF_STATUS`='A' AND ho.`ID`!='2200001895') h1
+ON h1.orgId=hu.`dept_id`
+LEFT JOIN hr_dingding_group hdg ON hdg.`org_id`=hu.`dept_id` AND hdg.`postionName`=hu.`position_name`
+WHERE hu.`company`=128    ORDER BY hu.`empl_id`,hu.`position_name`
+	</select>
+	
+	<select id="queryManager" resultType="com.human.dingding.bean.DeptInfo">
+	SELECT
+	hod.`org_dingding_id` id,GROUP_CONCAT(hu.`empl_id` SEPARATOR '|')
+	deptManagerUseridList FROM hr_user hu
+	LEFT JOIN hr_org_dingding hod ON hod.`org_id`=hu.`dept_id`
+	WHERE hu.`xdf_job_zhiji`>=7 AND hu.`company`='128'
+	GROUP BY hod.`org_dingding_id`
+	UNION
+	SELECT hod.`dingdingId` id,GROUP_CONCAT(hu.`empl_id` SEPARATOR '|')
+	deptManagerUseridList FROM hr_user hu
+	INNER JOIN hr_dingding_group hod ON hod.`org_id`=hu.`dept_id`
+	WHERE hu.`xdf_job_zhiji`>=7 AND hu.`company`='128'
+	GROUP BY hod.`dingdingId`
+</select>
+
+<select id="getUserDept" resultType="java.lang.Long"
+	parameterType="java.lang.String">
+	SELECT hod.`org_dingding_id` FROM hr_user hu
+	INNER JOIN hr_org_dingding
+	hod ON hod.`org_id`=hu.`dept_id` WHERE
+	hu.`empl_id`=#{empId,jdbcType=VARCHAR}
+	UNION
+	SELECT
+	hog.`dingdingId` FROM hr_user hu
+	INNER JOIN hr_dingding_group hog ON
+	hog.`org_id`=hu.`dept_id`
+	WHERE hu.`empl_id`=#{empId,jdbcType=VARCHAR}
+</select>
+
+
+<select id="queryKQuserId" resultType="java.lang.Integer"
+	parameterType="java.lang.Integer">
+	select userid from userinfo u where u.badgenumber=#{userid,jdbcType=VARCHAR}
+</select>
+
+<insert id="insertKQ" parameterType="com.human.dingding.bean.CheckInOut">
+insert into  checkinout (userid,checktime,checktype,verifycode) values(#{userid,jdbcType=INTEGER},#{checktime,jdbcType=VARCHAR},#{checktype,jdbcType=VARCHAR},#{verifycode,jdbcType=INTEGER})
+</insert>
+</mapper>

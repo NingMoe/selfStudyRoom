@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbQuestionAnswerDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbQuestionAnswer" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="QUESTION_ID" property="questionId" jdbcType="INTEGER" />
+    <result column="A_CONTENT" property="aContent" jdbcType="VARCHAR" />
+    <result column="IS_CORRECT" property="isCorrect" jdbcType="INTEGER" />
+    <result column="XH" property="xh" jdbcType="VARCHAR" />
+    <result column="A_IMG" property="aImg" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, QUESTION_ID, A_CONTENT, IS_CORRECT, XH, A_IMG
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_question_answer
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jzb_question_answer
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbQuestionAnswer" >
+    insert into jzb_question_answer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="questionId != null" >
+        QUESTION_ID,
+      </if>
+      <if test="aContent != null" >
+        A_CONTENT,
+      </if>
+      <if test="isCorrect != null" >
+        IS_CORRECT,
+      </if>
+      <if test="xh != null" >
+        XH,
+      </if>
+      <if test="aImg != null" >
+        A_IMG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="questionId != null" >
+        #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="aContent != null" >
+        #{aContent,jdbcType=VARCHAR},
+      </if>
+      <if test="isCorrect != null" >
+        #{isCorrect,jdbcType=INTEGER},
+      </if>
+      <if test="xh != null" >
+        #{xh,jdbcType=VARCHAR},
+      </if>
+      <if test="aImg != null" >
+        #{aImg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbQuestionAnswer" >
+    update jzb_question_answer
+    <set >
+      <if test="questionId != null" >
+        QUESTION_ID = #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="aContent != null" >
+        A_CONTENT = #{aContent,jdbcType=VARCHAR},
+      </if>
+      <if test="isCorrect != null" >
+        IS_CORRECT = #{isCorrect,jdbcType=INTEGER},
+      </if>
+      <if test="xh != null" >
+        XH = #{xh,jdbcType=VARCHAR},
+      </if>
+      <if test="aImg != null" >
+        A_IMG = #{aImg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="delImg" parameterType="java.lang.Integer" >
+  	update jzb_question_answer set A_IMG = null where id = #{answerId,jdbcType=INTEGER}
+  </update>
+  
+
+</mapper>

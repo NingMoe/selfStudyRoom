@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.feedback.dao.FbSubDao">
+
+<select id="getMyNowFeedback" parameterType="java.lang.String"
+	resultType="com.human.feedback.bean.FeedBackBase">
+	SELECT
+	fb.`id`,
+	fb.`title`,
+	fb.`user_name` userName
+	FROM
+	feedback_base fb WHERE fb.`user_name`=#{userName,jdbcType=VARCHAR} AND
+	fb.`state`=0 AND fb.`close_type` IS NULL
+</select>
+	
+	<select id="queryXdfOrg" resultType="com.human.manager.entity.HrOrganization"
+	parameterType="java.lang.String">
+	SELECT ho.`ID` id,ho.`NAME` n
+	,SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) NAME
+	FROM
+	hr_organization ho
+	WHERE ho.`COMPANY`=#{companyId,jdbcType=VARCHAR} and
+	SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2)!='' AND ho.`EFF_STATUS`='A'
+</select>
+	<insert id="insertFeedBackBase" useGeneratedKeys="true"
+		keyProperty="id" parameterType="com.human.feedback.bean.FeedBackBase">
+		INSERT INTO feedback_base (dept_id,title,user_name,is_hide)
+		values(#{deptId,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR},#{isHide,jdbcType=INTEGER})
+	</insert>
+	<insert id="inserFeedBaceDetail" useGeneratedKeys="true"
+		keyProperty="id" parameterType="com.human.feedback.bean.FeedBackDetail">
+		INSERT INTO feedback_detail
+		(base_id,oper_user,`type`,`desc`)
+		values(#{baseId,jdbcType=BIGINT},#{operUser,jdbcType=VARCHAR},#{type,jdbcType=INTEGER},#{desc,jdbcType=VARCHAR})
+	</insert>
+	<insert id="inserDetailPhoto" parameterType="com.human.feedback.bean.FeedBackPhoto">
+		INSERT INTO
+		feedback_photo(detail_id,`url`)
+		values(#{detailId,jdbcType=BIGINT},#{url,jdbcType=VARCHAR})
+	</insert>
+
+	<resultMap id="FeedBackMap" type="com.human.feedback.bean.FeedBackBase">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="deptName" property="deptName" jdbcType="VARCHAR" />
+		<result column="dept_id" property="deptId" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="close_time" property="closeTime" jdbcType="TIMESTAMP" />
+		<result column="close_type" property="closeType" jdbcType="INTEGER" />
+		<result column="score" property="score" jdbcType="INTEGER" />
+		<result column="close_desc" property="closeDesc" jdbcType="VARCHAR" />
+		<result column="close_user" property="closeUser" jdbcType="VARCHAR" />
+		<result column="is_hide" property="isHide" jdbcType="INTEGER" />
+		<collection property="fbdetail"
+			ofType="com.human.feedback.bean.FeedBackDetail">
+			<id column="fdid" property="id" jdbcType="BIGINT" />
+			<result column="type" property="type" jdbcType="INTEGER" />
+			<result column="desc" property="desc" jdbcType="VARCHAR" />
+			<result column="oper_user" property="operUser" jdbcType="VARCHAR" />
+			<result column="oper_time" property="operTime" jdbcType="TIMESTAMP" />
+			<collection property="fbpPhoto"
+				ofType="com.human.feedback.bean.FeedBackPhoto">
+				<id column="fpid" property="id" jdbcType="BIGINT" />
+				<result column="url" property="url" jdbcType="VARCHAR" />
+			</collection>
+		</collection>
+	</resultMap>
+
+	<select id="getMyFeedBack" parameterType="java.lang.String"
+	resultMap="FeedBackMap">
+	SELECT
+	fb.`id`,
+	fb.`state`,
+	fb.`title`,
+	fb.`close_type`,
+	fb.`close_time`,
+	fb.`close_desc`,
+	fb.`score`,
+	fb.`create_time`,
+	fd.`id`
+	fdid,
+	fd.`desc`,
+	fd.`type`
+	FROM
+	feedback_base fb
+	LEFT JOIN feedback_detail
+	fd
+	ON fb.`id` = fd.`base_id`
+	WHERE
+	fb.`user_name`=#{userName,jdbcType=VARCHAR}
+	ORDER BY fd.`id`
+	DESC,fb.`id` DESC
+</select>
+	<select id="queryFeedBackList" parameterType="com.human.manager.entity.FeedbackParamBean"
+		resultMap="FeedBackMap">
+		SELECT
+		fb.`id`,
+	fb.`state`,
+	fb.`title`,
+	fb.`close_type`,
+	fb.`close_time`,
+	fb.`close_desc`,
+	fb.`is_hide`,
+	fb.`score`,
+	hu2.`name` close_user,
+	hu1.`name` user_name,
+	SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName,
+		fb.`create_time`,
+		fd.`id` fdid,
+		fd.`desc`,
+		fd.`type`,
+		hu.`name` oper_user,
+		fd.`oper_time`,
+		fp.`id` fpid,
+		fp.`url`
+		FROM
+		feedback_base fb
+		LEFT JOIN feedback_oper_user fou
+		ON fou.`dept_id`=fb.`dept_id`
+		LEFT JOIN feedback_detail fd
+		ON fb.`id` = fd.`base_id`
+		LEFT JOIN feedback_photo fp
+		ON fd.`id` = fp.`detail_id`
+		LEFT JOIN hr_user hu ON hu.`email_addr`=fd.`oper_user`
+		LEFT JOIN hr_user hu1 ON hu1.`email_addr`=fb.`user_name`
+		LEFT JOIN hr_user hu2 ON hu2.`email_addr` = fb.`close_user`
+		LEFT JOIN hr_organization ho ON ho.`id`=fb.`dept_id`
+		WHERE fou.`oper_user`=#{userName,jdbcType=VARCHAR}
+		<if test="id!=null">
+			AND fb.`id`=#{id,jdbcType=BIGINT}
+		</if>
+		<if test="name!=null and name!=''">
+			AND hu.`name` LIKE CONCAT('%',
+			#{name,jdbcType=VARCHAR}, '%')  and fb.is_hide=0 
+		</if>
+		<if test="deptId!=null and deptId!=''">
+			AND fb.`dept_id`=#{deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="state!=null">
+			AND fb.`state`=#{state,jdbcType=INTEGER}
+		</if>
+		<if test="examStartDate!=null and examStartDate!=''">
+			AND DATE_FORMAT(fb.`create_time`,'%Y-%m-%d')
+			&gt;=#{examStartDate,jdbcType=VARCHAR}
+		</if>
+		<if test="examEndDate!=null and examEndDate!=''">
+			AND DATE_FORMAT(fb.`create_time`,'%Y-%m-%d')
+			&lt;=#{examEndDate,jdbcType=VARCHAR}
+		</if>
+		ORDER BY fb.`state` ASC,fb.`id` DESC, fd.`id` DESC
+	</select>
+
+
+<select id="queryFeedBackListById" parameterType="com.human.manager.entity.FeedbackParamBean"
+		resultMap="FeedBackMap">
+	SELECT
+	fb.`id`,
+	fb.`state`,
+	fb.`title`,
+	fb.`is_hide`,
+	fb.`close_type`,
+	fb.`close_time`,
+	fb.`close_desc`,
+	fb.`score`,
+	hu2.`name` close_user,
+	hu1.`name` user_name,
+	SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName,
+	fb.`create_time`,
+	fd.`id` fdid,
+	fd.`desc`,
+	fd.`type`,
+	hu.`name` oper_user,
+	fd.`oper_time`,
+	fp.`id` fpid,
+	fp.`url`
+	FROM
+	feedback_base fb
+	LEFT JOIN feedback_oper_user fou
+	ON fou.`dept_id`=fb.`dept_id`
+	LEFT JOIN feedback_detail fd
+	ON fb.`id` = fd.`base_id`
+	LEFT JOIN feedback_photo fp
+	ON fd.`id` = fp.`detail_id`
+	LEFT JOIN hr_user hu ON hu.`email_addr`=fd.`oper_user`
+	LEFT JOIN hr_user hu1 ON hu1.`email_addr`=fb.`user_name`
+	LEFT JOIN hr_user hu2 ON hu2.`email_addr` = fb.`close_user`
+	LEFT JOIN hr_organization ho ON ho.`id`=fb.`dept_id`
+	WHERE  fb.`id`=#{id,jdbcType=BIGINT}
+	<if test="userName !=null and userName!=''">
+		AND  fou.`oper_user`=#{userName,jdbcType=VARCHAR}
+	</if>
+	ORDER BY fd.`id` 
+	</select>
+
+	<select id="getMyOperFeedBack" parameterType="java.lang.String"
+		resultMap="FeedBackMap">
+		SELECT
+		fb.`id`,
+		fb.`state`,
+		fb.`title`,
+		fb.`create_time`,
+		hu3.`name` user_name,
+		fb.`is_hide`,
+		SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName,
+		fd.`id` fdid,
+		fd.`desc`,
+		fd.`type`,
+		hu.`name` oper_user,
+		fd.`oper_time`,
+		fp.`id` fpid,
+		fp.`url`
+		FROM
+		feedback_base fb
+		LEFT JOIN feedback_oper_user fou
+		ON fou.`dept_id`=fb.`dept_id`
+		LEFT JOIN feedback_detail fd
+		ON fb.`id` = fd.`base_id`
+		LEFT JOIN feedback_photo fp
+		ON fd.`id` = fp.`detail_id`
+		LEFT JOIN hr_user hu ON hu.`email_addr`=fd.`oper_user`
+		LEFT JOIN hr_user hu3 ON hu3.`email_addr`=fb.`user_name`
+		LEFT JOIN hr_organization ho ON ho.`ID`=fb.`dept_id`
+		WHERE fou.`oper_user`=#{userName,jdbcType=VARCHAR} AND fb.`state`=0
+		ORDER BY fd.`id` DESC,fb.`id` DESC
+	</select>
+
+	<select id="getMyOperFeedBackEd" parameterType="java.lang.String"
+		resultMap="FeedBackMap">
+		SELECT
+		fb.`id`,
+	fb.`state`,
+	fb.`title`,
+	fb.`close_type`,
+	fb.`close_time`,
+	fb.`close_desc`,
+	fb.`score`,
+	SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName,
+	hu2.`name` close_user,
+		fb.`create_time`,
+		hu3.`name` user_name,
+		fb.`is_hide`,
+		fd.`id` fdid,
+		fd.`desc`,
+		fd.`type`,
+		hu.`name` oper_user,
+		fd.`oper_time`,
+		fp.`id` fpid,
+		fp.`url`
+		FROM
+		feedback_base fb
+		LEFT JOIN feedback_oper_user fou
+		ON fou.`dept_id`=fb.`dept_id`
+		LEFT JOIN feedback_detail fd
+		ON fb.`id` = fd.`base_id`
+		LEFT JOIN feedback_photo fp
+		ON fd.`id` = fp.`detail_id`
+		LEFT JOIN hr_user hu ON hu.`email_addr`=fd.`oper_user`
+		LEFT JOIN hr_user hu2 ON hu2.`email_addr` = fb.`close_user`
+		LEFT JOIN hr_user hu3 ON hu3.`email_addr`=fb.user_name
+		LEFT JOIN hr_organization ho ON ho.`ID`=fb.`dept_id`
+		WHERE fou.`oper_user`=#{userName,jdbcType=VARCHAR} AND fb.`state` !=0
+		ORDER BY fd.`id` DESC,fb.`id` DESC
+	</select>
+
+	<!-- 关闭问题 -->
+	<update id="closeFeedBack" parameterType="com.human.manager.entity.FeedbackParamBean">
+		update feedback_base set
+		state=2,close_desc=#{closeDesc,jdbcType=VARCHAR},close_type=#{closeType,jdbcType=INTEGER},score=#{score,jdbcType=INTEGER},close_time=now(),close_user=#{userName,jdbcType=VARCHAR} where id =#{id,jdbcType=BIGINT}
+	</update>
+<update id="closeFeedBackByIds" >
+		update feedback_base set
+		state=2,close_desc=#{fpb.closeDesc},close_type=#{fpb.closeType},close_time=now(),close_user=#{fpb.userName,jdbcType=VARCHAR} where id in
+		<foreach collection="ids" item="id" index="index" open="("
+			separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+
+
+	<update id="updateFeedBackState" parameterType="com.human.feedback.bean.FeedBackBase">
+		update feedback_base set
+		state=#{state,jdbcType=INTEGER} where id=#{id,jdbcType=BIGINT} 
+		<if test="oldState!=null">
+			and state=#{oldState,jdbcType=INTEGER}
+		</if>
+	</update>
+
+	<select id="queryConfig" resultType="map" parameterType="java.lang.String">
+	SELECT ho.`ID`
+	id,SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName,GROUP_CONCAT(u.`name`)
+	operName
+	FROM
+	hr_organization ho
+	LEFT JOIN feedback_oper_user fou ON
+	fou.`dept_id`=ho.`ID`
+	LEFT JOIN hr_user u ON
+	u.`email_addr`=fou.`oper_user`
+	WHERE
+	ho.`COMPANY`=#{companyId,jdbcType=VARCHAR} and
+	SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2)!='' AND
+	ho.`EFF_STATUS`='A'
+	GROUP BY ho.`ID` ,ho.`NAME`
+</select>
+
+	<select id="queryOper" resultType="com.human.feedback.bean.FeedBackOper"
+		parameterType="com.human.feedback.bean.FeedBackOper">
+		SELECT fou.`id`,u.`email_addr` userName,u.`name` name,ho.`ID`
+		deptId,SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName FROM feedback_oper_user fou
+		LEFT JOIN hr_user u ON u.`email_addr`=fou.`oper_user`
+		LEFT JOIN hr_organization ho ON ho.`ID`=fou.`dept_id` 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			and fou.`dept_id`=#{deptId,jdbcType=VARCHAR}
+			<if test="userName!=null and userName!=''">
+				AND fou.`oper_user` =#{userName,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+
+	<delete id="removeConfig" parameterType="com.human.feedback.bean.FeedBackOper">
+		DELETE FROM feedback_oper_user WHERE oper_user=#{userName,jdbcType=VARCHAR}
+		AND dept_id=#{deptId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="addConfig" parameterType="com.human.feedback.bean.FeedBackOper">
+		INSERT INTO
+		feedback_oper_user(oper_user,dept_id)
+		values(#{userName,jdbcType=VARCHAR},#{deptId,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="queryUserOrg" resultType="com.human.manager.entity.HrOrganization"
+		parameterType="java.lang.String">
+		SELECT DISTINCT ho.`ID`,SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) name FROM
+		feedback_oper_user u
+		LEFT JOIN hr_organization ho ON ho.`ID`=u.`dept_id` where
+		u.`oper_user`=#{userName,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<select id="getMyYestodayOperFeedBack" parameterType="java.lang.String"
+		resultMap="FeedBackMap">
+		SELECT
+		fb.`id`,
+		fb.`state`,
+		fb.`title`,
+		fb.`is_hide`,
+		fb.`create_time`,
+		fd.`id` fdid,
+		SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName,
+		fd.`desc`,
+		fd.`type`,
+		hu.`name` oper_user,
+		fd.`oper_time`,
+		fp.`id` fpid,
+		fp.`url`
+		FROM
+		feedback_base fb
+		LEFT JOIN feedback_oper_user fou
+		ON fou.`dept_id`=fb.`dept_id`
+		LEFT JOIN feedback_detail fd
+		ON fb.`id` = fd.`base_id`
+		LEFT JOIN feedback_photo fp
+		ON fd.`id` = fp.`detail_id`
+		LEFT JOIN hr_user hu ON hu.`email_addr`=fd.`oper_user`
+		LEFT JOIN hr_organization ho ON ho.id=fb.`dept_id`
+		WHERE fou.`oper_user`=#{userName,jdbcType=VARCHAR} AND fb.`state`=0
+		AND TO_DAYS(NOW()) - TO_DAYS(fd.`oper_time`) &lt;=1 
+		ORDER BY fd.`id` DESC,fb.`id` DESC
+	</select>
+	
+	<select id="queryEmailUserList" resultType="com.human.manager.entity.Users" parameterType="com.human.feedback.bean.FeedBackOper">
+		SELECT  DISTINCT fou.`oper_user` loginName,u.`name` FROM feedback_oper_user fou
+LEFT JOIN hr_user u ON fou.`oper_user`=u.`email_addr` 
+<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="deptId!=null and deptId!=''">
+				AND fou.`dept_id` =#{deptId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+	
+	<select id="getBaseById" parameterType="java.lang.Long" resultType="com.human.feedback.bean.FeedBackBase">
+	SELECT
+	fb.`id`,
+	fb.`title`,
+	fb.`user_name` userName,
+	u.name createUsername
+	FROM
+	feedback_base fb
+	LEFT JOIN  hr_user u ON fb.`user_name`=u.email_addr
+	WHERE fb.`id`=#{id,jdbcType=BIGINT}
+	</select>
+	<select id="getBaseDetailById" parameterType="java.lang.Long"  resultMap="FeedBackMap">
+	SELECT 
+  fb.`id`,
+  fb.`state`,
+  fb.`title`,
+  fb.`dept_id`,
+  fb.`create_time`,
+  fb.`score`,
+  fb.`close_desc`,
+  fb.`close_time`,
+  hu1.name close_user,
+  fd.`id` fdid,
+  fd.`desc`,
+  fd.`type`,
+  fb.`is_hide`,
+  SUBSTRING(ho.`NAME`, INSTR(ho.`NAME`, '学校') + 2) deptName,
+  hu.`name` oper_user,
+  fd.`oper_time`,
+  fp.`id` fpid,
+  fp.`url` 
+FROM
+  feedback_base fb 
+  LEFT JOIN feedback_oper_user fou 
+    ON fou.`dept_id` = fb.`dept_id` 
+  LEFT JOIN feedback_detail fd 
+    ON fb.`id` = fd.`base_id` 
+  LEFT JOIN feedback_photo fp 
+    ON fd.`id` = fp.`detail_id` 
+  LEFT JOIN hr_user hu 
+    ON hu.`email_addr` = fd.`oper_user`  
+    LEFT JOIN hr_user hu1
+     ON hu1.`email_addr` = fb.`close_user`
+ LEFT JOIN hr_organization ho ON ho.`ID`=fb.`dept_id` 
+ WHERE  fb.`id`=#{id,jdbcType=BIGINT} AND  fd.`type`=0
+      ORDER BY fd.`id` DESC,fb.`id` DESC
+	</select>
+	
+</mapper>

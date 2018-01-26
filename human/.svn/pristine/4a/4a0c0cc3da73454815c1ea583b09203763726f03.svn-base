@@ -1,0 +1,59 @@
+html,body{	
+	background: linear-gradient(#FB7F5B,#FC6655);
+	position: relative;
+	height: 100%;
+}
+.logo{
+	padding-top: 0.6rem;
+	width: 100%;
+}
+.logo img{
+	margin-top: 0.2rem;
+	width: 2rem;
+	height: .7rem;
+	display: block;
+	margin: 0 auto;
+}
+.logo p{
+	color: white;
+	font-size: 0.2rem;
+	font-weight: 700;
+	text-align: center;
+	height: 0.6rem;
+	line-height: 0.6rem;
+}
+.inputnum{
+	height: 1.4rem;
+	width: 100%;
+
+}
+.inputnum p{
+	letter-spacing:0.02rem;
+	height: 0.58rem;
+	text-align: center;
+	font-size: 0.16rem;
+	color: white;
+	line-height: 0.58rem;
+}
+.inputnum input{
+	height: 0.5rem;
+	width: 80%;
+	display: block;
+	margin: 0 auto;
+	border-radius: 4px;
+	font-size:0.4rem;
+	color: #ccc;
+}
+.bottom{
+  height: 1rem;
+  position: absolute;
+  bottom: 0.2rem;
+  width: 100%;
+  font-size: 0.16rem;
+}
+.bottom p{
+	line-height: 0.4rem;
+	height: 0.4rem;
+	color: white;
+	text-align: center;
+}

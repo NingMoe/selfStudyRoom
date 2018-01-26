@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.manager.dao.HrOrganizationDao" >
+  <resultMap id="BaseResultMap" type="com.human.manager.entity.HrOrganization" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="VARCHAR" />
+    <result column="PARENT_NAME" property="parentName" jdbcType="VARCHAR" />
+    <result column="EFF_STATUS" property="effStatus" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, COMPANY, PARENT_ID, EFF_STATUS
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_organization
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from hr_organization
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByCompanyId" parameterType="java.lang.String" >
+    delete from hr_organization
+    where COMPANY = #{companyId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.manager.entity.HrOrganization" >
+    insert into hr_organization (ID, NAME, COMPANY, 
+      PARENT_ID, EFF_STATUS
+      )
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=VARCHAR}, #{effStatus,jdbcType=CHAR}
+      )
+  </insert>
+  
+  <insert id="insertOrgList" parameterType="java.util.List">
+        insert into hr_organization(ID, NAME, COMPANY, PARENT_ID, EFF_STATUS) values
+        <foreach item="item" collection="list" separator=",">
+            (
+            #{item.id},#{item.name},#{item.company},#{item.parentId},#{item.effStatus}
+            )
+        </foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.human.manager.entity.HrOrganization" >
+    insert into hr_organization
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="company != null" >
+        COMPANY,
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID,
+      </if>
+      <if test="effStatus != null" >
+        EFF_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="effStatus != null" >
+        #{effStatus,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.manager.entity.HrOrganization" >
+    update hr_organization
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        COMPANY = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="effStatus != null" >
+        EFF_STATUS = #{effStatus,jdbcType=CHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.manager.entity.HrOrganization" >
+    update hr_organization
+    set NAME = #{name,jdbcType=VARCHAR},
+      COMPANY = #{company,jdbcType=VARCHAR},
+      PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      EFF_STATUS = #{effStatus,jdbcType=CHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateOrgStatus" parameterType="com.human.manager.entity.HrOrganization" >
+    UPDATE hr_organization SET EFF_STATUS = 'C' WHERE NOT EXISTS (
+	SELECT 1 FROM (SELECT dept_id FROM mk_user UNION ALL SELECT dept_id  FROM hr_user) u 
+	WHERE u.dept_id = hr_organization.id
+	)
+  </update>
+
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select 
+    o.ID, o.NAME, o.COMPANY, o.PARENT_ID, o.EFF_STATUS,c.company_name,p.NAME parent_name 
+    from hr_organization o 
+    left join hr_company c on o.company = c.company_id 
+    left join hr_organization p on o.parent_id = p.id 
+    where o.EFF_STATUS = 'A' 
+   	 	<if test="t.company != null and t.company !=''">
+			and o.company = #{t.company,jdbcType=VARCHAR}
+		</if>
+		<if test="t.name != null and t.name !=''">
+			and o.name like CONCAT('%',#{t.name,jdbcType=VARCHAR},'%')
+		</if>
+  </select>
+  
+   <insert id="updateHrExtend" parameterType="java.lang.String" >
+	INSERT INTO hr_organization_extend(orgid,STATUS)
+	SELECT  id,'1' FROM hr_organization WHERE COMPANY = #{company,jdbcType=VARCHAR}
+	and NOT EXISTS (SELECT 1 FROM hr_organization_extend WHERE hr_organization_extend.orgid = hr_organization.id)
+  </insert>
+  
+</mapper>

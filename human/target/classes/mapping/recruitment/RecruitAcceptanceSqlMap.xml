@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.RecruitAcceptanceDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.ResumeSeeker" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="birth_date" property="birthDate" jdbcType="VARCHAR" />
+    <result column="major" property="major" jdbcType="VARCHAR" />
+    <result column="high_edu" property="highEdu" jdbcType="VARCHAR" />
+    <result column="graduation_date" property="graduationDate" jdbcType="VARCHAR" />
+    <result column="gra_school" property="graSchool" jdbcType="VARCHAR" />
+    <result column="standby_phone" property="standbyPhone" jdbcType="VARCHAR" />
+    <result column="id_card_no" property="idCardNo" jdbcType="VARCHAR" />
+    <result column="delivery_date" property="deliveryDate" jdbcType="VARCHAR" />
+    <result column="working_time" property="workTime" jdbcType="VARCHAR" />
+    <result column="location_city" property="locationCity" jdbcType="VARCHAR" />
+    <result column="edu_type" property="eduType" jdbcType="VARCHAR" />
+    <result column="head_url" property="headUrl" jdbcType="VARCHAR" />
+    <result column="open_id" property="openId" jdbcType="VARCHAR" />
+    <result column="marriage" property="marriage" jdbcType="VARCHAR" />    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, name, phone, email, sex, birth_date, major, 
+    high_edu, graduation_date, gra_school, standby_phone, id_card_no, delivery_date, 
+    working_time, location_city, edu_type,head_url,open_id,marriage
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_seeker
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_seeker
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="com.human.recruitment.entity.ResumeSeeker" >
+    insert into resume_seeker (name, phone, 
+      email, sex, birth_date, major, 
+      high_edu, graduation_date, gra_school, 
+      standby_phone, id_card_no, delivery_date, 
+      working_time, location_city, edu_type, head_url,open_id,marriage)
+    values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{birthDate,jdbcType=VARCHAR}, #{major,jdbcType=VARCHAR}, 
+      #{highEdu,jdbcType=VARCHAR}, #{graduationDate,jdbcType=VARCHAR}, #{graSchool,jdbcType=VARCHAR}, 
+      #{standbyPhone,jdbcType=VARCHAR}, #{idCardNo,jdbcType=VARCHAR}, #{deliveryDate,jdbcType=VARCHAR}, 
+      #{workTime,jdbcType=VARCHAR}, #{locationCity,jdbcType=VARCHAR}, #{eduType,jdbcType=VARCHAR}, 
+      #{headUrl,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR}, 
+      #{marriage,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.ResumeSeeker" >
+    update resume_seeker
+    <set >
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthDate != null" >
+        birth_date = #{birthDate,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null" >
+        major = #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="highEdu != null" >
+        high_edu = #{highEdu,jdbcType=VARCHAR},
+      </if>
+      <if test="graduationDate != null" >
+        graduation_date = #{graduationDate,jdbcType=VARCHAR},
+      </if>
+      <if test="graSchool != null" >
+        gra_school = #{graSchool,jdbcType=VARCHAR},
+      </if>
+      <if test="standbyPhone != null" >
+        standby_phone = #{standbyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="idCardNo != null" >
+        id_card_no = #{idCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryDate != null" >
+        delivery_date = #{deliveryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="workTime != null" >
+        working_time = #{workTime,jdbcType=VARCHAR},
+      </if>
+      <if test="locationCity != null" >
+        location_city = #{locationCity,jdbcType=VARCHAR},
+      </if>
+      <if test="eduType != null" >
+        edu_type = #{eduType,jdbcType=VARCHAR},
+      </if>
+      <if test="headUrl != null" >
+        head_url = #{headUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null and openId !=''" >
+        open_id = #{openId,jdbcType=VARCHAR},
+      </if>
+       <if test="marriage != null and marriage !=''" >
+        marriage = #{marriage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="queryResumeSeeker" resultMap="BaseResultMap"
+		parameterType="com.human.recruitment.entity.ResumeSeeker">
+		select
+		<include refid="Base_Column_List" />
+		from resume_seeker
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="id != null">
+				AND id=#{id,jdbcType=BIGINT}
+			</if>
+			<if test="likename !=null and likename !=''">
+				AND name LIKE CONCAT('%', #{likename,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="name !=null and name !=''">
+				AND name = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND phone=#{phone,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+
+	<insert id="saveResumeSeeker"  useGeneratedKeys="true" keyProperty="id" parameterType="com.human.recruitment.entity.ResumeSeeker">
+	INSERT INTO
+		resume_seeker(NAME,phone,email,sex,birth_date,major,high_edu,graduation_date,gra_school,standby_phone,id_card_no,delivery_date,working_time,location_city,edu_type,head_url)
+		VALUES(#{name,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{sex,jdbcType=VARCHAR},#{birthDate,jdbcType=DATE},#{major,jdbcType=VARCHAR},#{highEdu,jdbcType=VARCHAR},#{graduationDate,jdbcType=VARCHAR},#{graSchool,jdbcType=VARCHAR},#{standbyPhone,jdbcType=VARCHAR},#{idCardNo,jdbcType=VARCHAR},#{deliveryDate,jdbcType=VARCHAR},#{workTime,jdbcType=VARCHAR},#{locationCity,jdbcType=VARCHAR},#{eduType,jdbcType=VARCHAR},#{headUrl,jdbcType=VARCHAR})
+	</insert>
+  <update id="updateResumeSeeker" parameterType="com.human.recruitment.entity.ResumeSeeker">
+	update resume_seeker
+	<set>
+		<if test="name != null and name !=''">
+			NAME = #{name,jdbcType=VARCHAR},
+		</if>
+		<if test="phone != null and phone !=''">
+			phone = #{phone,jdbcType=VARCHAR},
+		</if>
+		<if test="email != null and phone !=''">
+			email = #{email,jdbcType=VARCHAR},
+		</if>
+		<if test="sex != null and sex !=''">
+			sex = #{sex,jdbcType=VARCHAR},
+		</if>
+		<if test="birthDate != null">
+			birth_date =#{birthDate,jdbcType=DATE},
+		</if>
+		<if test="major != null and major !=''">
+			major = #{major,jdbcType=VARCHAR},
+		</if>
+		<if test="highEdu != null and highEdu !=''">
+			high_edu = #{highEdu,jdbcType=VARCHAR},
+		</if>
+		<if test="graduationDate != null">
+			graduation_date = #{graduationDate,jdbcType=DATE},
+		</if>
+		<if test="graSchool != null and graSchool !=''">
+			gra_school =#{graSchool,jdbcType=VARCHAR},
+		</if>
+		<if test="standbyPhone != null and standbyPhone !=''">
+			standby_phone = #{standbyPhone,jdbcType=VARCHAR},
+		</if>
+		<if test="idCardNo != null and idCardNo !=''">
+			id_card_no = #{idCardNo,jdbcType=VARCHAR},
+		</if>
+		<if test="deliveryDate != null">
+			delivery_date = #{deliveryDate,jdbcType=TIMESTAMP},
+		</if>
+		<if test="workTime != null and workTime !=''">
+			working_time = #{workTime,jdbcType=VARCHAR},
+		</if>
+		<if test="locationCity != null and locationCity !=''">
+			location_city = #{locationCity,jdbcType=VARCHAR},
+		</if>
+		<if test="eduType != null and eduType !=''">
+			edu_type =#{eduType,jdbcType=VARCHAR},
+		</if>
+		<if test="headUrl != null and headUrl !=''">
+			head_url = #{headUrl,jdbcType=VARCHAR},
+		</if>
+	</set>
+	where ID = #{id,jdbcType=BIGINT}
+</update>
+  
+  
+ <!--  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hr_position
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.recruitment.entity.HrPosition" >
+    insert into hr_position (ID, NAME, COMID, 
+      DEPT, position_nature, position_attribute, 
+      postion_classification, ob_content, qualifications, 
+      recruitment_number, require_degree, working_month, 
+      salary_type, position_salary_range, salary0, 
+      salary1, is_release, status, 
+      effective_date, priority, is_aotusub, 
+      mailbox, telephone, is_feedback, 
+      text_task, picture_task, video_task, 
+      process_def, is_long_effective, job_addr, 
+      probation_period)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{comid,jdbcType=VARCHAR}, 
+      #{dept,jdbcType=VARCHAR}, #{positionNature,jdbcType=VARCHAR}, #{positionAttribute,jdbcType=VARCHAR}, 
+      #{postionClassification,jdbcType=VARCHAR}, #{obContent,jdbcType=VARCHAR}, #{qualifications,jdbcType=VARCHAR}, 
+      #{recruitmentNumber,jdbcType=INTEGER}, #{requireDegree,jdbcType=VARCHAR}, #{workingMonth,jdbcType=VARCHAR}, 
+      #{salaryType,jdbcType=VARCHAR}, #{positionSalaryRange,jdbcType=VARCHAR}, #{salary0,jdbcType=DECIMAL}, 
+      #{salary1,jdbcType=DECIMAL}, #{isRelease,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{effectiveDate,jdbcType=TIMESTAMP}, #{priority,jdbcType=INTEGER}, #{isAotusub,jdbcType=INTEGER}, 
+      #{mailbox,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{isFeedback,jdbcType=INTEGER}, 
+      #{textTask,jdbcType=VARCHAR}, #{pictureTask,jdbcType=VARCHAR}, #{videoTask,jdbcType=VARCHAR}, 
+      #{processDef,jdbcType=VARCHAR}, #{isLongEffective,jdbcType=INTEGER}, #{jobAddr,jdbcType=VARCHAR}, 
+      #{probationPeriod,jdbcType=VARCHAR})
+  </insert>
+
+  
+  
+  <select id="selectPositionPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT p.ID, p.NAME, p.COMID, p.DEPT,p.is_release,p.status,p.process_def, 
+    c.company_name,o.name dept_name FROM hr_position p 
+    left join hr_company c on p.comid = c.company_id 
+    left join hr_organization o on p.dept = o.id 
+    where 1=1
+   	 	<if test="t.comid != null and t.comid !=''">
+			and p.comid = #{t.comid,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			and p.dept = #{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.status != null and t.status !=''">
+			and p.status = #{t.status,jdbcType=INTEGER}
+		</if>
+		<if test="t.isRelease != null and t.isRelease !=''">
+			and p.is_release = #{t.isRelease,jdbcType=INTEGER}
+		</if>
+  </select>
+  
+  <insert id="insertJobCitys" parameterType="java.util.List">
+        insert into position_area(position_id,area_id) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.postionId},#{item.jobCity})
+        </foreach>
+  </insert>
+  
+   -->
+   <!-- 通过手机号和姓名检查该应聘者是否存在 -->
+   <select id="checkResumeByNameAndPhone" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select 
+		<include refid="Base_Column_List" /> 
+		from resume_seeker
+		where name = #{name,jdbcType=VARCHAR}
+		and phone=#{phone,jdbcType=VARCHAR}	
+  </select>
+
+	<select id="toLinkQuery" resultType="com.human.recruitment.entity.ResumeSeeker"
+	parameterType="com.human.recruitment.entity.ResumeSeeker">
+	SELECT rs.`ID`
+	id,rs.`name`,rs.`sex`,rs.`phone`,rs.`email`,rs.`gra_school`
+	graSchool,rs.`high_edu` highEdu,rs.`working_time`
+	workTime,MAX(cd.`link_Time`) preTime, MAX(cd.`next_time`) nextTime
+	FROM communication_desc cd
+	INNER JOIN communication_record cr ON cr.`ID`=cd.`communication_id`
+	INNER JOIN resume_seeker rs ON rs.`ID`=cr.`resume_seeker_id`
+	WHERE cd.`communication`=#{t.linkUser,jdbcType=VARCHAR}
+	<if test="t.state != null">
+		AND cd.`status`=#{t.state,jdbcType=INTEGER}
+	</if>
+	<if test="t.name!=null and t.name!=''">
+		AND rs.`name` LIKE CONCAT('%', #{t.name,jdbcType=VARCHAR},'%')
+	</if>
+	<if test="t.phone != null and t.phone !=''">
+		AND rs.`phone`=#{t.phone,jdbcType=VARCHAR}
+	</if>
+	GROUP BY
+	rs.`ID`,rs.`name`,rs.`sex`,rs.`phone`,rs.`email`,rs.`gra_school`,rs.`high_edu`,rs.`working_time`
+</select>
+   
+  <!--通过微信openId查询应聘者  -->
+   <select id="selectByOpenId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+	    select 
+	    <include refid="Base_Column_List" />
+	    from resume_seeker
+	    where open_id = #{openId,jdbcType=VARCHAR}
+  </select>
+  
+   <!--解除微信绑定  -->
+   <update id="removeBinding"  parameterType="java.lang.Long" >
+	  update  resume_seeker set open_id = NULL
+      where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByResumeBaseId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+	SELECT resume_seeker.* FROM resume_seeker JOIN resume_base 
+	ON  resume_seeker.id = resume_base.`resume_seeker_id` AND resume_base.id = #{resumeId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByFlowCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+	SELECT resume_seeker.* FROM resume_seeker 
+	JOIN resume_base ON resume_seeker.id = resume_base.`resume_seeker_id` 
+	JOIN hr_resume_flow ON hr_resume_flow.`resume_id` = resume_base.id AND hr_resume_flow.`flow_code` = #{flowCode,jdbcType=VARCHAR}
+  </select>
+  	
+</mapper>

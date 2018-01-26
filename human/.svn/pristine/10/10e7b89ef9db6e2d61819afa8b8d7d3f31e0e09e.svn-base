@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.customer.dao.CustomerSelectDao">
+	<resultMap id="BaseResultMap" type="com.human.customer.entity.CustomerSelect">
+	<id column="id" property="id" jdbcType="INTEGER" />
+	<result column="name" property="name" jdbcType="VARCHAR" />
+	<result column="parent_name" property="parentName" jdbcType="VARCHAR" />
+	<result column="level" property="level" jdbcType="INTEGER" />
+</resultMap>
+
+	<select id="queryAll" resultMap="BaseResultMap">
+		SELECT
+		r.id,
+		r.name,
+		r.`parent_name`,
+		r.`level`
+		FROM
+		customer_relation_select r
+		LEFT JOIN customer_relation_select r1
+		ON r1.`name` = r.`parent_name`
+		ORDER BY id
+	</select>
+	
+	<delete id="deleteAll" parameterType="java.lang.String">
+				delete  from customer_relation_select 
+	</delete>
+	
+	<insert id="insert" parameterType="com.human.customer.entity.CustomerSelect">
+	INSERT INTO customer_relation_select(`name`,`level`,parent_name,update_username)VALUES(#{name,jdbcType=VARCHAR},#{level,jdbcType=INTEGER},#{parentName,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="queryByKey" parameterType="java.lang.String"
+	resultMap="BaseResultMap">
+	SELECT
+	r.id,
+	r.name,
+	r.`parent_name`,
+	r.`level`
+	FROM
+	customer_relation_select r
+	where
+	r.`name` =#{name,jdbcType=VARCHAR}
+</select>
+
+	
+	<select id="queryByParam" parameterType="com.human.customer.entity.CustomerSelect"
+	resultMap="BaseResultMap">
+	SELECT
+	r.id,
+	r.name,
+	r.`parent_name`,
+	r.`level`
+	FROM
+	customer_relation_select r
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="name != null and name !=''">
+			AND r.`name` = #{name,jdbcType=VARCHAR}
+		</if>
+		<if test="parentName != null and parentName !=''">
+			AND r.`parent_name` = #{parentName,jdbcType=VARCHAR}
+		</if>
+		<if test="level != null">
+			AND r.`level` = #{level,jdbcType=INTEGER}
+		</if>
+	</trim>
+	ORDER BY id
+</select>
+</mapper>	

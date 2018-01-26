@@ -1,0 +1,126 @@
+
+
+    select {
+  /*Chrome和Firefox里面的边框是不一样的，所以复写了一下*/
+      border: solid 1px #ffffff!important;
+
+  /*很关键：将默认的select选择框样式清除*/
+  appearance:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
+
+
+
+  /*为下拉小箭头留出一点位置，避免被文字覆盖*/
+  padding-right: 14px;
+
+  background:none;
+  border: 1px solid transparent;
+  outline: none;
+  /* Prefixed box-sizing rules necessary for older browsers */
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  /* Remove select styling */
+  appearance: none;
+  -webkit-appearance: none;
+  /* Font size must the 16px or larger to prevent iOS page zoom on focus */
+  /* General select styles: change as needed */
+  font-family: helvetica, sans-serif;
+  font-weight: bold;
+  color: #7d7d7d;
+  padding: 0 10px;
+  line-height:1.3;
+}
+select::after {
+  content: "";
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  top: 50%;
+  right: 8px;
+  margin-top:-4px;
+  border:8px solid #929497;
+  border-width: 8px 5px 8px;
+  border-color: #929497 transparent transparent transparent;
+  z-index: 2;
+  pointer-events:none;
+}
+/* Hover style */
+select:hover {
+  border:1px solid #888;
+}
+/* Focus style */
+select select:focus {
+  outline:none;
+  box-shadow: 0 0 1px 3px rgba(180,222,250, 1);
+  background-color:transparent;
+  color: #222;
+  border:1px solid #aaa;
+}
+/* Set options to normal weight */
+select option {
+  font-weight:normal;
+}
+x:-o-prefocus, .custom-select::after {
+  display:none;
+}    
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {  
+select select::-ms-expand {
+    display: none;
+  }
+select select:focus::-ms-value {
+    background: transparent;
+    color: #222;
+  }
+}  
+@-moz-document url-prefix() { 
+  .custom-select {
+    overflow: hidden;
+  }
+custom-select select {
+    width: 120%;
+    width: -moz-calc(100% + 3em);
+    width: calc(100% + em);
+  }
+  
+}
+custom-select select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+
+}
+
+
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+select::-ms-expand { display: none; }
+
+.sch{    background: #53cac3!important;
+    color: #fff!important;
+    width: 18%;
+    border-radius: 4px;
+    border: 0px;
+    height: 40px;
+    font-size: 18px;
+    margin: 0 0 0 20px;
+    float: left;
+  }
+.choose{width: 90%;height:50px;margin: 5px auto;}
+#s_address{     width: 85%;
+    height: 40px;
+    float: left;
+    font-size: 15px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.35);
+    border-radius: 10px;
+}
+.classinfo{width:27rem;height: 200px;border-radius: 4px;border: 1px;background: #e0104a;color: #fff;font-size: 1rem;
+  -webkit-box-shadow:0 0 10px #0CC;
+  -moz-box-shadow:0 0 10px #0CC;
+  box-shadow:0 0 10px #0CC;
+
+}
+
+.123{background-color: green;}
+

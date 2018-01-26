@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.xdfStudent.dao.XdfStudentInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.xdfStudent.entity.XdfStudentInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="student_code" property="studentCode" jdbcType="VARCHAR" />
+    <result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+    <result column="telephone1" property="telephone1" jdbcType="VARCHAR" />
+    <result column="telephone2" property="telephone2" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, student_code, school_name, telephone1, telephone2, create_time, create_user, 
+    update_time, update_user
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from xdf_student_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!--通过学员号查询学员 -->
+  <select id="selectByStudentCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from xdf_student_info
+    where student_code = #{studentCode,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from xdf_student_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.human.xdfStudent.entity.XdfStudentInfo" >
+    insert into xdf_student_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="studentCode != null" >
+        student_code,
+      </if>
+      <if test="schoolName != null" >
+        school_name,
+      </if>
+      <if test="telephone1 != null" >
+        telephone1,
+      </if>
+      <if test="telephone2 != null" >
+        telephone2,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="studentCode != null" >
+        #{studentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolName != null" >
+        #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone1 != null" >
+        #{telephone1,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone2 != null" >
+        #{telephone2,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.xdfStudent.entity.XdfStudentInfo" >
+    update xdf_student_info
+    <set >
+      <if test="studentCode != null" >
+        student_code = #{studentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolName != null" >
+        school_name = #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone1 != null" >
+        telephone1 = #{telephone1,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone2 != null" >
+        telephone2 = #{telephone2,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    r.id, r.student_code, r.school_name, r.telephone1, r.telephone2
+	FROM 
+	xdf_student_info  r 	
+	WHERE 1=1	
+	<if test="t.studentCode != null and t.studentCode !=''">
+	   AND r.student_code like CONCAT(CONCAT('%', #{t.studentCode,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.telephone1 != null and t.telephone1 !=''">
+	   AND r.telephone1 like CONCAT(CONCAT('%', #{t.telephone1,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.telephone2 != null and t.telephone2 !=''">
+	   AND r.telephone2 like CONCAT(CONCAT('%', #{t.telephone2,jdbcType=VARCHAR}), '%') 
+	</if>	
+    ORDER BY CONVERT(SUBSTRING(r.student_code,3), SIGNED) DESC   
+  </select>
+  
+  <!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from xdf_student_info   
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>        
+  </delete>
+
+ <!--全部删除 -->
+  <delete id="deleteAll" >
+    delete from xdf_student_info 
+  </delete>
+  
+   <!-- 批量插入 -->
+  <insert id="insertByBatch" parameterType="java.util.List">
+        insert into xdf_student_info (student_code, school_name, telephone1, telephone2, create_time, create_user)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+           (#{item.studentCode,jdbcType=VARCHAR}, #{item.schoolName,jdbcType=VARCHAR}, 
+            #{item.telephone1,jdbcType=VARCHAR}, #{item.telephone2,jdbcType=VARCHAR}, 
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.createUser,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  
+  <!-- 批量更新 -->
+  <update id="updateBatch" parameterType="java.util.List">
+	  update xdf_student_info set
+	    school_name=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.schoolName,jdbcType=VARCHAR}
+	  </foreach>
+	  ,telephone1=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.telephone1,jdbcType=VARCHAR}
+	  </foreach>
+	  ,telephone2=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.telephone2,jdbcType=VARCHAR}
+	  </foreach>
+	  ,update_time=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.updateTime,jdbcType=TIMESTAMP}
+	  </foreach>
+	  ,update_user=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+	      when #{item.id,jdbcType=BIGINT} then #{item.updateUser,jdbcType=VARCHAR}
+	  </foreach>
+	  where ID in
+	  <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+	      #{item.id,jdbcType=BIGINT}
+	  </foreach>
+  </update>
+  
+  <!--导出选择的新东方学员数据 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+    SELECT 
+    r.id, r.student_code AS studentCode, r.school_name AS schoolName, r.telephone1 , r.telephone2
+	FROM 
+	xdf_student_info  r 
+	WHERE 1=1
+    <if test="s != null">
+		AND r.id IN
+		<foreach collection="s" item="id" index="index" open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+	    </foreach>
+	</if>
+	ORDER BY CONVERT(SUBSTRING(r.student_code,3), SIGNED) DESC
+   </select>
+   
+</mapper>

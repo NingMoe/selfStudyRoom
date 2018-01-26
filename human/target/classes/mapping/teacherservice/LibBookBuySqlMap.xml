@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.teacherservice.dao.LibBookBuyDao" >
+  <resultMap id="BaseResultMap" type="com.human.teacherservice.entity.LibBookBuy" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+    <result column="email_addr" property="emailAddr" jdbcType="VARCHAR" />
+    <result column="book_name" property="bookName" jdbcType="VARCHAR" />
+    <result column="book_author" property="bookAuthor" jdbcType="VARCHAR" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, company_id, email_addr, book_name, book_author, reason,create_time, is_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from lib_book_buy
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from lib_book_buy
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.human.teacherservice.entity.LibBookBuy" >
+    insert into lib_book_buy
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="emailAddr != null" >
+        email_addr,
+      </if>
+      <if test="bookName != null" >
+        book_name,
+      </if>
+      <if test="bookAuthor != null" >
+        book_author,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="emailAddr != null" >
+        #{emailAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="bookName != null" >
+        #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="bookAuthor != null" >
+        #{bookAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.teacherservice.entity.LibBookBuy" >
+    update lib_book_buy
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="emailAddr != null" >
+        email_addr = #{emailAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="bookName != null" >
+        book_name = #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="bookAuthor != null" >
+        book_author = #{bookAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+   <!-- 分页查询反馈记录 -->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT b.id,b.company_id,u.company_name,u.dept_name,u.name,
+	b.email_addr,b.book_name,b.book_author,b.reason,b.create_time
+	FROM lib_book_buy b
+	LEFT JOIN hr_company c ON b.company_id = c.company_id
+	LEFT JOIN  hr_user u ON b.email_addr=u.email_addr AND b.company_id=u.company
+	WHERE b.company_id= #{t.companyId,jdbcType=VARCHAR}
+	<if test="t.bookName != null and t.bookName !=''" >
+        AND b.book_name like CONCAT(CONCAT('%', #{t.bookName,jdbcType=VARCHAR}), '%')
+    </if>
+    <if test="t.bookAuthor != null and t.bookAuthor !=''" >
+        AND b.book_author like CONCAT(CONCAT('%', #{t.bookAuthor,jdbcType=VARCHAR}), '%')
+    </if>
+    <if test="t.name != null and t.name !=''" >
+        AND u.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%')
+    </if>
+    ORDER BY b.id DESC
+   </select>
+   
+   <!--导出反馈记录--> 
+   <select id="exportAll" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+    SELECT u.company_name AS companyName,u.dept_name AS deptName ,u.name,
+	b.book_name AS bookName,b.book_author AS bookAuthor,b.reason,b.create_time AS createTime
+	FROM lib_book_buy b
+	LEFT JOIN hr_company c ON b.company_id = c.company_id
+	LEFT JOIN  hr_user u ON b.email_addr=u.email_addr AND b.company_id=u.company
+	WHERE b.company_id= #{companyId,jdbcType=VARCHAR}
+   </select>
+</mapper>

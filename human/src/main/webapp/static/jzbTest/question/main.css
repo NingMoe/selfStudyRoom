@@ -1,0 +1,64 @@
+*{border:none;margin:0;padding:0; font-family:"微软雅黑";color:#4f4f4f}
+
+.banner-box,.banner-box img{width:100%}
+.layer-box{border-radius:5px;}
+.activityname-box,.main-box{margin-top:15px;border-bottom:1px solid transparent}
+.activityname-box img,.main-box img{ float:left;width:5%;margin-left:2.5%}
+.activityname-box p,.main-box p{ float:left;margin-left:5px !important;font-size:1.2em}
+.main{ width:95%;margin-left:2.5%;margin-bottom:50px}
+.bottom-box,.bottom-box2{width:100%;position:fixed;bottom:0}
+.bottom-box p{ float:left;width:49.8%; text-align:center;background:#3cc5be;color:#ffffff;margin:0;line-height:40px}
+.bottom-box2 p{ float:left;width:100%; text-align:center;background:#3cc5be;color:#ffffff;margin:0;line-height:40px}
+#yanzheng p{ text-align:center;margin-top:15px}
+.yz-submit{ width:70% !important;margin-left:15%;margin-bottom:30px;background:#3cc5be;color:#ffffff;line-height:30px;border-radius:15px}
+.card-box p{margin:0}
+.main{border-bottom:1px solid #dadada}
+.card-main{width:90%;margin-left:5% !important;text-indent: 2em}
+.card-title{width:90%;margin-left:5% !important}
+.share-box{width:100%;margin-bottom:50px}
+.share-box img{width:40%;margin-left:30%;}
+.share-box p{ text-align:center}
+.login-box{width:80%;margin-left:10%;margin-top:30%}
+.login-box input{ width:100% ;padding:8px 0;border-raidus:5px;margin-top:10px}
+.login-box p{ text-align:center;margin-top:5px}
+.submit{width:80% !important;margin-left:10%;border-radius:50px;background:#3cc5be;color:#ffffff}
+.attation{width:100%;text-align:center !important;padding:5px 0}
+.main-btn{width:97%;margin-left:3%}
+.main-btn input{width:30%;margin:0.1rem 0.1rem;padding:5px 8px;border-radius:3px;color:#ffffff;background:#3cc5be}
+.shopping-box{width:13%;position:fixed;bottom:1%;left:10%;}
+.shopping-name{width:20px;position:fixed;bottom:5%;left:20%;border-radius:50px;background:red;color:#ffffff; text-align:center}
+    .swiper-container {
+        width: 100%;
+        height: 100%;
+
+    }
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    .swiper-slide img{
+        width: 100%;
+        height: auto;
+    }
+	.btm{ width:100%;background:#999999;position:fixed;bottom:0;height:40px;}
+	.qrbutton{ float:right;width:30%;line-height:40px;text-align:center;background:#3cc5be;color:#ffffff}
+	.cost{line-height:40px;color:#ffffff; float:left;margin-left:10% !important;font-size:1.2em}
+	.my-box{ text-align:center;width:100%;line-height:40px;color:#ffffff;background:#3cc5be}
+	.can,.cant{padding:3px 8px;border-radius:5px;color:#ffffff}
+	.can{background:#fac622}
+	.cant{background:#009688}

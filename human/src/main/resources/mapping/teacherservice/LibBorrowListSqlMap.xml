@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.teacherservice.dao.LibBorrowListDao" >
+  <resultMap id="BaseResultMap" type="com.human.teacherservice.entity.LibBorrowList" >
+    <id column="borrow_id" property="borrow_id" jdbcType="INTEGER" />
+    <result column="borrow_schoolid" property="borrow_schoolid" jdbcType="VARCHAR" />
+    <result column="company_name" property="company_name" jdbcType="VARCHAR" />
+    <result column="dept_id" property="dept_id" jdbcType="VARCHAR" />
+    <result column="dept_name" property="dept_name" jdbcType="VARCHAR" />
+    <result column="email_addr" property="email_addr" jdbcType="VARCHAR" />
+    <result column="user_name" property="user_name" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="book_id" property="book_id" jdbcType="INTEGER" />
+    <result column="book_name" property="book_name" jdbcType="VARCHAR" />
+    <result column="book_type" property="book_type" jdbcType="INTEGER" />
+    <result column="type_name" property="type_name" jdbcType="VARCHAR" />
+    <result column="out_borrow_time" property="out_borrow_time" jdbcType="TIMESTAMP" />
+    <result column="borrow_time" property="borrow_time" jdbcType="TIMESTAMP" />
+    <result column="left_borrow_time" property="left_borrow_time" jdbcType="TIMESTAMP" />
+    <result column="right_borrow_time" property="right_borrow_time" jdbcType="TIMESTAMP" />
+    <result column="return_time" property="return_time" jdbcType="TIMESTAMP" />
+    <result column="left_return_time" property="left_return_time" jdbcType="TIMESTAMP" />
+    <result column="right_return_time" property="right_return_time" jdbcType="TIMESTAMP" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select * from lib_borrow_list
+    where borrow_id = #{borrow_id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+	 SELECT b.borrow_id, b.borrow_schoolid, u.company_name, u.dept_id, u.dept_name, b.email_addr, u.name, b.book_id, l.book_name, t.type_name, b.borrow_time, b.return_time
+	 FROM lib_borrow_list b
+	 LEFT JOIN hr_user u ON b.email_addr = u.email_addr
+	 LEFT JOIN lib_book l ON b.book_id = l.id
+	 LEFT JOIN lib_book_type t ON l.book_type = t.id
+	 where 1 = 1
+	 <if test="t.borrow_schoolid != null">
+	 	AND b.borrow_schoolid = #{t.borrow_schoolid,jdbcType=INTEGER}
+	 </if>
+	 <if test="t.book_type != null">
+	 	AND l.book_type = #{t.book_type,jdbcType=INTEGER}
+	 </if>
+	 <if test="t.book_name != null and t.book_name != ''">
+	 	AND l.book_name like CONCAT(CONCAT('%', #{t.book_name,jdbcType=VARCHAR}), '%')
+	 </if>
+	 <if test="t.out_borrow_time != null">
+	 	AND b.return_time &lt;= TIMESTAMPADD(DAY, #{t.out_borrow_time,jdbcType=TIMESTAMP}, NOW())
+	 </if>
+	 <if test="t.is_return != null and t.is_return == 0">
+	 	AND ISNULL(b.return_time)
+	 </if>
+	 <if test="t.is_return != null and t.is_return == 1">
+	 	AND !ISNULL(b.return_time)
+	 </if>
+	 <if test="t.left_borrow_time != null">
+	 	AND b.borrow_time &gt;= #{t.left_borrow_time,jdbcType=TIMESTAMP}
+	 </if>
+	 <if test="t.right_borrow_time != null">
+	 	AND b.borrow_time &lt;= #{t.right_borrow_time,jdbcType=TIMESTAMP}
+	 </if>
+	 <if test="t.left_return_time != null">
+	 	AND b.return_time &gt;= #{t.left_return_time,jdbcType=TIMESTAMP}
+	 </if>
+	 <if test="t.right_return_time != null">
+	 	AND b.return_time &lt;= #{t.right_return_time,jdbcType=TIMESTAMP}
+	 </if>
+	 ORDER BY b.borrow_id DESC
+  </select>
+  
+  <!-- 获取借阅记录 -->
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+  	SELECT l1.borrow_id, l1.borrow_schoolid, l1.book_id, l2.book_name, l1.borrow_time, l1.return_time FROM lib_borrow_list l1 LEFT JOIN lib_book l2 on l1.book_id = l2.id
+    WHERE l1.borrow_schoolid = #{school_id,jdbcType=VARCHAR} AND l1.email_addr = #{email_addr,jdbcType=VARCHAR}
+    ORDER BY l1.borrow_time DESC
+  </select>
+  
+  <!-- 获取正在借的书籍 -->
+  <select id="selectByOnTime" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+  	SELECT l1.borrow_id, l1.borrow_schoolid, l1.book_id, l2.book_name, l1.borrow_time, l1.return_time FROM lib_borrow_list l1 LEFT JOIN lib_book l2 on l1.book_id = l2.id
+    WHERE l1.borrow_schoolid = #{school_id,jdbcType=VARCHAR} AND l1.email_addr = #{email_addr,jdbcType=VARCHAR}
+    AND return_time IS NULL
+    ORDER BY l1.borrow_time DESC
+  </select>
+  
+  <!-- 最爱看书的人 -->
+  <select id="getPeopleCountBySchoolId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	SELECT u.dept_id, u.dept_name, b.email_addr, u.name, (SELECT COUNT(1) FROM lib_borrow_list b2 WHERE b2.`email_addr` = b.email_addr GROUP BY email_addr) num
+  	FROM lib_borrow_list b
+  	LEFT JOIN hr_user u ON b.email_addr = u.email_addr
+  	WHERE b.borrow_schoolid = #{school_id,jdbcType=VARCHAR}
+  	GROUP BY u.dept_id, u.dept_name, b.email_addr, u.name
+  	ORDER BY num DESC, b.email_addr
+  	limit 0,10
+  </select>
+  
+  <!--最容易被借的书  -->
+  <select id="getBookCountBySchoolId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	SELECT b.book_name, b.type_name, (SELECT COUNT(1) FROM lib_borrow_list b2 WHERE b2.`book_name` = b.book_name GROUP BY b2.book_name) num
+  	FROM lib_borrow_list b
+  	WHERE b.borrow_schoolid = #{school_id,jdbcType=VARCHAR}
+  	GROUP BY b.book_name, b.type_name
+  	ORDER BY num DESC
+  	limit 0,10
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lib_borrow_list
+    where borrow_id = #{borrow_id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.teacherservice.entity.LibBorrowList" >
+    insert into lib_borrow_list (borrow_id, borrow_schoolid, email_addr, 
+      book_id, book_name, type_name, borrow_time, return_time
+      )
+    values (#{borrow_id,jdbcType=INTEGER}, #{borrow_schoolid,jdbcType=VARCHAR}, #{email_addr,jdbcType=VARCHAR}, 
+      #{book_id,jdbcType=INTEGER}, #{book_name,jdbcType=VARCHAR}, #{type_name,jdbcType=VARCHAR},  #{borrow_time,jdbcType=TIMESTAMP}, #{return_time,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.human.teacherservice.entity.LibBorrowList" >
+    insert into lib_borrow_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="borrow_id != null" >
+        borrow_id,
+      </if>
+      <if test="borrow_schoolid != null" >
+        borrow_schoolid,
+      </if>
+      <if test="email_addr != null" >
+        email_addr,
+      </if>
+      <if test="book_id != null" >
+        book_id,
+      </if>
+      <if test="book_name != null" >
+        book_name,
+      </if>
+      <if test="type_name != null" >
+        type_name,
+      </if>
+      <if test="borrow_time != null" >
+        borrow_time,
+      </if>
+      <if test="return_time != null" >
+        return_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="borrow_id != null" >
+        #{borrow_id,jdbcType=INTEGER},
+      </if>
+      <if test="borrow_schoolid != null" >
+        #{borrow_schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="email_addr != null" >
+        #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="book_id != null" >
+        #{book_id,jdbcType=INTEGER},
+      </if>
+      <if test="book_name != null" >
+        #{book_name,jdbcType=VARCHAR},
+      </if>
+      <if test="type_name != null" >
+        #{type_name,jdbcType=VARCHAR},
+      </if>
+      <if test="borrow_time != null" >
+        #{borrow_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="return_time != null" >
+        #{return_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.teacherservice.entity.LibBorrowList" >
+    update lib_borrow_list
+    <set >
+      <if test="borrow_schoolid != null" >
+        borrow_schoolid = #{borrow_schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="email_addr != null" >
+        email_addr = #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="book_name != null" >
+        book_name = #{book_name,jdbcType=VARCHAR},
+      </if>
+      <if test="type_name != null" >
+        type_name = #{book_name,jdbcType=VARCHAR},
+      </if>
+      <if test="book_id != null" >
+        book_id = #{book_id,jdbcType=INTEGER},
+      </if>
+      <if test="borrow_time != null" >
+        borrow_time = #{borrow_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="return_time != null" >
+        return_time = #{return_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where borrow_id = #{borrow_id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.human.teacherservice.entity.LibBorrowList" >
+    update lib_borrow_list
+    set borrow_schoolid = #{borrow_schoolid,jdbcType=VARCHAR},
+      book_id = #{book_id,jdbcType=INTEGER},
+      book_name = #{book_name,jdbcType=VARCHAR},
+      type_name = #{type_name,jdbcType=VARCHAR},
+      borrow_time = #{borrow_time,jdbcType=TIMESTAMP},
+      return_time = #{return_time,jdbcType=TIMESTAMP}
+    where borrow_id = #{borrow_id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 查找已超时并未归还的图书(用于发邮件) -->
+  <select id="selectByBorrowTime" resultType="com.human.teacherservice.entity.LibBorrowListDto" parameterType="java.lang.String">
+	  SELECT b.borrow_schoolid AS companyId,
+	  IFNULL(u.name,'') AS name, b.email_addr AS emailAddr,
+	  b.book_id AS bookId,l.book_name AS bookName ,
+	  l.book_code AS bookCode,l.book_address AS bookAddress, b.borrow_time AS borrowTime
+	  FROM lib_borrow_list b
+	  LEFT JOIN hr_user u ON b.email_addr=u.email_addr AND b.borrow_schoolid=u.company
+	  LEFT JOIN lib_book l ON b.book_id = l.id
+	  WHERE b.return_time IS NULL 
+	  <![CDATA[AND b.borrow_time< #{borrowTime,jdbcType=VARCHAR}]]> 	  
+  </select>
+  <!-- 查找已超时并未归还的图书(用于发短信) -->
+  <select id="selectForSmsByBorrowTime" resultType="com.human.teacherservice.entity.LibBorrowListDto" parameterType="java.lang.String">
+    SELECT b.borrow_id AS borrowId,b.borrow_schoolid AS companyId,c.message_id AS messageId,
+	u.name, e.cell_phone_number AS phone,b.email_addr AS emailAddr,
+	b.book_id AS bookId,l.book_name AS bookName,l.book_code AS bookCode,l.book_address AS bookAddress, b.borrow_time AS borrowTime
+	FROM lib_borrow_list b
+	LEFT JOIN hr_company c ON b.borrow_schoolid = c.company_id
+	LEFT JOIN hr_user u ON b.email_addr=u.email_addr AND b.borrow_schoolid=u.company
+	LEFT JOIN hr_user_extend e ON u.empl_id=e.empl_id AND e.cell_phone_number IS NOT NULL
+	LEFT JOIN lib_book l ON b.book_id = l.id
+	LEFT JOIN lib_borrow_sms_record  r ON  b.borrow_id =r.borrow_id
+	WHERE b.return_time IS NULL
+	<![CDATA[AND b.borrow_time< #{borrowTime,jdbcType=VARCHAR}]]>  
+	AND (r.state IS NULL OR r.state=99)
+	AND e.cell_phone_number IS NOT NULL
+ </select>
+  
+</mapper>

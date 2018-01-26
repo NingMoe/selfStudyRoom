@@ -1,0 +1,25 @@
+package com.human.customer.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.human.customer.entity.CenterDept;
+import com.human.utils.PageView;
+
+public interface CustomerCenterConfigDeptService {
+
+    PageView query(PageView pageView,CenterDept cd);
+
+    Map<String, Object> add(CenterDept cd, HttpServletRequest request);
+
+    void delByIds(String ids);
+
+    CenterDept queryById(Long id);
+
+    Map<String, Object> edit(CenterDept cd, HttpServletRequest request);
+
+    List<CenterDept> getDepts();
+
+}

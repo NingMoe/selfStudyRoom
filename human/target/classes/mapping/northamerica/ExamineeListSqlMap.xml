@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.examineelist.dao.ExamineeListDao" >
+  <resultMap id="BaseResultMap" type="com.human.examineelist.entity.ExamineeList" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="class_Code" property="classCode" jdbcType="VARCHAR" />
+    <result column="tk_tearcher" property="tkTearcher" jdbcType="VARCHAR" />
+    <result column="d_tearcher" property="dTearcher" jdbcType="VARCHAR" />
+    <result column="yf_tearcher" property="yfTearcher" jdbcType="VARCHAR" />
+    <result column="R_tearcher" property="rTearcher" jdbcType="VARCHAR" />
+    <result column="L_tearcher" property="lTearcher" jdbcType="VARCHAR" />
+    <result column="S_tearcher" property="sTearcher" jdbcType="VARCHAR" />
+    <result column="W_tearcher" property="wTearcher" jdbcType="VARCHAR" />
+     <result column="frequency" property="frequency" jdbcType="VARCHAR" />
+     <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, class_Code,tkTearcher, dTearcher, yfTearcher, rTearcher, lTearcher, sTearcher, wTearcher,gender,name,code,frequency,dept_name
+  </sql>
+  <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    name, gender, code,class_Code as classCode,dept_name
+    from studentinfo
+    where 1=1  
+    <if test="t.name != null and t.name !=''">
+	   AND name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.code != null and t.code !=''">
+	   AND code like CONCAT(CONCAT('%', #{t.code,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.classCode != null and t.classCode !=''">
+	   AND class_Code like CONCAT(CONCAT('%', #{t.classCode,jdbcType=VARCHAR}), '%') 
+	</if>
+  </select>
+  <!--插入到学生信息表--> 
+    <insert id="insertIntoStu" parameterType="java.util.HashMap" >
+    insert into studentinfo (  class_Code,name, gender, code,dept_name)
+    values (#{classCode,jdbcType=VARCHAR}, #{Name,jdbcType=VARCHAR},#{Gender,jdbcType=VARCHAR}, #{Code,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR})
+  </insert>
+  <!-- 删除学生信息表中所有数据 -->
+  <delete id="deleteAll"   >
+  	delete  from studentinfo
+  </delete>
+  <!-- 查询出学生的所有成绩 -->
+  <select id="queryData" resultMap="BaseResultMap" parameterType="com.human.examineelist.entity.ExamineeList">
+    SELECT 
+    	e.id as id,e.class_Code as classCode ,e.tkTearcher as tkTearcher,e.dTearcher as dTearcher,e.type as name,e.cice as cice,
+    	e.yfTearcher as yfTearcher,e.rTearcher as rTearcher,
+    	e.lTearcher as lTearcher,e.sTearcher as  sTearcher,e.wTearcher as wTearcher ,e.frequency as frequency,e.code as code,e.stage as stage
+    from examinee_grade e
+    where 1=1 and e.code=#{code,jdbcType=VARCHAR} and e.dept_name= #{deptName,jdbcType=VARCHAR}
+     
+    <if test="type != null and type !=''">
+	   AND type like CONCAT(CONCAT('%', #{type,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="stage != null and stage !=''">
+	   AND stage like CONCAT(CONCAT('%', #{stage,jdbcType=VARCHAR}), '%') 
+	</if>
+  </select>
+  <!--删除所选学生数据-->
+  <delete id="deleteByCode" parameterType="java.util.HashMap">
+  	 delete from examinee_grade
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+<!--    	delete from examinee_grade  -->
+<!--    	where id=#{id,jdbcType=VARCHAR} -->
+  </delete>
+   <!-- 删除学生信息表中所有数据 -->
+  <delete id="deleteById"    parameterType="java.util.HashMap">
+  	delete  from examinee_grade where id =#{id,jdbcType=BIGINT}
+  </delete>
+  <!--插入到学生成绩表--> 
+    <insert id="insert" parameterType="com.human.examineelist.entity.ExamineeList" >
+    insert into examinee_grade (  class_Code,code,tkTearcher, dTearcher,  yfTearcher, rTearcher,lTearcher,sTearcher,wTearcher ,frequency,type,stage,cice,time)
+    values (#{classCode,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},#{tkTearcher,jdbcType=VARCHAR}, #{dTearcher,jdbcType=VARCHAR}, #{yfTearcher,jdbcType=VARCHAR},
+     #{rTearcher,jdbcType=VARCHAR}, #{lTearcher,jdbcType=VARCHAR}, #{sTearcher,jdbcType=VARCHAR},#{wTearcher,jdbcType=VARCHAR},#{frequency,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{stage,jdbcType=VARCHAR}
+     ,#{cice,jdbcType=VARCHAR},#{time,jdbcType=VARCHAR})
+  </insert>
+  <!-- 根据学员号查询所有成绩 -->
+  <select id="queryByCode" parameterType="java.util.HashMap"  resultMap="BaseResultMap" >
+  select e.tkTearcher ,e.dTearcher , e.yfTearcher, e.rTearcher,e.cice,
+    	 e.lTearcher, e.sTearcher,e.wTearcher ,e.frequency
+   from examinee_grade e where e.code =#{code,jdbcType=VARCHAR} and  e.stage=#{stage,jdbcType=VARCHAR} and e.type=#{type,jdbcType=VARCHAR}  ORDER BY e.time asc
+  </select>
+  <!-- 查詢班号 -->
+  <select id="queryforclassCode" parameterType="java.lang.String"  resultMap="BaseResultMap" >
+  select class_Code as classCode
+   from studentinfo e where code=#{code,jdbcType=VARCHAR}
+  </select>
+  <!--按照条件查询出每项考试的时间  -->
+  <select id="queryForTime" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT  time
+    from stu_class  
+    where stclass_no=#{classCode,jdbcType=VARCHAR} and  stage=#{stage,jdbcType=VARCHAR} and type=#{type_1,jdbcType=VARCHAR} and exam_name=#{frequery,jdbcType=VARCHAR}
+  </select>
+  <!-- 查询出阶段测试的成绩 -->
+  <select id="queryForGrade" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT  e.tkTearcher ,e.dTearcher , e.yfTearcher, e.rTearcher,e.cice,
+    	 e.lTearcher, e.sTearcher,e.wTearcher ,e.stage,e.time,e.frequency,e.type
+    from examinee_grade e  
+    where   code=#{code,jdbcType=VARCHAR} 
+    <if test="stage != null and stage !=''"> 
+	   AND stage = #{stage,jdbcType=VARCHAR}
+	</if> 
+	<if test="type != null and type !=''"> 
+	   AND e.type=#{type,jdbcType=VARCHAR}
+	</if> 
+	 order by e.time asc 
+  </select>
+<!--   根据学生号查询出班号 -->
+<select id="queryinfo" resultType="java.util.HashMap" parameterType="java.lang.String">
+	select class_Code from studentinfo where code=#{code,jdbcType=VARCHAR}
+</select>
+<!-- 查询出所有学生的学号 -->
+<select id="queryClassCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+	select code from studentinfo where class_Code=#{classCode,jdbcType=VARCHAR}
+</select>
+
+ <select id="queryByCodeTotal" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT  e.tkTearcher ,e.dTearcher , e.yfTearcher, e.rTearcher,e.cice,
+    	 e.lTearcher, e.sTearcher,e.wTearcher ,e.stage,e.time,e.frequency,e.type
+    from examinee_grade e  
+    where   
+    code=#{code,jdbcType=VARCHAR} 
+    and type in ('模考','实考')
+	 order by e.time asc 
+  </select>
+  
+  <!-- 查询出所有学生的学号 -->
+<select id="getStudentName" resultType="java.lang.String" parameterType="java.lang.String">
+	SELECT DISTINCT NAME FROM studentinfo WHERE CODE=#{code,jdbcType=VARCHAR} 
+</select>
+
+<select id="getKsNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+	select count(1) from examinee_grade WHERE CODE=#{code,jdbcType=VARCHAR}
+</select>
+</mapper>

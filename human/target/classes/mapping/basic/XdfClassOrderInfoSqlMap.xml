@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.XdfClassOrderInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.basic.entity.ClassBizBatch" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="n_school_id" property="nSchoolId" jdbcType="VARCHAR" />
+    <result column="s_order_code" property="sOrderCode" jdbcType="VARCHAR" />
+    <result column="n_channel" property="nChannel" jdbcType="VARCHAR" />
+    <result column="n_sub_channel" property="nSubChannel" jdbcType="VARCHAR" />
+    <result column="s_business_code" property="sBusinessCode" jdbcType="VARCHAR" />
+    <result column="s_system_source" property="sSystemSource" jdbcType="VARCHAR" />
+    <result column="s_marketing_sources" property="sMarketingSources" jdbcType="VARCHAR" />
+    <result column="s_marketing_sources_ext" property="sMarketingSourcesExt" jdbcType="VARCHAR" />
+    <result column="s_operate_type_code" property="sOperateTypeCode" jdbcType="VARCHAR" />
+    <result column="dt_sbmmit_date" property="dtSbmmitDate" jdbcType="VARCHAR" />
+    <result column="s_batch_code" property="sBatchCode" jdbcType="VARCHAR" />
+    <result column="n_biz_type" property="nBizType" jdbcType="VARCHAR" />
+    <result column="notice_type" property="noticeType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, n_school_id, s_order_code, n_channel, n_sub_channel, s_business_code, s_system_source, 
+    s_marketing_sources, s_marketing_sources_ext, s_operate_type_code, dt_sbmmit_date, 
+    s_batch_code, n_biz_type,notice_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from xdf_class_order_info
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.basic.entity.ClassBizBatch" >
+    insert into xdf_class_order_info (n_school_id, s_order_code, 
+      n_channel, n_sub_channel, s_business_code, 
+      s_system_source, s_marketing_sources, s_marketing_sources_ext, 
+      s_operate_type_code, dt_sbmmit_date, s_batch_code, 
+      n_biz_type,notice_type)
+    values (#{nSchoolId,jdbcType=VARCHAR}, #{sOrderCode,jdbcType=VARCHAR}, 
+      #{nChannel,jdbcType=VARCHAR}, #{nSubChannel,jdbcType=VARCHAR}, #{sBusinessCode,jdbcType=VARCHAR}, 
+      #{sSystemSource,jdbcType=VARCHAR}, #{sMarketingSources,jdbcType=VARCHAR}, #{sMarketingSourcesExt,jdbcType=VARCHAR}, 
+      #{sOperateTypeCode,jdbcType=VARCHAR}, #{dtSbmmitDate,jdbcType=VARCHAR}, #{sBatchCode,jdbcType=VARCHAR}, 
+      #{nBizType,jdbcType=VARCHAR}, #{noticeType,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.basic.entity.ClassBizBatch" >
+    update xdf_class_order_info
+    <set >
+      <if test="nSchoolId != null" >
+        n_school_id = #{nSchoolId,jdbcType=VARCHAR},
+      </if>
+      <if test="sOrderCode != null" >
+        s_order_code = #{sOrderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="nChannel != null" >
+        n_channel = #{nChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="nSubChannel != null" >
+        n_sub_channel = #{nSubChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="sBusinessCode != null" >
+        s_business_code = #{sBusinessCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sSystemSource != null" >
+        s_system_source = #{sSystemSource,jdbcType=VARCHAR},
+      </if>
+      <if test="sMarketingSources != null" >
+        s_marketing_sources = #{sMarketingSources,jdbcType=VARCHAR},
+      </if>
+      <if test="sMarketingSourcesExt != null" >
+        s_marketing_sources_ext = #{sMarketingSourcesExt,jdbcType=VARCHAR},
+      </if>
+      <if test="sOperateTypeCode != null" >
+        s_operate_type_code = #{sOperateTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dtSbmmitDate != null" >
+        dt_sbmmit_date = #{dtSbmmitDate,jdbcType=VARCHAR},
+      </if>
+      <if test="sBatchCode != null" >
+        s_batch_code = #{sBatchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="nBizType != null" >
+        n_biz_type = #{nBizType,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeType != null" >
+        notice_type = #{noticeType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insertOrderItems" parameterType="java.util.List">
+        insert into XDF_CLASS_ORDER_ITEM(ORDER_INFO_ID,S_STUDENT_CODE,S_BUSINESS_ITEM_CODE,IS_HIGH_END_CLASS,S_COURSE_CODE,
+        S_CLASS_CODE,S_CARD_CODE,S_OLD_ITEM_CODE,d_amount_receivable) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.orderInfoId},#{item.sStudentCode},#{item.sBusinessItemCode},#{item.isHighEndClass},#{item.sCourseCode}
+            ,#{item.sClassCode},#{item.sCardCode},#{item.sOldItemCode},#{item.dAmountReceivable}
+            )
+        </foreach>
+  </insert>
+</mapper>

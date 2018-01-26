@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.bpm.dao.BpmNodeConfigDao" >
+  <resultMap id="BaseResultMap" type="com.human.bpm.entity.BpmNodeConfig" >
+    <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+    <result column="processdef_id" property="processdefId" jdbcType="VARCHAR" />
+    <result column="process_name" property="processName" jdbcType="VARCHAR" />
+    <result column="node_name" property="nodeName" jdbcType="VARCHAR" />
+    <result column="node_type" property="nodeType" jdbcType="VARCHAR" />
+    <result column="assignee_exp" property="assigneeExp" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="position_name" property="positionName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    node_id, processdef_id, process_name, node_name, node_type, assignee_exp, 
+    sort
+  </sql>
+  
+  <select id="getAllConfig" parameterType="String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from act_node_config where processdef_id = #{processDef,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getMyAllNode" parameterType="Long" resultMap="BaseResultMap">
+	SELECT DISTINCT anc.`node_id`,anc.`node_name` FROM act_node_config anc WHERE processdef_id IN (
+SELECT pp.`PROCESS_DEF` FROM hr_position hrp 
+ INNER JOIN position_process pp ON pp.`POSITION_ID`=hrp.`ID`
+WHERE hrp.`DEPT` IN (
+SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT} AND  NOT  EXISTS
+(SELECT ho.id FROM hr_organization ho WHERE ho.`EFF_STATUS`='I' AND ud.deptId=ho.id))) AND anc.`node_type`=3;
+  </select>
+  
+  <select id="selectByNodeId" parameterType="String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from act_node_config where node_id = #{nodeId,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectByNodeIdAndFlowCode" parameterType="String" resultMap="BaseResultMap">
+		SELECT pnc.custom_node_name node_name,hp.`NAME` position_name FROM position_process_node_config  pnc
+		JOIN hr_resume_flow ON pnc.`position_process_id` = hr_resume_flow.`position_process_id` 
+		AND hr_resume_flow.`flow_code` = #{flowCode,jdbcType=VARCHAR}
+		JOIN position_process pp ON pp.`ID` = pnc.`position_process_id`
+		JOIN hr_position hp ON hp.`ID` = pp.`POSITION_ID`
+		WHERE  pnc.`node_id`= #{nodeId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <insert id="insert" parameterType="com.human.bpm.entity.BpmNodeConfig" >
+    insert into act_node_config (node_id, processdef_id, process_name, 
+      node_name, node_type, assignee_exp, sort)
+    values (#{nodeId,jdbcType=VARCHAR}, #{processdefId,jdbcType=VARCHAR}, #{processName,jdbcType=VARCHAR}, 
+      #{nodeName,jdbcType=VARCHAR}, #{nodeType,jdbcType=VARCHAR},#{assigneeExp,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.bpm.entity.BpmNodeConfig" >
+    insert into act_node_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="nodeId != null" >
+        node_id,
+      </if>
+      <if test="processdefId != null" >
+        processdef_id,
+      </if>
+      <if test="processName != null" >
+        process_name,
+      </if>
+      <if test="nodeName != null" >
+        node_name,
+      </if>
+      <if test="nodeType != null" >
+        node_type,
+      </if>
+      <if test="assigneeExp != null" >
+        assignee_exp,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="nodeId != null" >
+        #{nodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="processdefId != null" >
+        #{processdefId,jdbcType=VARCHAR},
+      </if>
+      <if test="processName != null" >
+        #{processName,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeName != null" >
+        #{nodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeType != null" >
+        #{nodeType,jdbcType=VARCHAR},
+      </if>
+      <if test="assigneeExp != null" >
+        #{assigneeExp,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

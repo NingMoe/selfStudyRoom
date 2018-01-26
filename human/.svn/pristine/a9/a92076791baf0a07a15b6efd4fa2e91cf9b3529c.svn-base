@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.manager.dao.UserDeptDao">
+	<select id="getUserCompany" resultType="com.human.manager.entity.HrCompany"
+		parameterType="java.lang.Long">
+		SELECT hc.`company_id` companyId,hc.`company_name` companyName FROM
+		user_dept ud
+		INNER JOIN hr_company hc ON ud.`deptId`=hc.`company_id`
+		WHERE ud.`userId`= #{userId,jdbcType=BIGINT}
+	</select>
+	<select id="getUserOrg" resultType="com.human.manager.entity.HrOrganization"
+		parameterType="com.human.manager.entity.UserDept">
+		SELECT ho.`ID`,ho.`NAME`, HO.`COMPANY` FROM user_dept ud
+		INNER JOIN hr_organization ho ON ud.`deptId`=ho.`ID`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="userId!= null">
+				AND ud.`userId`=#{userId,jdbcType=BIGINT}
+			</if>
+			<if test="companyId!= null and companyId!=''">
+				AND HO.`COMPANY`=#{companyId,jdbcType=VARCHAR}
+			</if>
+			and ho.EFF_STATUS='A'
+		</trim>
+	</select>
+
+	<select id="getUserAllOrg" resultType="com.human.manager.entity.UserDept"
+		parameterType="java.lang.Long">
+		SELECT * FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT} AND ud.`deptId` NOT IN 
+(SELECT id FROM hr_organization ho WHERE ho.`EFF_STATUS`='I');
+	</select>
+	
+	<select id="getUserDeptTree" resultType="com.human.manager.entity.HrOrganization"
+		parameterType="java.lang.Long">
+		SELECT hc.`company_id` id,hc.`company_name` NAME,'0' parentId
+		FROM hr_company hc
+		INNER JOIN user_dept ud ON ud.`deptId`=hc.`company_id` AND
+		ud.`userId`=#{userId,jdbcType=BIGINT}
+		UNION
+		SELECT ho.id,ho.name,ho.parent_id parentId FROM hr_organization ho
+		INNER JOIN user_dept ud ON ud.`deptId`=ho.id AND
+		ud.`userId`=#{userId,jdbcType=BIGINT}
+		WHERE ho.EFF_STATUS='A'
+		ORDER BY id
+	</select>
+
+	<delete id="delDeptByUserId" parameterType="java.lang.Long">
+		DELETE FROM user_dept WHERE userId=#{userId,jdbcType=BIGINT}
+	</delete>
+	<insert id="saveUserDept" parameterType="com.human.manager.entity.UserDept">
+			insert into user_dept (userId,deptId) values (#{userId,jdbcType=BIGINT},#{deptId,jdbcType=VARCHAR})
+	</insert>
+</mapper>

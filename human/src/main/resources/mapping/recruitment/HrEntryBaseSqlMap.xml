@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.HrEntryBaseDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.HrEntryBase" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_handler_id" property="entryHandlerId" jdbcType="INTEGER" />
+    <result column="seeker_name" property="seekerName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="first_name" property="firstName" jdbcType="VARCHAR" />
+    <result column="second_name" property="secondName" jdbcType="VARCHAR" />
+    <result column="eng_name" property="engName" jdbcType="VARCHAR" />
+    <result column="used_name" property="usedName" jdbcType="VARCHAR" />
+    <result column="pinyin_first_name" property="pinyinFirstName" jdbcType="VARCHAR" />
+    <result column="pinyin_name" property="pinyinName" jdbcType="VARCHAR" />
+    <result column="birth_date" property="birthDate" jdbcType="DATE" />
+    <result column="birth_addr" property="birthAddr" jdbcType="VARCHAR" />
+    <result column="nationality" property="nationality" jdbcType="VARCHAR" />
+    <result column="native_province" property="nativeProvince" jdbcType="VARCHAR" />
+    <result column="native_city" property="nativeCity" jdbcType="VARCHAR" />
+    <result column="marital" property="marital" jdbcType="INTEGER" />
+    <result column="ethnic" property="ethnic" jdbcType="VARCHAR" />
+    <result column="religious" property="religious" jdbcType="VARCHAR" />
+    <result column="political" property="political" jdbcType="INTEGER" />
+    <result column="account_type" property="accountType" jdbcType="INTEGER" />
+    <result column="residence" property="residence" jdbcType="VARCHAR" />
+    <result column="education_level" property="educationLevel" jdbcType="INTEGER" />
+    <result column="work_start_time" property="workStartTime" jdbcType="DATE" />
+    <result column="is_foreign" property="isForeign" jdbcType="INTEGER" />
+    <result column="is_graduate" property="isGraduate" jdbcType="INTEGER" />
+    <result column="is_waizhuan" property="isWaizhuan" jdbcType="INTEGER" />
+    <result column="is_xdf" property="isXdf" jdbcType="INTEGER" />
+    <result column="is_overSeas_exp" property="isOverSeasExp" jdbcType="INTEGER" />
+    <result column="home_tel" property="homeTel" jdbcType="VARCHAR" />
+    <result column="mobile_tel" property="mobileTel" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="recruitment_channel" property="recruitmentChannel" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="ComplexResultMap" type="com.human.recruitment.entity.HrEntryBase" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_handler_id" property="entryHandlerId" jdbcType="INTEGER" />
+    <result column="head_pic" property="headPic" jdbcType="VARCHAR" />
+    <result column="seeker_name" property="seekerName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="first_name" property="firstName" jdbcType="VARCHAR" />
+    <result column="second_name" property="secondName" jdbcType="VARCHAR" />
+    <result column="eng_name" property="engName" jdbcType="VARCHAR" />
+    <result column="used_name" property="usedName" jdbcType="VARCHAR" />
+    <result column="pinyin_first_name" property="pinyinFirstName" jdbcType="VARCHAR" />
+    <result column="pinyin_name" property="pinyinName" jdbcType="VARCHAR" />
+    <result column="birth_date" property="birthDate" jdbcType="DATE" />
+    <result column="birth_addr" property="birthAddr" jdbcType="VARCHAR" />
+    <result column="nationality" property="nationality" jdbcType="VARCHAR" />
+    <result column="native_province" property="nativeProvince" jdbcType="VARCHAR" />
+    <result column="native_city" property="nativeCity" jdbcType="VARCHAR" />
+    <result column="marital" property="marital" jdbcType="INTEGER" />
+    <result column="ethnic" property="ethnic" jdbcType="VARCHAR" />
+    <result column="religious" property="religious" jdbcType="VARCHAR" />
+    <result column="political" property="political" jdbcType="INTEGER" />
+    <result column="account_type" property="accountType" jdbcType="INTEGER" />
+    <result column="residence" property="residence" jdbcType="VARCHAR" />
+    <result column="education_level" property="educationLevel" jdbcType="INTEGER" />
+    <result column="work_start_time" property="workStartTime" jdbcType="DATE" />
+    <result column="is_foreign" property="isForeign" jdbcType="INTEGER" />
+    <result column="is_graduate" property="isGraduate" jdbcType="INTEGER" />
+    <result column="is_waizhuan" property="isWaizhuan" jdbcType="INTEGER" />
+    <result column="is_xdf" property="isXdf" jdbcType="INTEGER" />
+    <result column="is_overSeas_exp" property="isOverSeasExp" jdbcType="INTEGER" />
+    <result column="home_tel" property="homeTel" jdbcType="VARCHAR" />
+    <result column="mobile_tel" property="mobileTel" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="recruitment_channel" property="recruitmentChannel" jdbcType="INTEGER" />
+    
+    <association property="identi" resultMap="identiMap" columnPrefix="id_"/> 
+    <association property="contactaddr" resultMap="contactaddrMap" columnPrefix="co_"/>  
+    
+    <collection property="certifs" resultMap="certifMap" columnPrefix="ZB1_"/>
+    <collection property="edus" resultMap="eduMap" columnPrefix="ZB2_"/>
+    <collection property="workexps" resultMap="workexpMap" columnPrefix="ZB3_"/>
+    <collection property="familys" resultMap="familyMap" columnPrefix="ZB4_"/>
+    <collection property="emergencys" resultMap="emergencyMap" columnPrefix="ZB5_"/>
+    
+  </resultMap>
+  
+  
+  <resultMap id="identiMap" type="com.human.recruitment.entity.HrEntryIdentification" >
+   	<id column="id" property="id" jdbcType="INTEGER" />
+   	<result column="entry_base_id" property="entryBaseId" jdbcType="INTEGER" />
+    <result column="zj_nationality" property="zjNationality" jdbcType="VARCHAR" />
+    <result column="zj_type" property="zjType" jdbcType="INTEGER" />
+    <result column="zj_no" property="zjNo" jdbcType="VARCHAR" />
+    <result column="is_zj_sx" property="isZjSx" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="contactaddrMap" type="com.human.recruitment.entity.HrEntryContactaddr" >
+  	<id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_base_id" property="entryBaseId" jdbcType="INTEGER" />
+    <result column="dz_type" property="dzType" jdbcType="INTEGER" />
+    <result column="dz_province" property="dzProvince" jdbcType="VARCHAR" />
+    <result column="dz_city" property="dzCity" jdbcType="VARCHAR" />
+    <result column="dz_youbian" property="dzYoubian" jdbcType="VARCHAR" />
+    <result column="dz_detail_addr" property="dzDetailAddr" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="certifMap" type="com.human.recruitment.entity.HrEntryCertif" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_base_id" property="entryBaseId" jdbcType="INTEGER" />
+    <result column="certif_type" property="certifType" jdbcType="INTEGER" />
+    <result column="publish_date" property="publishDate" jdbcType="DATE" />
+    <result column="effective_date" property="effectiveDate" jdbcType="DATE" />
+    <result column="certif_name" property="certifName" jdbcType="VARCHAR" />
+    <result column="certif_no" property="certifNo" jdbcType="VARCHAR" />
+    <result column="certif_org" property="certifOrg" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="eduMap" type="com.human.recruitment.entity.HrEntryEduexp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_base_id" property="entryBaseId" jdbcType="INTEGER" />
+    <result column="edu_start_date" property="eduStartDate" jdbcType="DATE" />
+    <result column="edu_end_date" property="eduEndDate" jdbcType="DATE" />
+    <result column="edu_is_graduated" property="eduIsGraduated" jdbcType="INTEGER" />
+    <result column="edu_nationality" property="eduNationality" jdbcType="VARCHAR" />
+    <result column="edu_collage" property="eduCollage" jdbcType="VARCHAR" />
+    <result column="edu_type" property="eduType" jdbcType="INTEGER" />
+    <result column="edu_docotor" property="eduDocotor" jdbcType="INTEGER" />
+    <result column="edu_major" property="eduMajor" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="workexpMap" type="com.human.recruitment.entity.HrEntryWorkexp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_base_id" property="entryBaseId" jdbcType="INTEGER" />
+    <result column="start_date" property="startDate" jdbcType="DATE" />
+    <result column="end_date" property="endDate" jdbcType="DATE" />
+    <result column="enterprise" property="enterprise" jdbcType="VARCHAR" />
+    <result column="contact" property="contact" jdbcType="VARCHAR" />
+    <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+    <result column="last_position" property="lastPosition" jdbcType="VARCHAR" />
+    <result column="is_relevant" property="isRelevant" jdbcType="INTEGER" />
+    <result column="nationality" property="nationality" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="leaving_reason" property="leavingReason" jdbcType="VARCHAR" />
+    <result column="salary" property="salary" jdbcType="VARCHAR" />
+    <result column="currency_type" property="currencyType" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="familyMap" type="com.human.recruitment.entity.HrEntryFamily" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_base_id" property="entryBaseId" jdbcType="INTEGER" />
+    <result column="member_relation" property="memberRelation" jdbcType="INTEGER" />
+    <result column="first_name" property="firstName" jdbcType="VARCHAR" />
+    <result column="second_name" property="secondName" jdbcType="VARCHAR" />
+    <result column="member_sex" property="memberSex" jdbcType="INTEGER" />
+    <result column="borth_date" property="borthDate" jdbcType="DATE" />
+    <result column="member_phone" property="memberPhone" jdbcType="VARCHAR" />
+    <result column="work_unit" property="workUnit" jdbcType="VARCHAR" />
+    <result column="member_job" property="memberJob" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="emergencyMap" type="com.human.recruitment.entity.HrEntryEmergency" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entry_base_id" property="entryBaseId" jdbcType="INTEGER" />
+    <result column="relation" property="relation" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="is_first" property="isFirst" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="other_phone_type" property="otherPhoneType" jdbcType="INTEGER" />
+    <result column="other_phone" property="otherPhone" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, entry_handler_id, seeker_name, sex, first_name, second_name, eng_name, used_name, 
+    pinyin_first_name, pinyin_name, birth_date, birth_addr, nationality, native_province, 
+    native_city, marital, ethnic, religious, political, account_type, residence, education_level, 
+    work_start_time, is_foreign, is_graduate, is_waizhuan, is_xdf, is_overSeas_exp, home_tel, 
+    mobile_tel, email, recruitment_channel
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_entry_base
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByEntryHandler" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_entry_base
+    where entry_handler_id = #{entryHandlerId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectComplexByPrimaryKey" resultMap="ComplexResultMap" parameterType="java.lang.Integer" >
+    SELECT  t.id,t. entry_handler_id,t.seeker_name,t.sex,t.first_name,t.second_name,t.eng_name,t.used_name,t.pinyin_first_name,
+	t.pinyin_name,t.birth_date,t.birth_addr,t.nationality,t.native_province,t.native_city,t.marital,t.ethnic,t.religious,
+	t.political,t.account_type,t.residence,t.education_level,t.work_start_time,t.is_foreign,t.is_graduate,t.is_waizhuan,
+	t.is_xdf,t.is_overSeas_exp,t.home_tel,t.mobile_tel,t.email,t.recruitment_channel,
+	hr_entry_identification.id id_id, hr_entry_identification.entry_base_id id_entry_base_id,hr_resume_entryhandler.head_pic, hr_entry_identification.zj_nationality id_zj_nationality, hr_entry_identification.zj_type id_zj_type,
+	hr_entry_identification.zj_no id_zj_no, hr_entry_identification.is_zj_sx id_is_zj_sx ,
+	hr_entry_contactaddr.id co_id, hr_entry_contactaddr.entry_base_id co_entry_base_id, hr_entry_contactaddr.dz_type co_dz_type, hr_entry_contactaddr.dz_province co_dz_province, 
+	hr_entry_contactaddr.dz_city co_dz_city, hr_entry_contactaddr.dz_youbian co_dz_youbian, hr_entry_contactaddr.dz_detail_addr co_dz_detail_addr,
+	hr_entry_certif.id ZB1_id, hr_entry_certif.entry_base_id ZB1_entry_base_id, hr_entry_certif.certif_type ZB1_certif_type, hr_entry_certif.publish_date ZB1_publish_date, 
+	hr_entry_certif.effective_date ZB1_effective_date, hr_entry_certif.certif_name ZB1_certif_name, hr_entry_certif.certif_no ZB1_certif_no, hr_entry_certif.certif_org ZB1_certif_org,
+	hr_entry_eduexp.id ZB2_id, hr_entry_eduexp.entry_base_id ZB2_entry_base_id, hr_entry_eduexp.edu_start_date ZB2_edu_start_date, hr_entry_eduexp.edu_end_date ZB2_edu_end_date, 
+	hr_entry_eduexp.edu_is_graduated ZB2_edu_is_graduated, hr_entry_eduexp.edu_nationality ZB2_edu_nationality, 
+	hr_entry_eduexp.edu_collage ZB2_edu_collage, hr_entry_eduexp.edu_type ZB2_edu_type, hr_entry_eduexp.edu_docotor ZB2_edu_docotor, hr_entry_eduexp.edu_major ZB2_edu_major,
+	hr_entry_workexp.id ZB3_id,  hr_entry_workexp.entry_base_id ZB3_entry_base_id, hr_entry_workexp.start_date ZB3_start_date, hr_entry_workexp.end_date ZB3_end_date, hr_entry_workexp.enterprise ZB3_enterprise, 
+	hr_entry_workexp.contact ZB3_contact, hr_entry_workexp.contact_phone ZB3_contact_phone, hr_entry_workexp.last_position ZB3_last_position, hr_entry_workexp.is_relevant ZB3_is_relevant, 
+	hr_entry_workexp.nationality ZB3_nationality, hr_entry_workexp.province ZB3_province, hr_entry_workexp.city ZB3_city, 
+	hr_entry_workexp.leaving_reason ZB3_leaving_reason, hr_entry_workexp.salary ZB3_salary, hr_entry_workexp.currency_type ZB3_currency_type,
+	hr_entry_family.id ZB4_id, hr_entry_family.entry_base_id ZB4_entry_base_id, hr_entry_family.member_relation ZB4_member_relation, hr_entry_family.first_name ZB4_first_name, hr_entry_family.second_name ZB4_second_name, 
+	hr_entry_family.member_sex ZB4_member_sex, hr_entry_family.borth_date ZB4_borth_date, hr_entry_family.member_phone ZB4_member_phone, hr_entry_family.work_unit ZB4_work_unit, hr_entry_family.member_job ZB4_member_job,
+	hr_entry_emergency.id ZB5_id, hr_entry_emergency.entry_base_id ZB5_entry_base_id, hr_entry_emergency.relation ZB5_relation, hr_entry_emergency.name ZB5_name, hr_entry_emergency.is_first ZB5_is_first,
+	hr_entry_emergency.phone ZB5_phone, hr_entry_emergency.other_phone_type ZB5_other_phone_type, hr_entry_emergency.other_phone ZB5_other_phone 
+	FROM hr_entry_base t 
+	LEFT JOIN hr_resume_entryhandler on hr_resume_entryhandler.id = t.entry_handler_id 
+	LEFT JOIN hr_entry_identification ON hr_entry_identification.`entry_base_id` = t.id 
+	LEFT JOIN hr_entry_contactaddr ON hr_entry_contactaddr.`entry_base_id` = t.id 
+	LEFT JOIN hr_entry_eduexp ON hr_entry_eduexp.`entry_base_id` = t.id 
+	LEFT JOIN hr_entry_workexp ON hr_entry_workexp.`entry_base_id` = t.id 
+	LEFT JOIN hr_entry_family ON hr_entry_family.`entry_base_id` = t.id 
+	LEFT JOIN hr_entry_emergency ON hr_entry_emergency.`entry_base_id` = t.id 
+	LEFT JOIN hr_entry_certif ON hr_entry_certif.`entry_base_id` = t.id 
+    where t.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hr_entry_base
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.recruitment.entity.HrEntryBase" >
+    insert into hr_entry_base (id, entry_handler_id, seeker_name, 
+      sex, first_name, second_name, 
+      eng_name, used_name, pinyin_first_name, 
+      pinyin_name, birth_date, birth_addr, 
+      nationality, native_province, native_city, 
+      marital, ethnic, religious, 
+      political, account_type, residence, 
+      education_level, work_start_time, is_foreign, 
+      is_graduate, is_waizhuan, is_xdf, 
+      is_overSeas_exp, home_tel, mobile_tel, 
+      email, recruitment_channel)
+    values (#{id,jdbcType=INTEGER}, #{entryHandlerId,jdbcType=INTEGER}, #{seekerName,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=INTEGER}, #{firstName,jdbcType=VARCHAR}, #{secondName,jdbcType=VARCHAR}, 
+      #{engName,jdbcType=VARCHAR}, #{usedName,jdbcType=VARCHAR}, #{pinyinFirstName,jdbcType=VARCHAR}, 
+      #{pinyinName,jdbcType=VARCHAR}, #{birthDate,jdbcType=DATE}, #{birthAddr,jdbcType=VARCHAR}, 
+      #{nationality,jdbcType=VARCHAR}, #{nativeProvince,jdbcType=VARCHAR}, #{nativeCity,jdbcType=VARCHAR}, 
+      #{marital,jdbcType=INTEGER}, #{ethnic,jdbcType=VARCHAR}, #{religious,jdbcType=VARCHAR}, 
+      #{political,jdbcType=INTEGER}, #{accountType,jdbcType=INTEGER}, #{residence,jdbcType=VARCHAR}, 
+      #{educationLevel,jdbcType=INTEGER}, #{workStartTime,jdbcType=DATE}, #{isForeign,jdbcType=INTEGER}, 
+      #{isGraduate,jdbcType=INTEGER}, #{isWaizhuan,jdbcType=INTEGER}, #{isXdf,jdbcType=INTEGER}, 
+      #{isOverSeasExp,jdbcType=INTEGER}, #{homeTel,jdbcType=VARCHAR}, #{mobileTel,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{recruitmentChannel,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.HrEntryBase" >
+    update hr_entry_base
+    <set >
+      <if test="entryHandlerId != null" >
+        entry_handler_id = #{entryHandlerId,jdbcType=INTEGER},
+      </if>
+      <if test="seekerName != null" >
+        seeker_name = #{seekerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="firstName != null" >
+        first_name = #{firstName,jdbcType=VARCHAR},
+      </if>
+      <if test="secondName != null" >
+        second_name = #{secondName,jdbcType=VARCHAR},
+      </if>
+      <if test="engName != null" >
+        eng_name = #{engName,jdbcType=VARCHAR},
+      </if>
+      <if test="usedName != null" >
+        used_name = #{usedName,jdbcType=VARCHAR},
+      </if>
+      <if test="pinyinFirstName != null" >
+        pinyin_first_name = #{pinyinFirstName,jdbcType=VARCHAR},
+      </if>
+      <if test="pinyinName != null" >
+        pinyin_name = #{pinyinName,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDate != null" >
+        birth_date = #{birthDate,jdbcType=DATE},
+      </if>
+      <if test="birthAddr != null" >
+        birth_addr = #{birthAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="nationality != null" >
+        nationality = #{nationality,jdbcType=VARCHAR},
+      </if>
+      <if test="nativeProvince != null" >
+        native_province = #{nativeProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="nativeCity != null" >
+        native_city = #{nativeCity,jdbcType=VARCHAR},
+      </if>
+      <if test="marital != null" >
+        marital = #{marital,jdbcType=INTEGER},
+      </if>
+      <if test="ethnic != null" >
+        ethnic = #{ethnic,jdbcType=VARCHAR},
+      </if>
+      <if test="religious != null" >
+        religious = #{religious,jdbcType=VARCHAR},
+      </if>
+      <if test="political != null" >
+        political = #{political,jdbcType=INTEGER},
+      </if>
+      <if test="accountType != null" >
+        account_type = #{accountType,jdbcType=INTEGER},
+      </if>
+      <if test="residence != null" >
+        residence = #{residence,jdbcType=VARCHAR},
+      </if>
+      <if test="educationLevel != null" >
+        education_level = #{educationLevel,jdbcType=INTEGER},
+      </if>
+      <if test="workStartTime != null" >
+        work_start_time = #{workStartTime,jdbcType=DATE},
+      </if>
+      <if test="isForeign != null" >
+        is_foreign = #{isForeign,jdbcType=INTEGER},
+      </if>
+      <if test="isGraduate != null" >
+        is_graduate = #{isGraduate,jdbcType=INTEGER},
+      </if>
+      <if test="isWaizhuan != null" >
+        is_waizhuan = #{isWaizhuan,jdbcType=INTEGER},
+      </if>
+      <if test="isXdf != null" >
+        is_xdf = #{isXdf,jdbcType=INTEGER},
+      </if>
+      <if test="isOverSeasExp != null" >
+        is_overSeas_exp = #{isOverSeasExp,jdbcType=INTEGER},
+      </if>
+      <if test="homeTel != null" >
+        home_tel = #{homeTel,jdbcType=VARCHAR},
+      </if>
+      <if test="mobileTel != null" >
+        mobile_tel = #{mobileTel,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitmentChannel != null" >
+        recruitment_channel = #{recruitmentChannel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insertIdenti" parameterType="com.human.recruitment.entity.HrEntryIdentification">
+       insert into hr_entry_identification (entry_base_id, zj_nationality, zj_type, zj_no, is_zj_sx)
+       values ( #{entryBaseId,jdbcType=INTEGER}, #{zjNationality,jdbcType=VARCHAR}, 
+       #{zjType,jdbcType=INTEGER}, #{zjNo,jdbcType=VARCHAR}, #{isZjSx,jdbcType=INTEGER})
+  </insert>
+  
+  <delete id="deleteIdentiByBaseId" parameterType="java.lang.Integer" >
+    delete from hr_entry_identification where entry_base_id = #{entryBaseId}
+  </delete>
+  
+  
+  <insert id="insertContactaddr" parameterType="com.human.recruitment.entity.HrEntryContactaddr">
+       insert into hr_entry_contactaddr (entry_base_id, dz_type,dz_province, dz_city, dz_youbian,dz_detail_addr)
+       values (#{entryBaseId,jdbcType=INTEGER}, #{dzType,jdbcType=INTEGER}, #{dzProvince,jdbcType=VARCHAR}, 
+       #{dzCity,jdbcType=VARCHAR}, #{dzYoubian,jdbcType=VARCHAR}, #{dzDetailAddr,jdbcType=VARCHAR})
+  </insert>
+  
+  <delete id="deleteContactaddrByBaseId" parameterType="java.lang.Integer" >
+    delete from hr_entry_contactaddr where entry_base_id = #{entryBaseId}
+  </delete>
+  
+  
+  <insert id="insertCertifs" parameterType="java.util.List">
+      insert into hr_entry_certif (entry_base_id, certif_type,publish_date, effective_date, certif_name, 
+      certif_no, certif_org) values
+        <foreach item="item" collection="list" separator=",">
+        (#{item.entryBaseId,jdbcType=INTEGER}, #{item.certifType,jdbcType=INTEGER}, 
+        #{item.publishDate,jdbcType=DATE}, #{item.effectiveDate,jdbcType=DATE}, #{item.certifName,jdbcType=VARCHAR}, 
+        #{item.certifNo,jdbcType=VARCHAR}, #{item.certifOrg,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteCertifsByBaseId" parameterType="java.lang.Integer" >
+    delete from hr_entry_certif where entry_base_id = #{entryBaseId}
+  </delete>
+  
+  
+  <insert id="insertEdus" parameterType="java.util.List">
+       insert into hr_entry_eduexp (entry_base_id, edu_start_date, edu_end_date, edu_is_graduated, edu_nationality, 
+      edu_collage, edu_type, edu_docotor,edu_major) values
+        <foreach item="item" collection="list" separator=",">
+        (#{item.entryBaseId,jdbcType=INTEGER}, #{item.eduStartDate,jdbcType=DATE}, 
+         #{item.eduEndDate,jdbcType=DATE}, #{item.eduIsGraduated,jdbcType=INTEGER}, #{item.eduNationality,jdbcType=VARCHAR}, 
+         #{item.eduCollage,jdbcType=VARCHAR}, #{item.eduType,jdbcType=INTEGER}, #{item.eduDocotor,jdbcType=INTEGER}, 
+         #{item.eduMajor,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteEdusByBaseId" parameterType="java.lang.Integer" >
+    delete from hr_entry_eduexp where entry_base_id = #{entryBaseId}
+  </delete>
+  
+  <insert id="insertWorkexps" parameterType="java.util.List">
+      insert into hr_entry_workexp (entry_base_id, start_date,end_date, enterprise, contact, 
+      contact_phone, last_position, is_relevant,nationality, province, city, 
+      leaving_reason, salary, currency_type) values
+        <foreach item="item" collection="list" separator=",">
+        (#{item.entryBaseId,jdbcType=INTEGER}, #{item.startDate,jdbcType=DATE}, 
+         #{item.endDate,jdbcType=DATE}, #{item.enterprise,jdbcType=VARCHAR}, #{item.contact,jdbcType=VARCHAR}, 
+         #{item.contactPhone,jdbcType=VARCHAR}, #{item.lastPosition,jdbcType=VARCHAR}, #{item.isRelevant,jdbcType=INTEGER}, 
+         #{item.nationality,jdbcType=VARCHAR}, #{item.province,jdbcType=VARCHAR}, #{item.city,jdbcType=VARCHAR}, 
+         #{item.leavingReason,jdbcType=VARCHAR}, #{item.salary,jdbcType=VARCHAR}, #{item.currencyType,jdbcType=INTEGER})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteWorkexpsByBaseId" parameterType="java.lang.Integer" >
+    delete from hr_entry_workexp where entry_base_id = #{entryBaseId}
+  </delete>
+  
+  <insert id="insertFamilys" parameterType="java.util.List">
+      insert into hr_entry_family (entry_base_id, member_relation, first_name, second_name, member_sex, 
+      borth_date, member_phone, work_unit, member_job) values
+        <foreach item="item" collection="list" separator=",">
+        (#{item.entryBaseId,jdbcType=INTEGER}, #{item.memberRelation,jdbcType=INTEGER}, 
+         #{item.firstName,jdbcType=VARCHAR}, #{item.secondName,jdbcType=VARCHAR}, #{item.memberSex,jdbcType=INTEGER}, 
+         #{item.borthDate,jdbcType=DATE}, #{item.memberPhone,jdbcType=VARCHAR}, #{item.workUnit,jdbcType=VARCHAR}, 
+         #{item.memberJob,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteFamilysByBaseId" parameterType="java.lang.Integer" >
+    delete from hr_entry_family where entry_base_id = #{entryBaseId}
+  </delete>
+  
+  <insert id="insertEmergencys" parameterType="java.util.List">
+      insert into hr_entry_emergency (entry_base_id, relation, name, is_first, phone, 
+      other_phone_type, other_phone) values
+        <foreach item="item" collection="list" separator=",">
+        (#{item.entryBaseId,jdbcType=INTEGER}, #{item.relation,jdbcType=INTEGER}, 
+         #{item.name,jdbcType=VARCHAR}, #{item.isFirst,jdbcType=INTEGER}, #{item.phone,jdbcType=VARCHAR}, 
+         #{item.otherPhoneType,jdbcType=INTEGER}, #{item.otherPhone,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  
+  <delete id="deleteEmergencysByBaseId" parameterType="java.lang.Integer" >
+    delete from hr_entry_emergency where entry_base_id = #{entryBaseId}
+  </delete>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.PositionProcessNodeConfigDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.PositionProcessNodeConfig" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="position_process_id" property="positionProcessId" jdbcType="INTEGER" />
+    <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+    <result column="node_type" property="nodeType" jdbcType="INTEGER" />
+    <result column="sign_type" property="signType" jdbcType="INTEGER" />
+    <result column="sign_quantity" property="signQuantity" jdbcType="INTEGER" />
+    <result column="nopass_sign_type" property="nopassSignType" jdbcType="INTEGER" />
+    <result column="nopass_sign_quantity" property="nopassSignQuantity" jdbcType="INTEGER" />
+    <result column="notify1" property="notify1" jdbcType="INTEGER" />
+    <result column="notify1_quan" property="notify1Quan" jdbcType="INTEGER" />
+    <result column="notify2" property="notify2" jdbcType="INTEGER" />
+    <result column="notify2_quan" property="notify2Quan" jdbcType="INTEGER" />
+    <result column="custom_node_name" property="customNodeName" jdbcType="VARCHAR" />
+    <result column="text_task" property="textTask" jdbcType="VARCHAR" />
+    <result column="picture_task" property="pictureTask" jdbcType="VARCHAR" />
+    <result column="video_task" property="videoTask" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, position_process_id, node_id, node_type, sign_type, sign_quantity,nopass_sign_type, nopass_sign_quantity,notify1, notify1_quan, 
+    notify2, notify2_quan, custom_node_name, text_task, picture_task, video_task
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from position_process_node_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByProcessIdAndNodeId" resultMap="BaseResultMap" parameterType="com.human.recruitment.entity.PositionProcessNodeConfig" >
+    select 
+    <include refid="Base_Column_List" />
+    from position_process_node_config
+    where position_process_id = #{positionProcessId,jdbcType=INTEGER} and node_id = #{nodeId,jdbcType=VARCHAR} 
+  </select>
+  
+  <select id="getPassNumByTaskAndFlowCode" resultMap="BaseResultMap" parameterType="com.human.recruitment.entity.PositionProcessNodeConfig" >
+    select c.`sign_type`,c.`sign_quantity`,c.`nopass_sign_type`,c.`nopass_sign_quantity` from position_process_node_config c,hr_resume_flow f where c.`position_process_id` = f.`position_process_id` 
+	and f.flow_code = #{flowCode,jdbcType=VARCHAR}
+	and c.`node_id` = #{nodeId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from position_process_node_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByProcessId" parameterType="java.lang.Integer" >
+    delete from position_process_node_config
+    where position_process_id = #{positionProcessId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.recruitment.entity.PositionProcessNodeConfig" >
+    insert into position_process_node_config (id, position_process_id, node_id, 
+      node_type, sign_type, sign_quantity, nopass_sign_type, nopass_sign_quantity
+      notify1, notify1_quan, notify2, 
+      notify2_quan, custom_node_name, text_task, 
+      picture_task, video_task)
+    values (#{id,jdbcType=INTEGER}, #{positionProcessId,jdbcType=INTEGER}, #{nodeId,jdbcType=VARCHAR}, 
+      #{nodeType,jdbcType=INTEGER}, #{signType,jdbcType=INTEGER}, #{signQuantity,jdbcType=INTEGER},#{noPassSignType,jdbcType=INTEGER}, #{nopassSignQuantity,jdbcType=INTEGER},
+      #{notify1,jdbcType=INTEGER}, #{notify1Quan,jdbcType=INTEGER}, #{notify2,jdbcType=INTEGER}, 
+      #{notify2Quan,jdbcType=INTEGER}, #{customNodeName,jdbcType=VARCHAR}, #{textTask,jdbcType=VARCHAR}, 
+      #{pictureTask,jdbcType=VARCHAR}, #{videoTask,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.PositionProcessNodeConfig" >
+    update position_process_node_config
+    <set >
+      <if test="positionProcessId != null" >
+        position_process_id = #{positionProcessId,jdbcType=INTEGER},
+      </if>
+      <if test="nodeId != null" >
+        node_id = #{nodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeType != null" >
+        node_type = #{nodeType,jdbcType=INTEGER},
+      </if>
+      <if test="signType != null" >
+        sign_type = #{signType,jdbcType=INTEGER},
+      </if>
+      <if test="signQuantity != null" >
+        sign_quantity = #{signQuantity,jdbcType=INTEGER},
+      </if>
+       <if test="nopassSignType != null" >
+        nopass_sign_type = #{nopassSignType,jdbcType=INTEGER},
+      </if>
+      <if test="nopassSignQuantity != null" >
+        nopass_sign_quantity = #{nopassSignQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="notify1 != null" >
+        notify1 = #{notify1,jdbcType=INTEGER},
+      </if>
+      <if test="notify1Quan != null" >
+        notify1_quan = #{notify1Quan,jdbcType=INTEGER},
+      </if>
+      <if test="notify2 != null" >
+        notify2 = #{notify2,jdbcType=INTEGER},
+      </if>
+      <if test="notify2Quan != null" >
+        notify2_quan = #{notify2Quan,jdbcType=INTEGER},
+      </if>
+      <if test="customNodeName != null" >
+        custom_node_name = #{customNodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="textTask != null" >
+        text_task = #{textTask,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureTask != null" >
+        picture_task = #{pictureTask,jdbcType=VARCHAR},
+      </if>
+      <if test="videoTask != null" >
+        video_task = #{videoTask,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.human.recruitment.entity.PositionProcessNodeConfig" >
+    update position_process_node_config
+    set position_process_id = #{positionProcessId,jdbcType=INTEGER},
+      node_id = #{nodeId,jdbcType=VARCHAR},
+      node_type = #{nodeType,jdbcType=INTEGER},
+      sign_type = #{signType,jdbcType=INTEGER},
+      sign_quantity = #{signQuantity,jdbcType=INTEGER},
+      nopass_sign_type = #{nopassSignType,jdbcType=INTEGER},
+      nopass_sign_quantity = #{nopassSignQuantity,jdbcType=INTEGER},
+      notify1 = #{notify1,jdbcType=INTEGER},
+      notify1_quan = #{notify1Quan,jdbcType=INTEGER},
+      notify2 = #{notify2,jdbcType=INTEGER},
+      notify2_quan = #{notify2Quan,jdbcType=INTEGER},
+      custom_node_name = #{customNodeName,jdbcType=VARCHAR},
+      text_task = #{textTask,jdbcType=VARCHAR},
+      picture_task = #{pictureTask,jdbcType=VARCHAR},
+      video_task = #{videoTask,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <insert id="insertNodeConfigs" parameterType="java.util.List">
+        insert into position_process_node_config(position_process_id,node_id,node_type,sign_type,sign_quantity,nopass_sign_type,nopass_sign_quantity,notify1,notify1_quan
+        ,notify2,notify2_quan,custom_node_name,text_task,picture_task,video_task) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.positionProcessId},#{item.nodeId},#{item.nodeType},#{item.signType},
+            #{item.signQuantity},#{item.nopassSignType},
+            #{item.nopassSignQuantity},#{item.notify1},#{item.notify1Quan},#{item.notify2},
+            #{item.notify2Quan},#{item.customNodeName},#{item.textTask},
+            #{item.pictureTask},#{item.videoTask}
+            )
+        </foreach>
+  </insert>
+</mapper>

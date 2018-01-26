@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.customer.dao.CustomerCenterConfigDeptDao">
+<select id="queryDept" resultType="com.human.customer.entity.CenterDept" parameterType="map">
+SELECT id,dept_name deptName,baner_url banerUrl,is_del isDel FROM customer_center_dept WHERE is_del=0
+<if test="t.deptName!=null and t.deptName!=''">
+		AND dept_name  like CONCAT(CONCAT('%', #{t.deptName,jdbcType=VARCHAR}), '%') 
+	</if>
+</select>
+
+<select id="queryDeptByName" resultType="com.human.customer.entity.CenterDept" parameterType="String">
+	SELECT id,dept_name deptName,baner_url banerUrl,is_del isDel FROM customer_center_dept WHERE  dept_name=#{deptName,jdbcType=VARCHAR} and   is_del=0
+</select>
+
+<select id="queryById" resultType="com.human.customer.entity.CenterDept" parameterType="Long">
+	SELECT id,dept_name deptName,baner_url banerUrl,is_del isDel FROM customer_center_dept WHERE  id=#{id,jdbcType=BIGINT} 
+</select>
+
+
+<insert id="add" parameterType="com.human.customer.entity.CenterDept">
+	INSERT INTO
+	customer_center_dept(dept_name,baner_url)
+	values(#{deptName,jdbcType=VARCHAR},#{banerUrl,jdbcType=VARCHAR})
+</insert>
+
+<update id="delByIds"  parameterType="Long">
+	update customer_center_dept set is_del=1 where id in
+	<foreach collection="array" item="id" index="index" open="("
+		separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>
+</update>
+
+<update id="edit" parameterType="com.human.customer.entity.CenterDept">
+update customer_center_dept  set dept_name=#{deptName,jdbcType=VARCHAR} ,baner_url=#{banerUrl,jdbcType=VARCHAR} where id=#{id,jdbcType=BIGINT}
+</update>
+
+<select id="getDepts" resultType="com.human.customer.entity.CenterDept">
+	SELECT id,dept_name deptName,baner_url banerUrl,is_del isDel FROM
+	customer_center_dept 
+	WHERE 
+	is_del=0 
+</select>
+</mapper>

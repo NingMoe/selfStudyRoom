@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.customer.dao.CustomerCenterConfigModelDao">
+<select id="query" resultType="com.human.customer.entity.CenterModel" parameterType="map">
+SELECT id,model_name modelName,sort sort,is_del isDel FROM customer_student_model WHERE is_del=0
+<if test="t.modelName!=null and t.modelName!=''">
+		AND model_name  like CONCAT(CONCAT('%', #{t.modelName,jdbcType=VARCHAR}), '%') 
+	</if>
+</select>
+
+<select id="queryByName" resultType="com.human.customer.entity.CenterModel" parameterType="String">
+	SELECT id,model_name modelName,sort sort,is_del isDel FROM customer_student_model WHERE  model_name=#{modelName,jdbcType=VARCHAR} and   is_del=0
+</select>
+
+<select id="queryById" resultType="com.human.customer.entity.CenterModel" parameterType="Long">
+	SELECT id,model_name modelName,sort sort,is_del isDel FROM customer_student_model WHERE  id=#{id,jdbcType=BIGINT} 
+</select>
+
+
+<insert id="add" parameterType="com.human.customer.entity.CenterModel">
+	INSERT INTO
+	customer_student_model(model_name,sort)
+	values(#{modelName,jdbcType=VARCHAR},#{sort,jdbcType=VARCHAR})
+</insert>
+
+<update id="delByIds"  parameterType="Long">
+	update customer_student_model set is_del=1 where id in
+	<foreach collection="array" item="id" index="index" open="("
+		separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>
+</update> 
+
+<update id="edit" parameterType="com.human.customer.entity.CenterModel">
+update customer_student_model  set model_name=#{modelName,jdbcType=VARCHAR} ,sort=#{sort,jdbcType=VARCHAR} where id=#{id,jdbcType=BIGINT}
+</update>
+
+<select id="getModels" resultType="com.human.customer.entity.CenterModel">
+	SELECT id,model_name modelName,sort sort,is_del isDel
+	FROM customer_student_model 
+	WHERE is_del=0 order by sort
+</select>
+</mapper>

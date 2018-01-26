@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.PositionProcessScoreItemDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.PositionProcessScoreItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+    <result column="position_process_id" property="positionProcessId" jdbcType="INTEGER" />
+    <result column="score_item" property="scoreItem" jdbcType="VARCHAR" />
+    <result column="item_value" property="itemValue" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, node_id, position_process_id, score_item, item_value
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from position_process_score_item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getScoreItemsByProcessId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from position_process_score_item
+    where position_process_id = #{positionProcessId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from position_process_score_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByProcessId" parameterType="java.lang.Integer" >
+    delete from position_process_score_item
+    where position_process_id = #{positionProcessId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.recruitment.entity.PositionProcessScoreItem" >
+    insert into position_process_score_item (node_id, position_process_id, score_item, item_value
+      )
+    values (#{nodeId,jdbcType=VARCHAR}, #{positionProcessId,jdbcType=INTEGER}, #{scoreItem,jdbcType=VARCHAR}, #{itemValue,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.PositionProcessScoreItem" >
+    update position_process_score_item
+    <set >
+      <if test="positionProcessId != null" >
+        position_process_id = #{positionProcessId,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeId != null" >
+        node_id = #{nodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="scoreItem != null" >
+        score_item = #{scoreItem,jdbcType=VARCHAR},
+      </if>
+      <if test="itemValue != null" >
+        item_value = #{itemValue,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insertScoreItems" parameterType="java.util.List">
+        insert into position_process_score_item(position_process_id,node_id,score_item,item_value) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.positionProcessId},#{item.nodeId},#{item.scoreItem},#{item.itemValue})
+        </foreach>
+  </insert>
+  
+  
+</mapper>

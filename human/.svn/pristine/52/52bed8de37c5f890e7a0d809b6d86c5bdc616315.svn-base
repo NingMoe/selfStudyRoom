@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.InterviewDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.InterviewEntity" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="resumeId" property="resumeId" jdbcType="INTEGER" />
+    <result column="hrCompanyId" property="hrCompanyId" jdbcType="VARCHAR" />
+    <result column="companyName" property="companyName" jdbcType="VARCHAR" />
+    <result column="deptId" property="deptId" jdbcType="VARCHAR" />
+    <result column="deptName" property="deptName" jdbcType="VARCHAR" />
+    <result column="positionId" property="positionId" jdbcType="VARCHAR" />
+    <result column="positionName" property="positionName" jdbcType="VARCHAR" />
+    <result column="circulationName" property="circulationName" jdbcType="VARCHAR" />
+    <result column="seekerName" property="seekerName" jdbcType="VARCHAR" />
+    <result column="interviewName" property="interviewName" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="interviewTime" property="interviewTime" jdbcType="VARCHAR" />
+    <result column="interviewLocation" property="interviewLocation" jdbcType="VARCHAR" />
+    <result column="flowCode" property="flowCode" jdbcType="VARCHAR" />
+    <result column="seeker_id" property="seekerId" jdbcType="VARCHAR" />
+    <result column="flowStatus" property="flowStatus" jdbcType="VARCHAR" />
+  </resultMap>
+  
+<!-- 分页查询安排面试 -->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		SELECT 
+		k.id,k.hrCompanyId,k.deptId,k.positionId,k.resumeId,k.companyName,k.deptName,k.positionName,k.circulationName,k.seekerName,k.telephone,
+		k.interviewTime,k.interviewLocation,k.flowCode,k.resume_seeker_id seeker_id ,k.flow_status AS flowStatus
+		FROM 
+		(
+		SELECT h.id,h.comid AS hrCompanyId ,h.dept AS deptId,hp.ID AS positionId ,h.resume_id AS resumeId ,m.company_name AS companyName,o.NAME AS deptName,hp.name AS positionName,
+		g.custom_node_name AS circulationName,b.name AS seekerName,b.telephone,
+		h.interview_time AS interviewTime ,h.interview_location AS interviewLocation ,h.flow_code AS flowCode,b.resume_seeker_id,b.flow_status 
+		FROM hr_resume_flow h		 
+		LEFT JOIN hr_company m ON h.comid=m.company_id 
+		LEFT JOIN hr_organization o ON h.dept=o.ID
+		LEFT JOIN position_process p ON h.position_process_id=p.ID
+		LEFT JOIN hr_position hp ON p.position_id=hp.ID
+		LEFT JOIN resume_base b ON h.resume_id=b.id
+		LEFT JOIN position_process_node_config g ON h.position_process_id=g.position_process_id AND h.current_node=g.node_id
+		LEFT JOIN act_ru_task t ON h.process_instance_id=t.PROC_INST_ID_ AND p.PROCESS_DEF=t.PROC_DEF_ID_ AND h.current_node=t.TASK_DEF_KEY_		
+		WHERE h.status=0 AND p.STATUS=0 AND b.flow_status IN (1,5) AND g.node_type=3
+		and h.comid IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT}) AND h.dept IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT})
+		)k
+		where 1=1
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND k.hrCompanyId=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND k.deptId=#{t.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.positionId != null and t.positionId !=''">
+			AND k.positionId=#{t.positionId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.circulationName != null and t.circulationName !=''">
+			AND k.circulationName like CONCAT(CONCAT('%', #{t.circulationName,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.seekerName != null and t.seekerName !=''">
+			AND k.seekerName like CONCAT(CONCAT('%', #{t.seekerName,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.telephone != null and t.telephone !=''">
+			AND k.telephone like  CONCAT(CONCAT('%', #{t.telephone,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.interviewTimeStart != null and t.interviewTimeStart !=''">
+			AND k.interviewTime >= #{t.interviewTimeStart,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.interviewTimeEnd != null and t.interviewTimeEnd !=''">
+			<![CDATA[AND k.interviewTime <= #{t.interviewTimeEnd,jdbcType=TIMESTAMP}]]> 
+		</if>
+		<if test="t.flowStatus == '1'.toString() ">
+			AND k.flow_status=1
+		</if>
+		<if test="t.flowStatus == '5'.toString() ">
+			AND k.flow_status =5
+		</if>		
+		GROUP BY k.id,k.hrCompanyId,k.deptId,k.positionId,k.resumeId,k.companyName,k.deptName,k.positionName,k.circulationName,k.seekerName,k.telephone,
+		k.interviewTime,k.interviewLocation,k.flowCode,k.resume_seeker_id ,k.flow_status				
+		order By k.id DESC
+	</select>
+	
+		
+	<!--安排面试导出本页 -->
+   <select id="exporThisPage" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+		SELECT 
+		k.id,k.hrCompanyId,k.deptId,k.positionId,k.resumeId,k.companyName,k.deptName,k.positionName,k.circulationName,k.seekerName,k.telephone,
+		k.interviewTime,k.interviewLocation
+		FROM 
+		(
+		SELECT h.id,h.comid AS hrCompanyId ,h.dept AS deptId,hp.ID AS positionId ,h.resume_id AS resumeId ,m.company_name AS companyName,o.NAME AS deptName,hp.name AS positionName,
+		g.custom_node_name AS circulationName,b.name AS seekerName,b.telephone,
+		h.interview_time AS interviewTime ,h.interview_location AS interviewLocation
+		FROM hr_resume_flow h
+		LEFT JOIN hr_company m ON h.comid=m.company_id 
+		LEFT JOIN hr_organization o ON h.dept=o.ID
+		LEFT JOIN position_process p ON h.position_process_id=p.ID
+		LEFT JOIN hr_position hp ON p.position_id=hp.ID
+		LEFT JOIN resume_base b ON h.resume_id=b.id
+		LEFT JOIN position_process_node_config g ON h.position_process_id=g.position_process_id AND h.current_node=g.node_id
+		LEFT JOIN act_ru_task t ON h.process_instance_id=t.PROC_INST_ID_ AND p.PROCESS_DEF=t.PROC_DEF_ID_ AND h.current_node=t.TASK_DEF_KEY_
+		WHERE h.status=0 AND p.STATUS=0 AND b.flow_status=1 AND g.node_type=3
+		and h.comid IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT}) AND h.dept IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT})
+		)k
+		where 1=1
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND k.hrCompanyId=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND k.deptId=#{t.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.positionId != null and t.positionId !=''">
+			AND k.positionId=#{t.positionId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.circulationName != null and t.circulationName !=''">
+			AND k.circulationName like CONCAT(CONCAT('%', #{t.circulationName,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.seekerName != null and t.seekerName !=''">
+			AND k.seekerName like CONCAT(CONCAT('%', #{t.seekerName,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.telephone != null and t.telephone !=''">
+			AND k.telephone like  CONCAT(CONCAT('%', #{t.telephone,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.interviewTimeStart != null and t.interviewTimeStart !=''">
+			AND k.interviewTime >= #{t.interviewTimeStart,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.interviewTimeEnd != null and t.interviewTimeEnd !=''">
+			<![CDATA[AND k.interviewTime <= #{t.interviewTimeEnd,jdbcType=TIMESTAMP}]]> 
+		</if>
+		GROUP BY k.id,k.hrCompanyId,k.deptId,k.positionId,k.resumeId,k.companyName,k.circulationName,k.positionName,k.circulationName,k.seekerName,k.telephone,
+		k.interviewTime,k.interviewLocation				
+		order By k.id DESC
+	</select>
+	
+	<!--导出选择的安排面试 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+		SELECT 
+		k.id,k.hrCompanyId,k.deptId,k.positionId,k.resumeId,k.companyName,k.deptName,k.positionName,k.circulationName,k.seekerName,k.telephone,
+		k.interviewTime,k.interviewLocation
+		FROM 
+		(
+		SELECT h.id,h.comid AS hrCompanyId ,h.dept AS deptId,hp.ID AS positionId ,h.resume_id AS resumeId ,m.company_name AS companyName,o.NAME AS deptName,hp.name AS positionName,
+		g.custom_node_name AS circulationName,b.name AS seekerName,b.telephone,
+		h.interview_time AS interviewTime ,h.interview_location AS interviewLocation
+		FROM hr_resume_flow h
+		LEFT JOIN hr_company m ON h.comid=m.company_id 
+		LEFT JOIN hr_organization o ON h.dept=o.ID
+		LEFT JOIN position_process p ON h.position_process_id=p.ID
+		LEFT JOIN hr_position hp ON p.position_id=hp.ID
+		LEFT JOIN resume_base b ON h.resume_id=b.id
+		LEFT JOIN position_process_node_config g ON h.position_process_id=g.position_process_id AND h.current_node=g.node_id
+		LEFT JOIN act_ru_task t ON h.process_instance_id=t.PROC_INST_ID_ AND p.PROCESS_DEF=t.PROC_DEF_ID_ AND h.current_node=t.TASK_DEF_KEY_
+		WHERE h.status=0 AND p.STATUS=0 AND b.flow_status=1 AND g.node_type=3
+		and h.comid IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT}) AND h.dept IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT})
+		)k
+		<if test="s != null">
+		WHERE k.id IN
+		<foreach collection="s" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+	    </foreach>
+	    </if>
+		GROUP BY k.id,k.hrCompanyId,k.deptId,k.positionId,k.resumeId,k.companyName,k.circulationName,k.positionName,k.circulationName,k.seekerName,k.telephone,
+		k.interviewTime,k.interviewLocation				
+		order By k.id DESC
+	</select>
+	
+   
+</mapper>

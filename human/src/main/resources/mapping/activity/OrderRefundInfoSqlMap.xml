@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.activity.dao.OrderRefundInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.activity.entity.OrderRefundInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_refund_no" property="orderRefundNo" jdbcType="VARCHAR" />
+    <result column="transaction_id" property="transactionId" jdbcType="VARCHAR" />
+    <result column="refund_id" property="refundId" jdbcType="VARCHAR" />
+    <result column="order_cost" property="orderCost" jdbcType="DECIMAL" />
+    <result column="refund_cost" property="refundCost" jdbcType="DECIMAL" />
+    <result column="refund_channel" property="refundChannel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="refund_desc" property="refundDesc" jdbcType="VARCHAR" />
+    <result column="result_code" property="resultCode" jdbcType="VARCHAR" />
+    <result column="result_desc" property="resultDesc" jdbcType="VARCHAR" />
+    <result column="refund_user" property="refundUser" jdbcType="VARCHAR" />
+    <result column="order_refund_state" property="orderRefundState" jdbcType="INTEGER" />
+    <result column="refund_recv_accout" property="refundRecvAccout" jdbcType="VARCHAR" />
+    <result column="refund_count" property="refundCount" jdbcType="INTEGER" />
+    <result column="sucesses_time" property="sucessesTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, order_no, order_refund_no, transaction_id, refund_id, order_cost, refund_cost, 
+    refund_channel, create_time, refund_desc, result_code, result_desc, refund_user, 
+    order_refund_state, refund_recv_accout, refund_count, sucesses_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_refund_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from order_refund_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.activity.entity.OrderRefundInfo" >
+    insert into order_refund_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="orderRefundNo != null" >
+        order_refund_no,
+      </if>
+      <if test="transactionId != null" >
+        transaction_id,
+      </if>
+      <if test="refundId != null" >
+        refund_id,
+      </if>
+      <if test="orderCost != null" >
+        order_cost,
+      </if>
+      <if test="refundCost != null" >
+        refund_cost,
+      </if>
+      <if test="refundChannel != null" >
+        refund_channel,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="refundDesc != null" >
+        refund_desc,
+      </if>
+      <if test="resultCode != null" >
+        result_code,
+      </if>
+      <if test="resultDesc != null" >
+        result_desc,
+      </if>
+      <if test="refundUser != null" >
+        refund_user,
+      </if>
+      <if test="orderRefundState != null" >
+        order_refund_state,
+      </if>
+      <if test="refundRecvAccout != null" >
+        refund_recv_accout,
+      </if>
+      <if test="refundCount != null" >
+        refund_count,
+      </if>
+      <if test="sucessesTime != null" >
+        sucesses_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRefundNo != null" >
+        #{orderRefundNo,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null" >
+        #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="refundId != null" >
+        #{refundId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCost != null" >
+        #{orderCost,jdbcType=DECIMAL},
+      </if>
+      <if test="refundCost != null" >
+        #{refundCost,jdbcType=DECIMAL},
+      </if>
+      <if test="refundChannel != null" >
+        #{refundChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundDesc != null" >
+        #{refundDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="resultCode != null" >
+        #{resultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="resultDesc != null" >
+        #{resultDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="refundUser != null" >
+        #{refundUser,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRefundState != null" >
+        #{orderRefundState,jdbcType=INTEGER},
+      </if>
+      <if test="refundRecvAccout != null" >
+        #{refundRecvAccout,jdbcType=VARCHAR},
+      </if>
+      <if test="refundCount != null" >
+        #{refundCount,jdbcType=INTEGER},
+      </if>
+      <if test="sucessesTime != null" >
+        #{sucessesTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.activity.entity.OrderRefundInfo" >
+    update order_refund_info
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRefundNo != null" >
+        order_refund_no = #{orderRefundNo,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null" >
+        transaction_id = #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="refundId != null" >
+        refund_id = #{refundId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCost != null" >
+        order_cost = #{orderCost,jdbcType=DECIMAL},
+      </if>
+      <if test="refundCost != null" >
+        refund_cost = #{refundCost,jdbcType=DECIMAL},
+      </if>
+      <if test="refundChannel != null" >
+        refund_channel = #{refundChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundDesc != null" >
+        refund_desc = #{refundDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="resultCode != null" >
+        result_code = #{resultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="resultDesc != null" >
+        result_desc = #{resultDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="refundUser != null" >
+        refund_user = #{refundUser,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRefundState != null" >
+        order_refund_state = #{orderRefundState,jdbcType=INTEGER},
+      </if>
+      <if test="refundRecvAccout != null" >
+        refund_recv_accout = #{refundRecvAccout,jdbcType=VARCHAR},
+      </if>
+      <if test="refundCount != null" >
+        refund_count = #{refundCount,jdbcType=INTEGER},
+      </if>
+      <if test="sucessesTime != null" >
+        sucesses_time = #{sucessesTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+<!-- 通过商户退款单号查询退款信息 -->
+   <select id="selectByOrderRefundNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_refund_info
+    where order_refund_no = #{orderRefundNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!--查询所有处于退款中的退款信息 -->
+   <select id="getOrderRefundList" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_refund_info
+    where order_refund_state=1
+  </select>
+  
+  <!-- 通过商户订单号查询退款信息 -->
+   <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_refund_info
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

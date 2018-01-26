@@ -1,0 +1,28 @@
+.ztree li span.button.add {
+	margin-left: 2px;
+	margin-right: -1px;
+	background-position: -144px 0;
+	vertical-align: top;
+	*vertical-align: middle
+}
+
+table {
+	white-space: nowrap;
+	margin: 0 auto;
+	width: 80%;
+	display: none;
+	margin-top: 20px;
+	color: #1AA094;
+	font-weight: bold;
+}
+
+table td:nth-child(even) {
+	border: 1px solid #1AA094;
+	text-align: left;
+	width: 70%;
+}
+table td:nth-child(odd) {
+	border: 1px solid #1AA094;
+	width: 30%;
+	text-align: center;
+}

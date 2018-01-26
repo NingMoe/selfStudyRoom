@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsTeacherInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsTeacherInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="teacher_name" property="teacher_name" jdbcType="VARCHAR" />
+    <result column="teacher_mail" property="teacher_mail" jdbcType="VARCHAR" />
+    <result column="email_addr" property="email_addr" jdbcType="VARCHAR" />
+    <result column="empl_id" property="empl_id" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, teacher_name, teacher_mail, email_addr, empl_id
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ielts_teacher_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 分页获取教师信息 -->
+  <select id="queryteacher"  resultType="com.human.ielts.entity.IeltsTeacherInfo" parameterType="java.util.HashMap" >
+  	select id, teacher_name, teacher_mail, email_addr, empl_id from ielts_teacher_info
+  	where 1 = 1
+  	<if test="t.teacher_name != null and t.teacher_name != ''">
+  		and teacher_name like CONCAT(CONCAT('%', #{t.teacher_name,jdbcType=VARCHAR}, '%'))
+  	</if>
+  	<if test="t.teacher_mail != null and t.teacher_mail != ''">
+  		and teacher_mail like CONCAT(CONCAT('%', #{t.teacher_mail,jdbcType=VARCHAR}, '%'))
+  	</if>
+  </select>
+  
+  <!-- 通过学员id获取教师信息 -->
+  <select id="selectByStudentId" resultType="com.human.ielts.entity.IeltsTeacherInfo" parameterType="java.lang.Integer">
+  	select * from ielts_teacher_info t
+  	right join ielts_student_teacher s on s.email_addr = t.email_addr
+  	where s.student_id = #{student_id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 分页获取教师积分信息 -->
+  <select id="query"  resultType="com.human.ielts.entity.IeltsTeacherInfo" parameterType="java.util.HashMap" >
+  	SELECT t.*, tt1.tkt_scoreone, tt2.tkt_scoretwo, tt3.tkt_scorethree, tt4.tkt_scorefour, tso.ielts_source, tce.is_teacher_certificate, tce.is_celta, tat.abb_num, tat.duty_num,
+	tar.article_num, tsh.share_num, top.operate_num, tco.complaint_num
+	FROM ielts_teacher_info t
+	LEFT JOIN 
+	(
+	SELECT teacher_id, MAX(tkt_scoreone) tkt_scoreone FROM  ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt1
+	ON t.id = tt1.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scoretwo) tkt_scoretwo FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt2
+	ON t.id = tt2.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scorethree) tkt_scorethree FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt3
+	ON t.id = tt3.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scorefour) tkt_scorefour FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt4
+	ON t.id = tt4.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(ielts_source) ielts_source FROM ielts_teacher_source
+	WHERE date_add(time_valid, interval -2 year) &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP} and time_valid &gt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	)tso
+	ON t.id = tso.teacher_id	
+	LEFT JOIN ielts_teacher_certificate tce
+	ON t.id = tce.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(abb_num) abb_num, SUM(duty_num) duty_num
+	FROM ielts_teacher_attendance
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tat
+	ON t.id = tat.teacher_id
+	LEFT JOIN 
+	(
+	SELECT teacher_id, SUM(article_num) article_num
+	FROM ielts_teacher_article
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tar
+	ON t.id = tar.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(share_num) share_num
+	FROM ielts_teacher_share
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tsh
+	ON t.id = tsh.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(operate_num) operate_num
+	FROM ielts_teacher_operate
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) top
+	ON t.id = top.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(complaint_num) complaint_num
+	FROM ielts_teacher_complaint
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tco
+	ON t.id = tco.teacher_id
+  	where 1 = 1
+  	<if test="t.teacher_name != null and t.teacher_name != ''">
+  	and t.teacher_name like CONCAT(CONCAT('%', #{t.teacher_name,jdbcType=VARCHAR}, '%'))
+  	</if>
+  	<if test="t.teacher_mail != null and t.teacher_mail != ''">
+  	and t.teacher_mail like CONCAT(CONCAT('%', #{t.teacher_mail,jdbcType=VARCHAR}, '%'))
+  	</if>
+  </select>
+  
+  <!-- 通过email_addr，邮箱前缀获取教师信息 -->
+  <select id="seleByEmailAddr" resultType="com.human.ielts.entity.IeltsTeacherInfo" parameterType="java.lang.String">
+  	select * from ielts_teacher_info
+  	where email_addr = #{email_addr,jdbcType=VARCHAR}
+  </select>
+  
+    <select id="selectByTeacherId" resultType="com.human.ielts.entity.IeltsTeacherInfo" parameterType="java.util.HashMap">
+  	SELECT t.*, tt1.tkt_scoreone, tt2.tkt_scoretwo, tt3.tkt_scorethree, tt4.tkt_scorefour, tso.ielts_source, tce.is_teacher_certificate, tce.is_celta, tat.abb_num, tat.duty_num,
+	tar.article_num, tsh.share_num, top.operate_num, tco.complaint_num
+	FROM ielts_teacher_info t
+	LEFT JOIN 
+	(
+	SELECT teacher_id, MAX(tkt_scoreone) tkt_scoreone FROM  ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt1
+	ON t.id = tt1.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scoretwo) tkt_scoretwo FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt2
+	ON t.id = tt2.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scorethree) tkt_scorethree FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt3
+	ON t.id = tt3.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scorefour) tkt_scorefour FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt4
+	ON t.id = tt4.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(ielts_source) ielts_source FROM ielts_teacher_source
+	WHERE date_add(time_valid, interval -2 year) &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP} and time_valid &gt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	)tso
+	ON t.id = tso.teacher_id	
+	LEFT JOIN ielts_teacher_certificate tce
+	ON t.id = tce.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(abb_num) abb_num, SUM(duty_num) duty_num
+	FROM ielts_teacher_attendance
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tat
+	ON t.id = tat.teacher_id
+	LEFT JOIN 
+	(
+	SELECT teacher_id, SUM(article_num) article_num
+	FROM ielts_teacher_article
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tar
+	ON t.id = tar.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(share_num) share_num
+	FROM ielts_teacher_share
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tsh
+	ON t.id = tsh.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(operate_num) operate_num
+	FROM ielts_teacher_operate
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) top
+	ON t.id = top.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, SUM(complaint_num) complaint_num
+	FROM ielts_teacher_complaint
+	WHERE create_time &gt;= #{t.left_integral_time,jdbcType=TIMESTAMP} AND create_time &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	) tco
+	ON t.id = tco.teacher_id
+  	where t.id = #{t.id,jdbcType=INTEGER}
+  	<if test="t.teacher_name != null and t.teacher_name != ''">
+  		and t.teacher_name like CONCAT(CONCAT('%', #{t.teacher_name,jdbcType=VARCHAR}, '%'))
+  	</if>
+  	<if test="t.teacher_mail != null and t.teacher_mail != ''">
+  		and t.teacher_mail like CONCAT(CONCAT('%', #{t.teacher_mail,jdbcType=VARCHAR}, '%'))
+  	</if>
+  </select>
+  
+  <select id="selectTeacherCount" resultType="java.lang.Integer">
+  	select count(1) from ielts_teacher_info
+  </select>
+  
+      <!-- 获取教师积分 -->
+  <select id="selectselectallteacherintegral"  resultType="com.human.ielts.entity.IeltsTeacherInfo" parameterType="java.util.HashMap" >
+  	SELECT t.*, tt1.tkt_scoreone, tt2.tkt_scoretwo, tt3.tkt_scorethree, tt4.tkt_scorefour, tso.ielts_source, tce.is_teacher_certificate, tce.is_celta
+	FROM ielts_teacher_info t
+	LEFT JOIN 
+	(
+	SELECT teacher_id, MAX(tkt_scoreone) tkt_scoreone FROM  ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt1
+	ON t.id = tt1.teacher_id
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scoretwo) tkt_scoretwo FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt2
+	ON t.id = tt2.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scorethree) tkt_scorethree FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt3
+	ON t.id = tt3.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(tkt_scorefour) tkt_scorefour FROM ielts_teacher_tkt
+	GROUP BY teacher_id
+	) tt4
+	ON t.id = tt4.teacher_id	
+	LEFT JOIN
+	(
+	SELECT teacher_id, MAX(ielts_source) ielts_source FROM ielts_teacher_source
+	WHERE date_add(time_valid, interval -2 year) &lt;= #{t.right_integral_time,jdbcType=TIMESTAMP} and time_valid &gt;= #{t.right_integral_time,jdbcType=TIMESTAMP}
+	GROUP BY teacher_id
+	)tso
+	ON t.id = tso.teacher_id	
+	LEFT JOIN ielts_teacher_certificate tce
+	ON t.id = tce.teacher_id
+  </select>
+  
+  <select id="selectAllTeacherInfo" resultType="com.human.ielts.entity.IeltsTeacherInfo">
+  	select * from ielts_teacher_info
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_teacher_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsTeacherInfo" >
+    insert into ielts_teacher_info (id, teacher_name, teacher_mail, 
+      email_addr, empl_id)
+    values (#{id,jdbcType=INTEGER}, #{teacher_name,jdbcType=VARCHAR}, #{teacher_mail,jdbcType=VARCHAR}, 
+      #{email_addr,jdbcType=VARCHAR}, #{empl_id,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.ielts.entity.IeltsTeacherInfo" >
+    insert into ielts_teacher_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="teacher_name != null" >
+        teacher_name,
+      </if>
+      <if test="teacher_mail != null" >
+        teacher_mail,
+      </if>
+      <if test="email_addr != null" >
+        email_addr,
+      </if>
+      <if test="empl_id != null" >
+        empl_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="teacher_name != null" >
+        #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_mail != null" >
+        #{teacher_mail,jdbcType=VARCHAR},
+      </if>
+      <if test="email_addr != null" >
+        #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="empl_id != null" >
+        #{empl_id,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsTeacherInfo" >
+    update ielts_teacher_info
+    <set >
+      <if test="teacher_name != null" >
+        teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_mail != null" >
+        teacher_mail = #{teacher_mail,jdbcType=VARCHAR},
+      </if>
+      <if test="email_addr != null" >
+        email_addr = #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="empl_id != null" >
+        empl_id = #{empl_id,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.ielts.entity.IeltsTeacherInfo" >
+    update ielts_teacher_info
+    set teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      teacher_mail = #{teacher_mail,jdbcType=VARCHAR},
+      email_addr = #{email_addr,jdbcType=VARCHAR},
+      empl_id = #{empl_id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

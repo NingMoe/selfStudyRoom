@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsStudentTeacherDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsStudentTeacher" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="INTEGER" />
+    <result column="teacher_id" property="teacher_id" jdbcType="INTEGER" />
+    <result column="email_addr" property="email_addr" jdbcType="VARCHAR" />
+    <result column="vaild" property="vaild" jdbcType="INTEGER" />
+    <result column="student_name" property="student_name" jdbcType="VARCHAR" />
+    <collection property="ielts_enroll_info_list" ofType="com.human.ielts.entity.IeltsEnrollInfo">
+    	<id column="enroll_id" property="id" jdbcType="INTEGER" />
+    	<result column="total" property="total" jdbcType="DOUBLE" />
+	    <result column="listening" property="listening" jdbcType="DOUBLE" />
+	    <result column="reading" property="reading" jdbcType="DOUBLE" />
+	    <result column="writing" property="writing" jdbcType="DOUBLE" />
+	    <result column="oral" property="oral" jdbcType="DOUBLE" />
+	    <result column="is_target" property="is_target" jdbcType="INTEGER" />
+	    <result column="test_time" property="test_time" jdbcType="TIMESTAMP" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, teacher_id, email_addr, vaild
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ielts_student_teacher
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 通过教师id获取学员成绩回收率 -->
+  <select id="selectByTeacherId" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	SELECT t.*, i.student_name, ei.id as enroll_id, ei.total, ei.listening,
+  	ei.reading, ei.writing , ei.oral, ei.is_target, ei.test_time
+	FROM ielts_student_teacher t
+	LEFT JOIN ielts_student_info i ON t.student_id = i.id
+	LEFT JOIN ielts_enroll_info ei ON i.id = ei.student_id 
+	AND ei.test_time &gt;= #{left_integral_time,jdbcType=TIMESTAMP}
+	AND ei.test_time &lt;= #{right_integral_time,jdbcType=TIMESTAMP}
+	WHERE t.email_addr = #{email_addr,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 通过学员id删除教师关联 -->
+  <delete id="deleteByStudentId" parameterType="java.lang.Integer">
+  	delete from ielts_student_teacher
+    where student_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 通过教师id删除教师关联 -->
+  <delete id="deleteByTeacherEmailaddr" parameterType="java.lang.String">
+  	delete from ielts_student_teacher
+    where email_addr = #{email_addr,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_student_teacher
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsStudentTeacher" >
+    insert into ielts_student_teacher (id, student_id, teacher_id, email_addr, 
+      vaild)
+    values (#{id,jdbcType=INTEGER}, #{student_id,jdbcType=INTEGER}, #{teacher_id,jdbcType=INTEGER}, #{email_addr,jdbcType=VARCHAR}, 
+      #{vaild,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.ielts.entity.IeltsStudentTeacher" >
+    insert into ielts_student_teacher
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="teacher_id != null" >
+        teacher_id,
+      </if>
+      <if test="email_addr != null" >
+        email_addr,
+      </if>
+      <if test="vaild != null" >
+        vaild,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="teacher_id != null" >
+        #{teacher_id,jdbcType=INTEGER},
+      </if>
+      <if test="email_addr != null" >
+        #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="vaild != null" >
+        #{vaild,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsStudentTeacher" >
+    update ielts_student_teacher
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="teacher_id != null" >
+        teacher_id = #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="email_addr != null" >
+        email_addr = #{email_addr,jdbcType=VARCHAR},
+      </if>
+      <if test="vaild != null" >
+        vaild = #{vaild,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.human.ielts.entity.IeltsStudentTeacher" >
+    update ielts_student_teacher
+    set student_id = #{student_id,jdbcType=INTEGER},
+    	teacher_id = #{student_id,jdbcType=INTEGER},
+      email_addr = #{email_addr,jdbcType=VARCHAR},
+      vaild = #{vaild,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

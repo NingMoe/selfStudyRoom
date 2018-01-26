@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jw.dao.JwJyzUserDao" >
+  <resultMap id="BaseResultMap" type="com.human.jw.entity.JwJyzUser" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="JYZ" property="jyz" jdbcType="VARCHAR" />
+    <result column="DEPT" property="dept" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, EMAIL, NAME, JYZ,DEPT
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jw_jyz_user
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByEmail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from jw_jyz_user
+    where email = #{email,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jw_jyz_user
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.jw.entity.JwJyzUser" >
+    insert into jw_jyz_user (ID, EMAIL, NAME, 
+      JYZ,DEPT)
+    values (#{id,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{jyz,jdbcType=VARCHAR}, #{dept,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jw.entity.JwJyzUser" >
+    update jw_jyz_user
+    <set >
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="jyz != null" >
+        JYZ = #{jyz,jdbcType=VARCHAR},
+      </if>
+       <if test="dept != null" >
+        DEPT = #{dept,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectJyzPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select * from jw_jyz_user o 
+    where 1=1
+		<if test="t.name != null and t.name !=''">
+			and o.NAME like CONCAT('%',#{t.name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="t.jyz != null and t.jyz !=''">
+			and o.JYZ = #{t.jyz,jdbcType=VARCHAR}
+		</if>
+  </select>
+  
+</mapper>

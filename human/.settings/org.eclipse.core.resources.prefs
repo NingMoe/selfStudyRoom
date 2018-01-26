@@ -1,0 +1,15 @@
+=\=\=\=\=\=\=
+<<<<<<<=.mine
+>>>>>>>=.r196
+eclipse.preferences.version=1
+encoding//src/main/resources/properties/jdbc.properties=UTF-8
+encoding//src/main/resources/properties/quartz.properties=UTF-8
+encoding//src/main/webapp/WEB-INF/view/activity/frontWeixin/index1.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/view/common/bootstrapTable.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/view/common/taglib.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/view/framework/login.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/view/framework/main.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/view/manager/user/add.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/view/xdfStudent/wechat/index.jsp=UTF-8
+encoding//src/test/java=UTF-8
+encoding/<project>=UTF-8

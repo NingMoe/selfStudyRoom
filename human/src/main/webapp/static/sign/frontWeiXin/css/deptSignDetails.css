@@ -1,0 +1,114 @@
+input::-webkit-input-placeholder { /* WebKit browsers */ text-align: left;color:#ccc; font-size: .14rem;line-height:.28rem; } 
+input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */ text-align:  left;color:#ccc;font-size: .14rem;line-height:.28rem;  } 
+input:-ms-input-placeholder { /* Internet Explorer 10 */ text-align: left;color:#ccc; font-size: .14rem;line-height:.28rem; } 
+input::placeholder { text-align: left; color:ccc; font-size: .14rem;line-height:.28rem;} 
+.title{
+	background: linear-gradient(#FB7F5B,#FC6655);
+	height: 2.2rem;
+	padding-top: .4rem;
+	font-size: .20rem;
+	color: white;
+}
+.title p{
+	height: .4rem;
+	line-height: .4rem;
+	text-align: center;
+	display:block;
+	width:70%;
+	text-align:center;
+	margin:0  auto;
+	height: auto;
+}
+.title >div{
+	position: relative;
+	margin: 0  auto;
+	width: 91%;
+	margin-top: .1rem;
+	color:#D7D7D7;
+}
+.title input{
+	font-weight: 400;
+	width: 77%;
+	border-radius: .04rem;
+	height: .36rem;
+	margin: 0  auto;
+	color: #D7D7D7;
+	font-size: 0.2rem;
+	vertical-align: middle;
+}
+.title button{
+	background: white;
+	height: .36rem;
+	width: 20%;
+	border-radius: 0.04rem;
+	position: relative;
+	vertical-align: middle;
+    color: #FC6655;
+    text-align: center;
+    border: 1px  solid white;
+}
+.title i{
+	right:.2rem;
+	top:.04rem;
+}
+input[placeholder]{
+   color:#D7D7D7 !important;
+}
+.list1{
+	margin-top: .1rem;
+}
+.list1 li{
+  padding: 0  0.16rem;
+}
+.border{
+	padding-bottom: .1rem;
+	/*border-bottom: 1px solid #ccc;*/
+}
+.list1 li:last-child .border{
+	border-bottom: 1px solid   rgba(6,6,6,0.1);
+}
+.list1  .list1Left{
+	float: left;
+   width: 60%;
+}
+.list1Left p{
+	/*padding-left: 0.16rem;*/
+	font-size:0.16rem;
+	height: 0.2rem;
+	line-height: 0.2rem;
+}
+.list1  button{
+   float: right;
+   color:white ;
+   width: 22%;
+   background: #FC6655;
+   height: 0.36rem;
+   border-radius: .04rem;
+   font-size: 0.16rem;
+   text-align: center;
+}
+.content2{
+ background: white;
+ padding-bottom:0.2rem;
+ color: #ccc;;
+ min-height: 3rem;	
+ font-size: 0.15rem
+}
+.content2 li{
+	font-size: 0.16rem;
+	padding: 0  0.16rem;
+}
+.content2 .border{
+	font-size: 0.16rem;
+	padding: 0.12rem 0;
+	border: none;
+}
+.content2 .border>p{
+	font-size: 0.16rem;
+	color: #ccc;
+}
+.list2Right p{
+	font-size: 0.14rem;
+	text-align: right;
+	color: #ccc;
+}

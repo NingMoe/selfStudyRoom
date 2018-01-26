@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.activity.dao.ProductDao" >
+   <resultMap id="BaseResultMap" type="com.human.activity.entity.Product" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="total" property="total" jdbcType="BIGINT" />
+    <result column="sale_total" property="saleTotal" jdbcType="BIGINT" />
+    <result column="activtiy_id" property="activtiyId" jdbcType="BIGINT" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name, price, total, sale_total, activtiy_id, is_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from product
+    where id = #{id,jdbcType=BIGINT} and is_valid=1
+  </select>
+
+
+ <insert id="insertSelective" parameterType="com.human.activity.entity.Product" >
+    insert into product
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="total != null" >
+        total,
+      </if>
+      <if test="saleTotal != null" >
+        sale_total,
+      </if>
+      <if test="activtiyId != null" >
+        activtiy_id,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="total != null" >
+        #{total,jdbcType=BIGINT},
+      </if>
+      <if test="saleTotal != null" >
+        #{saleTotal,jdbcType=BIGINT},
+      </if>
+      <if test="activtiyId != null" >
+        #{activtiyId,jdbcType=BIGINT},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.activity.entity.Product" >
+    update product
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="total != null" >
+        total = #{total,jdbcType=BIGINT},
+      </if>
+      <if test="saleTotal != null" >
+        sale_total = #{saleTotal,jdbcType=BIGINT},
+      </if>
+      <if test="activtiyId != null" >
+        activtiy_id = #{activtiyId,jdbcType=BIGINT},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!--通过活动Id查询商品 -->
+  <select id="selectByActivtiyId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT id, NAME, CAST(price AS DECIMAL(10,0)) AS price,
+    total, sale_total, 
+    activtiy_id
+    FROM product    
+    WHERE  activtiy_id = #{activtiyId,jdbcType=BIGINT} AND is_valid=1
+  </select>
+
+
+</mapper>

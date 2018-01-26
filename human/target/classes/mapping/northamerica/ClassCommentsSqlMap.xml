@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.examineelist.dao.ClassCommentsDao" >
+  <resultMap id="BaseResultMap" type="com.human.examineelist.entity.ClassComments" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="pretk_comments" property="pretkComments" jdbcType="VARCHAR" />
+    <result column="pred_comments" property="predComments" jdbcType="VARCHAR" />
+    <result column="preyf_comments" property="preyfComments" jdbcType="VARCHAR" />
+    <result column="basl_comments" property="baslComments" jdbcType="VARCHAR" />
+    <result column="bass_comments" property="bassComments" jdbcType="VARCHAR" />
+    <result column="basr_comments" property="basrComments" jdbcType="VARCHAR" />
+    <result column="basw_comments" property="baswComments" jdbcType="VARCHAR" />
+    <result column="strl_comments" property="strlComments" jdbcType="VARCHAR" />
+    <result column="strs_comments" property="strsComments" jdbcType="VARCHAR" />
+    <result column="strr_comments" property="strrComments" jdbcType="VARCHAR" />
+    <result column="strw_comments" property="strwComments" jdbcType="VARCHAR" />
+    <result column="dasl_comments" property="daslComments" jdbcType="VARCHAR" />
+    <result column="dass_comments" property="dassComments" jdbcType="VARCHAR" />
+    <result column="dasr_comments" property="dasrComments" jdbcType="VARCHAR" />
+    <result column="dasw_comments" property="daswComments" jdbcType="VARCHAR" />
+    <result column="pre_starttime" property="preStarttime" jdbcType="VARCHAR" />
+    <result column="pre_endtime" property="preEndtime" jdbcType="VARCHAR" />
+    <result column="bas_starttime" property="basStarttime" jdbcType="VARCHAR" />
+    <result column="bas_endtime" property="basEndtime" jdbcType="VARCHAR" />
+    <result column="str_starttime" property="strStarttime" jdbcType="VARCHAR" />
+    <result column="str_endtime" property="strEndtime" jdbcType="VARCHAR" />
+    <result column="das_starttime" property="dasStarttime" jdbcType="VARCHAR" />
+    <result column="das_endtime" property="dasEndtime" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="stage" property="stage" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pretk_comments, pred_comments, preyf_comments, basl_comments, bass_comments, 
+    basr_comments, basw_comments, strl_comments, strs_comments, strr_comments, strw_comments, 
+    dasl_comments, dass_comments, dasr_comments, dasw_comments, pre_starttime, pre_endtime, 
+    bas_starttime, bas_endtime, str_starttime, str_endtime, das_starttime, das_endtime, 
+    code,stage,type,name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from class_comments
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from class_comments
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+<!--   根据学生编号查询数据 -->
+  <select id="queryforcode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from class_comments
+    where code = #{code,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="queryforcode2" resultType="java.util.HashMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from class_comments
+    where code = #{code,jdbcType=VARCHAR}
+  </select>
+  
+<!--   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" > -->
+<!--     delete from class_comments -->
+<!--     where id = #{id,jdbcType=BIGINT} -->
+<!--   </delete> -->
+  
+  <insert id="insert" parameterType="com.human.examineelist.entity.ClassComments"> 
+  insert into class_comments (
+  id, pretk_comments, pred_comments, preyf_comments, basl_comments, bass_comments, 
+  basr_comments, basw_comments, strl_comments, strs_comments, strr_comments, strw_comments,
+   dasl_comments, dass_comments, dasr_comments, dasw_comments, pre_starttime, pre_endtime, bas_starttime,
+    bas_endtime, str_starttime, str_endtime, das_starttime, das_endtime, code,stage,type,name) values (
+  #{id,jdbcType=BIGINT}, #{pretkComments,jdbcType=VARCHAR}, #{predComments,jdbcType=VARCHAR}, 
+  #{preyfComments,jdbcType=VARCHAR}, #{baslComments,jdbcType=VARCHAR}, #{bassComments,jdbcType=VARCHAR},
+   #{basrComments,jdbcType=VARCHAR}, #{baswComments,jdbcType=VARCHAR}, #{strlComments,jdbcType=VARCHAR}, 
+   #{strsComments,jdbcType=VARCHAR}, #{strrComments,jdbcType=VARCHAR}, #{strwComments,jdbcType=VARCHAR}, 
+   #{daslComments,jdbcType=VARCHAR}, #{dassComments,jdbcType=VARCHAR}, #{dasrComments,jdbcType=VARCHAR}, 
+   #{daswComments,jdbcType=VARCHAR}, #{preStarttime,jdbcType=VARCHAR}, #{preEndtime,jdbcType=VARCHAR}, 
+   #{basStarttime,jdbcType=VARCHAR}, #{basEndtime,jdbcType=VARCHAR}, #{strStarttime,jdbcType=VARCHAR}, 
+   #{strEndtime,jdbcType=VARCHAR}, #{dasStarttime,jdbcType=VARCHAR}, #{dasEndtime,jdbcType=VARCHAR},
+    #{code,jdbcType=VARCHAR},#{stage,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}) </insert>
+  <insert id="insertSelective" parameterType="com.human.examineelist.entity.ClassComments" >
+    insert into class_comments
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pretkComments != null" >
+        pretk_comments,
+      </if>
+      <if test="predComments != null" >
+        pred_comments,
+      </if>
+      <if test="preyfComments != null" >
+        preyf_comments,
+      </if>
+      <if test="baslComments != null" >
+        basl_comments,
+      </if>
+      <if test="bassComments != null" >
+        bass_comments,
+      </if>
+      <if test="basrComments != null" >
+        basr_comments,
+      </if>
+      <if test="baswComments != null" >
+        basw_comments,
+      </if>
+      <if test="strlComments != null" >
+        strl_comments,
+      </if>
+      <if test="strsComments != null" >
+        strs_comments,
+      </if>
+      <if test="strrComments != null" >
+        strr_comments,
+      </if>
+      <if test="strwComments != null" >
+        strw_comments,
+      </if>
+      <if test="daslComments != null" >
+        dasl_comments,
+      </if>
+      <if test="dassComments != null" >
+        dass_comments,
+      </if>
+      <if test="dasrComments != null" >
+        dasr_comments,
+      </if>
+      <if test="daswComments != null" >
+        dasw_comments,
+      </if>
+      <if test="preStarttime != null" >
+        pre_starttime,
+      </if>
+      <if test="preEndtime != null" >
+        pre_endtime,
+      </if>
+      <if test="basStarttime != null" >
+        bas_starttime,
+      </if>
+      <if test="basEndtime != null" >
+        bas_endtime,
+      </if>
+      <if test="strStarttime != null" >
+        str_starttime,
+      </if>
+      <if test="strEndtime != null" >
+        str_endtime,
+      </if>
+      <if test="dasStarttime != null" >
+        das_starttime,
+      </if>
+      <if test="dasEndtime != null" >
+        das_endtime,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="stage != null" >
+        stage,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="pretkComments != null" >
+        #{pretkComments,jdbcType=VARCHAR},
+      </if>
+      <if test="predComments != null" >
+        #{predComments,jdbcType=VARCHAR},
+      </if>
+      <if test="preyfComments != null" >
+        #{preyfComments,jdbcType=VARCHAR},
+      </if>
+      <if test="baslComments != null" >
+        #{baslComments,jdbcType=VARCHAR},
+      </if>
+      <if test="bassComments != null" >
+        #{bassComments,jdbcType=VARCHAR},
+      </if>
+      <if test="basrComments != null" >
+        #{basrComments,jdbcType=VARCHAR},
+      </if>
+      <if test="baswComments != null" >
+        #{baswComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strlComments != null" >
+        #{strlComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strsComments != null" >
+        #{strsComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strrComments != null" >
+        #{strrComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strwComments != null" >
+        #{strwComments,jdbcType=VARCHAR},
+      </if>
+      <if test="daslComments != null" >
+        #{daslComments,jdbcType=VARCHAR},
+      </if>
+      <if test="dassComments != null" >
+        #{dassComments,jdbcType=VARCHAR},
+      </if>
+      <if test="dasrComments != null" >
+        #{dasrComments,jdbcType=VARCHAR},
+      </if>
+      <if test="daswComments != null" >
+        #{daswComments,jdbcType=VARCHAR},
+      </if>
+      <if test="preStarttime != null" >
+        #{preStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="preEndtime != null" >
+        #{preEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="basStarttime != null" >
+        #{basStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="basEndtime != null" >
+        #{basEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="strStarttime != null" >
+        #{strStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="strEndtime != null" >
+        #{strEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="dasStarttime != null" >
+        #{dasStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="dasEndtime != null" >
+        #{dasEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="stage != null" >
+        #{stage,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.examineelist.entity.ClassComments" >
+    update class_comments
+    <set >
+      <if test="pretkComments != null" >
+        pretk_comments = #{pretkComments,jdbcType=VARCHAR},
+      </if>
+      <if test="predComments != null" >
+        pred_comments = #{predComments,jdbcType=VARCHAR},
+      </if>
+      <if test="preyfComments != null" >
+        preyf_comments = #{preyfComments,jdbcType=VARCHAR},
+      </if>
+      <if test="baslComments != null" >
+        basl_comments = #{baslComments,jdbcType=VARCHAR},
+      </if>
+      <if test="bassComments != null" >
+        bass_comments = #{bassComments,jdbcType=VARCHAR},
+      </if>
+      <if test="basrComments != null" >
+        basr_comments = #{basrComments,jdbcType=VARCHAR},
+      </if>
+      <if test="baswComments != null" >
+        basw_comments = #{baswComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strlComments != null" >
+        strl_comments = #{strlComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strsComments != null" >
+        strs_comments = #{strsComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strrComments != null" >
+        strr_comments = #{strrComments,jdbcType=VARCHAR},
+      </if>
+      <if test="strwComments != null" >
+        strw_comments = #{strwComments,jdbcType=VARCHAR},
+      </if>
+      <if test="daslComments != null" >
+        dasl_comments = #{daslComments,jdbcType=VARCHAR},
+      </if>
+      <if test="dassComments != null" >
+        dass_comments = #{dassComments,jdbcType=VARCHAR},
+      </if>
+      <if test="dasrComments != null" >
+        dasr_comments = #{dasrComments,jdbcType=VARCHAR},
+      </if>
+      <if test="daswComments != null" >
+        dasw_comments = #{daswComments,jdbcType=VARCHAR},
+      </if>
+      <if test="preStarttime != null" >
+        pre_starttime = #{preStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="preEndtime != null" >
+        pre_endtime = #{preEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="basStarttime != null" >
+        bas_starttime = #{basStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="basEndtime != null" >
+        bas_endtime = #{basEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="strStarttime != null" >
+        str_starttime = #{strStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="strEndtime != null" >
+        str_endtime = #{strEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="dasStarttime != null" >
+        das_starttime = #{dasStarttime,jdbcType=VARCHAR},
+      </if>
+      <if test="dasEndtime != null" >
+        das_endtime = #{dasEndtime,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="stage != null" >
+        stage = #{stage,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+       <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.examineelist.entity.ClassComments" >
+    update class_comments
+    set pretk_comments = #{pretkComments,jdbcType=VARCHAR},
+      pred_comments = #{predComments,jdbcType=VARCHAR},
+      preyf_comments = #{preyfComments,jdbcType=VARCHAR},
+      basl_comments = #{baslComments,jdbcType=VARCHAR},
+      bass_comments = #{bassComments,jdbcType=VARCHAR},
+      basr_comments = #{basrComments,jdbcType=VARCHAR},
+      basw_comments = #{baswComments,jdbcType=VARCHAR},
+      strl_comments = #{strlComments,jdbcType=VARCHAR},
+      strs_comments = #{strsComments,jdbcType=VARCHAR},
+      strr_comments = #{strrComments,jdbcType=VARCHAR},
+      strw_comments = #{strwComments,jdbcType=VARCHAR},
+      dasl_comments = #{daslComments,jdbcType=VARCHAR},
+      dass_comments = #{dassComments,jdbcType=VARCHAR},
+      dasr_comments = #{dasrComments,jdbcType=VARCHAR},
+      dasw_comments = #{daswComments,jdbcType=VARCHAR},
+      pre_starttime = #{preStarttime,jdbcType=VARCHAR},
+      pre_endtime = #{preEndtime,jdbcType=VARCHAR},
+      bas_starttime = #{basStarttime,jdbcType=VARCHAR},
+      bas_endtime = #{basEndtime,jdbcType=VARCHAR},
+      str_starttime = #{strStarttime,jdbcType=VARCHAR},
+      str_endtime = #{strEndtime,jdbcType=VARCHAR},
+      das_starttime = #{dasStarttime,jdbcType=VARCHAR},
+      das_endtime = #{dasEndtime,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      stage = #{stage,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR}
+    	where code = #{code,jdbcType=BIGINT}
+  </update>
+</mapper>

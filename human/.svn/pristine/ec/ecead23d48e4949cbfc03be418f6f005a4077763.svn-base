@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.sign.dao.SignActivityDao" >
+  <resultMap id="BaseResultMap" type="com.human.sign.entity.SignActivity" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="is_send" property="isSend" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="activity_time" property="activityTime" jdbcType="BIGINT" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="code_url" property="codeUrl" jdbcType="VARCHAR" />
+    <result column="tem_desc" property="temDesc" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="total" property="total" jdbcType="BIGINT" />
+    <result column="sign_total" property="signTotal" jdbcType="BIGINT" />
+    <result column="check_rate" property="checkRate" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, activity_name, start_time, end_time, is_send, create_user, create_time, activity_time, 
+    update_user, update_time, code_url, tem_desc, is_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sign_activity
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByActivityTime" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sign_activity
+    where activity_time = #{activityTime,jdbcType=BIGINT}
+  </select>
+ 
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sign_activity
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.human.sign.entity.SignActivity" >
+    insert into sign_activity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="activityName != null" >
+        activity_name,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="isSend != null" >
+        is_send,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="activityTime != null" >
+        activity_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="codeUrl != null" >
+        code_url,
+      </if>
+      <if test="temDesc != null" >
+        tem_desc,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="activityName != null" >
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isSend != null" >
+        #{isSend,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityTime != null" >
+        #{activityTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="codeUrl != null" >
+        #{codeUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="temDesc != null" >
+        #{temDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.sign.entity.SignActivity" >
+    update sign_activity
+    <set >
+      <if test="activityName != null" >
+        activity_name = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isSend != null" >
+        is_send = #{isSend,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityTime != null" >
+        activity_time = #{activityTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="codeUrl != null" >
+        code_url = #{codeUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="temDesc != null" >
+        tem_desc = #{temDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 分页查询签到活动 -->  
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  SELECT 
+	t.id, t.activity_name, t.start_time, t.end_time, t.is_send, 
+	t.create_time,t.create_user,t.dept_name,
+	t.activity_time, 
+	t.code_url,t.tem_desc,
+	IFNULL(t.sign_total,0) AS sign_total,
+	IFNULL(t.total,0) AS total,
+	IFNULL(FLOOR((t.sign_total/t.total)*100),0) AS check_rate
+	FROM 
+	(
+	SELECT s.id, s.activity_name, s.start_time, s.end_time, s.is_send, 
+	s.create_time,h.name AS create_user,h.dept_name,
+	s.activity_time, 
+	s.code_url,s.tem_desc,
+	(SELECT COUNT(DISTINCT s1.id) FROM sign_info  s1
+	WHERE s1.is_sign=1 
+	AND s1.is_valid=1 
+	AND s1.activity_id= s.id) AS sign_total,
+	(SELECT COUNT(DISTINCT s2.id) FROM sign_info  s2
+	WHERE s2.is_valid=1 
+	AND s2.activity_id= s.id) AS total
+	FROM sign_activity s
+	LEFT JOIN hr_user h ON s.create_user=h.email_addr
+	WHERE s.is_valid=1
+	AND h.dept_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId=#{userId,jdbcType=BIGINT})
+	<if test="t.activityName != null and t.activityName !=''" >
+        AND s.activity_name like CONCAT(CONCAT('%', #{t.activityName,jdbcType=VARCHAR}), '%')
+      </if>
+      <if test="t.startTime != null and t.startTime !='' " >
+        AND s.start_time >= #{t.startTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="t.endTime != null and t.endTime !=''" >
+        <![CDATA[AND s.end_time <= #{t.endTime,jdbcType=TIMESTAMP}]]> 
+      </if>
+	ORDER BY s.id DESC
+	)t
+  </select>
+  
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+   SELECT 
+	t.id, t.activity_name, 
+	IFNULL(t.sign_total,0) AS sign_total,
+	IFNULL(t.total,0) AS total,
+	IFNULL(FLOOR((t.sign_total/t.total)*100),0) AS check_rate
+	FROM 
+	( 
+		SELECT s.id, s.activity_name, 
+		(SELECT COUNT(s1.id) FROM sign_info  s1
+		WHERE s1.is_sign=1 
+		AND s1.is_valid=1 
+		AND s1.activity_id= s.id) AS sign_total,
+		(SELECT COUNT(s2.id) FROM sign_info  s2
+		WHERE s2.is_valid=1 
+		AND s2.activity_id= s.id) AS total
+		FROM sign_activity s
+		WHERE s.id= #{id,jdbcType=BIGINT}  AND s.is_valid=1
+	)t
+ </select> 
+  
+</mapper>

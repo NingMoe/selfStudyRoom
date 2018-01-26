@@ -1,0 +1,35 @@
+body{
+ margin: 0;
+ width: 100%;
+}
+
+.main_body{
+	margin: 0;
+	width: 100%;
+}
+
+.main_table_head{
+	border: solid 0.1rem #b3b0b0;
+	float: left;
+	height: 45px;
+	line-height: 45px;
+	width: 15%;
+	text-align: center;
+	font-size: 0.8rem;
+	font-weight: lighter;
+}
+
+.main_table_r{
+	border: solid 0.1rem #b3b0b0;
+	float: left;
+	height: 45px;
+	line-height: 45px;
+	width: 15%;
+	text-align: center;
+	font-size: 0.8rem;
+	font-weight: lighter;
+}
+
+.main_table_r_btn{
+	color: #ff9800;
+}

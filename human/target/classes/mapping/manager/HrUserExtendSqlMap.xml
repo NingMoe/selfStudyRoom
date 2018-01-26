@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.manager.dao.HrUserExtendDao" >
+  <resultMap id="BaseResultMap" type="com.human.manager.entity.HrUserExtend" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="empl_id" property="emplId" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
+    <result column="emp_source" property="empSource" jdbcType="CHAR" />
+    <result column="syn_time" property="synTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, empl_id, user_name, user_password, emp_source, syn_time, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_user_extend
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hr_user_extend
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.manager.entity.HrUserExtend" >
+    insert into hr_user_extend (empl_id, user_name, user_password, emp_source, syn_time, status)
+    values (#{emplId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, #{empSource,jdbcType=CHAR},
+      #{synTime,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.manager.entity.HrUserExtend" >
+    insert into hr_user_extend
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="emplId != null" >
+        empl_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="userPassword != null" >
+        user_password,
+      </if>
+      <if test="empSource != null" >
+        emp_source,
+      </if>
+      <if test="synTime != null" >
+        syn_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="emplId != null" >
+        #{emplId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPassword != null" >
+        #{userPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="empSource != null" >
+        #{empSource,jdbcType=CHAR},
+      </if>
+      <if test="synTime != null" >
+        #{synTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.manager.entity.HrUserExtend" >
+    update hr_user_extend
+    <set >
+      <if test="emplId != null" >
+        empl_id = #{emplId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPassword != null" >
+        user_password = #{userPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="empSource != null" >
+        emp_source = #{empSource,jdbcType=CHAR},
+      </if>
+      <if test="synTime != null" >
+        syn_time = #{synTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.manager.entity.HrUserExtend" >
+    update hr_user_extend
+    set empl_id = #{emplId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_password = #{userPassword,jdbcType=VARCHAR},
+      emp_source = #{empSource,jdbcType=CHAR},
+      syn_time = #{synTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=CHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateUserPhone" parameterType="com.human.manager.entity.HrUserExtend" >
+    update hr_user_extend
+    set cell_phone_number = #{cellPhoneNumber,jdbcType=VARCHAR}
+    where user_name = #{userName,jdbcType=VARCHAR}
+  </update>
+     <insert id="updateHrExtend" parameterType="java.lang.String" >
+	INSERT INTO hr_user_extend(empl_id,user_name,user_password,emp_source,syn_time,status)
+	SELECT  empl_id,email_addr,md5(RIGHT(national_id,6)),'1',NOW(),'0' FROM hr_user WHERE COMPANY = #{company,jdbcType=VARCHAR}
+	and NOT EXISTS (SELECT 1 FROM hr_user_extend WHERE hr_user_extend.empl_id = hr_user.empl_id)
+  </insert>
+</mapper>

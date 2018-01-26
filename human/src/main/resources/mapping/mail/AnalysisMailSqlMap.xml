@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.mail.dao.AnalysisMailDao" >
+  <resultMap id="BaseResultMap" type="com.human.mail.entity.AnalysisMail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="accept_mail_id" property="acceptMailId" jdbcType="BIGINT" />
+    <result column="stat_time" property="statTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="fail_time" property="failTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, accept_mail_id, stat_time, end_time, count, fail_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from analysis_mail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from analysis_mail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.mail.entity.AnalysisMail" >
+    insert into analysis_mail (accept_mail_id, stat_time, 
+      end_time, count, fail_time
+      )
+    values (#{acceptMailId,jdbcType=BIGINT}, #{statTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{count,jdbcType=INTEGER}, #{failTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.human.mail.entity.AnalysisMail" >
+    insert into analysis_mail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="acceptMailId != null" >
+        accept_mail_id,
+      </if>
+      <if test="statTime != null" >
+        stat_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="failTime != null" >
+        fail_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="acceptMailId != null" >
+        #{acceptMailId,jdbcType=BIGINT},
+      </if>
+      <if test="statTime != null" >
+        #{statTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="failTime != null" >
+        #{failTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.mail.entity.AnalysisMail" >
+    update analysis_mail
+    <set >
+      <if test="acceptMailId != null" >
+        accept_mail_id = #{acceptMailId,jdbcType=BIGINT},
+      </if>
+      <if test="statTime != null" >
+        stat_time = #{statTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="failTime != null" >
+        fail_time = #{failTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.mail.entity.AnalysisMail" >
+    update analysis_mail
+    set accept_mail_id = #{acceptMailId,jdbcType=BIGINT},
+      stat_time = #{statTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      count = #{count,jdbcType=INTEGER},
+      fail_time = #{failTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 根据解析邮件ID查询 -->
+   <select id="selectByAcceptMailId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from analysis_mail
+    where accept_mail_id = #{acceptMailId,jdbcType=BIGINT}
+  </select>
+</mapper>

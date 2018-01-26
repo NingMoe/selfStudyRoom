@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.HrResumeFlowDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.HrResumeFlow" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="position_process_id" property="positionProcessId" jdbcType="INTEGER" />
+    <result column="process_instance_id" property="processInstanceId" jdbcType="VARCHAR" />
+    <result column="flow_code" property="flowCode" jdbcType="VARCHAR" />
+    <result column="resume_id" property="resumeId" jdbcType="INTEGER" />
+    <result column="comid" property="comid" jdbcType="VARCHAR" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="approval_result" property="approvalResult" jdbcType="INTEGER" />
+    <result column="lose_cause" property="loseCause" jdbcType="VARCHAR" />
+    <result column="lose_node" property="loseNode" jdbcType="VARCHAR" />
+    <result column="current_node" property="currentNode" jdbcType="VARCHAR" />
+    <result column="lose_time" property="loseTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="current_type" property="currentType" jdbcType="INTEGER" />
+    <result column="interview_time" property="interviewTime" jdbcType="TIMESTAMP" />
+    <result column="interview_location" property="interviewLocation" jdbcType="VARCHAR" />
+    <result column="process_end_time" property="processEndTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+   <resultMap id="PageMap" type="com.human.recruitment.entity.HrResumeFlow" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="position_process_id" property="positionProcessId" jdbcType="INTEGER" />
+    <result column="position_id" property="positionId" jdbcType="INTEGER" />
+    <result column="position_name" property="positionName" jdbcType="VARCHAR" />
+    <result column="process_instance_id" property="processInstanceId" jdbcType="VARCHAR" />
+    <result column="flow_code" property="flowCode" jdbcType="VARCHAR" />
+    <result column="resume_id" property="resumeId" jdbcType="INTEGER" />
+    <result column="comid" property="comid" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="approval_result" property="approvalResult" jdbcType="INTEGER" />
+    <result column="lose_cause" property="loseCause" jdbcType="VARCHAR" />
+    <result column="lose_node" property="loseNode" jdbcType="VARCHAR" />
+    <result column="lose_node_name" property="loseNodeName" jdbcType="VARCHAR" />
+    <result column="current_node" property="currentNode" jdbcType="VARCHAR" />
+    <result column="lose_time" property="loseTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="current_type" property="currentType" jdbcType="INTEGER" />
+    <association property="seeker"  resultMap="seekerMap" columnPrefix="seeker_"  />
+  </resultMap>
+  
+  <resultMap id="seekerMap" type="com.human.recruitment.entity.ResumeSeeker" >
+  		<result column="id" property="id" jdbcType="INTEGER"/>  
+        <result column="edu_type" property="eduType" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="major" property="major" jdbcType="VARCHAR"/>
+        <result column="gra_school" property="graSchool" jdbcType="VARCHAR"/>   
+  </resultMap>  
+  
+  <sql id="Base_Column_List" >
+    ID, position_process_id,process_instance_id, flow_code, resume_id, comid, dept, approval_result, lose_cause, current_node,
+    lose_node, lose_time, status,current_type,interview_time,interview_location,process_end_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_resume_flow
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByFlowCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_resume_flow
+    where flow_code = #{flowCode,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectResumeFlowPage" resultMap="PageMap" parameterType="java.util.Map">
+    select hr.id,hr.resume_id,hr.flow_code,hr.`comid` ,c.`company_name`, hr.`dept`,ho.`NAME` dept_name, hr.`position_process_id`,p.position_id,hp.`NAME` position_name, hr.`lose_node`,hr.`lose_cause`,pnc.`custom_node_name` lose_node_name,rs.id seeker_id, rs.`edu_type` seeker_edu_type,rs.`name` seeker_name,rs.`phone` seeker_phone,rs.`gra_school` seeker_gra_school,rs.`major` seeker_major,hr.`lose_time` 
+	from hr_resume_flow hr 
+	left join resume_base r on hr.`resume_id` = r.id
+	left join resume_seeker rs on r.`resume_seeker_id` = rs.id
+	left join position_process p on hr.`position_process_id` = p.id 
+	left join hr_position hp on hp.`ID` = p.`POSITION_ID` 
+	left join hr_company c on c.`company_id` = hr.`comid`
+	left join hr_organization ho on ho.`ID` = hr.`dept` 
+	left join position_process_node_config pnc on pnc.`node_id` = hr.`lose_node` 
+	and pnc.`position_process_id` = hr.`position_process_id`
+    where hr.status= '0' and hr.current_node = 'rlqrTask' 
+     AND EXISTS(
+	SELECT 1 FROM act_id_membership WHERE GROUP_ID_ = CONCAT(hp.`ID`,'renli') AND user_id_ = #{t.assignee,jdbcType=VARCHAR}
+    )
+   	 	<if test="t.comid != null and t.comid !=''">
+			and hr.comid = #{t.comid,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dept != null and t.dept !=''">
+			and hr.dept = #{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.positionId != null and t.positionId !=''">
+			and hp.position_id = #{t.positionId,jdbcType=INTEGER}
+		</if>
+		<if test="t.loseNode != null and t.loseNode !=''">
+			and hr.lose_node = #{t.loseNode,jdbcType=VARCHAR}
+		</if>
+		<if test="t.seeker !=null and t.seeker.eduType != null and t.seeker.eduType !=''">
+			and rs.edu_type = #{t.seeker.eduType,jdbcType=VARCHAR}
+		</if>
+		<if test="t.seeker !=null and t.seeker.graSchool != null and t.seeker.graSchool !=''">
+			and rs.gra_school LIKE CONCAT('%', #{t.seeker.graSchool,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.seeker !=null and t.seeker.name != null and t.seeker.name !=''">
+			and rs.name LIKE CONCAT('%', #{t.seeker.name,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.seeker !=null and t.seeker.phone != null and t.seeker.phone !=''">
+			and rs.phone LIKE CONCAT('%', #{t.seeker.phone,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.loseTime0 != null and t.loseTime0 !=''">
+			and hr.lose_time >= #{t.loseTime0,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.loseTime1 != null and t.loseTime1 !=''">
+			<![CDATA[and hr.lose_time <= #{t.loseTime1,jdbcType=TIMESTAMP}]]> 
+		</if>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hr_resume_flow
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.recruitment.entity.HrResumeFlow" >
+    insert into hr_resume_flow (ID, position_process_id,process_instance_id, flow_code, 
+      resume_id, comid, dept, 
+      approval_result, lose_cause,current_node, lose_node, 
+      lose_time, status,interview_time,interview_location)
+    values (#{id,jdbcType=INTEGER}, #{positionProcessId,jdbcType=INTEGER},#{processInstanceId,jdbcType=VARCHAR},  #{flowCode,jdbcType=VARCHAR}, 
+      #{resumeId,jdbcType=INTEGER}, #{comid,jdbcType=VARCHAR}, #{dept,jdbcType=VARCHAR}, 
+      #{approvalResult,jdbcType=INTEGER}, #{loseCause,jdbcType=VARCHAR}, #{currentNode,jdbcType=VARCHAR}, #{loseNode,jdbcType=VARCHAR}, 
+      #{loseTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER},#{interviewTime,jdbcType=TIMESTAMP},#{interviewLocation,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="insertScore" parameterType="com.human.bpm.entity.ActCustomScorce" >
+    insert into act_custom_scorce (comment_id, score_item,item_value)
+    values (#{commentId,jdbcType=INTEGER}, #{scoreItem,jdbcType=VARCHAR},  
+      #{itemValue,jdbcType=DOUBLE})
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.HrResumeFlow" >
+    update hr_resume_flow 
+    <set >
+      <if test="positionProcessId != null" >
+        position_process_id = #{positionProcessId,jdbcType=INTEGER},
+      </if>
+	  <if test="processInstanceId != null" >
+        process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
+      </if>      
+      <if test="flowCode != null" >
+        flow_code = #{flowCode,jdbcType=VARCHAR},
+      </if>
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=INTEGER},
+      </if>
+      <if test="comid != null" >
+        comid = #{comid,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null" >
+        dept = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalResult != null" >
+        approval_result = #{approvalResult,jdbcType=INTEGER},
+      </if>
+      <if test="loseCause != null" >
+        lose_cause = #{loseCause,jdbcType=VARCHAR},
+      </if>
+      <if test="currentNode != null" >
+        current_node = #{currentNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseNode != null" >
+        lose_node = #{loseNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseTime != null" >
+        lose_time = #{loseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="currentType != null" >
+        current_type = #{currentType,jdbcType=INTEGER},
+      </if>
+      <if test="interviewTime != null" >
+        interview_time = #{interviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processEndTime != null" >
+        process_end_time = #{processEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="interviewLocation != null" >
+        interview_location = #{interviewLocation,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByFlowCodeSelective" parameterType="com.human.recruitment.entity.HrResumeFlow" >
+    update hr_resume_flow 
+    <set >
+      <if test="positionProcessId != null" >
+        position_process_id = #{positionProcessId,jdbcType=INTEGER},
+      </if>
+	  <if test="processInstanceId != null" >
+        process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
+      </if>      
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=INTEGER},
+      </if>
+      <if test="comid != null" >
+        comid = #{comid,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null" >
+        dept = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalResult != null" >
+        approval_result = #{approvalResult,jdbcType=INTEGER},
+      </if>
+      <if test="loseCause != null" >
+        lose_cause = #{loseCause,jdbcType=VARCHAR},
+      </if>
+      <if test="currentNode != null" >
+        current_node = #{currentNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseNode != null" >
+        lose_node = #{loseNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseTime != null" >
+        lose_time = #{loseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="currentType != null" >
+        current_type = #{currentType,jdbcType=INTEGER},
+      </if>
+      <if test="processEndTime != null" >
+        process_end_time = #{processEndTime,jdbcType=INTEGER},
+      </if>
+      
+    </set>
+    where flow_code = #{flowCode,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <update id="updateByFlowCode" parameterType="com.human.recruitment.entity.HrResumeFlow" >
+     update hr_resume_flow 
+    <set >
+      <if test="positionProcessId != null" >
+        position_process_id = #{positionProcessId,jdbcType=INTEGER},
+      </if>
+	  <if test="processInstanceId != null" >
+        process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
+      </if>      
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=INTEGER},
+      </if>
+      <if test="comid != null" >
+        comid = #{comid,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null" >
+        dept = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalResult != null" >
+        approval_result = #{approvalResult,jdbcType=INTEGER},
+      </if>
+      <if test="loseCause != null" >
+        lose_cause = #{loseCause,jdbcType=VARCHAR},
+      </if>
+      <if test="currentNode != null" >
+        current_node = #{currentNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseNode != null" >
+        lose_node = #{loseNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseTime != null" >
+        lose_time = #{loseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="currentType != null" >
+        current_type = #{currentType,jdbcType=INTEGER},
+      </if>
+      <if test="processEndTime != null" >
+        process_end_time = #{processEndTime,jdbcType=INTEGER},
+      </if>
+      interview_time = #{interviewTime,jdbcType=TIMESTAMP},
+      interview_location = #{interviewLocation,jdbcType=VARCHAR}, 
+    </set>
+    where flow_code = #{flowCode,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByProcessInstanceIdSelective" parameterType="com.human.recruitment.entity.HrResumeFlow" >
+    update hr_resume_flow 
+    <set >
+      <if test="positionProcessId != null" >
+        position_process_id = #{positionProcessId,jdbcType=INTEGER},
+      </if>
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=INTEGER},
+      </if>
+      <if test="comid != null" >
+        comid = #{comid,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null" >
+        dept = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalResult != null" >
+        approval_result = #{approvalResult,jdbcType=INTEGER},
+      </if>
+      <if test="loseCause != null" >
+        lose_cause = #{loseCause,jdbcType=VARCHAR},
+      </if>
+      <if test="currentNode != null" >
+        current_node = #{currentNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseNode != null" >
+        lose_node = #{loseNode,jdbcType=VARCHAR},
+      </if>
+      <if test="loseTime != null" >
+        lose_time = #{loseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="currentType != null" >
+        current_type = #{currentType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where process_instance_id = #{processInstanceId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="getMaxCodeByPrefix" resultType="java.lang.String" parameterType="java.lang.String" >
+    SELECT MAX(FLOW_CODE) FROM hr_resume_flow WHERE FLOW_CODE LIKE 
+    CONCAT(#{prefix,jdbcType=VARCHAR},'%')
+  </select>
+  
+  <!-- 通过简历ID查找当前再走的流程对象 -->
+  <select id="selectHrfByResumeId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_resume_flow
+    where resume_id = #{resumeId,jdbcType=INTEGER} and status=0 and current_type IN (0,4) and process_end_time is null 
+  </select>
+  
+  <select id="selectNewFlowResumeId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+   SELECT * FROM hr_resume_flow WHERE resume_id = #{resumeId,jdbcType=INTEGER} ORDER BY id DESC LIMIT 1  
+  </select>
+  
+  <select id="getNodesByResumeId" resultType="com.human.bpm.entity.ActNode" parameterType="java.lang.Integer" >
+  	SELECT DISTINCT 
+	(CASE c.node_id WHEN 'yimianTask' THEN 1 WHEN 'ermianTask' THEN 2 WHEN 'sanmianTask' THEN 3 WHEN 'simianTask' THEN 4 WHEN  'wumianTask' THEN 5 END )px
+	,pc.`custom_node_name` nodeName,pc.`text_task` task,pc.video_task vtask FROM act_custom_comment c
+	JOIN  hr_resume_flow f ON f.`flow_code` = c.`flow_code`
+	LEFT JOIN position_process_node_config pc ON pc.`node_id` = c.`node_id` AND pc.`position_process_id` = f.`position_process_id`
+	WHERE f.`resume_id` = #{resumeId,jdbcType=INTEGER}
+	ORDER BY px 
+  </select>
+  
+  <select id="getFirstNodeByResumeNode" resultType="com.human.bpm.entity.ActNode" parameterType="java.lang.String" >
+  	SELECT c.`custom_node_name` nodeName,c.`text_task` task,c.video_task vtask FROM position_process_node_config c 
+	JOIN hr_resume_flow f ON f.`position_process_id` = c.`position_process_id` AND f.`resume_id` = #{resumeId,jdbcType=INTEGER} 
+	AND c.`node_id` = #{nodeId,jdbcType=VARCHAR}
+	ORDER BY f.id DESC LIMIT 1
+  </select>
+  
+  
+  <select id="getCurrNode" resultType="com.human.bpm.entity.HrActNode" parameterType="java.lang.String" >
+  	SELECT flow_code flowCode, f.current_node currNode,pp.position_id positionId,pp.type,
+	(CASE f.current_node WHEN 'rlqrTask' THEN '人力确认' WHEN 'endevent' THEN '已归档' ELSE pnc.`custom_node_name` END) nodeName,
+	hp.name positionName 
+	FROM hr_resume_flow f 
+	LEFT JOIN position_process_node_config pnc ON f.`position_process_id` = pnc.`position_process_id` AND pnc.`node_id` = f.`current_node` 
+	JOIN position_process pp ON pp.id = f.`position_process_id`
+	JOIN hr_position hp ON hp.`ID` = pp.`POSITION_ID` 
+	WHERE flow_code = #{flowCode,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="getFlowDb" resultType="com.human.bpm.entity.ActEmailNotify">
+  	SELECT * FROM v_hr_act_db WHERE TO_DAYS(interviewTime) = TO_DAYS(NOW())+1  ORDER BY flowCode 
+  </select>
+  
+  <select id="getWatcherFlowDb" resultType="com.human.bpm.entity.ActEmailNotify">
+  	 SELECT v.*,w.`watcher_id` watcherId,w.`watcher_name` watcherName  FROM 
+  	 (SELECT interviewTime,flowCode,positionId,positionName,seekerName,phone,nodeName,sex,major,highEdu,graduationDate,birthDate,graSchool 
+		FROM v_hr_act_db GROUP BY interviewTime,flowCode,positionId,positionName,seekerName,phone,nodeName,sex,major,highEdu,graduationDate,birthDate,graSchool
+  	 )
+  	  v 
+	JOIN postion_watcher w ON v.`positionId` = w.`position_id` 
+	where v.interviewTime is null 
+	ORDER BY v.positionId,v.flowCode 
+  </select>
+  
+  <select id="getCsMsgDb" resultType="com.human.bpm.entity.ActEmailNotify">
+  	 SELECT * FROM v_hr_act_db WHERE TO_DAYS(interviewTime) &lt; TO_DAYS(NOW())-2  ORDER BY flowCode 
+  </select>
+  
+  <select id="getCsHrDb" resultType="com.human.bpm.entity.ActEmailNotify">
+  	 SELECT v.*,w.`user_id` hrUserId,w.`user_name` hrUserName  FROM (SELECT interviewTime,flowCode,positionId,positionName,seekerName,phone,nodeName,sex,major,highEdu,graduationDate,birthDate,graSchool 
+		FROM v_hr_act_db GROUP BY interviewTime,flowCode,positionId,positionName,seekerName,phone,nodeName,sex,major,highEdu,graduationDate,birthDate,graSchool
+  	 )
+  	  v 
+	JOIN position_hr_user w ON v.`positionId` = w.`position_id` 
+	WHERE TO_DAYS(interviewTime) &lt; TO_DAYS(NOW())-2 
+	ORDER BY v.positionId,v.flowCode 
+  </select>
+  
+  <select id="getCsWatcherDb" resultType="com.human.bpm.entity.ActEmailNotify">
+  	 SELECT v.*,w.`watcher_id` watcherId,w.`watcher_name` watcherName  FROM (SELECT interviewTime,flowCode,positionId,positionName,seekerName,phone,nodeName,sex,major,highEdu,graduationDate,birthDate,graSchool 
+		FROM v_hr_act_db GROUP BY interviewTime,flowCode,positionId,positionName,seekerName,phone,nodeName,sex,major,highEdu,graduationDate,birthDate,graSchool
+  	 )
+  	  v 
+	JOIN postion_watcher w ON v.`positionId` = w.`position_id` 
+	WHERE TO_DAYS(interviewTime) &lt; TO_DAYS(NOW())-2 
+	ORDER BY v.positionId,v.flowCode 
+  </select>
+</mapper>

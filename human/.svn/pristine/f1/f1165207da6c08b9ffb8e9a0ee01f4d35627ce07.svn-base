@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.PositionProcessDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.PositionProcess" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="POSITION_ID" property="positionId" jdbcType="INTEGER" />
+    <result column="PROCESS_DEF" property="processDef" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="TYPE" property="type" jdbcType="INTEGER" />
+    <result column="positionProcessName" property="positionProcessName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, POSITION_ID, PROCESS_DEF, STATUS, TYPE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from position_process
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getPositionProcessByPrimaryCondition" resultMap="BaseResultMap" parameterType="com.human.recruitment.entity.PositionProcess" >
+    select 
+    <include refid="Base_Column_List" />
+    from position_process
+    where POSITION_ID = #{positionId,jdbcType=INTEGER} and type = #{type,jdbcType=INTEGER} and status = 0 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from position_process
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.recruitment.entity.PositionProcess" >
+    insert into position_process (POSITION_ID, PROCESS_DEF,TYPE)
+    values (#{positionId,jdbcType=INTEGER}, #{processDef,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.PositionProcess" >
+    update position_process
+    <set >
+      <if test="positionId != null" >
+        POSITION_ID = #{positionId,jdbcType=INTEGER},
+      </if>
+      <if test="processDef != null" >
+        PROCESS_DEF = #{processDef,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="disablePositionProcess" parameterType="com.human.recruitment.entity.PositionProcess" >
+    update position_process set STATUS = 1 where POSITION_ID = #{positionId,jdbcType=INTEGER} 
+    and TYPE = #{type,jdbcType=INTEGER} and PROCESS_DEF = #{processDef,jdbcType=VARCHAR} 
+  </update>
+	
+	<select id="getListByPositionId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from position_process
+    where POSITION_ID = #{positionId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getPositionProcessExtend" resultType="com.human.recruitment.entity.PositionProcessExtend" parameterType="java.lang.Integer" >
+    SELECT p.`POSITION_ID` positionId,p.`ID` positionProcessId,p.`PROCESS_DEF` processDef,p.`TYPE`,h.`COMID`,h.`DEPT`,h.name positionName,pc.`custom_node_name` firstNodeName 
+ 	FROM position_process p JOIN hr_position h ON p.`POSITION_ID` = h.`ID`
+ 	JOIN position_process_node_config pc ON pc.`position_process_id` = p.id AND pc.`node_id`='yimianTask' 
+    where p.ID = #{positionId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 通过部门获取流程职位 -->
+  <select id="getListByDeptId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT p.ID, p.POSITION_ID, p.PROCESS_DEF, p.STATUS, p.TYPE,
+    (CASE WHEN p.TYPE=0 THEN CONCAT(h.name,'标准流程') 
+    WHEN p.TYPE=0 THEN CONCAT(h.name,'绿色通道')
+    ELSE '' END )AS positionProcessName
+    FROM position_process p
+    LEFT JOIN hr_position h ON p.POSITION_ID =h.ID 
+    LEFT JOIN hr_organization o ON h.DEPT = o.id     
+    where h.DEPT = #{deptId,jdbcType=VARCHAR} and p.status = '0' 
+    and h.status = 1 and (
+    	h.is_long_effective = 1 OR h.effective_date > CURDATE() 
+    )
+  </select>
+  
+  
+</mapper>

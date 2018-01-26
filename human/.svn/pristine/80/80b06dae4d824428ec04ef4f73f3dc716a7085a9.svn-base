@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.manager.dao.HrUserDao">
+  <resultMap id="BaseResultMap" type="com.human.manager.entity.HrUser">
+    <id column="empl_id" jdbcType="VARCHAR" property="emplId" />
+    <result column="birth_date" jdbcType="TIMESTAMP" property="birthDate" />
+    <result column="busn_phone" jdbcType="VARCHAR" property="busnPhone" />
+    <result column="company" jdbcType="VARCHAR" property="company" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="dept_id" jdbcType="VARCHAR" property="deptId" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="email_addr" jdbcType="VARCHAR" property="emailAddr" />
+    <result column="empl_phone" jdbcType="VARCHAR" property="emplPhone" />
+    <result column="ethic" jdbcType="VARCHAR" property="ethic" />
+    <result column="graduage_sch" jdbcType="VARCHAR" property="graduageSch" />
+    <result column="highest_educ" jdbcType="VARCHAR" property="highestEduc" />
+    <result column="hr_status" jdbcType="CHAR" property="hrStatus" />
+    <result column="job_code" jdbcType="VARCHAR" property="jobCode" />
+    <result column="login_user_name" jdbcType="VARCHAR" property="loginUserName" />
+    <result column="major" jdbcType="VARCHAR" property="major" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="national_id" jdbcType="VARCHAR" property="nationalId" />
+    <result column="natioanl_descr" jdbcType="VARCHAR" property="natioanlDescr" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="xdf_job_zhiji" jdbcType="VARCHAR" property="xdfJobZhiji" />
+    <result column="join_date" jdbcType="TIMESTAMP" property="joinDate" />
+    <result column="position_name" jdbcType="VARCHAR" property="positionName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    empl_id, birth_date, busn_phone, company, company_name, dept_id, dept_name, email_addr, 
+    empl_phone, ethic, graduage_sch, highest_educ, hr_status, job_code, login_user_name, 
+    major, name, national_id, natioanl_descr, sex, xdf_job_zhiji, join_date,position_name
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="com.human.manager.entity.HrUser" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hr_user
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="emplId != null and emplId!=''">
+			AND empl_id=#{emplId,jdbcType=VARCHAR}
+		</if>
+		<if test="emailAddr !=null and emailAddr !=''">
+			AND email_addr=#{emailAddr,jdbcType=VARCHAR}
+		</if>
+		<if test="hrStatus != null and hrStatus != ''">
+			AND hr_status=#{hrStatus,jdbcType=VARCHAR}
+		</if>
+	</trim>
+  </select>
+  
+   <select id="findAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hr_user
+  </select>
+  
+  <select id="findByCompany" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hr_user 
+    where company = #{company,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from hr_user
+    where empl_id = #{emplId,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByCompanyId" parameterType="java.lang.String" >
+    delete from hr_user
+    where COMPANY = #{companyId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertUserList" parameterType="java.util.List">
+        insert into hr_user(empl_id, birth_date, busn_phone, company, company_name, dept_id, dept_name, email_addr, 
+    	empl_phone, ethic, graduage_sch, highest_educ, hr_status, job_code, login_user_name, 
+    	major, name, national_id, natioanl_descr, sex, xdf_job_zhiji, join_date,position_name) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.emplId},#{item.birthDate},#{item.busnPhone},#{item.company},#{item.companyName},
+            #{item.deptId},#{item.deptName},#{item.emailAddr},#{item.emplPhone},#{item.ethic},
+            #{item.graduageSch},#{item.highestEduc},#{item.hrStatus},#{item.jobCode},#{item.loginUserName},
+            #{item.major},#{item.name},#{item.nationalId},#{item.natioanlDescr},#{item.sex},
+            #{item.xdfJobZhiji},#{item.joinDate},#{item.positionName}
+            )
+        </foreach>
+  </insert>
+  
+  <insert id="insert" parameterType="com.human.manager.entity.HrUser">
+    insert into hr_user (empl_id, birth_date, busn_phone, 
+      company, company_name, dept_id, 
+      dept_name, email_addr, empl_phone, 
+      ethic, graduage_sch, highest_educ, 
+      hr_status, job_code, login_user_name, 
+      major, name, national_id, 
+      natioanl_descr, sex, xdf_job_zhiji, 
+      join_date,position_name)
+    values (#{emplId,jdbcType=VARCHAR}, #{birthDate,jdbcType=TIMESTAMP}, #{busnPhone,jdbcType=VARCHAR}, 
+      #{company,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, 
+      #{deptName,jdbcType=VARCHAR}, #{emailAddr,jdbcType=VARCHAR}, #{emplPhone,jdbcType=VARCHAR}, 
+      #{ethic,jdbcType=VARCHAR}, #{graduageSch,jdbcType=VARCHAR}, #{highestEduc,jdbcType=VARCHAR}, 
+      #{hrStatus,jdbcType=CHAR}, #{jobCode,jdbcType=VARCHAR}, #{loginUserName,jdbcType=VARCHAR}, 
+      #{major,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{nationalId,jdbcType=VARCHAR}, 
+      #{natioanlDescr,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{xdfJobZhiji,jdbcType=VARCHAR}, 
+      #{joinDate,jdbcType=TIMESTAMP},#{item.positionName)
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.human.manager.entity.HrUser">
+    insert into hr_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="emplId != null">
+        empl_id,
+      </if>
+      <if test="birthDate != null">
+        birth_date,
+      </if>
+      <if test="busnPhone != null">
+        busn_phone,
+      </if>
+      <if test="company != null">
+        company,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="deptId != null">
+        dept_id,
+      </if>
+      <if test="deptName != null">
+        dept_name,
+      </if>
+      <if test="emailAddr != null">
+        email_addr,
+      </if>
+      <if test="emplPhone != null">
+        empl_phone,
+      </if>
+      <if test="ethic != null">
+        ethic,
+      </if>
+      <if test="graduageSch != null">
+        graduage_sch,
+      </if>
+      <if test="highestEduc != null">
+        highest_educ,
+      </if>
+      <if test="hrStatus != null">
+        hr_status,
+      </if>
+      <if test="jobCode != null">
+        job_code,
+      </if>
+      <if test="loginUserName != null">
+        login_user_name,
+      </if>
+      <if test="major != null">
+        major,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="nationalId != null">
+        national_id,
+      </if>
+      <if test="natioanlDescr != null">
+        natioanl_descr,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="xdfJobZhiji != null">
+        xdf_job_zhiji,
+      </if>
+      <if test="joinDate != null">
+        join_date,
+      </if>
+      <if test="positionName != null">
+        position_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="emplId != null">
+        #{emplId,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDate != null">
+        #{birthDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="busnPhone != null">
+        #{busnPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null">
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null">
+        #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="emailAddr != null">
+        #{emailAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="emplPhone != null">
+        #{emplPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="ethic != null">
+        #{ethic,jdbcType=VARCHAR},
+      </if>
+      <if test="graduageSch != null">
+        #{graduageSch,jdbcType=VARCHAR},
+      </if>
+      <if test="highestEduc != null">
+        #{highestEduc,jdbcType=VARCHAR},
+      </if>
+      <if test="hrStatus != null">
+        #{hrStatus,jdbcType=CHAR},
+      </if>
+      <if test="jobCode != null">
+        #{jobCode,jdbcType=VARCHAR},
+      </if>
+      <if test="loginUserName != null">
+        #{loginUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null">
+        #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nationalId != null">
+        #{nationalId,jdbcType=VARCHAR},
+      </if>
+      <if test="natioanlDescr != null">
+        #{natioanlDescr,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="xdfJobZhiji != null">
+        #{xdfJobZhiji,jdbcType=VARCHAR},
+      </if>
+      <if test="joinDate != null">
+        #{joinDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="positionName != null">
+        #{positionName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.manager.entity.HrUser">
+    update hr_user
+    <set>
+      <if test="birthDate != null">
+        birth_date = #{birthDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="busnPhone != null">
+        busn_phone = #{busnPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null">
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        dept_id = #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null">
+        dept_name = #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="emailAddr != null">
+        email_addr = #{emailAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="emplPhone != null">
+        empl_phone = #{emplPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="ethic != null">
+        ethic = #{ethic,jdbcType=VARCHAR},
+      </if>
+      <if test="graduageSch != null">
+        graduage_sch = #{graduageSch,jdbcType=VARCHAR},
+      </if>
+      <if test="highestEduc != null">
+        highest_educ = #{highestEduc,jdbcType=VARCHAR},
+      </if>
+      <if test="hrStatus != null">
+        hr_status = #{hrStatus,jdbcType=CHAR},
+      </if>
+      <if test="jobCode != null">
+        job_code = #{jobCode,jdbcType=VARCHAR},
+      </if>
+      <if test="loginUserName != null">
+        login_user_name = #{loginUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null">
+        major = #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nationalId != null">
+        national_id = #{nationalId,jdbcType=VARCHAR},
+      </if>
+      <if test="natioanlDescr != null">
+        natioanl_descr = #{natioanlDescr,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="xdfJobZhiji != null">
+        xdf_job_zhiji = #{xdfJobZhiji,jdbcType=VARCHAR},
+      </if>
+      <if test="joinDate != null">
+        join_date = #{joinDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="positionName != null">
+        position_name = #{positionName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where empl_id = #{emplId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.manager.entity.HrUser">
+    update hr_user
+    set birth_date = #{birthDate,jdbcType=TIMESTAMP},
+      busn_phone = #{busnPhone,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      dept_id = #{deptId,jdbcType=VARCHAR},
+      dept_name = #{deptName,jdbcType=VARCHAR},
+      email_addr = #{emailAddr,jdbcType=VARCHAR},
+      empl_phone = #{emplPhone,jdbcType=VARCHAR},
+      ethic = #{ethic,jdbcType=VARCHAR},
+      graduage_sch = #{graduageSch,jdbcType=VARCHAR},
+      highest_educ = #{highestEduc,jdbcType=VARCHAR},
+      hr_status = #{hrStatus,jdbcType=CHAR},
+      job_code = #{jobCode,jdbcType=VARCHAR},
+      login_user_name = #{loginUserName,jdbcType=VARCHAR},
+      major = #{major,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      national_id = #{nationalId,jdbcType=VARCHAR},
+      natioanl_descr = #{natioanlDescr,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      xdf_job_zhiji = #{xdfJobZhiji,jdbcType=VARCHAR},
+      join_date = #{joinDate,jdbcType=TIMESTAMP},
+      position_name = #{positionName,jdbcType=VARCHAR},
+    where empl_id = #{emplId,jdbcType=VARCHAR}
+  </update>
+</mapper>

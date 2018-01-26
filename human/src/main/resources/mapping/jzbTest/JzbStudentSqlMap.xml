@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbStudentDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbStudent" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="StudentResultMap" type="com.human.jzbTest.entity.JzbStudentDto" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="grade_id" property="gradeId" jdbcType="BIGINT" />
+    <result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+    <result column="subject_code" property="subjectCode" jdbcType="VARCHAR" />
+    <result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+    <result column="school_name" property="schoolName" jdbcType="VARCHAR" />   
+    <result column="dept_id" property="deptId" jdbcType="BIGINT" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />    
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="use_time" property="useTime" jdbcType="VARCHAR" />
+    <result column="is_pass" property="isPass" jdbcType="VARCHAR" />
+    <result column="is_pass_name" property="isPassName" jdbcType="VARCHAR" />
+    <result column="paper_id" property="paperId" jdbcType="INTEGER" />
+    <result column="xdf" property="xdf" jdbcType="INTEGER" />
+    <result column="xdf_no" property="xdfNo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="bm_codes" property="bmCodes" jdbcType="VARCHAR" />
+    <result column="REAL_BM_CODES" property="realBmCodes" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, PHONE, NAME
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_student
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getRecentPaper" resultMap="StudentResultMap"  parameterType="java.util.Date" >
+    select 
+    *
+    from jzb_question_paper
+    where CREATE_TIME > #{startDate,jdbcType=TIMESTAMP} and xdf = 2 
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jzb_student
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <insert id="insertBmRecord" parameterType="com.human.jzbTest.entity.JzbStudentBmRecord" >
+  	insert into jzb_student_bm_record(paper_id,class_code,class_name,create_time) 
+  	values(#{paperId,jdbcType=INTEGER},#{classCode,jdbcType=VARCHAR},#{className,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP});
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbStudent" >
+    insert into jzb_student
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="phone != null" >
+        PHONE,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbStudent" >
+    update jzb_student
+    <set >
+      <if test="phone != null" >
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+ <!-- 分页查询 -->
+  <select id="query" resultMap="StudentResultMap" parameterType="java.util.HashMap">
+    SELECT p1.id,p1.name,p1.phone,
+    (select group_concat(distinct g.class_code) from jzb_student_bm_record g where g.paper_id = p1.id) bm_codes,
+    p1.REAL_BM_CODES,g.id AS grade_id ,g.grade_name,
+	d1.data_value AS subject_code, d1.name AS subject_name,
+	c.school_name,
+	d.id AS dept_id ,d.name AS dept_name,d2.name is_pass_name,
+	p1.create_time,
+	TIMESTAMPDIFF(MINUTE,p1.start_time,p1.end_time) AS use_time,
+	p1.is_pass,
+    p1.id AS paper_id,
+    p1.xdf,p1.status  
+	FROM jzb_question_paper p1 
+	LEFT JOIN jzb_grade g ON p1.grade=g.id 
+	LEFT JOIN dic_data d1 ON p1.subject=d1.data_value
+	LEFT JOIN dic_data d2 ON p1.is_pass=d2.data_value and d2.dic_code = 'jzb_score_level'
+	LEFT JOIN jzb_school c ON p1.school=c.id
+	LEFT JOIN jzb_dept d ON g.dept_id=d.id
+	WHERE p1.name !="" AND  p1.phone !=""
+	AND d1.dic_code='subject' 
+	AND g.is_valid=0 
+	AND c.is_valid=0 
+	AND d.is_valid=1  
+	<if test="s != null">
+		AND g.dept_id  IN
+		<foreach collection="s" item="deptId" index="index" open="(" separator="," close=")">
+			#{deptId,jdbcType=BIGINT}
+	    </foreach>
+	</if>
+	<if test="t.deptId != null">
+			AND g.dept_id = #{t.deptId,jdbcType=BIGINT}
+	</if>
+	<if test="t.gradeId != null">
+			AND g.id = #{t.gradeId,jdbcType=BIGINT}
+	</if>
+	<if test="t.subjectCode!= null and t.subjectCode !=''">
+		    AND p1.subject = #{t.subjectCode,jdbcType=VARCHAR}
+	</if>
+	<if test="t.isPass != null and t.isPass !=''">
+	        AND p1.is_pass = #{t.isPass,jdbcType=VARCHAR}
+	</if>	
+	<if test="t.name!= null and t.name !=''">
+			AND p1.name like CONCAT('%',#{t.name,jdbcType=VARCHAR},'%')
+	</if>
+	<if test="t.phone!= null and t.phone !=''">
+			AND p1.phone like CONCAT('%',#{t.phone,jdbcType=VARCHAR},'%')
+	</if>
+	<if test="t.schoolName!= null and t.schoolName !=''">
+			AND c.school_name like CONCAT('%',#{t.schoolName,jdbcType=VARCHAR},'%')
+	</if>	
+	order by p1.id desc 
+  </select>
+  
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.ResumeHrRemarkDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.ResumeHrRemark" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_USER_NAME" property="createUserName" jdbcType="INTEGER" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+    <result column="RESUME_ID" property="resumeId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CREATE_USER, CREATE_TIME, CONTENT, RESUME_ID
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_hr_remark
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByResumeId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    SELECT r.*,u.`name` create_user_name FROM resume_hr_remark r
+	JOIN users u ON r.`CREATE_USER` = u.`user_name`
+    where RESUME_ID = #{resumeId,jdbcType=INTEGER} order by id desc 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from resume_hr_remark
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.recruitment.entity.ResumeHrRemark" >
+    insert into resume_hr_remark (ID, CREATE_USER, CREATE_TIME, 
+      CONTENT, RESUME_ID)
+    values (#{id,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{content,jdbcType=VARCHAR}, #{resumeId,jdbcType=INTEGER})
+  </insert>
+</mapper>

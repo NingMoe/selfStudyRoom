@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.SmsTempDao">
+	<resultMap id="BaseResultMap" type="com.human.basic.entity.SmsTem">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="tem_type" property="temType" jdbcType="INTEGER" />
+		<result column="tem_name" property="temName" jdbcType="VARCHAR" />
+		<result column="tem_company" property="temCompany" jdbcType="VARCHAR" />
+		<result column="company_name" property="temCompanyName" jdbcType="VARCHAR" />
+		<result column="tem_dept" property="temDept" jdbcType="VARCHAR" />
+		<result column="dept_name" property="temDeptName" jdbcType="VARCHAR" />
+		<result column="tem_desc" property="temDesc" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="BIGINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		st.`id`,st.`tem_type`,st.`tem_name`,st.`tem_company`,hc.`company_name` ,st.`tem_dept`,ho.`NAME` dept_name,st.tem_desc,st.state
+	</sql>
+
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		<include refid="Base_Column_List" />
+		FROM sms_temp st
+LEFT JOIN hr_company hc ON hc.`company_id`=st.`tem_company`
+LEFT JOIN hr_organization ho ON ho.`ID`=st.`tem_dept`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.temCompany !=null and t.temCompany !=''">
+				AND st.`tem_company`=#{t.temCompany,jdbcType=VARCHAR}
+		</if>
+		<if test="t.temName!=null and t.temName!=''">
+				AND st.`tem_name` LIKE CONCAT('%', #{t.temName,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.state!=null">
+				AND st.`state` = #{t.state,jdbcType=INTEGER}
+		</if>
+		<if test="t.deptIds !=null  and t.deptIds.length>0">
+				AND st.`tem_dept` in 
+				<foreach collection="t.deptIds" item="deptId" index="index"
+			open="(" separator="," close=")">
+			#{deptId,jdbcType=VARCHAR}
+		</foreach>
+		</if>
+		<if test="t.userId!=null">
+				AND st.`tem_company` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT}) AND st.`tem_dept` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT})
+		</if>
+		</trim>
+		order By st.id desc
+	</select>
+	
+	<select id="queryMsgRecord" resultType="com.human.basic.entity.SmsRecord" parameterType="java.util.HashMap">
+	SELECT hc.`company_name` sendCompany,ho.`NAME` sendDept,sr.`send_name` sendName,sr.`send_tel` sendTel,sr.`send_time` sendTime,sr.`state`,sr.`send_comment`sendComment,sr.`state_desc` stateDesc FROM sms_record sr 
+LEFT JOIN hr_company hc ON hc.`company_id`=sr.`company`
+LEFT JOIN hr_organization ho ON ho.`ID`=sr.`dept_id`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.company !=null and t.company !=''">
+				AND sr.`company`=#{t.company,jdbcType=VARCHAR}
+		</if>
+		<if test="t.sendTel!=null and t.sendTel!=''">
+				AND sr.`send_tel` = #{t.sendTel,jdbcType=VARCHAR}
+		</if>
+		<if test="t.state!=null">
+				<if test="t.state == 1">
+				AND sr.`state` = #{t.state,jdbcType=INTEGER}
+				</if>
+				<if test="t.state != 1">
+					AND sr.`state` != 1
+				</if>
+		</if>
+		<if test="t.deptIds !=null  and t.deptIds.length>0">
+				AND sr.`dept_id` in 
+				<foreach collection="t.deptIds" item="deptId" index="index"
+			open="(" separator="," close=")">
+			#{deptId,jdbcType=VARCHAR}
+		</foreach>
+		</if>
+		<if test="t.sendUser!=null">
+				AND sr.`company` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.sendUser,jdbcType=BIGINT}) AND sr.`dept_id` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.sendUser,jdbcType=BIGINT})
+		</if>
+		</trim>
+		order By sr.id desc
+	</select>
+	
+	
+	<select id="queryMsgRecordNoPage" resultType="com.human.basic.entity.SmsRecord"
+	parameterType="com.human.basic.entity.SmsRecord">
+	SELECT
+	sr.`send_name` sendName,sr.`send_time` sendTime,sr.`send_comment`
+	sendComment,sr.`state`,sr.`state_desc` stateDesc,sr.`send_tel` sendTel
+	FROM sms_record sr
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="seekerId ==null and resumeId == null">
+			<!-- <if test="sendTel!=null and sendTel!=''"> -->
+				AND sr.`send_tel` = #{sendTel,jdbcType=VARCHAR}
+			<!-- </if> -->
+		</if>
+		<if test="seekerId!=null">
+			AND sr.seeker_id = #{seekerId,jdbcType=BIGINT}
+		</if>
+		<if test="resumeId!=null">
+			AND sr.resume_id = #{resumeId,jdbcType=BIGINT}
+		</if>
+	</trim>
+	order By sr.id desc
+</select>
+	
+	
+	<select id="queryAll" resultMap="BaseResultMap" parameterType="com.human.basic.entity.SmsTem">
+		select
+		<include refid="Base_Column_List" />
+		FROM sms_temp st
+LEFT JOIN hr_company hc ON hc.`company_id`=st.`tem_company`
+LEFT JOIN hr_organization ho ON ho.`ID`=st.`tem_dept`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="temCompany !=null and temCompany !=''">
+				AND st.`tem_company`=#{temCompany,jdbcType=VARCHAR}
+		</if>
+		<if test="temName!=null and temName!=''">
+				AND st.`tem_name` LIKE CONCAT('%', #{temName,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="state!=null">
+				AND st.`state` = #{state,jdbcType=INTEGER}
+		</if>
+		<if test="deptIds !=null  and deptIds.length>0">
+				AND st.`tem_dept` in 
+				<foreach collection="deptIds" item="deptId" index="index"
+			open="(" separator="," close=")">
+			#{deptId,jdbcType=VARCHAR}
+		</foreach>
+		</if>
+		<if test="userId!=null">
+				AND st.`tem_company` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT}) AND st.`tem_dept` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{userId,jdbcType=BIGINT})
+		</if>
+		</trim>
+		order By st.id desc
+	</select>
+	
+	<select id="queryParam" resultType="com.human.basic.entity.SmsParam" parameterType="com.human.basic.entity.SmsParam">
+		SELECT sp.`id`,sp.`para_code` paraCode,sp.`para_name` paraName,sp.`smsTypeId` FROM sms_param sp
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="smsTypeId!=null">
+				AND sp.`smsTypeId`=#{smsTypeId,jdbcType=INTEGER}
+		</if>
+		</trim>
+	</select>
+	
+<!-- 	新增短信模版 -->
+	<insert id="add" parameterType="com.human.basic.entity.SmsTem">
+	INSERT INTO sms_temp
+	(tem_name,tem_company,tem_dept,tem_desc,create_user,create_time)
+	VALUES(#{temName,jdbcType=VARCHAR},#{temCompany,jdbcType=VARCHAR},#{temDept,jdbcType=VARCHAR},#{temDesc,jdbcType=VARCHAR},#{createUser,jdbcType=BIGINT},now())
+</insert>
+
+<select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		st.`id`,st.`tem_type`,st.`tem_name`,st.`tem_company`,st.`tem_dept`,st.tem_desc,st.state
+		FROM sms_temp st where st.id=#{id,jdbcType=BIGINT}
+	</select>
+	
+	<update id="edit"  parameterType="com.human.basic.entity.SmsTem">
+		UPDATE sms_temp SET tem_name=#{temName,jdbcType=VARCHAR},tem_company=#{temCompany,jdbcType=VARCHAR},tem_dept=#{temDept,jdbcType=VARCHAR},tem_desc=#{temDesc,jdbcType=VARCHAR},update_user=#{updateUser,jdbcType=BIGINT} ,update_time=NOW()
+		where id=#{id,jdbcType=BIGINT}
+	</update>
+	
+	<update id="delTemp" parameterType="java.util.HashMap">
+		update sms_temp set state=#{state,jdbcType=INTEGER} where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+	
+	
+	<insert id="insertSmsRecord" parameterType="com.human.basic.entity.SmsRecord">
+	INSERT INTO
+	sms_record
+	(company,dept_id,send_user,send_name,send_tel,send_comment,state,state_desc,resume_id,seeker_id,sms_type)
+	VALUES(#{company,jdbcType=VARCHAR},#{deptId,jdbcType=VARCHAR},#{sendUser,jdbcType=BIGINT},#{sendName,jdbcType=VARCHAR},#{sendTel,jdbcType=VARCHAR},#{sendComment,jdbcType=VARCHAR},#{state,jdbcType=INTEGER},#{stateDesc,jdbcType=VARCHAR},#{resumeId,jdbcType=BIGINT},#{seekerId,jdbcType=BIGINT},#{smsType,jdbcType=VARCHAR})
+</insert>
+
+   <!-- 获取前台短信修改手机号验证码 -->
+   <select id="getMsg" resultType="java.lang.String" parameterType="java.lang.String" >
+	 	SELECT
+	 	send_comment
+	 	FROM sms_record
+	 	WHERE send_tel= #{phone,jdbcType=VARCHAR}
+	 	AND send_time > #{time,jdbcType=VARCHAR}
+	 	AND sms_type = '1' AND state=1
+	 	ORDER BY send_time DESC LIMIT 1
+  </select>
+  
+  <select id="querySmsByResumeId" resultType="com.human.basic.entity.SmsRecord" parameterType="java.lang.Integer">
+  		SELECT send_comment sendComment,send_time sendTime FROM sms_record WHERE resume_id = #{resumeId,jdbcType=INTEGER} and state = 1 order by send_time desc 
+  </select>
+
+</mapper>

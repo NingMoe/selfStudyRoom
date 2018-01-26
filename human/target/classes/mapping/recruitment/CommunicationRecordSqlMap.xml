@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.CommunicationRecordDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.CommunicationRecord" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resume_flow_code" property="flowCode" jdbcType="VARCHAR" />
+    <result column="resume_seeker_id" property="seekerId" jdbcType="BIGINT" />
+    <result column="topIc" property="topIc" jdbcType="VARCHAR" />
+    <collection property="cd"  ofType="com.human.recruitment.entity.CommunicationDesc">
+		<id property="descId" column="descId" jdbcType="BIGINT" />
+		 <result column="communication" property="communication" jdbcType="VARCHAR" />
+		 <result column="name" property="communicationName" jdbcType="VARCHAR" />
+		<result column="link_Time" property="linkTime" jdbcType="TIMESTAMP" />
+		<result column="next_time" property="nextTime" jdbcType="TIMESTAMP" />
+		<result column="comment" property="comment" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+	cr.`ID`,cr.`resume_flow_code`,cr.`resume_seeker_id`,cr.`topic`,cd.`descId`,cd.`communication`,cd.`link_Time`,DATE_FORMAT(cd.`next_time`,'%Y-%m%-%d %H:%i:%S') next_time,cd.`comment`,cd.`status`,u.`name`
+</sql>
+	<select id="linkQuery" resultMap="BaseResultMap"
+	parameterType="com.human.recruitment.entity.CommunicationRecord">
+	SELECT
+	<include refid="Base_Column_List" />
+	FROM communication_record cr
+	LEFT JOIN communication_desc cd ON cd.`communication_id`=cr.`ID`
+	LEFT JOIN users u ON cd.`communication`=u.`user_name`
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="seekerId != null">
+			AND cr.`resume_seeker_id`=#{seekerId,jdbcType=BIGINT}
+		</if>
+	</trim>
+	ORDER BY cd.`link_Time`DESC
+</select>
+
+<select id="queryCommunicationDesc" resultType="com.human.recruitment.entity.CommunicationDesc"
+	parameterType="com.human.recruitment.entity.CommunicationDesc">
+	SELECT
+	cd.`descId` descId,cd.`link_Time` linkTime,cd.`next_time` nextTime,cd.`status` status,cd.`comment` comment,cd.`communication` communicator,cd.`communication_id` communicationId
+	FROM communication_desc cd 
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="communicationId != null">
+			AND cd.`communication_id`=#{communicationId,jdbcType=BIGINT}
+		</if>
+		<if test="status != null">
+			AND cd.`status`=#{status,jdbcType=INTEGER}
+		</if>
+	</trim>
+	ORDER BY cd.`link_Time`DESC
+</select>
+<insert id="inserRecord" useGeneratedKeys="true" keyProperty="id"
+	parameterType="com.human.recruitment.entity.CommunicationRecord">
+	INSERT INTO communication_record (resume_seeker_id,topic)
+	VALUES(#{seekerId,jdbcType=BIGINT},#{topIc,jdbcType=VARCHAR})
+	</insert>
+<insert id="inserDesc" parameterType="com.human.recruitment.entity.CommunicationDesc">
+	INSERT INTO
+	communication_desc
+	(communication,link_Time,
+	<if test="nextTime != null and nextTime !=''">
+		next_time,
+	</if>
+	COMMENT,communication_id,STATUS)
+	VALUES(#{communication,jdbcType=VARCHAR},now(),
+	<if test="nextTime != null and nextTime !=''">
+		#{nextTime,jdbcType=VARCHAR},
+	</if>
+	#{comment,jdbcType=VARCHAR},#{communicationId,jdbcType=BIGINT},#{status,jdbcType=INTEGER})
+</insert>
+	
+</mapper>

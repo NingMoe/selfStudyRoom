@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.customer.dao.CustomerMailFoxDao">
+	<resultMap id="BaseResultMap" type="com.human.customer.entity.CustomerMailFox">
+	<id column="id" property="id" jdbcType="BIGINT" />
+	<result column="acctype" property="acctype" jdbcType="VARCHAR" />
+	<result column="campus" property="campus" jdbcType="VARCHAR" />
+	<result column="grade" property="grade" jdbcType="VARCHAR" />
+	<result column="dept" property="dept" jdbcType="VARCHAR" />
+	<result column="type1" property="type1" jdbcType="VARCHAR" />
+	<result column="type2" property="type2" jdbcType="VARCHAR" />
+	<result column="type3" property="type3" jdbcType="VARCHAR" />
+	<result column="type4" property="type4" jdbcType="VARCHAR" />
+	<result column="title" property="title" jdbcType="VARCHAR" />
+	<result column="desc" property="desc" jdbcType="VARCHAR" />
+	<result column="openId" property="openId" jdbcType="VARCHAR" />
+	<result column="name" property="name" jdbcType="VARCHAR" />
+	<result column="telPhone" property="telPhone" jdbcType="VARCHAR" />
+	<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+	<result column="state" property="state" jdbcType="INTEGER" />
+	<result column="score" property="score" jdbcType="INTEGER" />
+	<result column="solution" property="solution" jdbcType="VARCHAR" />
+	<result column="sol_user" property="solUser" jdbcType="VARCHAR" />
+	<result column="complete_user" property="completeUser" jdbcType="VARCHAR" />
+	<result column="complete_time" property="completeTime" jdbcType="TIMESTAMP" />
+	<result column="comment" property="comment" jdbcType="VARCHAR" />
+	<result column="sol_time" property="solTime" jdbcType="TIMESTAMP" />
+	<result column="is_read" property="isRead" jdbcType="BIT" />
+	<result column="read_type" property="readType" jdbcType="INTEGER" />
+	<result column="is_tracet" property="isTracet" jdbcType="BIT" />
+	<result column="is_com_sms" property="isComSms" jdbcType="BIT" />
+	<result column="tracer" property="tracer" jdbcType="VARCHAR" />
+	<result column="tracerName" property="tracerName" jdbcType="VARCHAR" />
+	<result column="trace_desc" property="traceDesc" jdbcType="VARCHAR" />
+	<collection property="cmbp"
+				ofType="com.human.customer.entity.CustomerMailFoxBasePhoto">
+				<id column="cmbpid" property="id" jdbcType="BIGINT" />
+				<result column="cmbpurl" property="url" jdbcType="VARCHAR" />
+			</collection>
+	<collection property="cmd"
+				ofType="com.human.customer.entity.CustomerMailfoxDemand">
+				<id column="cid" property="id" jdbcType="BIGINT" />
+				<result column="base_id" property="baseId" jdbcType="BIGINT" />
+				<result column="demand_desc" property="demandDesc" jdbcType="VARCHAR" />
+				<result column="is_meet" property="isMeet" jdbcType="BIT" />
+			</collection>
+	<collection property="cmr"
+			ofType="com.human.customer.entity.CustomerMailFoxRecord">
+			<id column="cmrid" property="id" jdbcType="BIGINT" />
+			<result column="type" property="type" jdbcType="INTEGER" />
+			<result column="cmrdesc" property="desc" jdbcType="VARCHAR" />
+			<result column="oper_user" property="operUser" jdbcType="VARCHAR" />
+			<result column="oper_time" property="operTime" jdbcType="TIMESTAMP" />
+			<collection property="cmp"
+				ofType="com.human.customer.entity.CustomerMailFoxPhoto">
+				<id column="cmpid" property="id" jdbcType="BIGINT" />
+				<result column="url" property="url" jdbcType="VARCHAR" />
+			</collection>
+		</collection>
+</resultMap>
+
+	<select id="query" parameterType="com.human.customer.entity.CustomerMailFox"
+	resultMap="BaseResultMap">
+	SELECT
+	cmb.`id`,
+	cmb.`acctype`,
+	cmb.`campus`,
+	cmb.`grade`,
+	cmb.`dept`,
+	cmb.`type1`,
+	cmb.`type2`,
+	cmb.`type3`,
+	cmb.`type4`,
+	cmb.`title`,
+	cmb.`desc`,
+	cmb.`openId`,
+	cmb.`name`,
+	cmb.`telphone`,
+	cmb.`create_time`,
+	cmb.`state`,
+	cmb.`score`,
+	cmb.`solution`,
+	cmb.`sol_user`,
+	cmb.`sol_time`,
+	cmb.`comment`,
+	cmb.`is_tracet`,
+	cmb.`tracer`,
+	cmb.`trace_desc`,
+	cmb.`is_com_sms`
+	FROM
+	customer_mailfox_base cmb 
+  <trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.id!=null">
+			AND cmb.`id`=#{t.id,jdbcType=BIGINT}
+		</if>
+		<if test="t.solUser!=null and t.solUser!=''">
+			AND ((cmb.`state`=1) OR (cmb.`state`>1 AND cmb.`sol_user`=#{t.solUser,jdbcType=VARCHAR}))
+		</if>
+		<if test="t.tracer!=null and t.tracer!=''">
+			AND cmb.`state`>2 AND cmb.`tracer`=#{t.tracer,jdbcType=VARCHAR}
+		</if>
+		<if test="t.telPhone!=null and t.telPhone!=''">
+			AND cmb.`telPhone` =#{t.telPhone,jdbcType=VARCHAR}
+		</if>
+		<if test="t.dept!=null and t.dept!=''">
+			AND cmb.`dept`=#{t.dept,jdbcType=VARCHAR}
+		</if>
+		<if test="t.state!=null and t.state!=''">
+			AND cmb.`state`=#{t.state,jdbcType=VARCHAR}
+		</if>
+		<if test="t.grade!=null and t.grade!=''">
+			AND cmb.`grade`=#{t.grade,jdbcType=VARCHAR}
+		</if>
+		<if test="t.campus!=null and t.campus!=''">
+			AND cmb.`campus`=#{t.campus,jdbcType=VARCHAR}
+		</if>
+		<if test="t.acctype!=null and t.acctype!=''">
+			AND cmb.`acctype`=#{t.acctype,jdbcType=VARCHAR}
+		</if>
+		<if test="t.startDate!=null and t.startDate!=''">
+			AND DATE_FORMAT(cmb.`create_time`,'%Y-%m-%d')
+			&gt;=#{t.startDate,jdbcType=VARCHAR}
+		</if>
+		<if test="t.endDate !=null and t.endDate !=''">
+			AND DATE_FORMAT(cmb.`create_time`,'%Y-%m-%d')
+			&lt;=#{t.endDate,jdbcType=VARCHAR}
+		</if>
+		</trim>
+  ORDER BY cmb.`state` ASC,cmb.`id` DESC
+</select>
+<insert id="save" parameterType="com.human.customer.entity.CustomerMailFox">
+	INSERT INTO customer_mailfox_base
+	(acctype,campus,grade,dept,type1,type2,type3,type4,title,`desc`,telphone,`name`,state,create_time,sol_user)
+	VALUES
+	(#{acctype,jdbcType=VARCHAR},#{campus,jdbcType=VARCHAR},#{grade,jdbcType=VARCHAR},#{dept,jdbcType=VARCHAR},#{type1,jdbcType=VARCHAR},#{type2,jdbcType=VARCHAR},#{type3,jdbcType=VARCHAR},#{type4,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{state,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{solUser,jdbcType=VARCHAR})
+</insert>
+
+
+
+<select id="getMailById" parameterType="com.human.customer.entity.CustomerMailFox"
+	resultMap="BaseResultMap">
+	SELECT
+	cmb.`id`,
+	cmb.`acctype`,
+	cmb.`campus`,
+	cmb.`grade`,
+	cmb.`dept`,
+	cmb.`type1`,
+	cmb.`type2`,
+	cmb.`type3`,
+	cmb.`type4`,
+	cmb.`title`,
+	cmb.`desc`,
+	cmb.`openId`,
+	cmb.`name`,
+	cmb.`telphone`,
+	cmb.`create_time`,
+	cmb.`state`,
+	cmb.`score`,
+	cmb.`solution`,
+	u1.name sol_user,
+	cmb.`sol_time`,
+	cmb.`comment`,
+	u2.name complete_user,
+	cmb.`complete_time`,
+	cmb.`start_time`,
+	cmb.`tracer_start_time`,
+	cmb.`tracer_end_time`,
+	cmb.`is_tracet`,
+	cmb.`tracer`,
+	cmb.`is_read`,
+	cmb.`read_type`,
+	u.`name` tracerName,
+	cmb.`trace_desc`,
+	cmb.`is_com_sms`,
+	cmd.`id` cid,
+	cmd.`is_meet`,
+	cmd.`demand_desc`,
+	cmr.`id` cmrid,
+	cmr.`oper_time`,
+	cmr.`oper_user`,
+	cmr.`type`,
+	cmr.`desc` cmrdesc,
+	cmp.`id` cmpid,
+	cmp.`url`,
+	cmbp.`id` cmbpid,
+	cmbp.`url` cmbpurl
+	FROM
+	customer_mailfox_base cmb
+	LEFT JOIN customer_mailfox_demand cmd
+	ON cmd.`base_id` = cmb.`id`
+	LEFT JOIN customer_mailfox_record cmr
+	ON cmr.`base_id` = cmb.`id`
+	LEFT JOIN customer_mailfox_photo cmp
+	ON cmp.`record_id` = cmr.`id`
+	LEFT JOIN hr_user u
+	ON u.`email_addr`= cmb.`tracer`
+	LEFT JOIN hr_user u1
+	ON u1.`email_addr`= cmb.`sol_user`
+	LEFT JOIN hr_user u2
+	ON u2.`email_addr`= cmb.`complete_user`
+	LEFT JOIN customer_mailfox_base_photo cmbp ON cmbp.`record_id`=cmb.`id`
+	where cmb.`id`=#{id,jdbcType=BIGINT} 
+	<if test="openId !=null and openId !=''">
+			AND cmb.`openId`=#{openId,jdbcType=VARCHAR}
+   </if>
+   <if test="solUser!=null and solUser!=''">
+		 AND cmb.`sol_user`=#{solUser,jdbcType=VARCHAR}
+   </if>
+</select>
+
+<select id="queryById" parameterType="com.human.customer.entity.CustomerMailFox"
+	resultMap="BaseResultMap">
+	SELECT
+	cmb.`id`,
+	cmb.`acctype`,
+	cmb.`campus`,
+	cmb.`grade`,
+	cmb.`dept`,
+	cmb.`type1`,
+	cmb.`type2`,
+	cmb.`type3`,
+	cmb.`type4`,
+	cmb.`title`,
+	cmb.`desc`,
+	cmb.`openId`,
+	cmb.`name`,
+	cmb.`telphone`,
+	cmb.`create_time`,
+	cmb.`state`,
+	cmb.`score`,
+	cmb.`solution`,
+	u1.name sol_user,
+	cmb.`sol_time`,
+	cmb.`comment`,
+	u2.name complete_user,
+	cmb.`complete_time`,
+	cmb.`start_time`,
+	cmb.`tracer_start_time`,
+	cmb.`tracer_end_time`,
+	cmb.`is_tracet`,
+	cmb.`tracer`,
+	u.`name` tracerName,
+	cmb.`trace_desc`,
+	cmb.`is_com_sms`,
+	cmd.`id` cid,
+	cmd.`is_meet`,
+	cmd.`demand_desc`,
+	cmr.`id` cmrid,
+	cmr.`oper_time`,
+	cmr.`oper_user`,
+	cmr.`type`,
+	cmr.`desc` cmrdesc,
+	cmp.`id` cmpid,
+	cmp.`url`,
+	cmbp.`id` cmbpid,
+	cmbp.`url` cmbpurl
+	FROM
+	customer_mailfox_base cmb
+	LEFT JOIN customer_mailfox_demand cmd
+	ON cmd.`base_id` = cmb.`id`
+	LEFT JOIN customer_mailfox_record cmr
+	ON cmr.`base_id` = cmb.`id`
+	LEFT JOIN customer_mailfox_photo cmp
+	ON cmp.`record_id` = cmr.`id`
+	LEFT JOIN hr_user u
+	ON u.`email_addr`= cmb.`tracer`
+	LEFT JOIN hr_user u1
+	ON u1.`email_addr`= cmb.`sol_user`
+	LEFT JOIN hr_user u2
+	ON u2.`email_addr`= cmb.`complete_user`
+	LEFT JOIN customer_mailfox_base_photo cmbp ON cmbp.`record_id`=cmb.`id`
+	where cmb.`id`=#{id,jdbcType=BIGINT}
+</select>
+
+<delete id="delDemand">DELETE FROM customer_mailfox_demand WHERE base_id=#{id,jdbcType=BIGINT}</delete>
+
+<insert id="insertDemand"  parameterType="com.human.customer.entity.CustomerMailfoxDemand">
+	insert into customer_mailfox_demand
+	(base_id,demand_desc,is_meet,create_user)
+	VALUES
+	(#{baseId,jdbcType=BIGINT},#{demandDesc,jdbcType=VARCHAR},#{isMeet,jdbcType=BIT},#{createUser,jdbcType=VARCHAR})
+</insert>
+
+<update id="update" parameterType="com.human.customer.entity.CustomerMailFox">
+update customer_mailfox_base
+	set acctype=#{acctype,jdbcType=VARCHAR},
+	campus=#{campus,jdbcType=VARCHAR},
+	grade=#{grade,jdbcType=VARCHAR},
+	dept=#{dept,jdbcType=VARCHAR},
+	type1=#{type1,jdbcType=VARCHAR},
+	type2=#{type2,jdbcType=VARCHAR},
+	type3=#{type3,jdbcType=VARCHAR},
+	type4=#{type4,jdbcType=VARCHAR},
+	title=#{title,jdbcType=VARCHAR},
+	`desc`=#{desc,jdbcType=VARCHAR},
+	telphone=#{telPhone,jdbcType=VARCHAR},
+	`name`=#{name,jdbcType=VARCHAR},
+	state=#{state,jdbcType=VARCHAR},
+	<if test="solUser !=null and solUser!=''">
+		sol_user=#{solUser,jdbcType=VARCHAR},
+	</if>
+	solution=#{solution,jdbcType=VARCHAR},
+	<if test="solTime !=null">
+		sol_time=#{solTime,jdbcType=TIMESTAMP},
+		</if>
+	<if test="completeUser !=null and completeUser !=''">
+		complete_user=#{completeUser,jdbcType=VARCHAR},
+	</if>
+	<if test="complete_time !=null">
+		complete_time=#{completeTime,jdbcType=TIMESTAMP},
+	</if>
+	<if test="tracer_start_time !=null">
+		tracer_start_time=#{tracerStartTime,jdbcType=TIMESTAMP},
+	</if>
+	<if test="tracer_end_time !=null">
+		tracer_end_time=#{tracerEndTime,jdbcType=TIMESTAMP},
+	</if>
+	<if test="start_time !=null">
+		start_time=#{startTime,jdbcType=TIMESTAMP},
+	</if>
+	comment=#{comment,jdbcType=VARCHAR},
+	is_tracet=#{isTracet,jdbcType=BIT},
+	tracer=#{tracer,jdbcType=VARCHAR},
+	trace_desc=#{traceDesc,jdbcType=VARCHAR},
+	is_com_sms=#{isComSms,jdbcType=BIT}
+	where id=#{id,jdbcType=BIGINT}
+</update>
+
+<update id="managerUpdate" parameterType="com.human.customer.entity.CustomerMailFox">
+update customer_mailfox_base
+	set acctype=#{acctype,jdbcType=VARCHAR},
+	campus=#{campus,jdbcType=VARCHAR},
+	grade=#{grade,jdbcType=VARCHAR},
+	dept=#{dept,jdbcType=VARCHAR},
+	type1=#{type1,jdbcType=VARCHAR},
+	type2=#{type2,jdbcType=VARCHAR},
+	type3=#{type3,jdbcType=VARCHAR},
+	type4=#{type4,jdbcType=VARCHAR},
+	title=#{title,jdbcType=VARCHAR},
+	`desc`=#{desc,jdbcType=VARCHAR},
+	telphone=#{telPhone,jdbcType=VARCHAR},
+	`name`=#{name,jdbcType=VARCHAR},
+	state=#{state,jdbcType=INTEGER},
+	sol_user=#{solUser,jdbcType=VARCHAR},
+	solution=#{solution,jdbcType=VARCHAR},
+	sol_time=#{createTime,jdbcType=TIMESTAMP},
+	complete_user=#{completeUser,jdbcType=VARCHAR},
+	complete_time=#{completeTime,jdbcType=TIMESTAMP},
+	tracer_start_time=#{tracerStartTime,jdbcType=TIMESTAMP},
+	tracer_end_time=#{tracerEndTime,jdbcType=TIMESTAMP},
+	start_time=#{startTime,jdbcType=TIMESTAMP},
+	comment=#{comment,jdbcType=VARCHAR},
+	is_tracet=#{isTracet,jdbcType=BIT},
+	tracer=#{tracer,jdbcType=VARCHAR},
+	trace_desc=#{traceDesc,jdbcType=VARCHAR},
+	is_com_sms=#{isComSms,jdbcType=BIT}
+	where id=#{id,jdbcType=BIGINT}
+</update>
+
+<update id="updateTracer" parameterType="com.human.customer.entity.CustomerMailFox">
+update customer_mailfox_base
+	set state=#{state,jdbcType=INTEGER},
+	tracer=#{tracer,jdbcType=VARCHAR},
+	trace_desc=#{traceDesc,jdbcType=VARCHAR},
+	tracer_end_time=now()
+	where id=#{id,jdbcType=BIGINT}
+</update>
+
+<insert id="addMail" useGeneratedKeys="true" keyProperty="id"
+	parameterType="com.human.customer.entity.CustomerMailFox">
+	INSERT INTO customer_mailfox_base
+	(acctype,grade,`desc`,`type`,state,create_time,openid)
+	VALUES
+	(#{acctype,jdbcType=VARCHAR},#{grade,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},0,now(),#{openId,jdbcType=VARCHAR})
+</insert>
+
+	<insert id="addMailfoxRecord" useGeneratedKeys="true"
+	keyProperty="id" parameterType="com.human.customer.entity.CustomerMailFoxRecord">
+	INSERT INTO customer_mailfox_record
+	(base_id,oper_user,`type`,`desc`)
+	values(#{baseId,jdbcType=BIGINT},#{operUser,jdbcType=VARCHAR},#{type,jdbcType=INTEGER},#{desc,jdbcType=VARCHAR})
+</insert>
+	<insert id="inserBasePhoto" parameterType="com.human.customer.entity.CustomerMailFoxBasePhoto">
+		INSERT INTO
+		customer_mailfox_base_photo(record_id,`url`)
+		values(#{recordId,jdbcType=BIGINT},#{url,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="inserRecordPhoto" parameterType="com.human.customer.entity.CustomerMailFoxPhoto">
+		INSERT INTO
+		customer_mailfox_photo(record_id,`url`)
+		values(#{recordId,jdbcType=BIGINT},#{url,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getMailList" parameterType="com.human.customer.entity.CustomerMailFox"
+	resultMap="BaseResultMap">
+	SELECT
+	cmb.`id`,
+	cmb.`is_read`,
+	cmb.`read_type`,
+	cmb.`acctype`,
+	cmb.`campus`,
+	cmb.`grade`,
+	cmb.`dept`,
+	cmb.`type1`,
+	cmb.`type2`,
+	cmb.`type3`,
+	cmb.`type4`,
+	cmb.`title`,
+	cmb.`desc`,
+	cmb.`openId`,
+	cmb.`name`,
+	cmb.`telphone`,
+	cmb.`create_time`,
+	cmb.`state`,
+	cmb.`score`,
+	cmb.`solution`,
+	cmb.`sol_time`,
+	cmb.`comment`,
+	cmb.`start_time`,
+	cmb.`tracer_start_time`,
+	cmb.`tracer_end_time`,
+	cmb.`is_tracet`,
+	cmb.`tracer`,
+	cmb.`trace_desc`,
+	cmb.`is_com_sms`
+	FROM
+	customer_mailfox_base cmb
+	where 1=1
+	<if test="openId !=null and openId !=''">
+			AND cmb.`openId`=#{openId,jdbcType=VARCHAR} 
+   </if>
+   <if test="solUser!=null and solUser!=''">
+		 AND cmb.`sol_user`=#{solUser,jdbcType=VARCHAR}
+   </if>
+   order by id desc
+</select>
+
+<update id="subScore" parameterType="com.human.customer.entity.CustomerMailFox">
+update customer_mailfox_base
+	set score=#{score,jdbcType=INTEGER}
+	where id=#{id,jdbcType=BIGINT}
+</update>
+
+<update id="updateReadType" parameterType="com.human.customer.entity.CustomerMailFox">
+	update customer_mailfox_base
+	set is_read=#{isRead,jdbcType=BIT}
+	 <if test="readType!=null ">
+		 ,read_type=#{readType,jdbcType=INTEGER}
+   </if>
+	where id=#{id,jdbcType=BIGINT}
+</update>
+
+<select id="queryManagerList"  parameterType="java.util.HashMap"
+	resultMap="BaseResultMap">
+	SELECT
+	cmb.`id`,
+	cmb.`is_read`,
+	cmb.`read_type`,
+	cmb.`acctype`,
+	cmb.`campus`,
+	cmb.`grade`,
+	cmb.`dept`,
+	cmb.`type1`,
+	cmb.`type2`,
+	cmb.`type3`,
+	cmb.`type4`,
+	cmb.`title`,
+	cmb.`desc`,
+	cmb.`openId`,
+	cmb.`name`,
+	cmb.`telphone`,
+	cmb.`create_time`,
+	cmb.`state`,
+	cmb.`score`,
+	cmb.`solution`,
+	cmb.`sol_user`,
+	cmb.`sol_time`,
+	cmb.`comment`,
+	cmb.`is_tracet`,
+	cmb.`tracer`,
+	cmb.`trace_desc`,
+	cmb.`is_com_sms`
+	FROM
+	customer_mailfox_base cmb 
+  <trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="queryType==1">
+			 and cmb.`state`=1 
+		</if>
+		<if test="queryType==2">
+			 and cmb.`state` >1 and cmb.`state` &lt;5 and cmb.`sol_user`=#{solUser}
+		</if>
+		<if test="queryType==3">
+		     and  cmb.`state` =5 and cmb.`sol_user`=#{solUser}
+		</if>
+		</trim>
+  ORDER BY cmb.`state` ASC,cmb.`id` DESC
+</select>
+</mapper>	

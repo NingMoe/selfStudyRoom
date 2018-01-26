@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jw.dao.JwXdfClassInfoDao">
+  <resultMap id="BaseResultMap" type="com.human.basic.entity.XdfClassInfo">
+    <id column="s_class_code" jdbcType="VARCHAR" property="sClassCode" />
+    <result column="s_class_name" jdbcType="VARCHAR" property="sClassName" />
+    <result column="dt_begin_date" jdbcType="VARCHAR" property="dtBeginDate" />
+    <result column="dt_end_date" jdbcType="VARCHAR" property="dtEndDate" />
+    <result column="b_is_net" jdbcType="VARCHAR" property="bIsNet" />
+    <result column="b_is_end" jdbcType="VARCHAR" property="bIsEnd" />
+    <result column="b_souke" jdbcType="VARCHAR" property="bSouke" />
+    <result column="class_book_delivery_type" jdbcType="VARCHAR" property="ClassBookDeliveryType" />
+    <result column="d_fee" jdbcType="VARCHAR" property="dFee" />
+    <result column="s_class_type_code" jdbcType="VARCHAR" property="sClassTypeCode" />
+    <result column="s_class_type_f_code" jdbcType="VARCHAR" property="sClassTypeFCode" />
+    <result column="s_class_type_name" jdbcType="VARCHAR" property="sClassTypeName" />
+    <result column="s_project_code" jdbcType="VARCHAR" property="sProjectCode" />
+    <result column="s_project_f_code" jdbcType="VARCHAR" property="sProjectFCode" />
+    <result column="s_project_name" jdbcType="VARCHAR" property="sProjectName" />
+    <result column="s_dept_code" jdbcType="VARCHAR" property="sDeptCode" />
+    <result column="s_dept_f_code" jdbcType="VARCHAR" property="sDeptFCode" />
+    <result column="s_dept_name" jdbcType="VARCHAR" property="sDeptName" />
+    <result column="b_insurance" jdbcType="VARCHAR" property="bInsurance" />
+    <result column="n_use_card" jdbcType="VARCHAR" property="nUseCard" />
+    <result column="b_is_reside_class" jdbcType="VARCHAR" property="bIsResideClass" />
+    <result column="s_area_address" jdbcType="VARCHAR" property="sAreaAddress" />
+    <result column="s_area_code" jdbcType="VARCHAR" property="sAreaCode" />
+    <result column="course_code" jdbcType="VARCHAR" property="CourseCode" />
+    <result column="n_lesson" jdbcType="VARCHAR" property="nLesson" />
+    <result column="n_max_count" jdbcType="VARCHAR" property="nMaxCount" />
+    <result column="n_current_count" jdbcType="VARCHAR" property="nCurrentCount" />
+    <result column="s_print_address" jdbcType="VARCHAR" property="sPrintAddress" />
+    <result column="s_print_time" jdbcType="VARCHAR" property="sPrintTime" />
+    <result column="n_make_point" jdbcType="VARCHAR" property="nMakePoint" />
+    <result column="dt_open_time" jdbcType="VARCHAR" property="dtOpenTime" />
+    <result column="s_all_teacher_name" jdbcType="VARCHAR" property="sAllTeacherName" />
+    <result column="b_all_fee_insert" jdbcType="VARCHAR" property="bAllFeeInsert" />
+    <result column="s_class_subject" jdbcType="VARCHAR" property="sClassSubject" />
+    <result column="s_quarter" jdbcType="VARCHAR" property="sQuarter" />
+    <result column="grade" jdbcType="VARCHAR" property="Grade" />
+    <result column="stage" jdbcType="VARCHAR" property="Stage" />
+    <result column="dt_real_begin_date" jdbcType="VARCHAR" property="dtRealBeginDate" />
+    <result column="dt_real_end_date" jdbcType="VARCHAR" property="dtRealEndDate" />
+    <result column="b_can_register" jdbcType="VARCHAR" property="bCanRegister" />
+    <result column="s_manage_dept_codes" jdbcType="VARCHAR" property="sManageDeptCodes" />
+    <result column="n_state" jdbcType="VARCHAR" property="nState" />
+    <result column="n_audit" jdbcType="VARCHAR" property="nAudit" />
+    <result column="b_virtual" jdbcType="VARCHAR" property="bVirtual" />
+     <result column="remark" jdbcType="VARCHAR" property="remark" />
+     <result column="s_level" jdbcType="VARCHAR" property="sLevel" />
+     <result column="area" jdbcType="VARCHAR" property="area" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    s_class_code, s_class_name, dt_begin_date, dt_end_date, b_is_net, b_is_end, b_souke, 
+    class_book_delivery_type, d_fee, s_class_type_code, s_class_type_f_code, s_class_type_name, 
+    s_project_code, s_project_f_code, s_project_name, s_dept_code, s_dept_f_code, s_dept_name, 
+    b_insurance, n_use_card, b_is_reside_class, s_area_address, s_area_code, course_code, 
+    n_lesson, n_max_count, n_current_count, s_print_address, s_print_time, n_make_point, 
+    dt_open_time, s_all_teacher_name, b_all_fee_insert, s_class_subject, s_quarter, grade, 
+    stage, dt_real_begin_date, dt_real_end_date, b_can_register, s_manage_dept_codes, 
+    n_state, n_audit, b_virtual
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT 
+    s_class_code, s_class_name, dt_begin_date, dt_end_date, b_is_net, b_is_end, b_souke, 
+    class_book_delivery_type, d_fee, s_class_type_code, s_class_type_f_code, s_class_type_name, 
+    s_project_code, s_project_f_code, s_project_name, s_dept_code, s_dept_f_code, s_dept_name, 
+    b_insurance, n_use_card, b_is_reside_class, t.JYZ AS sAreaAddress, s_area_code, course_code, 
+    n_lesson, n_max_count, n_current_count, s_print_address, s_print_time, n_make_point, 
+    dt_open_time, s_all_teacher_name, b_all_fee_insert, s_class_subject, s_quarter, grade, 
+    stage, dt_real_begin_date, dt_real_end_date, b_can_register, s_manage_dept_codes, 
+    n_state, n_audit, b_virtual
+    FROM xdf_class_info X
+    LEFT JOIN (SELECT o.ID, o.TEACHER_CODE, o.TEACHER_NAME, o.SEX, o.DKSX, o.JYZ, o.SCHOOL, o.SCHOOL_NAME, o.ORG, o.ORG_NAME, o.CN_HOURS,o.sz_sj,o.sy_sj,o.xy_sj,o.cn_sj,o.yj_sj,o.WS_SJ,
+    o.DEPT, o.SUBJECT, o.ONE_SX, o.SEX_CURR, o.ONE_CURR, o.REMARK, o.PHONE ,o.EMAIL,o.LOCK_USER,o.LOCK_STATE,
+    (SELECT GROUP_CONCAT(g.JW_GRADE) FROM jw_teacher_grade g WHERE g.TEACHER_CODE = o.TEACHER_CODE) grades,
+    (SELECT GROUP_CONCAT(s.JW_SITE) FROM jw_teacher_site s WHERE s.TEACHER_CODE = o.TEACHER_CODE) sites 
+    FROM jw_teacher o) t ON t.TEACHER_NAME =x.s_all_teacher_name 
+    WHERE s_class_code = #{sClassCode,jdbcType=VARCHAR}
+  </select>
+  
+   <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    x.s_class_code, x.s_class_name, x.dt_begin_date, x.dt_end_date, x.b_is_net, x.b_is_end, x.b_souke, 
+    x.class_book_delivery_type, x.d_fee, x.s_class_type_code, x.s_class_type_f_code, x.s_class_type_name, 
+    x.s_project_code, x.s_project_f_code, x.s_project_name, x.s_dept_code, x.s_dept_f_code, x.s_dept_name, 
+    x.b_insurance, x.n_use_card, x.b_is_reside_class, x.s_area_address, x.s_area_code, x.course_code, 
+    x.n_lesson, x.n_max_count, x.n_current_count, x.s_print_address, x.s_print_time, x.n_make_point, 
+    x.dt_open_time, x.s_all_teacher_name, x.b_all_fee_insert, x.s_class_subject, x.s_quarter, x.grade, 
+    x.stage, x.dt_real_begin_date, x.dt_real_end_date, x.b_can_register, x.s_manage_dept_codes, 
+    x.n_state, x.n_audit,x.b_virtual ,r.remark ,r.s_level,
+    t.jyz as area
+    from xdf_class_info x LEFT JOIN class_info_rm  r on x.s_class_code=r.s_class_code 
+    left join (select o.ID, o.TEACHER_CODE, o.TEACHER_NAME, o.SEX, o.DKSX, o.JYZ, o.SCHOOL, o.SCHOOL_NAME, o.ORG, o.ORG_NAME, o.CN_HOURS,o.sz_sj,o.sy_sj,o.xy_sj,o.cn_sj,o.yj_sj,o.WS_SJ,
+    o.DEPT, o.SUBJECT, o.ONE_SX, o.SEX_CURR, o.ONE_CURR, o.REMARK, o.PHONE ,o.EMAIL,o.LOCK_USER,o.LOCK_STATE,
+    (select group_concat(g.JW_GRADE) from jw_teacher_grade g where g.TEACHER_CODE = o.TEACHER_CODE) grades,
+    (select group_concat(s.JW_SITE) from jw_teacher_site s where s.TEACHER_CODE = o.TEACHER_CODE) sites 
+    from jw_teacher o) t on t.TEACHER_NAME =x.s_all_teacher_name 
+    where 1=1 and  LEFT(SYSDATE(),10) <![CDATA[ < ]]> LEFT(x.dt_real_end_date,10)  and x.s_manage_dept_codes in ('DPHF1004','DPHF1005')
+    and x.s_class_code like '%z6%' 
+	<if test="t.sClassCode != null and t.sClassCode !=''">
+	   AND x.s_class_code like CONCAT(CONCAT('%', #{t.sClassCode,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.sQuarter != null and t.sQuarter !=''">
+	   AND x.s_quarter like CONCAT(CONCAT('%', #{t.sQuarter,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.sAllTeacherName != null and t.sAllTeacherName !=''">
+	   AND x.s_all_teacher_name like CONCAT(CONCAT('%', #{t.sAllTeacherName,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.sClassTypeName != null and t.sClassTypeName !=''">
+	   AND t.jyz like CONCAT(CONCAT('%', #{t.sClassTypeName,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.sAreaAddress != null and t.sAreaAddress !=''">
+	   AND t.jyz like CONCAT(CONCAT('%', #{t.sAreaAddress,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.sPrintAddress != null and t.sPrintAddress !=''">
+	   AND x.s_print_address like CONCAT(CONCAT('%', #{t.sPrintAddress,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.sPrintTime != null and t.sPrintTime !=''">
+	   AND x.s_print_time like CONCAT(CONCAT('%', #{t.sPrintTime,jdbcType=VARCHAR}), '%') 
+	</if>
+ 	<if test="t.nCurrentCount != null and t.nCurrentCount !=''">
+	   AND x.n_current_count like CONCAT(CONCAT('%', #{t.nCurrentCount,jdbcType=VARCHAR}), '%') 
+	</if> 
+	<if test="t.beginGrade != null and t.beginGrade !='' and t.beginGrade !='40'">
+	   AND  LEFT(r.`s_level`,2) <![CDATA[>=]]>#{t.beginGrade,jdbcType=INTEGER}
+	</if>
+	<if test="t.beginGrade != null and t.beginGrade !='' and t.beginGrade =='40'">
+	   AND   CAST(r.`s_level` AS SIGNED) <![CDATA[<]]>#{t.beginGrade,jdbcType=INTEGER}
+	</if>
+	<if test="t.endGrade != null and t.endGrade !='' and t.endGrade !='40'">
+	   AND  CAST(SUBSTRING(r.`s_level`,0,2) AS SIGNED)<![CDATA[ <= ]]>#{t.endGrade,jdbcType=INTEGER}
+	</if>
+	<if test="t.endGrade != null and t.endGrade !='' and t.endGrade =='40'">
+	   AND  CAST(r.`s_level` AS SIGNED)<![CDATA[ <]]>#{t.endGrade,jdbcType=INTEGER}
+	</if>
+	<if test="t.sProjectCode != null and t.sProjectCode !=''">
+	   AND x.s_project_code =#{t.sProjectCode,jdbcType=VARCHAR}
+	</if>
+	<if test="t.area != null and t.area !=''">
+			and INSTR(#{t.area,jdbcType=VARCHAR},t.JYZ)>0
+	</if>
+	<if test="t.view != null and t.view =='gz' and t.view!=''">
+		AND x.s_project_code in ('PRHF102001','PRHF102002','PRHF102003') 
+	</if>
+	<if test="t.view != null and t.view =='cz' and t.view!=''">
+		AND x.s_project_code in ('PRHF102004','PRHF102005','PRHF102006') 
+	</if>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from xdf_class_info
+    where s_class_code = #{sClassCode,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert"  parameterType="com.human.basic.entity.XdfClassInfo">
+    insert into xdf_class_info (s_class_code, s_class_name, dt_begin_date, 
+      dt_end_date, b_is_net, b_is_end, 
+      b_souke, class_book_delivery_type, d_fee, 
+      s_class_type_code, s_class_type_f_code, s_class_type_name, 
+      s_project_code, s_project_f_code, s_project_name, 
+      s_dept_code, s_dept_f_code, s_dept_name, 
+      b_insurance, n_use_card, b_is_reside_class, 
+      s_area_address, s_area_code, course_code, 
+      n_lesson, n_max_count, n_current_count, 
+      s_print_address, s_print_time, n_make_point, 
+      dt_open_time, s_all_teacher_name, b_all_fee_insert, 
+      s_class_subject, s_quarter, grade, 
+      stage, dt_real_begin_date, dt_real_end_date, 
+      b_can_register, s_manage_dept_codes, n_state, 
+      n_audit, b_virtual)
+    values (#{sClassCode,jdbcType=VARCHAR}, #{sClassName,jdbcType=VARCHAR}, #{dtBeginDate,jdbcType=VARCHAR}, 
+      #{dtEndDate,jdbcType=VARCHAR}, #{bIsNet,jdbcType=VARCHAR}, #{bIsEnd,jdbcType=VARCHAR}, 
+      #{bSouke,jdbcType=VARCHAR}, #{ClassBookDeliveryType,jdbcType=VARCHAR}, #{dFee,jdbcType=VARCHAR}, 
+      #{sClassTypeCode,jdbcType=VARCHAR}, #{sClassTypeFCode,jdbcType=VARCHAR}, #{sClassTypeName,jdbcType=VARCHAR}, 
+      #{sProjectCode,jdbcType=VARCHAR}, #{sProjectFCode,jdbcType=VARCHAR}, #{sProjectName,jdbcType=VARCHAR}, 
+      #{sDeptCode,jdbcType=VARCHAR}, #{sDeptFCode,jdbcType=VARCHAR}, #{sDeptName,jdbcType=VARCHAR}, 
+      #{bInsurance,jdbcType=VARCHAR}, #{nUseCard,jdbcType=VARCHAR}, #{bIsResideClass,jdbcType=VARCHAR}, 
+      #{sAreaAddress,jdbcType=VARCHAR}, #{sAreaCode,jdbcType=VARCHAR}, #{CourseCode,jdbcType=VARCHAR}, 
+      #{nLesson,jdbcType=VARCHAR}, #{nMaxCount,jdbcType=VARCHAR}, #{nCurrentCount,jdbcType=VARCHAR}, 
+      #{sPrintAddress,jdbcType=VARCHAR}, #{sPrintTime,jdbcType=VARCHAR}, #{nMakePoint,jdbcType=VARCHAR}, 
+      #{dtOpenTime,jdbcType=VARCHAR}, #{sAllTeacherName,jdbcType=VARCHAR}, #{bAllFeeInsert,jdbcType=VARCHAR}, 
+      #{sClassSubject,jdbcType=VARCHAR}, #{sQuarter,jdbcType=VARCHAR}, #{Grade,jdbcType=VARCHAR}, 
+      #{Stage,jdbcType=VARCHAR}, #{dtRealBeginDate,jdbcType=VARCHAR}, #{dtRealEndDate,jdbcType=VARCHAR}, 
+      #{bCanRegister,jdbcType=VARCHAR}, #{sManageDeptCodes,jdbcType=VARCHAR}, #{nState,jdbcType=VARCHAR}, 
+      #{nAudit,jdbcType=VARCHAR}, #{bVirtual,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.basic.entity.XdfClassInfo">
+    insert into xdf_class_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sClassCode != null">
+        s_class_code,
+      </if>
+      <if test="sClassName != null">
+        s_class_name,
+      </if>
+      <if test="dtBeginDate != null">
+        dt_begin_date,
+      </if>
+      <if test="dtEndDate != null">
+        dt_end_date,
+      </if>
+      <if test="bIsNet != null">
+        b_is_net,
+      </if>
+      <if test="bIsEnd != null">
+        b_is_end,
+      </if>
+      <if test="bSouke != null">
+        b_souke,
+      </if>
+      <if test="ClassBookDeliveryType != null">
+        class_book_delivery_type,
+      </if>
+      <if test="dFee != null">
+        d_fee,
+      </if>
+      <if test="sClassTypeCode != null">
+        s_class_type_code,
+      </if>
+      <if test="sClassTypeFCode != null">
+        s_class_type_f_code,
+      </if>
+      <if test="sClassTypeName != null">
+        s_class_type_name,
+      </if>
+      <if test="sProjectCode != null">
+        s_project_code,
+      </if>
+      <if test="sProjectFCode != null">
+        s_project_f_code,
+      </if>
+      <if test="sProjectName != null">
+        s_project_name,
+      </if>
+      <if test="sDeptCode != null">
+        s_dept_code,
+      </if>
+      <if test="sDeptFCode != null">
+        s_dept_f_code,
+      </if>
+      <if test="sDeptName != null">
+        s_dept_name,
+      </if>
+      <if test="bInsurance != null">
+        b_insurance,
+      </if>
+      <if test="nUseCard != null">
+        n_use_card,
+      </if>
+      <if test="bIsResideClass != null">
+        b_is_reside_class,
+      </if>
+      <if test="sAreaAddress != null">
+        s_area_address,
+      </if>
+      <if test="sAreaCode != null">
+        s_area_code,
+      </if>
+      <if test="CourseCode != null">
+        course_code,
+      </if>
+      <if test="nLesson != null">
+        n_lesson,
+      </if>
+      <if test="nMaxCount != null">
+        n_max_count,
+      </if>
+      <if test="nCurrentCount != null">
+        n_current_count,
+      </if>
+      <if test="sPrintAddress != null">
+        s_print_address,
+      </if>
+      <if test="sPrintTime != null">
+        s_print_time,
+      </if>
+      <if test="nMakePoint != null">
+        n_make_point,
+      </if>
+      <if test="dtOpenTime != null">
+        dt_open_time,
+      </if>
+      <if test="sAllTeacherName != null">
+        s_all_teacher_name,
+      </if>
+      <if test="bAllFeeInsert != null">
+        b_all_fee_insert,
+      </if>
+      <if test="sClassSubject != null">
+        s_class_subject,
+      </if>
+      <if test="sQuarter != null">
+        s_quarter,
+      </if>
+      <if test="Grade != null">
+        grade,
+      </if>
+      <if test="Stage != null">
+        Stage,
+      </if>
+      <if test="dtRealBeginDate != null">
+        dt_real_begin_date,
+      </if>
+      <if test="dtRealEndDate != null">
+        dt_real_end_date,
+      </if>
+      <if test="bCanRegister != null">
+        b_can_register,
+      </if>
+      <if test="sManageDeptCodes != null">
+        s_manage_dept_codes,
+      </if>
+      <if test="nState != null">
+        n_state,
+      </if>
+      <if test="nAudit != null">
+        n_audit,
+      </if>
+      <if test="bVirtual != null">
+        b_virtual,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sClassCode != null">
+        #{sClassCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassName != null">
+        #{sClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="dtBeginDate != null">
+        #{dtBeginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dtEndDate != null">
+        #{dtEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="bIsNet != null">
+        #{bIsNet,jdbcType=VARCHAR},
+      </if>
+      <if test="bIsEnd != null">
+        #{bIsEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="bSouke != null">
+        #{bSouke,jdbcType=VARCHAR},
+      </if>
+      <if test="ClassBookDeliveryType != null">
+        #{ClassBookDeliveryType,jdbcType=VARCHAR},
+      </if>
+      <if test="dFee != null">
+        #{dFee,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassTypeCode != null">
+        #{sClassTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassTypeFCode != null">
+        #{sClassTypeFCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassTypeName != null">
+        #{sClassTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectCode != null">
+        #{sProjectCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectFCode != null">
+        #{sProjectFCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectName != null">
+        #{sProjectName,jdbcType=VARCHAR},
+      </if>
+      <if test="sDeptCode != null">
+        #{sDeptCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sDeptFCode != null">
+        #{sDeptFCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sDeptName != null">
+        #{sDeptName,jdbcType=VARCHAR},
+      </if>
+      <if test="bInsurance != null">
+        #{bInsurance,jdbcType=VARCHAR},
+      </if>
+      <if test="nUseCard != null">
+        #{nUseCard,jdbcType=VARCHAR},
+      </if>
+      <if test="bIsResideClass != null">
+        #{bIsResideClass,jdbcType=VARCHAR},
+      </if>
+      <if test="sAreaAddress != null">
+        #{sAreaAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sAreaCode != null">
+        #{sAreaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="CourseCode != null">
+        #{CourseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="nLesson != null">
+        #{nLesson,jdbcType=VARCHAR},
+      </if>
+      <if test="nMaxCount != null">
+        #{nMaxCount,jdbcType=VARCHAR},
+      </if>
+      <if test="nCurrentCount != null">
+        #{nCurrentCount,jdbcType=VARCHAR},
+      </if>
+      <if test="sPrintAddress != null">
+        #{sPrintAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sPrintTime != null">
+        #{sPrintTime,jdbcType=VARCHAR},
+      </if>
+      <if test="nMakePoint != null">
+        #{nMakePoint,jdbcType=VARCHAR},
+      </if>
+      <if test="dtOpenTime != null">
+        #{dtOpenTime,jdbcType=VARCHAR},
+      </if>
+      <if test="sAllTeacherName != null">
+        #{sAllTeacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="bAllFeeInsert != null">
+        #{bAllFeeInsert,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassSubject != null">
+        #{sClassSubject,jdbcType=VARCHAR},
+      </if>
+      <if test="sQuarter != null">
+        #{sQuarter,jdbcType=VARCHAR},
+      </if>
+      <if test="Grade != null">
+        #{Grade,jdbcType=VARCHAR},
+      </if>
+      <if test="Stage != null">
+        #{Stage,jdbcType=VARCHAR},
+      </if>
+      <if test="dtRealBeginDate != null">
+        #{dtRealBeginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dtRealEndDate != null">
+        #{dtRealEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="bCanRegister != null">
+        #{bCanRegister,jdbcType=VARCHAR},
+      </if>
+      <if test="sManageDeptCodes != null">
+        #{sManageDeptCodes,jdbcType=VARCHAR},
+      </if>
+      <if test="nState != null">
+        #{nState,jdbcType=VARCHAR},
+      </if>
+      <if test="nAudit != null">
+        #{nAudit,jdbcType=VARCHAR},
+      </if>
+      <if test="bVirtual != null">
+        #{bVirtual,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.basic.entity.XdfClassInfo">
+    update xdf_class_info
+    <set>
+      <if test="sClassName != null">
+        s_class_name = #{sClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="dtBeginDate != null">
+        dt_begin_date = #{dtBeginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dtEndDate != null">
+        dt_end_date = #{dtEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="bIsNet != null">
+        b_is_net = #{bIsNet,jdbcType=VARCHAR},
+      </if>
+      <if test="bIsEnd != null">
+        b_is_end = #{bIsEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="bSouke != null">
+        b_souke = #{bSouke,jdbcType=VARCHAR},
+      </if>
+      <if test="ClassBookDeliveryType != null">
+        class_book_delivery_type = #{ClassBookDeliveryType,jdbcType=VARCHAR},
+      </if>
+      <if test="dFee != null">
+        d_fee = #{dFee,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassTypeCode != null">
+        s_class_type_code = #{sClassTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassTypeFCode != null">
+        s_class_type_f_code = #{sClassTypeFCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassTypeName != null">
+        s_class_type_name = #{sClassTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectCode != null">
+        s_project_code = #{sProjectCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectFCode != null">
+        s_project_f_code = #{sProjectFCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectName != null">
+        s_project_name = #{sProjectName,jdbcType=VARCHAR},
+      </if>
+      <if test="sDeptCode != null">
+        s_dept_code = #{sDeptCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sDeptFCode != null">
+        s_dept_f_code = #{sDeptFCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sDeptName != null">
+        s_dept_name = #{sDeptName,jdbcType=VARCHAR},
+      </if>
+      <if test="bInsurance != null">
+        b_insurance = #{bInsurance,jdbcType=VARCHAR},
+      </if>
+      <if test="nUseCard != null">
+        n_use_card = #{nUseCard,jdbcType=VARCHAR},
+      </if>
+      <if test="bIsResideClass != null">
+        b_is_reside_class = #{bIsResideClass,jdbcType=VARCHAR},
+      </if>
+      <if test="sAreaAddress != null">
+        s_area_address = #{sAreaAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sAreaCode != null">
+        s_area_code = #{sAreaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="CourseCode != null">
+        course_code = #{CourseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="nLesson != null">
+        n_lesson = #{nLesson,jdbcType=VARCHAR},
+      </if>
+      <if test="nMaxCount != null">
+        n_max_count = #{nMaxCount,jdbcType=VARCHAR},
+      </if>
+      <if test="nCurrentCount != null">
+        n_current_count = #{nCurrentCount,jdbcType=VARCHAR},
+      </if>
+      <if test="sPrintAddress != null">
+        s_print_address = #{sPrintAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sPrintTime != null">
+        s_print_time = #{sPrintTime,jdbcType=VARCHAR},
+      </if>
+      <if test="nMakePoint != null">
+        n_make_point = #{nMakePoint,jdbcType=VARCHAR},
+      </if>
+      <if test="dtOpenTime != null">
+        dt_open_time = #{dtOpenTime,jdbcType=VARCHAR},
+      </if>
+      <if test="sAllTeacherName != null">
+        s_all_teacher_name = #{sAllTeacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="bAllFeeInsert != null">
+        b_all_fee_insert = #{bAllFeeInsert,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassSubject != null">
+        s_class_subject = #{sClassSubject,jdbcType=VARCHAR},
+      </if>
+      <if test="sQuarter != null">
+        s_quarter = #{sQuarter,jdbcType=VARCHAR},
+      </if>
+      <if test="Grade != null">
+        grade = #{Grade,jdbcType=VARCHAR},
+      </if>
+      <if test="Stage != null">
+        stage = #{Stage,jdbcType=VARCHAR},
+      </if>
+      <if test="dtRealBeginDate != null">
+        dt_real_begin_date = #{dtRealBeginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="dtRealEndDate != null">
+        dt_real_end_date = #{dtRealEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="bCanRegister != null">
+        b_can_register = #{bCanRegister,jdbcType=VARCHAR},
+      </if>
+      <if test="sManageDeptCodes != null">
+        s_manage_dept_codes = #{sManageDeptCodes,jdbcType=VARCHAR},
+      </if>
+      <if test="nState != null">
+        n_state = #{nState,jdbcType=VARCHAR},
+      </if>
+      <if test="nAudit != null">
+        n_audit = #{nAudit,jdbcType=VARCHAR},
+      </if>
+      <if test="bVirtual != null">
+        b_virtual = #{bVirtual,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where s_class_code = #{sClassCode,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.basic.entity.XdfClassInfo">
+    update xdf_class_info
+    set s_class_name = #{sClassName,jdbcType=VARCHAR},
+      dt_begin_date = #{dtBeginDate,jdbcType=VARCHAR},
+      dt_end_date = #{dtEndDate,jdbcType=VARCHAR},
+      b_is_net = #{bIsNet,jdbcType=VARCHAR},
+      b_is_end = #{bIsEnd,jdbcType=VARCHAR},
+      b_souke = #{bSouke,jdbcType=VARCHAR},
+      class_book_delivery_type = #{ClassBookDeliveryType,jdbcType=VARCHAR},
+      d_fee = #{dFee,jdbcType=VARCHAR},
+      s_class_type_code = #{sClassTypeCode,jdbcType=VARCHAR},
+      s_class_type_f_code = #{sClassTypeFCode,jdbcType=VARCHAR},
+      s_class_type_name = #{sClassTypeName,jdbcType=VARCHAR},
+      s_project_code = #{sProjectCode,jdbcType=VARCHAR},
+      s_project_f_code = #{sProjectFCode,jdbcType=VARCHAR},
+      s_project_name = #{sProjectName,jdbcType=VARCHAR},
+      s_dept_code = #{sDeptCode,jdbcType=VARCHAR},
+      s_dept_f_code = #{sDeptFCode,jdbcType=VARCHAR},
+      s_dept_name = #{sDeptName,jdbcType=VARCHAR},
+      b_insurance = #{bInsurance,jdbcType=VARCHAR},
+      n_use_card = #{nUseCard,jdbcType=VARCHAR},
+      b_is_reside_class = #{bIsResideClass,jdbcType=VARCHAR},
+      s_area_address = #{sAreaAddress,jdbcType=VARCHAR},
+      s_area_code = #{sAreaCode,jdbcType=VARCHAR},
+      course_code = #{CourseCode,jdbcType=VARCHAR},
+      n_lesson = #{nLesson,jdbcType=VARCHAR},
+      n_max_count = #{nMaxCount,jdbcType=VARCHAR},
+      n_current_count = #{nCurrentCount,jdbcType=VARCHAR},
+      s_print_address = #{sPrintAddress,jdbcType=VARCHAR},
+      s_print_time = #{sPrintTime,jdbcType=VARCHAR},
+      n_make_point = #{nMakePoint,jdbcType=VARCHAR},
+      dt_open_time = #{dtOpenTime,jdbcType=VARCHAR},
+      s_all_teacher_name = #{sAllTeacherName,jdbcType=VARCHAR},
+      b_all_fee_insert = #{bAllFeeInsert,jdbcType=VARCHAR},
+      s_class_subject = #{sClassSubject,jdbcType=VARCHAR},
+      s_quarter = #{sQuarter,jdbcType=VARCHAR},
+      grade = #{Grade,jdbcType=VARCHAR},
+      stage = #{Stage,jdbcType=VARCHAR},
+      dt_real_begin_date = #{dtRealBeginDate,jdbcType=VARCHAR},
+      dt_real_end_date = #{dtRealEndDate,jdbcType=VARCHAR},
+      b_can_register = #{bCanRegister,jdbcType=VARCHAR},
+      s_manage_dept_codes = #{sManageDeptCodes,jdbcType=VARCHAR},
+      n_state = #{nState,jdbcType=VARCHAR},
+      n_audit = #{nAudit,jdbcType=VARCHAR},
+      b_virtual = #{bVirtual,jdbcType=VARCHAR}
+    where s_class_code = #{sClassCode,jdbcType=VARCHAR}
+  </update>
+  <update id="updateForMap" parameterType="java.util.HashMap">
+    update class_info_rm
+    set s_class_code = #{sClassCode,jdbcType=VARCHAR},
+    	remark = #{remark,jdbcType=VARCHAR},
+    	s_level = #{sLevel,jdbcType=VARCHAR}
+    where s_class_code = #{sClassCode,jdbcType=VARCHAR}
+  </update>
+   <insert id="insertForClass"  parameterType="java.lang.String">
+    insert into class_info_rm (s_class_code)
+    values (#{sClassCode,jdbcType=VARCHAR})
+  </insert>
+  
+   <select id="selectByprimaryForRm" parameterType="java.lang.String"  resultType="java.util.HashMap">
+    select 
+    s_class_code,remark,s_level
+    from class_info_rm
+    where s_class_code = #{sClassCode,jdbcType=VARCHAR}
+  </select>
+  <select id="queryTotalNum" resultMap="BaseResultMap" >
+  	SELECT 
+    x.s_class_code, x.s_class_name, x.dt_begin_date, x.dt_end_date, x.b_is_net, x.b_is_end, x.b_souke, 
+    x.class_book_delivery_type, x.d_fee, x.s_class_type_code, x.s_class_type_f_code, x.s_class_type_name, 
+    x.s_project_code, x.s_project_f_code, x.s_project_name, x.s_dept_code, x.s_dept_f_code, x.s_dept_name, 
+    x.b_insurance, x.n_use_card, x.b_is_reside_class, x.s_area_address, x.s_area_code, x.course_code, 
+    x.n_lesson, x.n_max_count, x.n_current_count, x.s_print_address, x.s_print_time, x.n_make_point, 
+    x.dt_open_time, x.s_all_teacher_name, x.b_all_fee_insert, x.s_class_subject, x.s_quarter, x.grade, 
+    x.stage, x.dt_real_begin_date, x.dt_real_end_date, x.b_can_register, x.s_manage_dept_codes, 
+    x.n_state, x.n_audit,x.b_virtual ,r.remark ,r.s_level,
+    t.jyz as area
+    from xdf_class_info x LEFT JOIN class_info_rm  r on x.s_class_code=r.s_class_code 
+    left join (select o.ID, o.TEACHER_CODE, o.TEACHER_NAME, o.SEX, o.DKSX, o.JYZ, o.SCHOOL, o.SCHOOL_NAME, o.ORG, o.ORG_NAME, o.CN_HOURS,o.sz_sj,o.sy_sj,o.xy_sj,o.cn_sj,o.yj_sj,o.WS_SJ,
+    o.DEPT, o.SUBJECT, o.ONE_SX, o.SEX_CURR, o.ONE_CURR, o.REMARK, o.PHONE ,o.EMAIL,o.LOCK_USER,o.LOCK_STATE,
+    (select group_concat(g.JW_GRADE) from jw_teacher_grade g where g.TEACHER_CODE = o.TEACHER_CODE) grades,
+    (select group_concat(s.JW_SITE) from jw_teacher_site s where s.TEACHER_CODE = o.TEACHER_CODE) sites 
+    from jw_teacher o) t on t.TEACHER_NAME =x.s_all_teacher_name 
+    where 1=1 and  LEFT(SYSDATE(),10) <![CDATA[ < ]]> LEFT(x.dt_real_end_date,10)  and x.s_manage_dept_codes in ('DPHF1004','DPHF1005')
+    and x.s_class_code like '%z6%'
+  </select>
+  <update id="updateNCurrentNum" parameterType="java.util.List">
+   		update xdf_class_info set
+	    n_current_count=
+	  <foreach collection="list" item="item" index="index" separator=" " open="case s_class_code" close="end">
+	      when #{item.sClassCode,jdbcType=VARCHAR} then #{item.nCurrentCount,jdbcType=VARCHAR}
+	  </foreach> 
+  </update>
+</mapper>

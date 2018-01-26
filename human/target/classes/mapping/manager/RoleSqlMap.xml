@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.manager.dao.RoleDao" >
+   <resultMap id="BaseResultMap" type="com.human.manager.entity.Role" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_desc" property="roleDesc" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="BIGINT" />
+     <result column="createUserName" property="createUserName" jdbcType="VARCHAR" />
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+       <result column="update_user" property="updateUser" jdbcType="BIGINT" />
+        <result column="updateUserName" property="updateUserName" jdbcType="VARCHAR" />
+      <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+ 
+ <!-- 分页查询 -->
+ <select id="query"  resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		SELECT r.`id`,r.`name`,r.`role_desc`,r.`status`,r.`create_user`,u.`name` createUserName,r.`create_time`,r.`update_user`,u1.`name` updateUserName,r.`update_time` FROM role r
+LEFT JOIN users u ON r.`create_user`=u.`id`
+LEFT JOIN users u1 ON r.`update_user`=u1.id
+		<trim prefix="WHERE"  prefixOverrides="AND | OR">
+			<if test="t.roleName != null and t.roleName != ''">
+				and r.name like CONCAT(CONCAT('%', #{t.roleName,jdbcType=VARCHAR}), '%')
+			</if>
+			<if test="t.createUser != null and t.createUser != ''" >
+        	 AND r.create_user=#{t.createUser,jdbcType=BIGINT}
+      		</if>
+				and r.status !=-1
+		</trim>
+	</select>
+ 
+ <sql id="Base_Column_List" >
+     id, name, role_desc, status, create_time, create_user,update_time,update_user 
+  </sql>
+ <!-- 更新角色状态 -->
+	<update id="updateStatusByIds" parameterType="java.util.HashMap">
+		update role set status=#{status,jdbcType=INTEGER},update_user=#{updateUser,jdbcType=BIGINT},update_time=now() where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+ 
+ <select id="queryRole" resultMap="BaseResultMap" parameterType="com.human.manager.entity.Role" >
+    select 
+    <include refid="Base_Column_List" />
+    from role
+    <trim prefix="WHERE"  prefixOverrides="AND | OR"> 
+     <if test="id != null" >
+    	and  id = #{id,jdbcType=BIGINT}
+     </if>
+      <if test="roleName != null and roleName !=''" >
+        and  name = #{roleName,jdbcType=VARCHAR}
+      </if>
+      	and status !=-1
+      <if test="roleDesc != null and roleDesc !=''" >
+        and role_desc = #{roleDesc,jdbcType=VARCHAR}
+      </if>
+      <if test="createUser != null" >
+        and create_user = #{createUser,jdbcType=BIGINT}
+      </if>
+      </trim>
+  </select>
+  
+  <insert id="insert" parameterType="com.human.manager.entity.Role" >
+    insert into role (name, role_desc, create_user)
+    values (#{roleName,jdbcType=VARCHAR},  #{roleDesc,jdbcType=VARCHAR},  #{createUser,jdbcType=BIGINT})
+  </insert>
+ 
+ 
+  <update id="updateByPrimaryKey" parameterType="com.human.manager.entity.Role" >
+    update role
+    set 
+      role_desc = #{roleDesc,jdbcType=VARCHAR},
+      update_user=#{updateUser,jdbcType=BIGINT},
+      update_time=now()
+    where id = #{id,jdbcType=BIGINT}  
+  </update>
+  
+  
+  <resultMap id="resMap" type="com.human.manager.entity.Resources">
+	<id column="ID" property="id" jdbcType="BIGINT" />
+	<result column="name" property="name" jdbcType="VARCHAR" />
+	<result column="parentId" property="parentId" jdbcType="INTEGER" />
+	<result column="parentName" property="parentName" jdbcType="VARCHAR" />
+	<result column="resKey" property="resKey" jdbcType="VARCHAR" />
+	<result column="type" property="type" jdbcType="INTEGER" />
+	<result column="resUrl" property="resUrl" jdbcType="VARCHAR" />
+	<result column="resc_desc" property="rescDesc" jdbcType="VARCHAR" />
+	<result column="status" property="status" jdbcType="INTEGER" />
+	<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="createUserId" property="createUserId" jdbcType="BIT" />
+	<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	<result column="update_user" property="updateUserId" jdbcType="BIT" />
+	<result column="sort" property="sort" jdbcType="INTEGER" />
+	<result column="icon" property="iconUrl" jdbcType="VARCHAR" />
+</resultMap>
+  
+  <!-- 	根据角色Id获取该角色的权限 -->
+	<select id="getRoleRes" parameterType="com.human.manager.entity.Role" resultMap="resMap">
+	SELECT
+		r.*
+		FROM resources r WHERE r.`status`!=-1 AND  r.`id` IN (
+		SELECT rr.resc_id FROM
+		resources_role rr WHERE rr.`role_id` = #{id,jdbcType=BIGINT} )
+	</select>
+	
+	<delete id="deleteRoleRes" parameterType="com.human.manager.entity.ResRole" >
+    delete from resources_role
+    where role_id = #{roleId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="saveRoleRes" parameterType="com.human.manager.entity.ResRole" >
+    insert into resources_role(resc_id,role_id) values(#{resId,jdbcType=BIGINT},#{roleId,jdbcType=BIGINT})
+  </insert>
+  
+  <!-- 
+  <select id="queryAll" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    select 
+    <include refid="Base_Column_List" />
+    from manager_role  
+    <trim prefix="WHERE"  prefixOverrides="AND | OR">
+    <if test="t.createUser != null and t.createUser != ''" >
+        	 AND  FIND_IN_SET(create_user,queryChildrenUser(#{t.createUser,jdbcType=VARCHAR}))
+      		</if>
+      		AND is_valid=0
+      </trim>
+  </select>
+  
+  
+	
+  <sql id="base_info_List" >
+    id, role_code, role_name, role_desc, is_valid, create_time,  create_user
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+	parameterType="com.spt.manager.entity.ManagerRole">
+	select
+	<include refid="base_info_List" />
+	from manager_role
+	where 
+			( role_code = #{roleCode,jdbcType=VARCHAR}
+			or role_name = #{roleName,jdbcType=VARCHAR}
+			)
+			and is_valid=0
+</select>
+  
+  
+  
+  
+  <update id="updateToDelete"  parameterType="java.lang.String" >
+    update  manager_role set is_valid=1 where  id in 
+    <foreach collection="array" item="roleId" index="index"
+            open="("  separator="," close=")">
+            #{roleId,jdbcType=BIGINT}
+        </foreach>
+  </update>
+  
+   -->
+  <!--
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.mobile.bean.ManagerRole" >
+    
+      WARNING - @mbggenerated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      This element was generated on Thu Jul 14 13:25:30 CST 2016.
+   
+    update manager_role
+    <set >
+      <if test="roleCode != null" >
+        role_code = #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleDesc != null" >
+        role_desc = #{roleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  -->
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.questionnaire.dao.QuestionParamDao" >
+  <resultMap id="BaseResultMap" type="com.human.questionnaire.entity.ParamBean" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="key" property="key" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    `id`, `name`, `key`, `sort`, `status`
+  </sql>
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		<include refid="Base_Column_List" />
+		from q_param q
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="t.name!= null and t.name !=''">
+				AND q.`name` like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%')
+			</if>
+			<if test="t.key != null and t.key != ''">
+				AND q.`key` like CONCAT(CONCAT('%', #{t.key,jdbcType=VARCHAR}), '%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="queryParam" resultMap="BaseResultMap"
+		parameterType="com.human.questionnaire.entity.ParamBean">
+		select
+		<include refid="Base_Column_List" />
+		from q_param q
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="name!= null and name !=''">
+				AND q.`name` =#{name,jdbcType=VARCHAR}
+			</if>
+			<if test="key != null and key != ''">
+				AND q.`key`= #{key,jdbcType=VARCHAR}
+			</if>
+			<if test="status!= null">
+				AND q.`status` =#{status,jdbcType=INTEGER}
+			</if>
+			<if test="id!= null">
+				AND q.`id` =#{id,jdbcType=BIGINT}
+			</if>
+		</trim>
+	</select>
+
+	<insert id="saveParam" parameterType="com.human.questionnaire.entity.ParamBean">
+		insert into q_param(`name`,`key`,`sort`) values
+		(#{name,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{sort,jdbcType=BIGINT})
+	</insert>
+
+	<update id="editParam" parameterType="com.human.questionnaire.entity.ParamBean">
+		update q_param
+		set `name` = #{name,jdbcType=VARCHAR},
+		`key` = #{key,jdbcType=VARCHAR},
+		`sort` = #{sort,jdbcType=INTEGER}
+		where id = #{id,jdbcType=BIGINT}
+	</update> 
+	
+	<!-- 更新状态 -->
+	<update id="updateByIds" parameterType="java.util.HashMap">
+		update q_param set status=#{status,jdbcType=INTEGER} where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+
+	<select id="queryFormParam" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		SELECT qp.*,qfp.required  FROM q_form_param qfp
+		INNER JOIN q_param qp ON qp.`id`=qfp.`param_id`
+		WHERE qfp.form_id=#{id,jdbcType=BIGINT}
+		ORDER BY sort,id
+	</select>
+	
+</mapper>

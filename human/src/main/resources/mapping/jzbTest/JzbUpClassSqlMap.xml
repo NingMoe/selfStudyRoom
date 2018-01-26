@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbUpClassDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbUpClass" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="grade_subject_id" property="gradeSubjectId" jdbcType="BIGINT" />
+    <result column="nSchoolId" property="nschoolid" jdbcType="INTEGER" />
+    <result column="sWindowPeriodId" property="swindowperiodid" jdbcType="VARCHAR" />
+    <result column="sWindowPeriodName" property="swindowperiodname" jdbcType="VARCHAR" />
+    <result column="sStageId" property="sstageid" jdbcType="VARCHAR" />
+    <result column="sStageName" property="sstagename" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, grade_subject_id, nSchoolId, sWindowPeriodId, sWindowPeriodName, sStageId, sStageName, 
+    create_time, create_user, update_time, update_user, is_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_garde_subject_upclass
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from jzb_garde_subject_upclass
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbUpClass" >
+    insert into jzb_garde_subject_upclass
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="gradeSubjectId != null" >
+        grade_subject_id,
+      </if>
+      <if test="nschoolid != null" >
+        nSchoolId,
+      </if>
+      <if test="swindowperiodid != null" >
+        sWindowPeriodId,
+      </if>
+      <if test="swindowperiodname != null" >
+        sWindowPeriodName,
+      </if>
+      <if test="sstageid != null" >
+        sStageId,
+      </if>
+      <if test="sstagename != null" >
+        sStageName,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gradeSubjectId != null" >
+        #{gradeSubjectId,jdbcType=BIGINT},
+      </if>
+      <if test="nschoolid != null" >
+        #{nschoolid,jdbcType=INTEGER},
+      </if>
+      <if test="swindowperiodid != null" >
+        #{swindowperiodid,jdbcType=VARCHAR},
+      </if>
+      <if test="swindowperiodname != null" >
+        #{swindowperiodname,jdbcType=VARCHAR},
+      </if>
+      <if test="sstageid != null" >
+        #{sstageid,jdbcType=VARCHAR},
+      </if>
+      <if test="sstagename != null" >
+        #{sstagename,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbUpClass" >
+    update jzb_garde_subject_upclass
+    <set >
+      <if test="gradeSubjectId != null" >
+        grade_subject_id = #{gradeSubjectId,jdbcType=BIGINT},
+      </if>
+      <if test="nschoolid != null" >
+        nSchoolId = #{nschoolid,jdbcType=INTEGER},
+      </if>
+      <if test="swindowperiodid != null" >
+        sWindowPeriodId = #{swindowperiodid,jdbcType=VARCHAR},
+      </if>
+      <if test="swindowperiodname != null" >
+        sWindowPeriodName = #{swindowperiodname,jdbcType=VARCHAR},
+      </if>
+      <if test="sstageid != null" >
+        sStageId = #{sstageid,jdbcType=VARCHAR},
+      </if>
+      <if test="sstagename != null" >
+        sStageName = #{sstagename,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+<!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    id, grade_subject_id, nSchoolId, sWindowPeriodId, sWindowPeriodName, sStageId, sStageName
+    FROM jzb_garde_subject_upclass 
+	WHERE is_valid=0 
+	AND grade_subject_id= #{t.gradeSubjectId,jdbcType=BIGINT}
+	<if test="t.swindowperiodname != null and t.swindowperiodname !=''">
+	   AND sWindowPeriodName like CONCAT(CONCAT('%', #{t.swindowperiodname,jdbcType=VARCHAR}), '%') 
+	</if>	
+	<if test="t.sstagename != null and t.sstagename !=''">
+	   AND sStageName like CONCAT(CONCAT('%', #{t.sstagename,jdbcType=VARCHAR}), '%') 
+	</if>
+	ORDER BY id DESC
+  </select>
+  
+  <!--批量删除 -->
+  <update id="deleteByIds" parameterType="java.util.HashMap" >
+    update jzb_garde_subject_upclass set is_valid=1
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+    </foreach>    
+  </update>
+  
+	<!--通过年级、科目、班级类型查询升班级课程规则 -->
+  <select id="selectUpClassRuleByParams" resultMap="BaseResultMap" parameterType="com.human.jzbTest.entity.JzbGradeSubjectDto">
+    SELECT c.id, c.grade_subject_id, c.nSchoolId, c.sWindowPeriodId, c.sWindowPeriodName, 
+    c.sStageId, c.sStageName
+	FROM jzb_garde_subject_upclass c
+	LEFT JOIN jzb_grade_subject s ON c.grade_subject_id=s.id
+	WHERE c.is_valid=0 AND s.is_valid=0
+	AND s.grade_id=#{gradeId,jdbcType=BIGINT}
+	AND s.subject_code=#{subjectCode,jdbcType=VARCHAR}
+	AND s.class_type=#{classType,jdbcType=INTEGER}   
+  </select>
+	    
+  
+</mapper>

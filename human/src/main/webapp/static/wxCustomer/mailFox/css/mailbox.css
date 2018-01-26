@@ -1,0 +1,183 @@
+html,body{
+	position: relative;
+	height: 100%
+}
+.topImg{
+	margin-bottom: .14rem;
+}
+.topImg img{
+	width: 100%;
+} 
+.contentBox{
+	width: 92%;
+	height: auto;
+	margin: 0 auto;
+	border: 1px  solid #ccc;
+	padding-bottom: .18rem;
+	min-height: 5rem;
+}
+.titlelist{
+	text-align: center;
+	background-color: #F5F5F5;
+}
+.titlelist div{
+	font-size: .18rem;
+	height:.36rem;
+	line-height: .36rem; 
+	width:33.33333333%
+}
+.on{
+	 color: #0DB09B;
+	 border-bottom: 2px solid  #0DB09B;
+	 background-color: white;
+}
+.content{
+	background-color: #F5F5F5;
+	height: 100%;
+}
+/*未处理s*/
+.list1{
+	background-color: white;
+	padding: .15rem;
+	margin-bottom: 5px;
+}
+.list1:last-child{
+	margin-bottom: 0;
+}
+.list1 b{
+	font-weight: normal;
+}
+.list1 h3{
+	margin: 0;
+	font-size: .16rem;
+}
+.list1 h3 span{
+	float: left;
+	font-weight: 700;
+}
+.list1 h3 b{
+	float: right;
+	font-size: .14rem;
+	color: #ccc;
+}
+.list1 p{
+	color: #666;
+	margin-top: 10px;
+	font-size: .14rem;
+}
+.list1 h4{
+	margin: 0;
+}
+.list1 h4 span{
+	font-size: .15rem;
+	float: left;
+}
+.list1 h4 b{
+	float: right;
+	font-size: .14rem;
+	color: #0DB09B;
+}
+/*未处理e*/
+/*待跟进s*/
+.list2{
+	background-color: white;
+	padding: .15rem;
+	padding-bottom:0;
+}
+.list2>ul{
+	padding-bottom:5px;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	background-color: white;
+	margin-bottom: 0;
+}
+.list2:last-child>ul{
+ border: none;
+}
+.list2 h4{
+	margin: 4px 0;
+	font-size: .16rem;
+}
+.list2 h4 i{
+	color: #0DB09B;
+	margin-right: 5px;
+}
+.list2 p{
+	width: 100%;
+	height: .24rem;
+	line-height: .24rem;
+	overflow: hidden;
+	margin:0;
+	color: #ccc;
+	font-size: .14rem;
+}
+.list2 li:nth-child(4) b{
+  color: #666;
+  font-weight: normal;
+}
+.list2 li:nth-child(5) {
+	margin-top: 8px;
+}
+.list2 li:nth-child(5) span{
+	float: left;
+	color: #666;
+    font-size: .14rem;
+}
+.list2 li:nth-child(5) b{
+	float: right;
+	color: #0DB09B;
+	font-weight: normal;
+	font-size: .15rem;
+}
+/*待跟进e*/
+/*已处理s*/
+.list3 h4{
+	margin: 5px 0;
+	font-size: .16rem;
+	margin-bottom: 6px;
+}
+.list3{
+	background-color: white;
+	padding: .15rem;
+	padding-bottom:0;
+	padding-top: .12rem;
+}
+.list3>ul{
+	background-color: white;
+	 margin-bottom:0px;
+}
+.list3:last-child>ul h4{
+ margin-bottom: 0;
+}
+.list3 span {
+	/*float: left;*/
+    font-size: .16rem;	
+}
+.list3 b{
+  display: inline-block;
+  font-weight: normal;
+  font-size: .15rem;
+  color: #ccc;
+  width: 1.7rem;
+  overflow: hidden;
+  height: .2rem;
+  line-height: .2rem;
+  vertical-align: middle;
+}
+.list3 li:nth-child(6) span{
+	float: left;
+	color: #666;
+    font-size: .15rem;
+}
+.list3 li:nth-child(5) i{
+	float: left;
+	color: #FFCB05;
+    font-size: .15rem;
+}
+.list3 li:nth-child(6) b{
+	float: right;
+	color: #0DB09B;
+	font-weight: normal;
+	font-size: .15rem;
+	text-align: right;
+}
+/*已处理e*/

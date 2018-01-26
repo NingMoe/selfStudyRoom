@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsEnrollInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsEnrollInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="INTEGER" />
+    <result column="total" property="total" jdbcType="DOUBLE" />
+    <result column="listening" property="listening" jdbcType="DOUBLE" />
+    <result column="reading" property="reading" jdbcType="DOUBLE" />
+    <result column="writing" property="writing" jdbcType="DOUBLE" />
+    <result column="oral" property="oral" jdbcType="DOUBLE" />
+    <result column="is_target" property="is_target" jdbcType="INTEGER" />
+    <result column="test_time" property="test_time" jdbcType="TIMESTAMP" />
+    <result column="valid" property="valid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, total, listening, reading, writing, oral, test_time, valid
+  </sql>
+  
+  <!-- 按年级获取有考试时间人数 -->
+  <select id="selectGradeCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1) FROM
+	(
+	SELECT e.student_id, COUNT(1) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_info s
+	ON e.student_id = s.id
+	WHERE s.grade_name = #{grade_name,jdbcType=VARCHAR}
+	and e.test_time IS NOT NULL 
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY e.student_id
+	) e
+  </select>
+  
+    <!-- 按年级获取提分人数 -->
+  <select id="selectIncreaseGradeCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1)
+	FROM
+	(	
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT e.student_id, MAX(e.test_time) test_time FROM ielts_enroll_info e
+	LEFT JOIN ielts_student_info s
+	ON s.id = e.student_id
+	WHERE s.grade_name = #{grade_name,jdbcType=VARCHAR}
+	and e.total IS NOT NULL
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY e.student_id
+	) e3
+	ON e1.student_id = e3.student_id
+	AND e1.test_time = e3.test_time
+	GROUP BY e1.student_id
+	) e1
+	JOIN
+	(
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT student_id, MIN(test_time) test_time FROM ielts_enroll_info e
+	LEFT JOIN ielts_student_info s
+	ON s.id = e.student_id
+	WHERE s.grade_name = #{grade_name,jdbcType=VARCHAR}
+	and e.total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	AND e1.test_time = e2.test_time
+	GROUP BY e1.student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	WHERE e1.total > e2.total
+  </select>
+  
+  <!-- 获取计划类提分学员数 -->
+  <select id="selectEnrollIncreasePlanCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1)
+	FROM
+	(	
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT e.student_id, MAX(e.test_time) test_time FROM ielts_student_info s
+	LEFT JOIN ielts_enroll_info e
+	ON s.id = e.student_id
+	WHERE total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	AND s.is_planning = 1
+	GROUP BY student_id
+	) e3
+	ON e1.student_id = e3.student_id
+	AND e1.test_time = e3.test_time
+	GROUP BY e1.student_id
+	) e1
+	JOIN
+	(
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT student_id, MIN(test_time) test_time FROM ielts_student_info s
+	LEFT JOIN ielts_enroll_info e
+	ON s.id = e.student_id
+	WHERE total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	AND s.is_planning = 1
+	GROUP BY student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	AND e1.test_time = e2.test_time
+	GROUP BY e1.student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	WHERE e1.total > e2.total
+  </select>
+  
+    <!-- 获取计划类提分学员数 -->
+  <select id="selectTeacherEnrollIncreasePlanCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1)
+	FROM
+	(	
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT e.student_id, MAX(e.test_time) test_time FROM ielts_student_info s
+	LEFT JOIN ielts_enroll_info e
+	ON s.id = e.student_id
+	RIGHT JOIN ielts_student_teacher st
+	ON st.student_id = s.id
+	WHERE st.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	AND s.is_planning = 1
+	GROUP BY e.student_id
+	) e3
+	ON e1.student_id = e3.student_id
+	AND e1.test_time = e3.test_time
+	GROUP BY e1.student_id
+	) e1
+	JOIN
+	(
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT e.student_id, MIN(test_time) test_time FROM ielts_student_info s
+	LEFT JOIN ielts_enroll_info e
+	ON s.id = e.student_id
+	RIGHT JOIN ielts_student_teacher st
+	ON st.student_id = s.id
+	WHERE st.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	AND s.is_planning = 1
+	GROUP BY e.student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	AND e1.test_time = e2.test_time
+	GROUP BY e1.student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	WHERE e1.total > e2.total
+  </select>
+    
+  <!-- 获取计划内学员数 -->
+  <select id="selectStudentEnrollPlanCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1) FROM
+	(
+	SELECT student_id FROM ielts_student_info s
+	LEFT JOIN ielts_enroll_info e
+	ON s.id = e.student_id
+	WHERE e.test_time IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	AND s.is_planning = 1
+	GROUP BY student_id
+	) e
+  </select>
+  
+    <!-- 获取单个教师计划内学员数 -->
+  <select id="selectTeacherStudentEnrollPlanCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1) FROM
+	(
+	SELECT t.student_id FROM ielts_student_info s
+	RIGHT JOIN ielts_student_teacher t
+	ON t.student_id = s.id 
+	LEFT JOIN ielts_enroll_info e
+	ON s.id = e.student_id
+	WHERE e.test_time IS NOT NULL
+	AND t.email_addr = #{email_addr,jdbcType=VARCHAR}
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	AND s.is_planning = 1
+	GROUP BY t.student_id
+	) e
+  </select>
+  
+  <!-- 获取雅思提分学员数 -->
+  <select id="selectEnrollIncreaseCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1)
+	FROM
+	(	
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT student_id, MAX(test_time) test_time FROM ielts_enroll_info
+	WHERE total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY student_id
+	) e3
+	ON e1.student_id = e3.student_id
+	AND e1.test_time = e3.test_time
+	GROUP BY e1.student_id
+	) e1
+	JOIN
+	(
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT student_id, MIN(test_time) test_time FROM ielts_enroll_info
+	WHERE total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	AND e1.test_time = e2.test_time
+	GROUP BY e1.student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	WHERE e1.total > e2.total
+  </select>
+  
+  
+    <!-- 获取单个教师雅思提分学员数 -->
+  <select id="selectTeacherEnrollIncreaseCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1)
+	FROM
+	(	
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT e.student_id, MAX(e.test_time) test_time FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.total IS NOT NULL
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY e.student_id
+	) e3
+	ON e1.student_id = e3.student_id
+	AND e1.test_time = e3.test_time
+	GROUP BY e1.student_id
+	) e1
+	JOIN
+	(
+	SELECT e1.student_id, MAX(e1.total) total FROM ielts_enroll_info e1
+	RIGHT JOIN 
+	(
+	SELECT e.student_id, MIN(e.test_time) test_time FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.total IS NOT NULL
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY e.student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	AND e1.test_time = e2.test_time
+	GROUP BY e1.student_id
+	) e2
+	ON e1.student_id = e2.student_id
+	WHERE e1.total > e2.total
+  </select>
+  
+  <!-- 获取听力平均分 -->
+  <select id="selectStudentListenAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+  	SELECT AVG(listening) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL
+	AND listening IS NOT NULL 
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+    <!-- 获取单个教师听力平均分 -->
+  <select id="selectTeacherStudentListenAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+  	SELECT AVG(listening) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	AND e.listening IS NOT NULL 
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+  <!-- 获取阅读平均分 -->
+  <select id="selectStudentReadAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+  	SELECT AVG(reading) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL
+	AND reading IS NOT NULL 
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+    <!-- 获取单个教师阅读平均分 -->
+  <select id="selectTeacherStudentReadAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+  	SELECT AVG(reading) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	AND e.reading IS NOT NULL 
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+  <!-- 获取写作平均分 -->
+  <select id="selectStudentWriteAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+  	SELECT AVG(writing) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL
+	AND writing IS NOT NULL 
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+  <!-- 获取单个教师写作平均分 -->
+  <select id="selectTeacherStudentWriteAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+  	SELECT AVG(writing) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	AND e.writing IS NOT NULL 
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+  <!-- 获取口语平均分 -->
+  <select id="selectStudentTalkAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+    SELECT AVG(oral) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL
+	AND oral IS NOT NULL 
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+    <!-- 获取单个教师口语平均分 -->
+  <select id="selectTeacherStudentTalkAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+    SELECT AVG(oral) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	AND e.oral IS NOT NULL 
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+  <!-- 获取总成绩平均分 -->
+  <select id="selectStudentTotalAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+    SELECT AVG(total) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL
+	AND total IS NOT NULL 
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+    <!-- 获取单个教师总成绩平均分 -->
+  <select id="selectTeacherStudentTotalAvg" resultType="java.lang.Double" parameterType="java.util.HashMap">
+    SELECT AVG(total) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	AND e.total IS NOT NULL 
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  </select>
+  
+  <!-- 获取所有学员最高分 -->
+  <select id="selectStudentMaxSourceList" resultType="java.lang.Double" parameterType="java.util.HashMap">
+    SELECT MAX(total) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL
+	AND total IS NOT NULL  
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	GROUP BY student_id
+  </select>
+  
+    <!-- 获取单个教师所有学员最高分 -->
+  <select id="selectTeacherStudentMaxSourceList" resultType="java.lang.Double" parameterType="java.util.HashMap">
+    SELECT MAX(total) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	AND e.total IS NOT NULL  
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	GROUP BY e.student_id
+  </select>
+  
+  <!-- 获取有成绩的人 -->
+  <select id="selectStudentCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1) FROM
+	(
+	SELECT student_id, COUNT(1) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL 
+	AND total IS NOT NULL
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY student_id
+	) e
+  </select>
+  
+  <!-- 获取单个教师有成绩的人 -->
+  <select id="selectTeacherStudentCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1) FROM
+	(
+	SELECT e.student_id, COUNT(1) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	AND e.total IS NOT NULL
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY e.student_id
+	) e
+  </select>
+  
+  <!-- 获取有考试时间人数 -->
+  <select id="selectEnrollCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1) FROM
+	(
+	SELECT student_id, COUNT(1) FROM ielts_enroll_info
+	WHERE test_time IS NOT NULL 
+	<if test="left_test_time != null">
+  		and test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY student_id
+	) e
+  </select>
+  
+   <!-- 获取单个教师有考试时间人数 -->
+   <select id="selectTeacherEnrollCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1) FROM
+	(
+	SELECT e.student_id, COUNT(1) FROM ielts_enroll_info e
+	RIGHT JOIN ielts_student_teacher s
+	ON s.student_id = e.student_id
+	WHERE s.email_addr = #{email_addr,jdbcType=VARCHAR}
+	AND e.test_time IS NOT NULL
+	<if test="left_test_time != null">
+  		and e.test_time &gt; #{left_test_time,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="right_test_time != null">
+  		and e.test_time &lt; #{right_test_time,jdbcType=TIMESTAMP}
+  	</if>
+	GROUP BY e.student_id
+	) e
+  </select>
+  
+  <select id="query" resultType="com.human.ielts.entity.IeltsEnrollInfo" parameterType="java.util.HashMap">
+  select * from ielts_enroll_info
+  where student_id = #{t.student_id,jdbcType=INTEGER}
+  <if test="t.left_test_time != null">
+  	and test_time &gt; #{t.left_test_time,jdbcType=TIMESTAMP}
+  </if>
+  <if test="t.right_test_time != null">
+  	and test_time &lt; #{t.right_test_time,jdbcType=TIMESTAMP}
+  </if>
+  order by test_time desc
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select *
+    from ielts_enroll_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 通过学生id删除学员考试信息 -->
+  <delete id="deleteByStudentId" parameterType="java.lang.Integer" >
+  	delete from ielts_enroll_info
+    where student_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_enroll_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsEnrollInfo" >
+    insert into ielts_enroll_info (id, student_id, total, 
+      listening, reading, writing, oral, is_target, test_time, valid)
+    values (#{id,jdbcType=INTEGER}, #{student_id,jdbcType=INTEGER}, #{total,jdbcType=DOUBLE}, 
+      #{listening,jdbcType=DOUBLE}, #{reading,jdbcType=DOUBLE}, #{writing,jdbcType=DOUBLE}, 
+       #{oral,jdbcType=DOUBLE},  #{test_time,jdbcType=TIMESTAMP}, #{is_target,jdbcType=INTEGER}, #{valid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.ielts.entity.IeltsEnrollInfo" >
+    insert into ielts_enroll_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="total != null" >
+        total,
+      </if>
+      <if test="listening != null" >
+        listening,
+      </if>
+      <if test="reading != null" >
+        reading,
+      </if>
+      <if test="writing != null" >
+        writing,
+      </if>
+      <if test="oral != null" >
+        oral,
+      </if>
+      <if test="is_target != null" >
+        is_target,
+      </if>
+      <if test="test_time != null" >
+        test_time,
+      </if>
+      <if test="valid != null" >
+        valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        #{total,jdbcType=DOUBLE},
+      </if>
+      <if test="listening != null" >
+        #{listening,jdbcType=DOUBLE},
+      </if>
+      <if test="reading != null" >
+        #{reading,jdbcType=DOUBLE},
+      </if>
+      <if test="writing != null" >
+        #{writing,jdbcType=DOUBLE},
+      </if>
+      <if test="oral != null" >
+        #{oral,jdbcType=DOUBLE},
+      </if>
+      <if test="is_target != null" >
+        #{is_target,jdbcType=INTEGER},
+      </if>
+      <if test="test_time != null" >
+        #{test_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="valid != null" >
+        #{valid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsEnrollInfo" >
+    update ielts_enroll_info
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        total = #{total,jdbcType=DOUBLE},
+      </if>
+      <if test="listening != null" >
+        listening = #{listening,jdbcType=DOUBLE},
+      </if>
+      <if test="reading != null" >
+        reading = #{reading,jdbcType=DOUBLE},
+      </if>
+      <if test="writing != null" >
+        writing = #{writing,jdbcType=DOUBLE},
+      </if>
+      <if test="oral != null" >
+        oral = #{oral,jdbcType=DOUBLE},
+      </if>
+      <if test="is_target != null" >
+        is_target = #{is_target,jdbcType=INTEGER},
+      </if>
+      <if test="test_time != null" >
+        test_time = #{test_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="valid != null" >
+        valid = #{valid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.ielts.entity.IeltsEnrollInfo" >
+    update ielts_enroll_info
+    set student_id = #{student_id,jdbcType=INTEGER},
+      total = #{total,jdbcType=DOUBLE},
+      listening = #{listening,jdbcType=DOUBLE},
+      reading = #{reading,jdbcType=DOUBLE},
+      writing = #{writing,jdbcType=DOUBLE},
+      oral = #{oral,jdbcType=DOUBLE},
+      is_target = #{is_target,jdbcType=INTEGER},
+      test_time = #{test_time,jdbcType=TIMESTAMP},
+      valid = #{valid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

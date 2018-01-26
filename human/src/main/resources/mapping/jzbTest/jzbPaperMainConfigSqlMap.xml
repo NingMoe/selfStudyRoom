@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.jzbPaperMainConfigDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.jzbPaperMainConfig" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="GRADE" property="grade" jdbcType="VARCHAR" />
+    <result column="SUBJECT" property="subject" jdbcType="VARCHAR" />
+    <result column="SUBJECT_NAME" property="subjectName" jdbcType="VARCHAR" />
+    <result column="CLASS_TYPE" property="classType" jdbcType="VARCHAR" />
+    <result column="CLASS_TYPE_NAME" property="classTypeName" jdbcType="VARCHAR" />
+    <result column="DAY_TIMES" property="dayTimes" jdbcType="INTEGER" />
+    <result column="MONTH_TIMES" property="monthTimes" jdbcType="INTEGER" />
+    <result column="TOTAL_TIMES" property="totalTimes" jdbcType="INTEGER" />
+    <result column="HEAD_MESSAGE" property="headMessage" jdbcType="VARCHAR" />
+    <result column="DEPT" property="dept" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, GRADE, SUBJECT, CLASS_TYPE, DAY_TIMES, MONTH_TIMES, TOTAL_TIMES, HEAD_MESSAGE, 
+    DEPT
+  </sql>
+<!--   分页查询 -->
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    <include refid="Base_Column_List" />
+    from jzb_paper_main_config
+    where 1=1
+    <if test="deptId != null and deptId !=''">
+	   AND dept  = #{deptId,jdbcType=INTEGER}
+	</if>
+	<if test="t.grade != null and t.grade !=''">
+	   AND grade = #{t.grade,jdbcType=INTEGER}
+	</if>
+	<if test="t.subject != null and t.subject !=''">
+	   AND subject = #{t.subject,jdbcType=INTEGER}
+	</if>
+	<if test="t.classType!= null and t.classType !=''">
+	   AND class_type = #{t.classType,jdbcType=INTEGER}
+	</if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_paper_main_config
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jzb_paper_main_config
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.jzbTest.entity.jzbPaperMainConfig" >
+    insert into jzb_paper_main_config (ID, GRADE, SUBJECT, 
+      CLASS_TYPE, DAY_TIMES, MONTH_TIMES, 
+      TOTAL_TIMES, HEAD_MESSAGE,dept)
+    values (#{id,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR}, 
+      #{classType,jdbcType=VARCHAR}, #{dayTimes,jdbcType=INTEGER}, #{monthTimes,jdbcType=INTEGER}, 
+      #{totalTimes,jdbcType=INTEGER}, #{headMessage,jdbcType=VARCHAR}, #{dept,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.jzbPaperMainConfig" >
+    insert into jzb_paper_main_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="grade != null" >
+        GRADE,
+      </if>
+      <if test="subject != null" >
+        SUBJECT,
+      </if>
+      <if test="classType != null" >
+        CLASS_TYPE,
+      </if>
+      <if test="dayTimes != null" >
+        DAY_TIMES,
+      </if>
+      <if test="monthTimes != null" >
+        MONTH_TIMES,
+      </if>
+      <if test="totalTimes != null" >
+        TOTAL_TIMES,
+      </if>
+      <if test="headMessage != null" >
+        HEAD_MESSAGE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="classType != null" >
+        #{classType,jdbcType=VARCHAR},
+      </if>
+      <if test="dayTimes != null" >
+        #{dayTimes,jdbcType=INTEGER},
+      </if>
+      <if test="monthTimes != null" >
+        #{monthTimes,jdbcType=INTEGER},
+      </if>
+      <if test="totalTimes != null" >
+        #{totalTimes,jdbcType=INTEGER},
+      </if>
+      <if test="headMessage != null" >
+        #{headMessage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.jzbPaperMainConfig" >
+    update jzb_paper_main_config
+    <set >
+      <if test="grade != null" >
+        GRADE = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        SUBJECT = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="classType != null" >
+        CLASS_TYPE = #{classType,jdbcType=VARCHAR},
+      </if>
+      <if test="dayTimes != null" >
+        DAY_TIMES = #{dayTimes,jdbcType=INTEGER},
+      </if>
+      <if test="monthTimes != null" >
+        MONTH_TIMES = #{monthTimes,jdbcType=INTEGER},
+      </if>
+      <if test="totalTimes != null" >
+        TOTAL_TIMES = #{totalTimes,jdbcType=INTEGER},
+      </if>
+      <if test="headMessage != null" >
+        HEAD_MESSAGE = #{headMessage,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.jzbTest.entity.jzbPaperMainConfig" >
+    update jzb_paper_main_config
+    set GRADE = #{grade,jdbcType=VARCHAR},
+      SUBJECT = #{subject,jdbcType=VARCHAR},
+      CLASS_TYPE = #{classType,jdbcType=VARCHAR},
+      DAY_TIMES = #{dayTimes,jdbcType=INTEGER},
+      MONTH_TIMES = #{monthTimes,jdbcType=INTEGER},
+      TOTAL_TIMES = #{totalTimes,jdbcType=INTEGER},
+      HEAD_MESSAGE = #{headMessage,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!--批量删除 -->
+  <delete id="deleteByMap" parameterType="java.util.HashMap" >
+    delete from jzb_paper_main_config
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+  
+  <select id="getPaperMainConfig" resultMap="BaseResultMap" parameterType="com.human.jzbTest.entity.jzbPaperMainConfig" >
+    SELECT m.ID, m.GRADE, m.SUBJECT,sub.name subject_name, m.CLASS_TYPE,ct.name class_type_name, m.DAY_TIMES, m.MONTH_TIMES, m.TOTAL_TIMES, m.HEAD_MESSAGE, 
+   	m.DEPT
+    FROM jzb_paper_main_config m
+    LEFT JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'class_type') ct ON ct.DATA_VALUE = m.`CLASS_TYPE`
+    LEFT JOIN (
+    SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'subject') sub ON sub.DATA_VALUE = m.`SUBJECT`
+    where m.CLASS_TYPE = #{classType,jdbcType=VARCHAR} and m.GRADE in (#{grade,jdbcType=VARCHAR}) and m.SUBJECT = #{subject,jdbcType=VARCHAR} 
+  </select>
+  <select id="getDicData" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+	   select * from dic_data where dic_code=#{dicCode,jdbcType=VARCHAR} AND NAME= #{subject,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectPaperInfo" resultMap="BaseResultMap" parameterType="com.human.jzbTest.entity.jzbPaperMainConfig" >
+			SELECT 
+    		<include refid="Base_Column_List" />
+    	FROM jzb_paper_main_config
+  		 WHERE   class_type =#{classType,jdbcType=INTEGER} AND grade =  #{grade,jdbcType=INTEGER}
+     	AND SUBJECT = #{subject,jdbcType=INTEGER} and dept = #{dept,jdbcType=INTEGER}
+  </select>	
+   <!--批量主配置关联的月份删除 -->
+  <delete id="deleteMonth" parameterType="java.util.HashMap" >
+    delete from jzb_paper_month_config
+    where MAIN_CONFIG_ID in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+  <select id="getList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select * from jzb_paper_month_config
+  	where MAIN_CONFIG_ID in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+	</foreach>
+  </select>
+  
+  <select id="selectValidClassType" resultType="com.human.basic.entity.DicData" parameterType="java.lang.String" >
+    SELECT a.NAME,a.DATA_VALUE dataValue FROM dic_data a
+ 	WHERE a.DIC_CODE= 'class_type'
+ 	AND EXISTS (
+	SELECT 1 FROM jzb_paper_month_config mc JOIN jzb_paper_main_config ac   ON mc.`MAIN_CONFIG_ID` = ac.id 
+	WHERE mc.status=2 and ac.`GRADE` in(#{gradeIds,jdbcType=VARCHAR}) AND mc.month=#{month,jdbcType=VARCHAR} AND ac.`CLASS_TYPE`=a.`DATA_VALUE`) 
+  </select>
+  
+  <select id="selectValidSubject" resultType="com.human.basic.entity.DicData" parameterType="java.lang.String" >
+    SELECT a.NAME,a.DATA_VALUE dataValue FROM dic_data a 
+	JOIN jzb_paper_main_config ac ON ac.subject = a.`DATA_VALUE`
+	JOIN jzb_paper_month_config mc ON ac.id = mc.MAIN_CONFIG_ID   
+	WHERE mc.status=2 and a.DIC_CODE= 'subject' AND ac.`CLASS_TYPE` = #{classType,jdbcType=VARCHAR} 
+	AND ac.`GRADE` IN (#{gradeIds,jdbcType=VARCHAR}) AND mc.`MONTH`=#{month,jdbcType=VARCHAR}
+  </select>
+</mapper>

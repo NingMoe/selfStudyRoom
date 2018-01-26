@@ -1,0 +1,25 @@
+.title{
+    background: linear-gradient(#FB7F5B,#FC6655);
+	min-height: 1.8rem;
+	padding-top: .5rem;
+	font-size: .24rem;
+	color: white;
+}
+.title p{
+	height: .4rem;
+	line-height: .4rem;
+	text-align: center;
+}
+.contentlist{
+	padding:.1rem;
+	width: 100%;
+	color: #666;
+}
+.list li{
+	letter-spacing: .01rem;
+	margin-top: .1rem;
+	font-size: 0.16rem;
+}
+.list li:nth-child(1){
+	margin-top: 0;
+}

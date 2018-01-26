@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.resume.dao.ResumeIntentionDao" >
+  <resultMap id="BaseResultMap" type="com.human.resume.entity.ResumeIntention" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resume_id" property="resumeId" jdbcType="BIGINT" />
+    <result column="expect_work_place" property="expectWorkPlace" jdbcType="VARCHAR" />
+    <result column="expect_work_property" property="expectWorkProperty" jdbcType="VARCHAR" />
+    <result column="expect_work_job" property="expectWorkJob" jdbcType="VARCHAR" />
+    <result column="expect_work_salary" property="expectWorkSalary" jdbcType="VARCHAR" />
+    <result column="current_status" property="currentStatus" jdbcType="VARCHAR" />
+    <result column="expect_arrival_time" property="expectArrivalTime" jdbcType="VARCHAR" />
+    <result column="expect_work_industry" property="expectWorkIndustry" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+    <result column="min_salary" property="minSalary" jdbcType="BIGINT" />
+    <result column="max_salary" property="maxSalary" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, resume_id, expect_work_place, expect_work_property, expect_work_job, expect_work_salary, 
+    current_status, expect_arrival_time, expect_work_industry, is_valid,min_salary,max_salary
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_intention
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_intention
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.resume.entity.ResumeIntention" >
+    insert into resume_intention (resume_id, expect_work_place, 
+      expect_work_property, expect_work_job, expect_work_salary, 
+      current_status, expect_arrival_time, expect_work_industry, 
+      is_valid)
+    values (#{resumeId,jdbcType=BIGINT}, #{expectWorkPlace,jdbcType=VARCHAR}, 
+      #{expectWorkProperty,jdbcType=VARCHAR}, #{expectWorkJob,jdbcType=VARCHAR}, #{expectWorkSalary,jdbcType=VARCHAR}, 
+      #{currentStatus,jdbcType=VARCHAR}, #{expectArrivalTime,jdbcType=VARCHAR}, #{expectWorkIndustry,jdbcType=VARCHAR}, 
+      #{isValid,jdbcType=BIT},#{minSalary,jdbcType=BIGINT},#{maxSalary,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.resume.entity.ResumeIntention" >
+    insert into resume_intention
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="resumeId != null" >
+        resume_id,
+      </if>
+      <if test="expectWorkPlace != null" >
+        expect_work_place,
+      </if>
+      <if test="expectWorkProperty != null" >
+        expect_work_property,
+      </if>
+      <if test="expectWorkJob != null" >
+        expect_work_job,
+      </if>
+      <if test="expectWorkSalary != null" >
+        expect_work_salary,
+      </if>
+      <if test="currentStatus != null" >
+        current_status,
+      </if>
+      <if test="expectArrivalTime != null" >
+        expect_arrival_time,
+      </if>
+      <if test="expectWorkIndustry != null" >
+        expect_work_industry,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="minSalary != null" >
+        min_salary,
+      </if>
+      <if test="maxSalary != null" >
+        max_salary,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resumeId != null" >
+        #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="expectWorkPlace != null" >
+        #{expectWorkPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkProperty != null" >
+        #{expectWorkProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkJob != null" >
+        #{expectWorkJob,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkSalary != null" >
+        #{expectWorkSalary,jdbcType=VARCHAR},
+      </if>
+      <if test="currentStatus != null" >
+        #{currentStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="expectArrivalTime != null" >
+        #{expectArrivalTime,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkIndustry != null" >
+        #{expectWorkIndustry,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+      <if test="minSalary != null" >
+        #{minSalary,jdbcType=BIGINT},
+      </if>
+       <if test="maxSalary != null" >
+        #{maxSalary,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.resume.entity.ResumeIntention" >
+    update resume_intention
+    <set >
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="expectWorkPlace != null" >
+        expect_work_place = #{expectWorkPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkProperty != null" >
+        expect_work_property = #{expectWorkProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkJob != null" >
+        expect_work_job = #{expectWorkJob,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkSalary != null" >
+        expect_work_salary = #{expectWorkSalary,jdbcType=VARCHAR},
+      </if>
+      <if test="currentStatus != null" >
+        current_status = #{currentStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="expectArrivalTime != null" >
+        expect_arrival_time = #{expectArrivalTime,jdbcType=VARCHAR},
+      </if>
+      <if test="expectWorkIndustry != null" >
+        expect_work_industry = #{expectWorkIndustry,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="minSalary != null" >
+        min_salary = #{minSalary,jdbcType=BIGINT},
+      </if>
+      <if test="maxSalary != null" >
+        max_salary = #{maxSalary,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.resume.entity.ResumeIntention" >
+    update resume_intention
+    set resume_id = #{resumeId,jdbcType=BIGINT},
+      expect_work_place = #{expectWorkPlace,jdbcType=VARCHAR},
+      expect_work_property = #{expectWorkProperty,jdbcType=VARCHAR},
+      expect_work_job = #{expectWorkJob,jdbcType=VARCHAR},
+      expect_work_salary = #{expectWorkSalary,jdbcType=VARCHAR},
+      current_status = #{currentStatus,jdbcType=VARCHAR},
+      expect_arrival_time = #{expectArrivalTime,jdbcType=VARCHAR},
+      expect_work_industry = #{expectWorkIndustry,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT},
+      min_salary = #{minSalary,jdbcType=BIGINT},
+      max_salary = #{maxSalary,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!--通过简历ID查询求职意向  -->
+  <select id="selectByResumeId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_intention
+    where resume_id = #{resumeId,jdbcType=BIGINT}
+  </select>
+  
+  
+  
+  
+  
+</mapper>

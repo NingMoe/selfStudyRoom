@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.manager.dao.HrCompanyDao" >
+  <resultMap id="BaseResultMap" type="com.human.manager.entity.HrCompany" >
+    <id column="company_id" property="companyId" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="message_id" property="messageId" jdbcType="VARCHAR" />
+    <result column="school_site" property="schoolSite" jdbcType="VARCHAR" />
+    <result column="recruit_site" property="recruitSite" jdbcType="VARCHAR" />
+    <result column="service_phone" property="servicePhone" jdbcType="VARCHAR" />
+    <result column="wechat_no" property="wechatNo" jdbcType="VARCHAR" />
+    <result column="wechat_image" property="wechatImage" jdbcType="VARCHAR" />
+    <result column="recruit_email" property="recruitEmail" jdbcType="VARCHAR" />
+    <result column="profile" property="profile" jdbcType="VARCHAR" />
+    <result column="province_code" property="provinceCode" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+    <result column="addr" property="addr" jdbcType="VARCHAR" />
+    <result column="school_video" property="schoolVideo" jdbcType="VARCHAR" />
+    <result column="temperament_pc_image" property="temperamentPcImage" jdbcType="VARCHAR" />
+    <result column="temperament_mobile_image" property="temperamentMobileImage" jdbcType="VARCHAR" />
+    <result column="appid" property="appid" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="org_update_time" property="orgUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="user_update_time" property="userUpdateTime" jdbcType="VARCHAR" />
+    <result column="is_birth_wish" property="isBirthWish" jdbcType="VARCHAR" />
+    <result column="is_join_wish" property="isJoinWish" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    company_id, company_name, message_id, school_site, recruit_site, service_phone, wechat_no, 
+    wechat_image, recruit_email, profile, province_code, city_code, addr, school_video, 
+    temperament_pc_image, temperament_mobile_image, appid, password,org_update_time,user_update_time,is_birth_wish,is_join_wish
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_company
+    where company_id = #{companyId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCityId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_company
+    where city_code = #{cityId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectCompanyPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select 
+    <include refid="Base_Column_List" />
+    from hr_company
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hr_company
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from hr_company
+    where company_id = #{companyId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.human.manager.entity.HrCompany" >
+    insert into hr_company (company_id, company_name, message_id, 
+      school_site, recruit_site, service_phone, 
+      wechat_no, wechat_image, recruit_email, 
+      profile, province_code, city_code, 
+      addr, school_video, temperament_pc_image, 
+      temperament_mobile_image, appid, password,is_birth_wish,is_join_wish
+      )
+    values (#{companyId,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{messageId,jdbcType=VARCHAR}, 
+      #{schoolSite,jdbcType=VARCHAR}, #{recruitSite,jdbcType=VARCHAR}, #{servicePhone,jdbcType=VARCHAR}, 
+      #{wechatNo,jdbcType=VARCHAR}, #{wechatImage,jdbcType=VARCHAR}, #{recruitEmail,jdbcType=VARCHAR}, 
+      #{profile,jdbcType=VARCHAR}, #{provinceCode,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, 
+      #{addr,jdbcType=VARCHAR}, #{schoolVideo,jdbcType=VARCHAR}, #{temperamentPcImage,jdbcType=VARCHAR}, 
+      #{temperamentMobileImage,jdbcType=VARCHAR}, #{appid,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR,
+      #{isBirthWish,jdbcType=VARCHAR}, #{isJoinWish,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.manager.entity.HrCompany" >
+    insert into hr_company
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="messageId != null" >
+        message_id,
+      </if>
+      <if test="schoolSite != null" >
+        school_site,
+      </if>
+      <if test="recruitSite != null" >
+        recruit_site,
+      </if>
+      <if test="servicePhone != null" >
+        service_phone,
+      </if>
+      <if test="wechatNo != null" >
+        wechat_no,
+      </if>
+      <if test="wechatImage != null" >
+        wechat_image,
+      </if>
+      <if test="recruitEmail != null" >
+        recruit_email,
+      </if>
+      <if test="profile != null" >
+        profile,
+      </if>
+      <if test="provinceCode != null" >
+        province_code,
+      </if>
+      <if test="cityCode != null" >
+        city_code,
+      </if>
+      <if test="addr != null" >
+        addr,
+      </if>
+      <if test="schoolVideo != null" >
+        school_video,
+      </if>
+      <if test="temperamentPcImage != null" >
+        temperament_pc_image,
+      </if>
+      <if test="temperamentMobileImage != null" >
+        temperament_mobile_image,
+      </if>
+      <if test="appid != null" >
+        appid,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="isBirthWish != null" >
+        is_birth_wish,
+      </if>
+      <if test="isJoinWish != null" >
+        is_join_wish,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="companyId != null" >
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="messageId != null" >
+        #{messageId,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolSite != null" >
+        #{schoolSite,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitSite != null" >
+        #{recruitSite,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePhone != null" >
+        #{servicePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatNo != null" >
+        #{wechatNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatImage != null" >
+        #{wechatImage,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitEmail != null" >
+        #{recruitEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="profile != null" >
+        #{profile,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null" >
+        #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolVideo != null" >
+        #{schoolVideo,jdbcType=VARCHAR},
+      </if>
+      <if test="temperamentPcImage != null" >
+        #{temperamentPcImage,jdbcType=VARCHAR},
+      </if>
+      <if test="temperamentMobileImage != null" >
+        #{temperamentMobileImage,jdbcType=VARCHAR},
+      </if>
+      <if test="appid != null" >
+        #{appid,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="isBirthWish != null" >
+        isBirthWish,
+      </if>
+      <if test="isJoinWish != null" >
+        isJoinWish,
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.manager.entity.HrCompany" >
+    update hr_company
+    <set >
+      <if test="newCompanyId != null" >
+        company_id = #{newCompanyId,jdbcType=VARCHAR},
+      </if>	
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="messageId != null" >
+        message_id = #{messageId,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolSite != null" >
+        school_site = #{schoolSite,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitSite != null" >
+        recruit_site = #{recruitSite,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePhone != null" >
+        service_phone = #{servicePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatNo != null" >
+        wechat_no = #{wechatNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatImage != null" >
+        wechat_image = #{wechatImage,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitEmail != null" >
+        recruit_email = #{recruitEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="profile != null" >
+        profile = #{profile,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null" >
+        province_code = #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        city_code = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolVideo != null" >
+        school_video = #{schoolVideo,jdbcType=VARCHAR},
+      </if>
+      <if test="temperamentPcImage != null" >
+        temperament_pc_image = #{temperamentPcImage,jdbcType=VARCHAR},
+      </if>
+      <if test="temperamentMobileImage != null" >
+        temperament_mobile_image = #{temperamentMobileImage,jdbcType=VARCHAR},
+      </if>
+      <if test="appid != null" >
+        appid = #{appid,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+	  <if test="orgUpdateTime != null" >
+        org_update_time = #{orgUpdateTime,jdbcType=TIMESTAMP},
+      </if>   
+      <if test="userUpdateTime != null" >
+        user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="isBirthWish != null" >
+        is_birth_wish = #{isBirthWish,jdbcType=VARCHAR},
+      </if>
+      <if test="isJoinWish != null" >
+      	is_join_wish = #{isJoinWish,jdbcType=VARCHAR},
+      </if>     
+    </set>
+    where company_id = #{companyId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.manager.entity.HrCompany" >
+    update hr_company
+    set company_name = #{companyName,jdbcType=VARCHAR},
+      message_id = #{messageId,jdbcType=VARCHAR},
+      school_site = #{schoolSite,jdbcType=VARCHAR},
+      recruit_site = #{recruitSite,jdbcType=VARCHAR},
+      service_phone = #{servicePhone,jdbcType=VARCHAR},
+      wechat_no = #{wechatNo,jdbcType=VARCHAR},
+      wechat_image = #{wechatImage,jdbcType=VARCHAR},
+      recruit_email = #{recruitEmail,jdbcType=VARCHAR},
+      profile = #{profile,jdbcType=VARCHAR},
+      province_code = #{provinceCode,jdbcType=VARCHAR},
+      city_code = #{cityCode,jdbcType=VARCHAR},
+      addr = #{addr,jdbcType=VARCHAR},
+      school_video = #{schoolVideo,jdbcType=VARCHAR},
+      temperament_pc_image = #{temperamentPcImage,jdbcType=VARCHAR},
+      temperament_mobile_image = #{temperamentMobileImage,jdbcType=VARCHAR},
+      appid = #{appid,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      org_update_time = #{orgUpdateTime,jdbcType=TIMESTAMP},
+      user_update_time = #{userUpdateTime,jdbcType=TIMESTAMP},
+      is_birth_wish = #{isBirthWish,jdbcType=VARCHAR},
+      is_join_wish = #{isJoinWish,jdbcType=VARCHAR}
+    where company_id = #{companyId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectWishEmployee" resultType="com.human.manager.entity.MessageWish" parameterType="java.lang.String" >
+   SELECT users.empl_phone tel,DATE_FORMAT(users.birth_date,'%Y-%m-%d') birthDate,DATE_FORMAT(users.join_date,'%Y-%m-%d')  joinDate,
+   users.company,c.company_name companyName,users.dept_id deptId,users.dept_name deptName,users.email_addr email,users.NAME,users.sex,'1' TYPE 
+   FROM users JOIN hr_company c WHERE c.`company_id` =users.`company` AND  MONTH(users.join_date) = MONTH(CURDATE()) AND DAY(users.join_date)= DAY(CURDATE()) AND YEAR(users.join_date)&lt;YEAR(CURDATE())
+   AND c.`is_join_wish` = 1
+   UNION ALL 
+   SELECT users.empl_phone tel,DATE_FORMAT(users.birth_date,'%Y-%m-%d') birthDate,DATE_FORMAT(users.join_date,'%Y-%m-%d')  joinDate,
+   users.company,c.company_name companyName,users.dept_id deptId,users.dept_name deptName,users.email_addr email,users.NAME,users.sex,'2' TYPE 
+   FROM users JOIN hr_company c WHERE c.`company_id` =users.`company` AND  MONTH(users.birth_date) = MONTH(CURDATE()) AND DAY(users.birth_date)= DAY(CURDATE())
+   AND c.`is_birth_wish` = 1 
+  </select>
+  
+  <!-- 通过登录账号查询登录人所在学校的schoolId -->
+   <select id="selectByEmailAddr" resultMap="BaseResultMap" parameterType="java.lang.String" >
+	    SELECT c.message_id
+		FROM hr_user  u 
+		LEFT JOIN hr_company c ON u.company= c.company_id
+		WHERE u.email_addr=#{email,jdbcType=VARCHAR}
+		limit 1
+  </select>
+</mapper>

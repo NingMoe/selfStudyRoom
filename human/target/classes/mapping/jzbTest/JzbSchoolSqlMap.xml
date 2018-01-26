@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbSchoolDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbSchool" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="school_company_id" property="schoolCompanyId" jdbcType="VARCHAR" />
+    <result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+    <result column="school_province" property="schoolProvince" jdbcType="BIGINT" />
+    <result column="school_province_name" property="schoolProvinceName" jdbcType="VARCHAR" />
+    <result column="school_city" property="schoolCity" jdbcType="BIGINT" />
+    <result column="school_city_name" property="schoolCityName" jdbcType="VARCHAR" />
+    <result column="school_area" property="schoolArea" jdbcType="BIGINT" />
+     <result column="school_area_name" property="schoolAreaName" jdbcType="VARCHAR" />
+    <result column="school_type" property="schoolType" jdbcType="INTEGER" />
+    <result column="school_addr" property="schoolAddr" jdbcType="VARCHAR" />
+    <result column="school_url" property="schoolUrl" jdbcType="VARCHAR" />
+    <result column="school_tel" property="schoolTel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />    
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, school_company_id, school_name, school_province, school_city, school_area, school_type, 
+    school_addr, school_url, school_tel, create_time, is_valid, create_user, update_time, 
+    update_user
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT s.id, s.school_company_id, s.school_name, s.school_province,a1.area_name AS school_province_name, 
+	s.school_city,a2.area_name AS school_city_name, s.school_area,a3.area_name AS school_area_name, s.school_type,s.is_valid 
+	FROM jzb_school s 
+	LEFT JOIN  area_info a1 ON s.school_province=a1.id AND a1.area_level=1 
+	LEFT JOIN  area_info a2 ON s.school_city=a2.id AND a2.area_level=2
+	LEFT JOIN  area_info a3 ON s.school_area=a3.id AND a3.area_level=3
+    WHERE s.id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from jzb_school
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbSchool" >
+    insert into jzb_school
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="schoolCompanyId != null" >
+        school_company_id,
+      </if>
+      <if test="schoolName != null" >
+        school_name,
+      </if>
+      <if test="schoolProvince != null" >
+        school_province,
+      </if>
+      <if test="schoolCity != null" >
+        school_city,
+      </if>
+      <if test="schoolArea != null" >
+        school_area,
+      </if>
+      <if test="schoolType != null" >
+        school_type,
+      </if>
+      <if test="schoolAddr != null" >
+        school_addr,
+      </if>
+      <if test="schoolUrl != null" >
+        school_url,
+      </if>
+      <if test="schoolTel != null" >
+        school_tel,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="schoolCompanyId != null" >
+        #{schoolCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolName != null" >
+        #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProvince != null" >
+        #{schoolProvince,jdbcType=BIGINT},
+      </if>
+      <if test="schoolCity != null" >
+        #{schoolCity,jdbcType=BIGINT},
+      </if>
+      <if test="schoolArea != null" >
+        #{schoolArea,jdbcType=BIGINT},
+      </if>
+      <if test="schoolType != null" >
+        #{schoolType,jdbcType=INTEGER},
+      </if>
+      <if test="schoolAddr != null" >
+        #{schoolAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolUrl != null" >
+        #{schoolUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolTel != null" >
+        #{schoolTel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbSchool" >
+    update jzb_school
+    <set >
+      <if test="schoolCompanyId != null" >
+        school_company_id = #{schoolCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolName != null" >
+        school_name = #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProvince != null" >
+        school_province = #{schoolProvince,jdbcType=BIGINT},
+      </if>
+      <if test="schoolCity != null" >
+        school_city = #{schoolCity,jdbcType=BIGINT},
+      </if>
+      <if test="schoolArea != null" >
+        school_area = #{schoolArea,jdbcType=BIGINT},
+      </if>
+      <if test="schoolType != null" >
+        school_type = #{schoolType,jdbcType=INTEGER},
+      </if>
+      <if test="schoolAddr != null" >
+        school_addr = #{schoolAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolUrl != null" >
+        school_url = #{schoolUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolTel != null" >
+        school_tel = #{schoolTel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT s.id, s.school_company_id, s.school_name, a1.area_name AS school_province_name, 
+	a2.area_name AS school_city_name, a3.area_name AS school_area_name, s.school_type,s.is_valid 
+	FROM jzb_school s 
+	LEFT JOIN  area_info a1 ON s.school_province=a1.id AND a1.area_level=1 
+	LEFT JOIN  area_info a2 ON s.school_city=a2.id AND a2.area_level=2
+	LEFT JOIN  area_info a3 ON s.school_area=a3.id AND a3.area_level=3
+	WHERE s.is_valid=0 AND a1.is_valid=0 AND a2.is_valid=0 AND a3.is_valid=0
+	<if test="s != null">
+		AND s.school_company_id  IN
+		<foreach collection="s" item="schoolCompanyId" index="index" open="(" separator="," close=")">
+			#{schoolCompanyId,jdbcType=VARCHAR}
+	    </foreach>
+	</if>
+	<if test="t.schoolProvince != null and t.schoolProvince !=''">
+			and s.school_province = #{t.schoolProvince,jdbcType=BIGINT}
+	</if>
+	<if test="t.schoolCity != null and t.schoolCity !=''">
+			and s.school_city = #{t.schoolCity,jdbcType=BIGINT}
+	</if>
+	<if test="t.schoolArea != null and t.schoolArea !=''">
+			and s.school_area = #{t.schoolArea,jdbcType=BIGINT}
+	</if>
+	<if test="t.schoolType != null">
+			and s.school_type = #{t.schoolType,jdbcType=INTEGER}
+	</if>
+	<if test="t.schoolName!= null and t.schoolName !=''">
+			and s.school_name like CONCAT('%',#{t.schoolName,jdbcType=VARCHAR},'%')
+	</if>	
+  </select>
+  
+  <!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from jzb_school   
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>        
+  </delete>
+  
+  <select id="selectByAreaAndGrade" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+   SELECT s.id,s.school_name FROM jzb_school s 
+	JOIN jzb_grade g ON g.school_type = s.`school_type` AND g.id = #{gradeId,jdbcType=INTEGER}
+	WHERE s.school_area = #{areaId,jdbcType=INTEGER} 
+  </select>
+  
+  
+</mapper>

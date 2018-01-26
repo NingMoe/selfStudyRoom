@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jzbTest.dao.JzbQuestionPaperDao">
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbQuestionPaper">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="OPEN_ID" jdbcType="VARCHAR" property="openId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="GRADE" jdbcType="INTEGER" property="grade" />
+    <result column="GRADE_NAME" jdbcType="VARCHAR" property="gradeName" />
+    <result column="CLASSTYPE" jdbcType="VARCHAR" property="classtype" />
+    <result column="SUBJECT" jdbcType="VARCHAR" property="subject" />
+    <result column="SUBJECT_NAME" jdbcType="VARCHAR" property="subjectName" />
+    <result column="AREA" jdbcType="INTEGER" property="area" />
+    <result column="SCHOOL" jdbcType="INTEGER" property="school" />
+    <result column="MONTH_CONFIG_ID" jdbcType="INTEGER" property="monthConfigId" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="IS_PASS" jdbcType="INTEGER" property="isPass" />
+    <result column="is_pass_name" jdbcType="VARCHAR" property="isPassName" />
+    <result column="PAPER_NAME" jdbcType="VARCHAR" property="paperName" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="PAPER_TIME" jdbcType="INTEGER" property="paperTime" />
+    <result column="xdf" jdbcType="INTEGER" property="xdf" />
+    <result column="xdf_no" jdbcType="VARCHAR" property="xdfNo" />
+    <result column="MESSAGE_ID" jdbcType="VARCHAR" property="messageId" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, OPEN_ID, NAME, PHONE, GRADE, CLASSTYPE, SUBJECT, AREA, SCHOOL, MONTH_CONFIG_ID, 
+    CREATE_TIME, START_TIME, END_TIME, IS_PASS,PAPER_NAME,status,XDF,xdf_no
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select p.* from jzb_question_paper p where p.ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getExistTotalTimesByOpenId" parameterType="com.human.jzbTest.entity.JzbQuestionPaper" resultType="java.lang.Integer">
+    select count(1)
+    from jzb_question_paper
+    where OPEN_ID = #{openId,jdbcType=VARCHAR} and CLASSTYPE = #{classtype,jdbcType=VARCHAR} and grade = #{grade,jdbcType=VARCHAR} and subject = #{subject,jdbcType=VARCHAR} 
+  </select>
+  
+  <select id="getExistMonthTotalTimesByOpenId" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(1)
+    from jzb_question_paper
+    where OPEN_ID = #{openId,jdbcType=VARCHAR} and CLASSTYPE = #{classtype,jdbcType=VARCHAR} and grade = #{grade,jdbcType=VARCHAR} and subject = #{subject,jdbcType=VARCHAR} 
+    and MONTH(create_time) = MONTH(NOW()) AND YEAR(create_time) = YEAR(NOW())
+  </select>
+  
+  <select id="getExistDayTimesByOpenId" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(1)
+    from jzb_question_paper
+    where OPEN_ID = #{openId,jdbcType=VARCHAR} and CLASSTYPE = #{classtype,jdbcType=VARCHAR} and grade = #{grade,jdbcType=VARCHAR} and subject = #{subject,jdbcType=VARCHAR} 
+    and DAY(create_time) = DAY(NOW()) AND MONTH(create_time) = MONTH(NOW()) AND YEAR(create_time) = YEAR(NOW()) 
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from jzb_question_paper
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.jzbTest.entity.JzbQuestionPaper">
+    insert into jzb_question_paper
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="openId != null">
+        OPEN_ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="phone != null">
+        PHONE,
+      </if>
+      <if test="grade != null">
+        GRADE,
+      </if>
+      <if test="classtype != null">
+        CLASSTYPE,
+      </if>
+      <if test="subject != null">
+        SUBJECT,
+      </if>
+      <if test="area != null">
+        AREA,
+      </if>
+      <if test="school != null">
+        SCHOOL,
+      </if>
+      <if test="monthConfigId != null">
+        MONTH_CONFIG_ID,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="startTime != null">
+        START_TIME,
+      </if>
+      <if test="endTime != null">
+        END_TIME,
+      </if>
+      <if test="isPass != null">
+        IS_PASS,
+      </if>
+      <if test="paperName != null">
+        PAPER_NAME,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="openId != null">
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null">
+        #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="classtype != null">
+        #{classtype,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null">
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=INTEGER},
+      </if>
+      <if test="school != null">
+        #{school,jdbcType=INTEGER},
+      </if>
+      <if test="monthConfigId != null">
+        #{monthConfigId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isPass != null">
+        #{isPass,jdbcType=Integer},
+      </if>
+      <if test="paperName != null">
+        #{paperName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbQuestionPaper">
+    update jzb_question_paper
+    <set>
+      <if test="openId != null">
+        OPEN_ID = #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null">
+        GRADE = #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="classtype != null">
+        CLASSTYPE = #{classtype,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null">
+        SUBJECT = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        AREA = #{area,jdbcType=INTEGER},
+      </if>
+      <if test="school != null">
+        SCHOOL = #{school,jdbcType=INTEGER},
+      </if>
+      <if test="monthConfigId != null">
+        MONTH_CONFIG_ID = #{monthConfigId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null">
+        START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isPass != null">
+        IS_PASS = #{isPass,jdbcType=INTEGER},
+      </if>
+      <if test="paperName != null">
+        PAPER_NAME = #{paperName,jdbcType=VARCHAR},
+      </if>
+       <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="xdf != null">
+        xdf = #{xdf,jdbcType=INTEGER},
+      </if>
+      <if test="xdfNo != null">
+        xdf_no = #{xdfNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bmCodes != null">
+        BM_CODES = #{bmCodes,jdbcType=VARCHAR},
+      </if>
+      <if test="realBmCodes != null">
+        real_bm_codes = #{realBmCodes,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 通过openid查询考卷 -->
+  <select id="selectByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select p.*,d.grade_name,sub.name subject_name,sub1.name is_pass_name from jzb_question_paper p
+    JOIN jzb_grade d ON d.id = p.grade 
+	JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'subject') sub ON sub.DATA_VALUE = p.subject
+	JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'jzb_score_level') sub1 ON sub1.DATA_VALUE = p.is_pass
+    where p.OPEN_ID = #{openId,jdbcType=VARCHAR} and p.IS_PASS is not null
+  </select>
+  
+  <select id="selectLastPaperByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_question_paper
+    where OPEN_ID = #{openId,jdbcType=VARCHAR} order by id desc limit 1
+  </select>
+  
+  <select id="getNoJiaoyanPaper" resultMap="BaseResultMap">
+    SELECT p.id,p.phone,p.name,c.`message_id` FROM jzb_question_paper  p
+	JOIN jzb_grade g ON g.`id` = p.`GRADE` 
+	JOIN jzb_dept d ON d.id = g.`dept_id`
+	JOIN hr_company c ON c.`company_id` = d.`COMPANY`
+  </select>
+  
+  
+</mapper>

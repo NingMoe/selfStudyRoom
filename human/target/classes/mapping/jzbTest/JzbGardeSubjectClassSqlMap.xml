@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jzbTest.dao.JzbGradeSubjectClassDao">
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbGradeSubjectClass">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="grade_subject_id" property="gradeSubjectId" jdbcType="BIGINT" />
+    <result column="s_quarter" property="sQuarter" jdbcType="VARCHAR" />
+    <result column="s_manageDeptCodes" property="sManagedeptcodes" jdbcType="VARCHAR" />
+    <result column="s_manage_dept_name" property="sManageDeptName" jdbcType="VARCHAR"  />
+    <result column="s_projectCode" property="sProjectcode" jdbcType="VARCHAR" />
+    <result column="s_project_name" property="sProjectName" jdbcType="VARCHAR" />
+    <result column="s_classSubject" property="sClasssubject" jdbcType="VARCHAR" />
+    <result column="s_class_subject_name" property="sClassSubjectName" jdbcType="VARCHAR"/>
+    <result column="s_className" property="sClassname" jdbcType="VARCHAR" />
+    
+    <result column="contain_class_name" property="containClassName" jdbcType="VARCHAR" />
+    <result column="no_contain_class_name" property="noContainClassName" jdbcType="VARCHAR" />
+    <result column="contain_class_number" property="containClassNumber" jdbcType="VARCHAR" />
+    <result column="no_contain_class_number" property="noContainClassNumber" jdbcType="VARCHAR" />
+    
+    <result column="startDateTime" property="startDateTime" jdbcType="VARCHAR" />
+    <result column="endDateTime" property="endDateTime" jdbcType="VARCHAR" />
+    <result column="is_pass" property="isPass" jdbcType="INTEGER" />
+    <result column="is_pass_name" property="isPassName" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, grade_subject_id, s_quarter, s_manageDeptCodes, s_projectCode, s_classSubject, 
+    s_className, startDateTime, endDateTime, is_pass, create_time, create_user, update_time, 
+    update_user, is_valid,contain_class_name,no_contain_class_name,contain_class_number,no_contain_class_number
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_garde_subject_class
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from jzb_garde_subject_class
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+   <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbGradeSubjectClass" >
+    insert into jzb_garde_subject_class
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="gradeSubjectId != null" >
+        grade_subject_id,
+      </if>
+      <if test="sQuarter != null" >
+        s_quarter,
+      </if>
+      <if test="sManagedeptcodes != null" >
+        s_manageDeptCodes,
+      </if>
+      <if test="sProjectcode != null" >
+        s_projectCode,
+      </if>
+      <if test="sClasssubject != null" >
+        s_classSubject,
+      </if>
+      <if test="sClassname != null" >
+        s_className,
+      </if>
+      <if test="startDateTime != null" >
+        startDateTime,
+      </if>
+      <if test="endDateTime != null" >
+        endDateTime,
+      </if>
+      <if test="isPass != null" >
+        is_pass,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="containClassName != null" >
+        contain_class_name,
+      </if>
+      <if test="noContainClassName != null" >
+        no_contain_class_name,
+      </if>
+      <if test="containClassNumber != null" >
+        contain_class_number,
+      </if>
+      <if test="noContainClassNumber != null" >
+        no_contain_class_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gradeSubjectId != null" >
+        #{gradeSubjectId,jdbcType=BIGINT},
+      </if>
+      <if test="sQuarter != null" >
+        #{sQuarter,jdbcType=VARCHAR},
+      </if>
+      <if test="sManagedeptcodes != null" >
+        #{sManagedeptcodes,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectcode != null" >
+        #{sProjectcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sClasssubject != null" >
+        #{sClasssubject,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassname != null" >
+        #{sClassname,jdbcType=VARCHAR},
+      </if>
+      <if test="startDateTime != null" >
+        #{startDateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endDateTime != null" >
+        #{endDateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="isPass != null" >
+        #{isPass,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+      <if test="containClassName != null" >
+         #{containClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="noContainClassName != null" >
+        #{noContainClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="containClassNumber != null" >
+        #{containClassNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="noContainClassNumber != null" >
+        #{noContainClassNumber,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbGradeSubjectClass" >
+    update jzb_garde_subject_class
+    <set >
+      <if test="gradeSubjectId != null" >
+        grade_subject_id = #{gradeSubjectId,jdbcType=BIGINT},
+      </if>
+      <if test="sQuarter != null" >
+        s_quarter = #{sQuarter,jdbcType=VARCHAR},
+      </if>
+      <if test="sManagedeptcodes != null" >
+        s_manageDeptCodes = #{sManagedeptcodes,jdbcType=VARCHAR},
+      </if>
+      <if test="sProjectcode != null" >
+        s_projectCode = #{sProjectcode,jdbcType=VARCHAR},
+      </if>
+      <if test="sClasssubject != null" >
+        s_classSubject = #{sClasssubject,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassname != null" >
+        s_className = #{sClassname,jdbcType=VARCHAR},
+      </if>
+      <if test="startDateTime != null" >
+        startDateTime = #{startDateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endDateTime != null" >
+        endDateTime = #{endDateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="isPass != null" >
+        is_pass = #{isPass,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="containClassName != null" >
+        contain_class_name = #{containClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="noContainClassName != null" >
+        no_contain_class_name = #{noContainClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="containClassNumber != null" >
+        contain_class_number = #{containClassNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="noContainClassNumber != null" >
+        no_contain_class_number = #{noContainClassNumber,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+ <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT  c.id, c.grade_subject_id, c.s_quarter, 
+    c.s_manageDeptCodes, d1.name AS s_manage_dept_name , 
+    c.s_projectCode, d2.name AS s_project_name,
+    c.s_classSubject, d3.name AS s_class_subject_name,d5.name is_pass_name,
+    c.s_className, c.startDateTime, c.endDateTime, c.is_pass,c.contain_class_name,c.no_contain_class_name,c.contain_class_number,c.no_contain_class_number 
+    FROM jzb_garde_subject_class c
+    LEFT JOIN dic_data d1 ON c.s_manageDeptCodes=d1.data_value
+	LEFT JOIN dic_data d2 ON c.s_projectCode=d2.data_value
+	LEFT JOIN dic_data d3 ON c.s_classSubject=d3.data_value
+	left join dic_data d4 on c.is_pass = d4.data_value and d3.DIC_CODE = 'jzb_score_level'
+	JOIN (SELECT * FROM dic_data WHERE dic_code='jzb_score_level') d5 ON d5.data_value =c.is_pass 
+	WHERE c.is_valid=0 
+	AND c.grade_subject_id= #{t.gradeSubjectId,jdbcType=BIGINT}	
+	AND d1.FILTER=#{t.companyId,jdbcType=VARCHAR} 
+	AND d2.FILTER=#{t.companyId,jdbcType=VARCHAR}
+	AND d3.DIC_CODE="subject"
+	<if test="t.sQuarter != null and t.sQuarter !=''">
+	   AND c.s_quarter = #{t.sQuarter,jdbcType=VARCHAR}
+	</if>
+	<if test="t.sManagedeptcodes != null and t.sManagedeptcodes !=''">
+	   AND c.s_manageDeptCodes = #{t.sManagedeptcodes,jdbcType=VARCHAR}
+	</if>
+	<if test="t.sProjectcode != null and t.sProjectcode !=''">
+	   AND c.s_projectCode = #{t.sProjectcode,jdbcType=VARCHAR}
+	</if>
+	<if test="t.sClasssubject != null and t.sClasssubject !=''">
+	   AND c.s_classSubject = #{t.sClasssubject,jdbcType=VARCHAR}
+	</if>
+	<if test="t.sClassname != null and t.sClassname !=''">
+	   AND c.s_className like CONCAT(CONCAT('%', #{t.sClassname,jdbcType=VARCHAR}), '%') 
+	</if>	
+	<if test="t.isPass != null and t.isPass !=''">
+	   AND c.is_pass = #{t.isPass,jdbcType=VARCHAR}
+	</if>	
+	ORDER BY c.id DESC
+  </select>
+  
+   <!--批量删除 -->
+  <update id="deleteByIds" parameterType="java.util.HashMap" >
+    update jzb_garde_subject_class set is_valid=1
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=BIGINT}
+	</foreach>        
+  </update>
+  
+  <!--全部删除 -->
+  <update id="deleteAll" parameterType="java.lang.Long" >
+    update jzb_garde_subject_class set is_valid=1
+    where  grade_subject_id = #{gradeSubjectId,jdbcType=BIGINT}    
+  </update>
+  
+  <!--通过年级、科目、班级类型查询推荐课程规则 -->
+  <select id="selectClassRuleByParams" resultMap="BaseResultMap" parameterType="com.human.jzbTest.entity.JzbGradeSubjectDto">
+    SELECT c.id ,c.grade_subject_id,c.s_quarter,c.s_manageDeptCodes,
+    c.s_projectCode, c.s_classSubject, 
+    c.s_className, c.startDateTime, c.endDateTime,c.contain_class_name,c.no_contain_class_name, 
+    c.contain_class_number,c.no_contain_class_number 
+	FROM jzb_garde_subject_class c
+	LEFT JOIN jzb_grade_subject s ON c.grade_subject_id=s.id
+	WHERE c.is_valid=0 AND s.is_valid=0
+	<if test="isPass != null and isPass !=''">
+		AND c.is_pass = #{isPass,jdbcType=INTEGER} 
+	</if>		
+	AND s.grade_id=#{gradeId,jdbcType=BIGINT} 
+	AND s.subject_code=#{subjectCode,jdbcType=VARCHAR} 
+	AND s.class_type=#{classType,jdbcType=INTEGER}    
+  </select>
+  
+</mapper>

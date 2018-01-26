@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.mail.dao.AcceptMailDao" >
+  <resultMap id="BaseResultMap" type="com.human.mail.entity.AcceptMail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="message_id" property="messageId" jdbcType="VARCHAR" />
+    <result column="message_source" property="messageSource" jdbcType="VARCHAR" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="message_accept" property="messageAccept" jdbcType="VARCHAR" />
+    <result column="is_read" property="isRead" jdbcType="BIT" />
+    <result column="is_contain_attach" property="isContainAttach" jdbcType="BIT" />
+    <result column="subject" property="subject" jdbcType="VARCHAR" />
+    <result column="original_mail" property="originalMail" jdbcType="VARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="mail_html" property="mailHtml" jdbcType="VARCHAR" />
+    <result column="is_read_success" property="isReadSuccess" jdbcType="BIT" />
+    <result column="is_analysis" property="isAnalysis" jdbcType="BIT" />
+    <result column="is_analysis_success" property="isAnalysisSuccess" jdbcType="BIT" />
+    <result column="is_photo" property="isPhoto" jdbcType="BIT" />
+    <result column="hr_company_id" property="hrCompanyId" jdbcType="VARCHAR" />
+    <result column="company_name" property="hrCompanyName" jdbcType="VARCHAR" />
+    <result column="stat_time" property="statTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="fail_time" property="failTime" jdbcType="TIMESTAMP" />      
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, message_id, message_source, send_time, message_accept, is_read, is_contain_attach, 
+    subject, original_mail, attachment, mail_html, is_read_success, is_analysis, is_analysis_success,is_photo,hr_company_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from accept_mail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from accept_mail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.mail.entity.AcceptMail" >
+    insert into accept_mail (message_id, message_source, 
+      send_time, message_accept, is_read, 
+      is_contain_attach, subject, original_mail, 
+      attachment, mail_html, is_read_success, 
+      is_analysis, is_analysis_success,is_photo,hr_company_id)
+    values (#{messageId,jdbcType=VARCHAR}, #{messageSource,jdbcType=VARCHAR}, 
+      #{sendTime,jdbcType=TIMESTAMP}, #{messageAccept,jdbcType=VARCHAR}, #{isRead,jdbcType=BIT}, 
+      #{isContainAttach,jdbcType=BIT}, #{subject,jdbcType=VARCHAR}, #{originalMail,jdbcType=VARCHAR}, 
+      #{attachment,jdbcType=VARCHAR}, #{mailHtml,jdbcType=VARCHAR}, #{isReadSuccess,jdbcType=BIT}, 
+      #{isAnalysis,jdbcType=BIT}, #{isAnalysisSuccess,jdbcType=BIT},#{isPhoto,jdbcType=BIT}, #{hrCompanyId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="id" parameterType="com.human.mail.entity.AcceptMail" >
+    insert into accept_mail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="messageId != null" >
+        message_id,
+      </if>
+      <if test="messageSource != null" >
+        message_source,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+      <if test="messageAccept != null" >
+        message_accept,
+      </if>
+      <if test="isRead != null" >
+        is_read,
+      </if>
+      <if test="isContainAttach != null" >
+        is_contain_attach,
+      </if>
+      <if test="subject != null" >
+        subject,
+      </if>
+      <if test="originalMail != null" >
+        original_mail,
+      </if>
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="mailHtml != null" >
+        mail_html,
+      </if>
+      <if test="isReadSuccess != null" >
+        is_read_success,
+      </if>
+      <if test="isAnalysis != null" >
+        is_analysis,
+      </if>
+      <if test="isAnalysisSuccess != null" >
+        is_analysis_success,
+      </if>
+      <if test="isPhoto != null" >
+        is_photo,
+      </if>
+      <if test="hrCompanyId != null" >
+        hr_company_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="messageId != null" >
+        #{messageId,jdbcType=VARCHAR},
+      </if>
+      <if test="messageSource != null" >
+        #{messageSource,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="messageAccept != null" >
+        #{messageAccept,jdbcType=VARCHAR},
+      </if>
+      <if test="isRead != null" >
+        #{isRead,jdbcType=BIT},
+      </if>
+      <if test="isContainAttach != null" >
+        #{isContainAttach,jdbcType=BIT},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="originalMail != null" >
+        #{originalMail,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="mailHtml != null" >
+        #{mailHtml,jdbcType=VARCHAR},
+      </if>
+      <if test="isReadSuccess != null" >
+        #{isReadSuccess,jdbcType=BIT},
+      </if>
+      <if test="isAnalysis != null" >
+        #{isAnalysis,jdbcType=BIT},
+      </if>
+      <if test="isAnalysisSuccess != null" >
+        #{isAnalysisSuccess,jdbcType=BIT},
+      </if>
+      <if test="isPhoto != null" >
+        #{isPhoto,jdbcType=BIT},
+      </if>
+       <if test="hrCompanyId != null" >
+        #{hrCompanyId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.mail.entity.AcceptMail" >
+    update accept_mail
+    <set >
+      <if test="messageId != null" >
+        message_id = #{messageId,jdbcType=VARCHAR},
+      </if>
+      <if test="messageSource != null" >
+        message_source = #{messageSource,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null" >
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="messageAccept != null" >
+        message_accept = #{messageAccept,jdbcType=VARCHAR},
+      </if>
+      <if test="isRead != null" >
+        is_read = #{isRead,jdbcType=BIT},
+      </if>
+      <if test="isContainAttach != null" >
+        is_contain_attach = #{isContainAttach,jdbcType=BIT},
+      </if>
+      <if test="subject != null" >
+        subject = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="originalMail != null" >
+        original_mail = #{originalMail,jdbcType=VARCHAR},
+      </if>
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="mailHtml != null" >
+        mail_html = #{mailHtml,jdbcType=VARCHAR},
+      </if>
+      <if test="isReadSuccess != null" >
+        is_read_success = #{isReadSuccess,jdbcType=BIT},
+      </if>
+      <if test="isAnalysis != null" >
+        is_analysis = #{isAnalysis,jdbcType=BIT},
+      </if>
+      <if test="isAnalysisSuccess != null" >
+        is_analysis_success = #{isAnalysisSuccess,jdbcType=BIT},
+      </if>
+      <if test="isPhoto != null" >
+        is_photo = #{isPhoto,jdbcType=BIT},
+      </if>
+      <if test="hrCompanyId != null" >
+        hr_company_id = #{hrCompanyId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.mail.entity.AcceptMail" >
+    update accept_mail
+    set message_id = #{messageId,jdbcType=VARCHAR},
+      message_source = #{messageSource,jdbcType=VARCHAR},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      message_accept = #{messageAccept,jdbcType=VARCHAR},
+      is_read = #{isRead,jdbcType=BIT},
+      is_contain_attach = #{isContainAttach,jdbcType=BIT},
+      subject = #{subject,jdbcType=VARCHAR},
+      original_mail = #{originalMail,jdbcType=VARCHAR},
+      attachment = #{attachment,jdbcType=VARCHAR},
+      mail_html = #{mailHtml,jdbcType=VARCHAR},
+      is_read_success = #{isReadSuccess,jdbcType=BIT},
+      is_analysis = #{isAnalysis,jdbcType=BIT},
+      is_analysis_success = #{isAnalysisSuccess,jdbcType=BIT},
+      is_photo = #{isPhoto,jdbcType=BIT},
+      hr_company_id = #{hrCompanyId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- 根据邮件自带的唯一标示messageId查询邮件 -->
+  <select id="queryByMessageId" resultType="java.lang.Integer"  parameterType="java.lang.String" > 
+    select count(t.id)
+    from accept_mail t
+    where t.message_id = #{messageId,jdbcType=VARCHAR} and is_read=1 and is_read_success=1
+  </select>
+  
+  
+  <!-- 查询所有解析失败的邮件 -->
+  <select id="queryFailAnalysis" resultMap="BaseResultMap" >
+    select m.*    
+    from accept_mail m,analysis_mail a
+    where m.id=a.accept_mail_id 
+    and is_analysis=1 and is_analysis_success=0
+    <![CDATA[AND a.count <= 3]]>
+  </select> 
+  
+   
+  <!-- 分页查询解析邮件 -->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+	   	SELECT m.*,
+	   	hc.company_name,
+	   	a.stat_time,IFNULL(a.end_time,'') AS end_time ,
+	   	a.count,IFNULL(a.fail_time,'') AS fail_time
+		FROM accept_mail m ,hr_company hc, analysis_mail a
+		WHERE m.hr_company_id=hc.company_id
+		AND m.id=a.accept_mail_id 
+		AND m.hr_company_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId=#{userId,jdbcType=BIGINT})
+	    <if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND m.hr_company_id=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.messageSource != null and t.messageSource !=''">
+			AND m.message_source=#{t.messageSource,jdbcType=VARCHAR}
+		</if>
+		<if test="t.isAnalysisSuccess =='1'.toString()">
+			AND m.is_analysis_success=1
+		</if>
+		<if test="t.isAnalysisSuccess =='0'.toString()">
+			AND m.is_analysis_success=0
+		</if>
+		<if test="t.subject != null and t.subject !=''">
+			AND m.subject like CONCAT(CONCAT('%', #{t.subject,jdbcType=VARCHAR}), '%') 
+		</if>	
+		<if test="t.deliveryDateStart != null and t.deliveryDateStart !=''">
+			AND m.send_time >= #{t.deliveryDateStart,jdbcType=TIMESTAMP}
+		</if>
+		<if test="t.deliveryDateEnd != null and t.deliveryDateEnd !=''">
+			<![CDATA[AND m.send_time <= #{t.deliveryDateEnd,jdbcType=TIMESTAMP}]]> 
+		</if>
+    ORDER BY m.id DESC     
+   </select>
+  
+  
+  
+  
+  
+  
+  
+</mapper>

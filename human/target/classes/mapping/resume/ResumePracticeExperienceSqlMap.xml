@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.resume.dao.ResumePracticeExperienceDao" >
+  <resultMap id="BaseResultMap" type="com.human.resume.entity.ResumePracticeExperience" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resume_id" property="resumeId" jdbcType="BIGINT" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="practice_name" property="practiceName" jdbcType="VARCHAR" />
+    <result column="practice_describe" property="practiceDescribe" jdbcType="VARCHAR" />
+    <result column="practice_position" property="practicePosition" jdbcType="VARCHAR" />
+    <result column="practice_company" property="practiceCompany" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, resume_id, start_time, end_time, practice_name, practice_describe, practice_position, 
+    practice_company, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_practice_experience
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_practice_experience
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.resume.entity.ResumePracticeExperience" >
+    insert into resume_practice_experience (resume_id, start_time, 
+      end_time, practice_name, practice_describe, 
+      practice_position, practice_company, is_valid
+      )
+    values (#{resumeId,jdbcType=BIGINT}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{practiceName,jdbcType=VARCHAR}, #{practiceDescribe,jdbcType=VARCHAR}, 
+      #{practicePosition,jdbcType=VARCHAR}, #{practiceCompany,jdbcType=VARCHAR}, #{isValid,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.resume.entity.ResumePracticeExperience" >
+    insert into resume_practice_experience
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="resumeId != null" >
+        resume_id,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="practiceName != null" >
+        practice_name,
+      </if>
+      <if test="practiceDescribe != null" >
+        practice_describe,
+      </if>
+      <if test="practicePosition != null" >
+        practice_position,
+      </if>
+      <if test="practiceCompany != null" >
+        practice_company,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resumeId != null" >
+        #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="practiceName != null" >
+        #{practiceName,jdbcType=VARCHAR},
+      </if>
+      <if test="practiceDescribe != null" >
+        #{practiceDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="practicePosition != null" >
+        #{practicePosition,jdbcType=VARCHAR},
+      </if>
+      <if test="practiceCompany != null" >
+        #{practiceCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.resume.entity.ResumePracticeExperience" >
+    update resume_practice_experience
+    <set >
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="practiceName != null" >
+        practice_name = #{practiceName,jdbcType=VARCHAR},
+      </if>
+      <if test="practiceDescribe != null" >
+        practice_describe = #{practiceDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="practicePosition != null" >
+        practice_position = #{practicePosition,jdbcType=VARCHAR},
+      </if>
+      <if test="practiceCompany != null" >
+        practice_company = #{practiceCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.resume.entity.ResumePracticeExperience" >
+    update resume_practice_experience
+    set resume_id = #{resumeId,jdbcType=BIGINT},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      practice_name = #{practiceName,jdbcType=VARCHAR},
+      practice_describe = #{practiceDescribe,jdbcType=VARCHAR},
+      practice_position = #{practicePosition,jdbcType=VARCHAR},
+      practice_company = #{practiceCompany,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <delete id="deleteByResumeId"  parameterType="java.lang.Long" >
+	    delete  
+	    from resume_practice_experience
+	    where resume_id = #{resumeId,jdbcType=BIGINT} 
+   </delete>
+</mapper>

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.CollegeDao" >
+  <resultMap id="BaseResultMap" type="com.human.basic.entity.College" >
+    <id column="school_id" property="schoolId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="is211" property="is211" jdbcType="BIT" />
+    <result column="is985" property="is985" jdbcType="BIT" />
+    <result column="rank" property="rank" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="BIT" />
+    <result column="site" property="site" jdbcType="VARCHAR" />
+    <result column="school_property" property="schoolProperty" jdbcType="TINYINT" />
+    <result column="is_edudirect" property="isEdudirect" jdbcType="BIT" />
+    <result column="ranking" property="ranking" jdbcType="BIGINT" />
+    <result column="ranking_college_type" property="rankingCollegeType" jdbcType="BIGINT" />
+    <result column="info" property="info" jdbcType="VARCHAR" />
+    <result column="province_id" property="provinceId" jdbcType="VARCHAR" />
+     <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="VARCHAR" />
+    <result column="source_type" property="sourceType" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+    <result column="educational_level" property="educationalLevel" jdbcType="BIT" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    school_id, name, is211, is985, rank, type, site, school_property, is_edudirect, ranking, 
+    ranking_college_type, info, province_id, city_id, source_type, create_user, create_time, 
+    update_user, update_time, is_valid,educational_level
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from college
+    where school_id = #{schoolId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from college
+    where school_id = #{schoolId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.human.basic.entity.College" >
+    insert into college
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="schoolId != null" >
+        school_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="is211 != null" >
+        is211,
+      </if>
+      <if test="is985 != null" >
+        is985,
+      </if>
+      <if test="rank != null" >
+        rank,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="site != null" >
+        site,
+      </if>
+      <if test="schoolProperty != null" >
+        school_property,
+      </if>
+      <if test="isEdudirect != null" >
+        is_edudirect,
+      </if>
+      <if test="ranking != null" >
+        ranking,
+      </if>
+      <if test="rankingCollegeType != null" >
+        ranking_college_type,
+      </if>
+      <if test="info != null" >
+        info,
+      </if>
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="sourceType != null" >
+        source_type,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+       <if test="educationalLevel != null" >
+        educational_level,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="schoolId != null" >
+        #{schoolId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="is211 != null" >
+        #{is211,jdbcType=BIT},
+      </if>
+      <if test="is985 != null" >
+        #{is985,jdbcType=BIT},
+      </if>
+      <if test="rank != null" >
+        #{rank,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="site != null" >
+        #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProperty != null" >
+        #{schoolProperty,jdbcType=TINYINT},
+      </if>
+      <if test="isEdudirect != null" >
+        #{isEdudirect,jdbcType=BIT},
+      </if>
+      <if test="ranking != null" >
+        #{ranking,jdbcType=BIGINT},
+      </if>
+      <if test="rankingCollegeType != null" >
+        #{rankingCollegeType,jdbcType=BIGINT},
+      </if>
+      <if test="info != null" >
+        #{info,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceId != null" >
+        #{provinceId,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+      <if test="educationalLevel != null" >
+        #{educationalLevel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.basic.entity.College" >
+    update college
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="is211 != null" >
+        is211 = #{is211,jdbcType=BIT},
+      </if>
+      <if test="is985 != null" >
+        is985 = #{is985,jdbcType=BIT},
+      </if>
+      <if test="rank != null" >
+        rank = #{rank,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=BIT},
+      </if>
+      <if test="site != null" >
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProperty != null" >
+        school_property = #{schoolProperty,jdbcType=TINYINT},
+      </if>
+      <if test="isEdudirect != null" >
+        is_edudirect = #{isEdudirect,jdbcType=BIT},
+      </if>
+      <if test="ranking != null" >
+        ranking = #{ranking,jdbcType=BIGINT},
+      </if>
+      <if test="rankingCollegeType != null" >
+        ranking_college_type = #{rankingCollegeType,jdbcType=BIGINT},
+      </if>
+      <if test="info != null" >
+        info = #{info,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceId != null" >
+        province_id = #{provinceId,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        source_type = #{sourceType,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="educationalLevel != null" >
+        educational_level = #{educationalLevel,jdbcType=BIT}
+      </if>
+    </set>
+    where school_id = #{schoolId,jdbcType=BIGINT}
+  </update>
+
+  <!-- 分页查询大学数据 -->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		 SELECT  c.school_id, c.name, c.is211, c.is985, c.rank, c.type, c.site, c.school_property, 
+		 c.is_edudirect, c.ranking, 
+         c.ranking_college_type, c.info, c.province_id,a.area_name AS provinceName,c. city_id, c.source_type, c.create_user, c.create_time, 
+         c.update_user, c.update_time, c.is_valid ,c.educational_level
+		 FROM college c
+		 LEFT JOIN area_info a ON c.province_id=a.id
+		 <trim prefix="WHERE" prefixOverrides="AND | OR">
+		 
+		 <if test="t.provinceId != null and t.provinceId !=''">
+			AND c.province_id=#{t.provinceId,jdbcType=VARCHAR}
+		</if>		
+		 <if test="t.type != null ">
+			AND c.type=#{t.type,jdbcType=BIT}
+		</if>
+		<if test="t.is211 != null">
+			AND c.is211=#{t.is211,jdbcType=BIT}
+		</if>
+		<if test="t.is985 != null">
+			AND c.is985=#{t.is985,jdbcType=BIT}
+		</if>
+		<if test="t.name!= null and t.name != ''">
+			AND c.name  like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>		
+			AND c.is_valid=0
+		</trim>
+		 order By c.create_time DESC
+	</select>
+
+	<!-- 删除大学（逻辑删除）-->
+	<update id="updateByIds" parameterType="java.util.HashMap">
+		update college set is_valid=1,update_user=#{updateUser,jdbcType=VARCHAR},update_time = #{updateTime,jdbcType=TIMESTAMP} where school_id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+<!--根据学校名称查询大学 -->
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from college
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+
+
+
+
+</mapper>

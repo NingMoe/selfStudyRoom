@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.HrPositiveRecordDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.HrPositiveRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="emp_id" property="empId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="position_id" property="positionId" jdbcType="INTEGER" />
+    <result column="position_name" property="positionName" jdbcType="VARCHAR" />
+    <result column="gra_school" property="graSchool" jdbcType="VARCHAR" />
+    <result column="high_edu" property="highEdu" jdbcType="VARCHAR" />
+    <result column="major" property="major" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="join_date" property="joinDate" jdbcType="DATE" />
+    <result column="interview_time" property="interviewTime" jdbcType="TIMESTAMP" />
+    <result column="interviewer" property="interviewer" jdbcType="VARCHAR" />
+    <result column="interviewer_name" property="interviewerName" jdbcType="VARCHAR" />
+    <result column="interview_location" property="interviewLocation" jdbcType="VARCHAR" />
+    <result column="interview_remark" property="interviewRemark" jdbcType="VARCHAR" />
+    <result column="ms_status" property="msStatus" jdbcType="INTEGER" />
+    <result column="inside_recommend" property="insideRecommend" jdbcType="VARCHAR" />
+    <result column="recommend_name" property="recommendName" jdbcType="VARCHAR" />
+    <result column="inside_relation" property="insideRelation" jdbcType="VARCHAR" />
+    <result column="extend_phone" property="extendPhone" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id,emp_id,name,id_card,company,dept, position_id, gra_school, high_edu, major, phone, join_date, interview_time, 
+    interviewer, interview_location, interview_remark, ms_status ,inside_recommend,recommend_name,inside_relation 
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hr_positive_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hr_positive_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertPositiveRecords">
+        INSERT INTO hr_positive_record (emp_id,user_id,NAME,id_card,company,dept,position_id, gra_school, high_edu, major,phone, 
+        join_date,inside_recommend,inside_relation,recommend_name) 
+		SELECT 
+		  t.`empl_id`,
+		  t.email_addr user_id,
+		  t.name,
+		  t.national_id id_card,
+		  t.`company`,
+		  t.`dept_id` dept,
+		  hp.id position_id,
+		  t.`graduage_sch` gra_school,
+		  t.`highest_educ` high_edu,
+		  t.`major`,
+		  e.`phone`,
+		  t.`join_date`,
+		  rb.inside_recommend,
+		  rb.inside_relation,
+		  t1.name recommend_name
+		FROM
+		  hr_user t 
+		  LEFT JOIN hr_company ON hr_company.`company_id` = T.COMPANY
+		  LEFT JOIN hr_resume_entryhandler e ON e.`id_card` = t.`national_id` 
+		  LEFT JOIN hr_resume_flow f ON e.`flow_code` = f.`flow_code`
+		  LEFT JOIN position_process p ON p.`ID` = f.`position_process_id` 
+		  LEFT JOIN hr_position hp ON hp.id = p.`POSITION_ID` 
+		  LEFT JOIN resume_base rb ON rb.id = e.`RESUME_ID` 
+		  LEFT JOIN hr_user t1 ON t1.`email_addr` = rb.`inside_recommend` 
+		  WHERE TO_DAYS(DATE_ADD(t.`join_date`, INTERVAL hr_company.`sy_period` MONTH) )-TO_DAYS(NOW()) = 42
+		  AND NOT EXISTS (SELECT 1 FROM hr_positive_record WHERE emp_id = t.`empl_id`)
+  </insert>
+  
+  <select id="selectInitRecords" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  	select hr_user.`email_addr` user_id,hr_user.`name`,hr_user.`national_id` id_card,hr_user.`company`,hr_user.`dept_id` dept,e.`entry_position` position_id,
+    rb.`gra_school`,rb.`high_edu`,rb.`major`, rb.`inside_recommend`,rb.`inside_relation`,hr.name recommend_name,e.`phone`,hr_user.`join_date` 
+    from hr_resume_entryhandler e 
+	join hr_user on e.`id_card` = hr_user.`national_id` 
+	left join resume_base rb on e.`RESUME_ID` = rb.id 
+	LEFT JOIN hr_user hr ON hr.`email_addr` = rb.`inside_recommend` 
+	where e.`status` = 3 
+  </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.HrPositiveRecord" >
+    update hr_positive_record
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null" >
+        id_card = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="positionId != null" >
+        position_id = #{positionId,jdbcType=INTEGER},
+      </if>
+      <if test="graSchool != null" >
+        gra_school = #{graSchool,jdbcType=VARCHAR},
+      </if>
+      <if test="highEdu != null" >
+        high_edu = #{highEdu,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null" >
+        major = #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="joinDate != null" >
+        join_date = #{joinDate,jdbcType=DATE},
+      </if>
+      <if test="interviewTime != null" >
+        interview_time = #{interviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="interviewer != null" >
+        interviewer = #{interviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="interviewLocation != null" >
+        interview_location = #{interviewLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="interviewRemark != null" >
+        interview_remark = #{interviewRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="msStatus != null" >
+        ms_status = #{msStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectPositiveRecordPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select t.id,t.`company`,c.`company_name`,t.`dept`,o.`NAME` dept_name,t.`position_id`,p.`NAME` position_name,t.`name`,t.inside_recommend,
+    t.recommend_name,t.inside_relation,t.`gra_school`,t.`high_edu`,t.`major`,t.`phone`,t.`join_date`,t.`interview_time`,t.`interviewer`,
+    t.ms_status,hue.cell_phone_number extend_phone from hr_positive_record t 
+	left join hr_company c on t.`company` = c.`company_id` 
+	left join hr_organization o on t.`dept` = o.`ID`
+	left join hr_position p on t.`position_id` = p.id
+	left join hr_user u on u.`email_addr` = t.`interviewer` 
+	left join hr_user_extend hue on hue.empl_id = t.emp_id  
+	where t.`company` = #{record.loginCompany,jdbcType=VARCHAR}
+   	<if test="record.company != null and record.company !=''">
+   		and t.company = #{record.company,jdbcType=VARCHAR}
+	</if>
+	<if test="record.dept != null and record.dept !=''">
+   		and t.dept = #{record.dept,jdbcType=VARCHAR}
+	</if>
+	<if test="record.positionId != null and record.positionId !=''">
+   		and t.position_id = #{record.positionId,jdbcType=INTEGER}
+	</if>
+	<if test="record.insideRecommend == '1'.toString() ">
+		and t.inside_recommend is not null 
+	</if>
+	<if test="record.joinDate0 != null and record.joinDate0 !=''">
+		and t.join_date >= #{record.joinDate0,jdbcType=TIMESTAMP}
+	</if>
+	<if test="record.joinDate1 != null and record.joinDate1 !=''">
+		<![CDATA[and t.join_date <= #{record.joinDate1,jdbcType=TIMESTAMP}]]> 
+	</if>
+	<if test="record.interviewTime0 != null and record.interviewTime0 !=''">
+		and t.interview_time >= #{record.interviewTime0,jdbcType=TIMESTAMP}
+	</if>
+	<if test="record.interviewTime1 != null and record.interviewTime1 !=''">
+		<![CDATA[and t.interview_time <= #{record.interviewTime1,jdbcType=TIMESTAMP}]]> 
+	</if>
+	<if test="record.msStatus != null ">
+		and t.ms_status = #{record.msStatus,jdbcType=INTEGER}
+	</if>
+	<if test="record.name != null and record.name !=''">
+		and t.name LIKE CONCAT('%', #{record.name,jdbcType=VARCHAR}, '%')
+	</if>
+	<if test="record.phone != null and record.phone !=''">
+		and t.phone LIKE CONCAT('%', #{record.phone,jdbcType=VARCHAR}, '%')
+	</if>
+	<if test="record.highEdu != null and record.highEdu !=''">
+		and t.high_edu LIKE CONCAT('%', #{record.highEdu,jdbcType=VARCHAR}, '%')
+	</if>
+	<if test="record.graSchool != null and record.graSchool !=''">
+		and t.gra_School LIKE CONCAT('%', #{record.graSchool,jdbcType=VARCHAR}, '%')
+	</if>
+	<if test="record.interviewer != null and record.interviewer !=''">
+		and t.interviewer LIKE CONCAT('%', #{record.interviewer,jdbcType=VARCHAR}, '%')
+	</if>
+	order by t.id desc 
+  </select>
+  
+  <select id="getInterviewRecord" resultType="com.human.recruitment.entity.HrInterviewRecord" parameterType="java.lang.Integer" >
+  		SELECT positive_id positiveId,interview_comment interviewComment,interview_result interviewResult,refuse_reason refuseReason FROM hr_interview_record where positive_id = #{positionId,jdbcType=INTEGER} 
+  </select> 
+  
+  <update id="updateInterviewRecord" parameterType="com.human.recruitment.entity.HrInterviewRecord" >
+  	replace into hr_interview_record(positive_id,interview_comment,interview_result,refuse_reason) 
+  	values(#{positiveId,jdbcType=INTEGER},#{interviewComment,jdbcType=VARCHAR},#{interviewResult,jdbcType=INTEGER},#{refuseReason,jdbcType=INTEGER} )
+  </update>
+  
+  
+</mapper>

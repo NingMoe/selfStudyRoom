@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jw.dao.JwDao">
+	<resultMap id="TreeMap" type="com.human.jw.entity.OrgEmployeeTree">
+		<id column="ID" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="is_parent" property="isParent" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="queryTreeById" resultMap="TreeMap" parameterType="String">
+		SELECT id,NAME,parent_id,1 is_parent FROM hr_organization WHERE parent_id = #{id,jdbcType=VARCHAR}
+		UNION ALL 
+		SELECT u.email_addr id,u.NAME, u.dept_id parent_id,0 is_parent FROM hr_user u WHERE u.dept_id = #{id,jdbcType=VARCHAR}
+		and not exists (select 1 from jw_teacher where email = u.email_addr)
+	</select>
+</mapper>

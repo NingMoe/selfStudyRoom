@@ -1,0 +1,9 @@
+coupon.grant_type=password
+coupon.client_id=MicroServiceApp
+coupon.client_secret=58476952659365838447
+coupon.username=MicroServiceApiUser
+coupon.password=$3w3Gwc
+coupon.tokenUrl=http://youhuiapi.staff.xdf.cn/token
+coupon.couponUrl=http://youhuiapi.staff.xdf.cn/api/coupon/q
+coupon.schoolId=25
+coupon.student_url=http://wxpay.xdf.cn/wechat/commonbinding/operate.do

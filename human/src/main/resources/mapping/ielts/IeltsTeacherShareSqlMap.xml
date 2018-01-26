@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsTeacherShareDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsTeacherShare" >
+  	<id column="id" property="id" jdbcType="INTEGER" />
+    <result column="teacher_id" property="teacher_id" jdbcType="INTEGER" />
+    <result column="share_num" property="share_num" jdbcType="INTEGER" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, teacher_id, share_num, create_time
+  </sql>
+  
+  <!-- 分页获取 -->
+  <select id="query" resultType="com.human.ielts.entity.IeltsTeacherShare" parameterType="java.util.HashMap">
+  	select * from ielts_teacher_share
+  	where teacher_id = #{t.teacher_id,jdbcType=INTEGER}
+  	and create_time &gt; #{t.left_integral_time,jdbcType=TIMESTAMP}
+  	and create_time &lt; #{t.right_integral_time,jdbcType=TIMESTAMP}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ielts_teacher_share
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByTeacherId" resultType="com.human.ielts.entity.IeltsTeacherShare" parameterType="java.util.HashMap">
+  	select * from ielts_teacher_share
+  	where teacher_id = #{t.id,jdbcType=INTEGER}
+  	and create_time &gt; #{t.left_integral_time,jdbcType=TIMESTAMP}
+  	and create_time &lt; #{t.right_integral_time,jdbcType=TIMESTAMP}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_teacher_share
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByTeacherId" parameterType="java.lang.Integer" >
+    delete from ielts_teacher_share
+    where teacher_id = #{teacher_id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsTeacherShare" >
+    insert into ielts_teacher_share (teacher_id, share_num, create_time
+      )
+    values (#{teacher_id,jdbcType=INTEGER}, #{share_num,jdbcType=INTEGER}, #{create_time,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.ielts.entity.IeltsTeacherShare" >
+    insert into ielts_teacher_share
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="teacher_id != null" >
+        teacher_id,
+      </if>
+      <if test="share_num != null" >
+        share_num,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="teacher_id != null" >
+        #{teacher_id,jdbcType=INTEGER},
+      </if>
+      <if test="share_num != null" >
+        #{share_num,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsTeacherShare" >
+    update ielts_teacher_share
+    <set >
+      <if test="share_num != null" >
+        share_num = #{share_num,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.ielts.entity.IeltsTeacherShare" >
+    update ielts_teacher_share
+    set share_num = #{share_num,jdbcType=INTEGER},
+      create_time = #{create_time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

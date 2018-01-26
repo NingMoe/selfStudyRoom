@@ -1,0 +1,52 @@
+html,body{
+	color:#ccc;
+    background: linear-gradient(#FB7F5B,#FC6655);
+	position: relative;
+	height: 100%;
+}
+.people{
+	color:white;
+	padding-top: 0.3rem;
+}
+.people p{
+	font-size: .24rem;
+	height: .4rem;
+	line-height: .4rem;
+	text-align: center;
+}
+.name{
+	margin-top: .2rem;
+
+}
+.succeed{
+	color:white;
+	margin-top: 1rem;
+	font-size: .28rem;	
+}
+.succeed p{
+	text-align: center;
+}
+.bottom{
+    color:white;
+	position: absolute;
+	bottom:0.8rem;
+	width: 100%;
+	font-size: .26rem; 
+}
+.btbox{
+	width: 2.4rem;
+	margin: 0 auto;
+	text-align: center;
+}
+.bottom button{
+	margin-left: 0.05rem;
+	height: .4rem;
+	color:#FB7F5B;
+	background:#fff;
+	border-radius: .02rem;
+	width: 1.1rem;
+	font-size: .16rem; 
+}
+.bottom span{
+	font-size: .14rem;
+}

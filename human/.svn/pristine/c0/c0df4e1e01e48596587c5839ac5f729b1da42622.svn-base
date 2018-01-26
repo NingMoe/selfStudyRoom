@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsGradeInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsGradeInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+    <result column="valid" property="valid" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.human.ielts.entity.IeltsGradeInfo" extends="BaseResultMap" >
+    <result column="grade_name" property="grade_name" jdbcType="VARBINARY" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_time, valid
+  </sql>
+  <sql id="Blob_Column_List" >
+    grade_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ielts_grade_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_grade_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsGradeInfo" >
+    insert into ielts_grade_info (id, create_time, valid, 
+      grade_name)
+    values (#{id,jdbcType=INTEGER}, #{create_time,jdbcType=TIMESTAMP}, #{valid,jdbcType=INTEGER}, 
+      #{grade_name,jdbcType=VARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.ielts.entity.IeltsGradeInfo" >
+    insert into ielts_grade_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+      <if test="valid != null" >
+        valid,
+      </if>
+      <if test="grade_name != null" >
+        grade_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="valid != null" >
+        #{valid,jdbcType=INTEGER},
+      </if>
+      <if test="grade_name != null" >
+        #{grade_name,jdbcType=VARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsGradeInfo" >
+    update ielts_grade_info
+    <set >
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="valid != null" >
+        valid = #{valid,jdbcType=INTEGER},
+      </if>
+      <if test="grade_name != null" >
+        grade_name = #{grade_name,jdbcType=VARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.human.ielts.entity.IeltsGradeInfo" >
+    update ielts_grade_info
+    set create_time = #{create_time,jdbcType=TIMESTAMP},
+      valid = #{valid,jdbcType=INTEGER},
+      grade_name = #{grade_name,jdbcType=VARBINARY}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.ielts.entity.IeltsGradeInfo" >
+    update ielts_grade_info
+    set create_time = #{create_time,jdbcType=TIMESTAMP},
+      valid = #{valid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

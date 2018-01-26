@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.recruitment.dao.SchoolRecruitmentDao" >
+  <resultMap id="BaseResultMap" type="com.human.recruitment.entity.SchoolRecruitment" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="hr_company_id" property="hrCompanyId" jdbcType="VARCHAR" />
+    <result column="dept_id" property="deptId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code_url" property="codeUrl" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="totalCount" property="totalCount" jdbcType="BIGINT" />
+    <result column="noDealCount" property="noDealCount" jdbcType="BIGINT" />
+    <result column="interviewCount" property="interviewCount" jdbcType="BIGINT" />
+    <result column="eliminateCount" property="eliminateCount" jdbcType="BIGINT" />
+    <result column="entryCount" property="entryCount" jdbcType="BIGINT" /> 
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, hr_company_id, dept_id, name, code_url, create_time, create_user, update_time, 
+    update_user
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT r.id,r.hr_company_id,r.dept_id,o.name AS dept_name,r.name
+	FROM school_recruitment r
+	LEFT JOIN hr_organization o ON r.dept_id=o.id    
+    where r.id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from school_recruitment
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from school_recruitment
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+  
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.recruitment.entity.SchoolRecruitment" >
+    insert into school_recruitment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="hrCompanyId != null" >
+        hr_company_id,
+      </if>
+      <if test="deptId != null" >
+        dept_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="codeUrl != null" >
+        code_url,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="hrCompanyId != null" >
+        #{hrCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null" >
+        #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="codeUrl != null" >
+        #{codeUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.recruitment.entity.SchoolRecruitment" >
+    update school_recruitment
+    <set >
+      <if test="hrCompanyId != null" >
+        hr_company_id = #{hrCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null" >
+        dept_id = #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="codeUrl != null" >
+        code_url = #{codeUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 分页查询内推管理-->
+    <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		SELECT r.id,r.hr_company_id,c.company_name ,r.dept_id,o.name AS dept_name,
+		r.name,r.code_url,r.create_time,u.name AS create_user
+		FROM school_recruitment r
+		LEFT JOIN hr_company c ON r.hr_company_id=c.company_id
+		LEFT JOIN hr_organization o ON r.dept_id=o.id
+		LEFT JOIN users u ON r.create_user=u.user_name
+		WHERE r.hr_company_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId =#{t.userId,jdbcType=BIGINT}) 
+		AND r.dept_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId =#{t.userId,jdbcType=BIGINT})
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND r.hr_company_id=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND r.dept_id=#{t.deptId,jdbcType=VARCHAR}
+		</if>		
+		<if test="t.name != null and t.name !=''">
+			AND r.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+       ORDER BY r.id DESC
+	</select>
+	
+	<!--导出选择的校招管理信息 -->
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+        SELECT r.id,r.hr_company_id AS hrCompanyId,c.company_name AS companyName,
+        r.dept_id AS deptId,o.name AS deptName,r.name,r.create_time AS createTime,u.name AS createUser
+		FROM school_recruitment r
+		LEFT JOIN hr_company c ON r.hr_company_id=c.company_id
+		LEFT JOIN hr_organization o ON r.dept_id=o.id
+		LEFT JOIN users u ON r.create_user=u.user_name
+		WHERE r.hr_company_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId =#{userId,jdbcType=BIGINT}) 
+		AND r.dept_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId =#{userId,jdbcType=BIGINT})   
+       <if test="s != null">
+		  AND r.id IN
+			<foreach collection="s" item="id" index="index"
+				open="(" separator="," close=")">
+				#{id,jdbcType=BIGINT}
+		    </foreach>
+	    </if>
+   </select>
+      
+   <!--导出本页的内推管理信息 -->
+   <select id="exporThisPage" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+	    SELECT r.id,r.hr_company_id AS hrCompanyId,c.company_name AS companyName,
+        r.dept_id AS deptId,o.name AS deptName,r.name,r.create_time AS createTime,u.name AS createUser
+		FROM school_recruitment r
+		LEFT JOIN hr_company c ON r.hr_company_id=c.company_id
+		LEFT JOIN hr_organization o ON r.dept_id=o.id
+		LEFT JOIN users u ON r.create_user=u.user_name
+		WHERE r.hr_company_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId =#{t.userId,jdbcType=BIGINT}) 
+		AND r.dept_id IN (SELECT ud.deptId FROM user_dept ud WHERE ud.userId =#{t.userId,jdbcType=BIGINT})
+		<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+			AND r.hr_company_id=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId != null and t.deptId !=''">
+			AND r.dept_id=#{t.deptId,jdbcType=VARCHAR}
+		</if>		
+		<if test="t.name != null and t.name !=''">
+			AND r.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+	</select>	
+	
+	
+	
+	
+	<!--统计收到简历的数量 -->	
+	<select id="getTotalCount" resultType="java.lang.Long" parameterType="java.lang.Long">
+		SELECT COUNT(t.id) AS totalCount
+		FROM resume_base t
+		WHERE t.school_recruitment_id = #{id,jdbcType=BIGINT}
+	</select>
+	<!--统计简历不同状态的数量 -->	
+	<select id="getNumberHashMap" resultType="java.util.HashMap" parameterType="java.lang.Long">
+		SELECT t.flow_status,COUNT(t.flow_status) AS totalNumber
+	    FROM resume_base t
+	    WHERE  t.school_recruitment_id=#{id,jdbcType=BIGINT}
+	    GROUP BY t.flow_status
+	</select>
+	
+	<!--统计入职简历的数量 -->	
+	<select id="getEntryNumberMap" resultType="java.lang.Long" parameterType="java.lang.Long">
+		SELECT COUNT(t.id) AS entryCount
+		FROM resume_base t,hr_resume_entryhandler h
+		WHERE t.id=h.RESUME_ID
+		AND h.status=9
+		AND t.school_recruitment_id=#{id,jdbcType=BIGINT}
+	</select>	
+</mapper>

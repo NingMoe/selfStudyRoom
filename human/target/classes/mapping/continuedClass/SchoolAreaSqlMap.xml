@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.continuedClass.dao.SchoolAreaDao">
+  <resultMap id="BaseResultMap" type="com.human.continuedClass.entity.SchoolArea">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="hr_company_id" jdbcType="INTEGER" property="hrCompanyId" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, hr_company_id, name, address, create_time, create_user, update_time, update_user
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    r.id, r.hr_company_id,m.company_name,r.name, r.address, r.create_time, r.create_user, r.update_time, r.update_user
+    from school_area r
+    LEFT JOIN hr_company m ON r.hr_company_id=m.company_id
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from school_area
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.human.continuedClass.entity.SchoolArea">
+    insert into school_area
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="hrCompanyId != null">
+        hr_company_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="hrCompanyId != null">
+        #{hrCompanyId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuedClass.entity.SchoolArea">
+    update school_area
+    <set>
+      <if test="hrCompanyId != null">
+        hr_company_id = #{hrCompanyId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+	r.id, r.hr_company_id,m.company_name ,r.name, r.address,r.create_time, u.name AS create_user, r.update_time, s.name AS update_user
+	FROM school_area r
+	LEFT JOIN hr_company m ON r.hr_company_id=m.company_id 
+	LEFT JOIN users u ON r.create_user=u.user_name
+	LEFT JOIN users s ON r.update_user=s.user_name	
+	WHERE 1=1 
+	<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+	   AND r.hr_company_id = #{t.hrCompanyId,jdbcType=INTEGER}
+	</if>
+    <if test="t.name != null and t.name !=''">
+	   AND r.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.createUser != null and t.createUser !=''">
+	   AND u.name like CONCAT(CONCAT('%', #{t.createUser,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.deliveryDateStart != null and t.deliveryDateStart !=''">
+	   AND r.create_time >= #{t.deliveryDateStart,jdbcType=TIMESTAMP}
+	</if>
+	<if test="t.deliveryDateEnd != null and t.deliveryDateEnd !=''">
+		<![CDATA[AND r.create_time <= #{t.deliveryDateEnd,jdbcType=TIMESTAMP}]]> 
+	</if>
+    ORDER BY r.id DESC   
+  </select>
+  
+  <!--批量删除 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from school_area
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+  
+  <select id="getSchoolArea" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT r.id,r.name
+	FROM school_area r
+	WHERE 1=1 
+	<if test="t.hrCompanyId != null and t.hrCompanyId !=''">
+	   AND r.hr_company_id = #{t.hrCompanyId,jdbcType=INTEGER}
+	</if>
+    ORDER BY r.id DESC   
+  </select>
+  
+  <!-- 根据校区名称查询校区 -->
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    r.id, r.hr_company_id,m.company_name,r.name, r.address, r.create_time, r.create_user, r.update_time, r.update_user
+    from school_area r
+    LEFT JOIN hr_company m ON r.hr_company_id=m.company_id
+    where r.name = #{name,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

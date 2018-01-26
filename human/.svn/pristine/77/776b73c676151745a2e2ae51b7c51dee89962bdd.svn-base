@@ -1,0 +1,10 @@
+body{
+ margin: 0;
+ width: 100%;
+ background-color: #F0F0F0;
+}
+
+.main_body{
+	margin: 0;
+	width: 100%;
+}

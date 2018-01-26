@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.MailTempDao">
+	<resultMap id="BaseResultMap" type="com.human.basic.entity.MailTem">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="tem_type" property="temType" jdbcType="INTEGER" />
+		<result column="tem_name" property="temName" jdbcType="VARCHAR" />
+		<result column="tem_company" property="temCompany" jdbcType="VARCHAR" />
+		<result column="company_name" property="temCompanyName" jdbcType="VARCHAR" />
+		<result column="tem_dept" property="temDept" jdbcType="VARCHAR" />
+		<result column="dept_name" property="temDeptName" jdbcType="VARCHAR" />
+		<result column="tem_desc" property="temDesc" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		st.`id`,st.`tem_type`,st.`tem_name`,st.`tem_company`,hc.`company_name` ,st.`tem_dept`,ho.`NAME` dept_name,st.tem_desc,st.state
+	</sql>
+	
+   <!-- 分页查询邮件模版 -->
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		<include refid="Base_Column_List" />
+		FROM mail_temp st
+		LEFT JOIN hr_company hc ON hc.`company_id`=st.`tem_company`
+		LEFT JOIN hr_organization ho ON ho.`ID`=st.`tem_dept`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.temCompany !=null and t.temCompany !=''">
+				AND st.`tem_company`=#{t.temCompany,jdbcType=VARCHAR}
+		</if>
+		<if test="t.temName!=null and t.temName!=''">
+				AND st.`tem_name` LIKE CONCAT('%', #{t.temName,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.state!=null">
+				AND st.`state` #{t.state,jdbcType=INTEGER}
+		</if>
+		<if test="t.deptIds !=null  and t.deptIds.length>0">
+				AND st.`tem_dept` in 
+				<foreach collection="t.deptIds" item="deptId" index="index"
+			open="(" separator="," close=")">
+			#{deptId,jdbcType=VARCHAR}
+		</foreach>
+		</if>
+		<if test="t.userId!=null">
+				AND st.`tem_company` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT}) AND st.`tem_dept` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.userId,jdbcType=BIGINT})
+		</if>
+		</trim>
+		order By st.id desc
+	</select>
+	
+	<!-- 查询邮件模板参数 -->
+	<select id="queryParam" resultType="com.human.basic.entity.MailParam" parameterType="com.human.basic.entity.MailParam">
+		SELECT sp.`id`,sp.`para_code` paraCode,sp.`para_name` paraName,sp.`state`,sp.`type` FROM mail_param sp
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="type!=null">
+				AND sp.`type`=#{type,jdbcType=INTEGER}
+		</if>
+		<if test="state!=null">
+				AND sp.`state` =#{state,jdbcType=INTEGER}
+		</if>
+		</trim>
+	</select>
+	
+   <!--新增邮件模版 -->
+	<insert id="add" parameterType="com.human.basic.entity.MailTem">
+		INSERT INTO mail_temp
+		(tem_name,tem_company,tem_dept,tem_desc,create_user,create_time,tem_type)
+		VALUES(#{temName,jdbcType=VARCHAR},#{temCompany,jdbcType=VARCHAR},#{temDept,jdbcType=VARCHAR},#{temDesc,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},now(),#{temType,jdbcType=INTEGER})
+   </insert>
+   
+  <!--根据主键查询邮件模版 -->
+    <select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		st.`id`,st.`tem_type`,st.`tem_name`,st.`tem_company`,st.`tem_dept`,st.tem_desc,st.state
+		FROM mail_temp st where st.id=#{id,jdbcType=BIGINT}
+	</select>
+	
+  <!--根据主键编辑邮件模版 -->
+	<update id="edit"  parameterType="com.human.basic.entity.MailTem">
+		UPDATE mail_temp SET tem_name=#{temName,jdbcType=VARCHAR},tem_company=#{temCompany,jdbcType=VARCHAR},tem_dept=#{temDept,jdbcType=VARCHAR},tem_desc=#{temDesc,jdbcType=VARCHAR},update_user=#{updateUser,jdbcType=VARCHAR} ,update_time=NOW(),tem_type=#{temType,jdbcType=INTEGER}
+		where id=#{id,jdbcType=BIGINT}
+	</update>
+	
+	<!--禁用邮件模版 -->
+	<update id="delTemp" parameterType="java.util.HashMap">
+		update mail_temp set state=#{state,jdbcType=INTEGER},update_user=#{updateUser,jdbcType=VARCHAR} ,update_time=NOW() 
+		where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>		
+
+</mapper>

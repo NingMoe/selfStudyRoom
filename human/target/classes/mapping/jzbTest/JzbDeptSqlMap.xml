@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbDeptDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbDept" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+    <result column="IS_VALID" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, COMPANY,IS_VALID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_dept
+    where ID = #{id,jdbcType=INTEGER} 
+  </select>
+  
+   <select id="getDeptById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select d.*,c.company_name 
+    from jzb_dept d join hr_company c on d.company = c.company_id
+    where d.ID = #{id,jdbcType=INTEGER} 
+  </select>
+  
+  <select id="getDeptsByCompany" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select d.*,c.company_name 
+    from jzb_dept d join hr_company c on d.company = c.company_id
+    where d.COMPANY = #{company,jdbcType=VARCHAR} and d.IS_VALID = 1 
+  </select>
+  
+  <select id="getAllDeptsByCompany" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select d.*,c.company_name 
+    from jzb_dept d join hr_company c on d.company = c.company_id
+    where d.COMPANY = #{company,jdbcType=VARCHAR} 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jzb_dept
+    where ID = #{id,jdbcType=INTEGER} 
+  </delete>
+  <insert id="insert" parameterType="com.human.jzbTest.entity.JzbDept" >
+    insert into jzb_dept (NAME, COMPANY)
+    values (#{name,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbDept" >
+    insert into jzb_dept
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="company != null" >
+        COMPANY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbDept" >
+    update jzb_dept
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        COMPANY = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.jzbTest.entity.JzbDept" >
+    update jzb_dept
+    set NAME = #{name,jdbcType=VARCHAR},
+      COMPANY = #{company,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getDeptManagers" resultType="com.human.jzbTest.entity.JzbDeptManager" parameterType="java.lang.Integer" >
+    select dept_id deptId,dept_name deptName,email,real_name realName from jzb_dept_manager
+    where dept_id = #{deptId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="getDeptByCondition" resultMap="BaseResultMap" parameterType="com.human.jzbTest.entity.JzbDeptManager" >
+    select dept_id deptId,dept_name deptName,email,real_name realName from jzb_dept_manager
+    where email = #{email,jdbcType=VARCHAR} 
+  </select>
+  
+  <insert id="addDeptManager" parameterType="com.human.jzbTest.entity.JzbDept" >
+    insert into jzb_dept_manager (dept_id, dept_name,email,real_name)
+    values (#{deptId,jdbcType=INTEGER},#{deptName,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR})
+  </insert>
+  
+  <delete id="delDeptManager" parameterType="com.human.jzbTest.entity.JzbDept" >
+    delete from jzb_dept_manager
+    where dept_id = #{deptId,jdbcType=INTEGER} and email = #{email,jdbcType=VARCHAR} 
+  </delete>
+  
+   <select id="getManageDeptByEmail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   select <include refid="Base_Column_List" /> from jzb_dept where id =(select dept_id from jzb_dept_manager where email = #{email,jdbcType=VARCHAR} limit 1)
+  </select>
+</mapper>

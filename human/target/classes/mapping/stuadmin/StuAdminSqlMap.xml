@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.stuadmin.dao.StuAdminDao" >
+  <resultMap id="BaseResultMap" type="com.human.stuadmin.entity.StuAdmin" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="s_class_code" property="sClassCode" jdbcType="VARCHAR" />
+    <result column="stu_name" property="stuName" jdbcType="VARCHAR" />
+    <result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+    <result column="planner" property="planner" jdbcType="VARCHAR" />
+    <result column="stu_origin" property="stuOrigin" jdbcType="VARCHAR" />
+    <result column="stu_par" property="stuPar" jdbcType="VARCHAR" />
+    <result column="stu_phone" property="stuPhone" jdbcType="VARCHAR" />
+    <result column="mar_acc" property="marAcc" jdbcType="VARCHAR" />
+    <result column="is_sub" property="isSub" jdbcType="VARCHAR" />
+    <result column="test_acce" property="testAcce" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,code, s_class_code, stu_name, school_name, planner, stu_origin, stu_par, stu_phone, 
+    mar_acc, is_sub, test_acce, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from stu_admin
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from stu_admin
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.stuadmin.entity.StuAdmin" >
+    insert into stu_admin (id,code, s_class_code, stu_name, 
+      school_name, planner, stu_origin, 
+      stu_par, stu_phone, mar_acc, 
+      is_sub, test_acce, remark,status
+      )
+    values (#{id,jdbcType=BIGINT},#{code,jdbcType=VARCHAR}, #{sClassCode,jdbcType=VARCHAR}, #{stuName,jdbcType=VARCHAR}, 
+      #{schoolName,jdbcType=VARCHAR}, #{planner,jdbcType=VARCHAR}, #{stuOrigin,jdbcType=VARCHAR}, 
+      #{stuPar,jdbcType=VARCHAR}, #{stuPhone,jdbcType=VARCHAR}, #{marAcc,jdbcType=VARCHAR}, 
+      #{isSub,jdbcType=VARCHAR}, #{testAcce,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.stuadmin.entity.StuAdmin" >
+    insert into stu_admin
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="sClassCode != null" >
+        s_class_code,
+      </if>
+      <if test="stuName != null" >
+        stu_name,
+      </if>
+      <if test="schoolName != null" >
+        school_name,
+      </if>
+      <if test="planner != null" >
+        planner,
+      </if>
+      <if test="stuOrigin != null" >
+        stu_origin,
+      </if>
+      <if test="stuPar != null" >
+        stu_par,
+      </if>
+      <if test="stuPhone != null" >
+        stu_phone,
+      </if>
+      <if test="marAcc != null" >
+        mar_acc,
+      </if>
+      <if test="isSub != null" >
+        is_sub,
+      </if>
+      <if test="testAcce != null" >
+        test_acce,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="sClassCode != null" >
+        #{sClassCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stuName != null" >
+        #{stuName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolName != null" >
+        #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="planner != null" >
+        #{planner,jdbcType=VARCHAR},
+      </if>
+      <if test="stuOrigin != null" >
+        #{stuOrigin,jdbcType=VARCHAR},
+      </if>
+      <if test="stuPar != null" >
+        #{stuPar,jdbcType=VARCHAR},
+      </if>
+      <if test="stuPhone != null" >
+        #{stuPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="marAcc != null" >
+        #{marAcc,jdbcType=VARCHAR},
+      </if>
+      <if test="isSub != null" >
+        #{isSub,jdbcType=VARCHAR},
+      </if>
+      <if test="testAcce != null" >
+        #{testAcce,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.stuadmin.entity.StuAdmin" >
+    update stu_admin
+    <set >
+      <if test="sClassCode != null" >
+        s_class_code = #{sClassCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stuName != null" >
+        stu_name = #{stuName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolName != null" >
+        school_name = #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="planner != null" >
+        planner = #{planner,jdbcType=VARCHAR},
+      </if>
+      <if test="stuOrigin != null" >
+        stu_origin = #{stuOrigin,jdbcType=VARCHAR},
+      </if>
+      <if test="stuPar != null" >
+        stu_par = #{stuPar,jdbcType=VARCHAR},
+      </if>
+      <if test="stuPhone != null" >
+        stu_phone = #{stuPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="marAcc != null" >
+        mar_acc = #{marAcc,jdbcType=VARCHAR},
+      </if>
+      <if test="isSub != null" >
+        is_sub = #{isSub,jdbcType=VARCHAR},
+      </if>
+      <if test="testAcce != null" >
+        test_acce = #{testAcce,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.stuadmin.entity.StuAdmin" >
+    update stu_admin
+    set s_class_code = #{sClassCode,jdbcType=VARCHAR},
+      stu_name = #{stuName,jdbcType=VARCHAR},
+      school_name = #{schoolName,jdbcType=VARCHAR},
+      planner = #{planner,jdbcType=VARCHAR},
+      stu_origin = #{stuOrigin,jdbcType=VARCHAR},
+      stu_par = #{stuPar,jdbcType=VARCHAR},
+      stu_phone = #{stuPhone,jdbcType=VARCHAR},
+      mar_acc = #{marAcc,jdbcType=VARCHAR},
+      is_sub = #{isSub,jdbcType=VARCHAR},
+      test_acce = #{testAcce,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+<!--   分页查询 -->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    <include refid="Base_Column_List" />
+    from stu_admin 
+    where 1=1
+    and s_class_code=#{t.sClassCode,jdbcType=VARCHAR} and status=1
+    <if test="t.schoolName != null and t.schoolName !=''">
+	   AND school_name like CONCAT(CONCAT('%', #{t.schoolName,jdbcType=VARCHAR}), '%') 
+	</if>
+	 <if test="t.planner!= null and t.planner !=''">
+	   AND planner like CONCAT(CONCAT('%', #{t.planner,jdbcType=VARCHAR}), '%') 
+	</if>
+	 <if test="t.stuOrigin != null and t.stuOrigin !=''">
+	   AND stu_origin like CONCAT(CONCAT('%', #{t.stuOrigin,jdbcType=VARCHAR}), '%') 
+	</if>
+	 <if test="t.stuPar != null and t.stuPar !=''">
+	   AND stu_par like CONCAT(CONCAT('%', #{t.stuPar,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.stuPhone != null and t.stuPhone !=''">
+	   AND stu_phone like CONCAT(CONCAT('%', #{t.stuPhone,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.isSub != null and t.isSub !=''">
+	   AND is_sub like CONCAT(CONCAT('%', #{t.isSub,jdbcType=VARCHAR}), '%') 
+	</if>
+   </select>
+<!--    根据班号查出所有学生学号 -->
+ <select id="queryClassCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+	select code from stu_admin where s_class_code=#{sClassCode,jdbcType=VARCHAR}
+</select>
+
+<update id="updateAcce" parameterType="com.human.stuadmin.entity.StuAdmin" >
+    update stu_admin
+    <set >
+<!--       <if test="testAcce != null" > -->
+        test_acce = #{testAcce,jdbcType=VARCHAR},is_sub = #{isSub,jdbcType=VARCHAR},
+<!--       </if> -->
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updatePhone" parameterType="java.util.HashMap" >
+    update stu_admin
+    <set >
+    	<if test="stu_phone != null" >
+        stu_phone = #{stuPhone,jdbcType=VARCHAR}
+        </if>
+        <if test="schoolName != null" >
+        school_name = #{schoolName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateStatusBySclassCode" parameterType="java.lang.String">
+  	   update stu_admin
+    <set >
+        STATUS = #{status,jdbcType=INTEGER}
+    </set>
+    where s_class_code = #{sClassCode,jdbcType=VARCHAR}
+    <if test="code !=null and code !=''">
+    	and code = #{code,jdbcType=VARCHAR}
+    </if>
+  </update>
+  <select id="selectByCodeAndSclassCode" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  		select * from stu_admin 
+  		where s_class_code = #{sClassCode,jdbcType=VARCHAR} and code=#{code,jdbcType=VARCHAR}
+  </select>
+</mapper>

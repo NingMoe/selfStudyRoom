@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.RecruitMailDao" >
+  <resultMap id="BaseResultMap" type="com.human.basic.entity.RecruitMail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="hr_company_id" property="hrCompanyId" jdbcType="VARCHAR" />
+    <result column="hr_company_name" property="hrCompanyName" jdbcType="VARCHAR" />
+    <result column="pop_server_host" property="pop3MailServerHost" jdbcType="VARCHAR" />
+    <result column="exchange_server_host" property="exchangeMailServerHost" jdbcType="VARCHAR" />
+    <result column="mail_user" property="mailUser" jdbcType="VARCHAR" />
+    <result column="mail_password" property="mailPassword" jdbcType="VARCHAR" />
+    <result column="mail_domain" property="domain" jdbcType="VARCHAR" />
+    <result column="mail_type" property="mailType" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="pop_is_valid" property="popIsValid" jdbcType="BIT" />
+    <result column="exchange_is_valid" property="exchangeIsValid" jdbcType="BIT" />
+    <result column="send_server_host" property="sendMailServerHost" jdbcType="VARCHAR" />
+    <result column="send_is_valid" property="sendIsValid" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, hr_company_id, pop_server_host, exchange_server_host,mail_user, mail_password, mail_type, create_user, create_time, 
+    update_user, update_time, status,mail_domain,pop_is_valid,exchange_is_valid,send_server_host,send_is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recruit_mail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recruit_mail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.human.basic.entity.RecruitMail" >
+    insert into recruit_mail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="hrCompanyId != null" >
+        hr_company_id,
+      </if>
+      <if test="pop3MailServerHost != null" >
+        pop_server_host,
+      </if>
+      <if test="exchangeMailServerHost != null" >
+        exchange_server_host,
+      </if>
+      <if test="mailUser != null" >
+        mail_user,
+      </if>
+      <if test="mailPassword != null" >
+        mail_password,
+      </if>
+      <if test="mailType != null" >
+        mail_type,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+       <if test="domain != null" >
+        mail_domain,
+      </if>
+       <if test="popIsValid != null" >
+        pop_is_valid,
+      </if>
+      <if test="exchangeIsValid != null" >
+        exchange_is_valid,
+      </if>
+      <if test="sendMailServerHost != null" >
+        send_server_host,
+      </if>
+      <if test="sendIsValid != null" >
+        send_is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="hrCompanyId != null" >
+        #{hrCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="pop3MailServerHost != null" >
+        #{pop3MailServerHost,jdbcType=VARCHAR},
+      </if>
+      <if test="exchangeMailServerHost != null" >
+        #{exchangeMailServerHost,jdbcType=VARCHAR},
+      </if>
+      <if test="mailUser != null" >
+        #{mailUser,jdbcType=VARCHAR},
+      </if>
+      <if test="mailPassword != null" >
+        #{mailPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="mailType != null" >
+        #{mailType,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+       <if test="domain != null" >
+        #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="popIsValid != null" >
+        #{popIsValid,jdbcType=BIT},
+      </if>
+      <if test="exchangeIsValid != null" >
+        #{exchangeIsValid,jdbcType=BIT},
+      </if>
+      <if test="sendMailServerHost != null" >
+       #{sendMailServerHost,jdbcType=VARCHAR},
+      </if>
+      <if test="sendIsValid != null" >
+       #{sendIsValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.basic.entity.RecruitMail" >
+    update recruit_mail
+    <set >
+      <if test="hrCompanyId != null" >
+        hr_company_id = #{hrCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="pop3MailServerHost != null" >
+        pop_server_host = #{pop3MailServerHost,jdbcType=VARCHAR},
+      </if>
+        <if test="exchangeMailServerHost != null" >
+        exchange_server_host = #{exchangeMailServerHost,jdbcType=VARCHAR},
+      </if>
+      <if test="mailUser != null" >
+        mail_user = #{mailUser,jdbcType=VARCHAR},
+      </if>
+      <if test="mailPassword != null" >
+        mail_password = #{mailPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="mailType != null" >
+        mail_type = #{mailType,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="domain != null" >
+        mail_domain = #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="popIsValid != null" >
+        pop_is_valid = #{popIsValid,jdbcType=BIT},
+      </if>
+      <if test="exchangeIsValid != null" >
+        exchange_is_valid = #{exchangeIsValid,jdbcType=BIT},
+      </if>
+      <if test="sendMailServerHost != null" >
+       send_server_host = #{sendMailServerHost,jdbcType=VARCHAR},
+      </if>
+      <if test="sendIsValid != null" >
+       send_is_valid = #{sendIsValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- 分页查询招聘邮箱 -->
+   <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		 SELECT r.id, r.hr_company_id, r.pop_server_host, r.exchange_server_host, r.mail_user, r.mail_password,
+		 r.mail_type, r.create_user, r.create_time, 
+         r.update_user, r.update_time, r.status,r.mail_domain, r.pop_is_valid,r.exchange_is_valid,r.send_server_host,r.send_is_valid,
+		 h.company_name AS hr_company_name 
+         FROM recruit_mail r
+         LEFT JOIN hr_company h 
+         ON r.hr_company_id=h.company_id
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		 <if test="t.hrCompanyId!= null and t.hrCompanyId !=''">
+			AND r.hr_company_id=#{t.hrCompanyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.pop3MailServerHost!= null and t.pop3MailServerHost != ''">
+			AND r.pop_server_host  like CONCAT(CONCAT('%', #{t.pop3MailServerHost,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.exchangeMailServerHost!= null and t.exchangeMailServerHost != ''">
+			AND r.exchange_server_host  like CONCAT(CONCAT('%', #{t.exchangeMailServerHost,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.mailUser!= null and t.mailUser != ''">
+			AND r.mail_user  like CONCAT(CONCAT('%', #{t.mailUser,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.mailType!= null">
+			AND r.mail_type=#{t.mailType,jdbcType=BIT}
+		</if>		
+			AND r.status = 0
+		</trim>
+		order By r.create_time DESC
+	</select>
+
+	<!-- 删除邮箱（逻辑删除）-->
+	<update id="updateByIds" parameterType="java.util.HashMap">
+		update recruit_mail set status=1,update_user=#{updateUser,jdbcType=VARCHAR},update_time = #{updateTime,jdbcType=TIMESTAMP} where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+
+    <!-- 查询所有的接收邮箱 -->
+    <select id="queryAllMail" resultMap="BaseResultMap">
+	 select 
+	 <include refid="Base_Column_List" />
+     from recruit_mail
+	 where mail_type=1	AND STATUS=0
+    </select>
+
+  <!-- 根据机构ID查询发件邮箱 -->
+  <select id="selectByCompanyId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from recruit_mail
+    where mail_type=2 AND STATUS=0 AND hr_company_id=#{hrCompanyId,jdbcType=VARCHAR}
+  </select>
+
+
+
+</mapper>

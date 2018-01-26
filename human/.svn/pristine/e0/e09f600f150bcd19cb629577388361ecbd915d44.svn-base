@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.activity.dao.ActivityInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.activity.entity.ActivityInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="text1" property="text1" jdbcType="VARCHAR" />
+    <result column="text1_isNeed" property="text1Isneed" jdbcType="VARCHAR" />
+    <result column="text2" property="text2" jdbcType="VARCHAR" />
+    <result column="text2_isNeed" property="text2Isneed" jdbcType="VARCHAR" />
+    <result column="text3" property="text3" jdbcType="VARCHAR" />
+    <result column="text3_isNeed" property="text3Isneed" jdbcType="VARCHAR" />
+    <result column="text4" property="text4" jdbcType="VARCHAR" />
+    <result column="text4_isNeed" property="text4Isneed" jdbcType="VARCHAR" />
+    <result column="toll_limit" property="tollLimit" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+    <result column="code_url" property="codeUrl" jdbcType="VARCHAR" />
+    <result column="account_valid" property="accountValid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <resultMap id="ActivityResultMap" type="com.human.activity.entity.ActivityInfoDto" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+    <result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+    <result column="valid_time" property="validTime" jdbcType="VARCHAR" />       
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="proscenium_num" property="prosceniumNum" jdbcType="INTEGER" />
+    <result column="total_payMoney" property="totalPayMoney" jdbcType="DECIMAL" />
+    <result column="refund_num" property="refundNum" jdbcType="INTEGER" />
+    <result column="total_refundMoney" property="totalRefundMoney" jdbcType="DECIMAL" />
+    <result column="service_payMoney" property="servicePayMoney" jdbcType="DECIMAL" />
+    <result column="total_surplusMoney" property="totalSurplusMoney" jdbcType="DECIMAL" />
+    <result column="code_url" property="codeUrl" jdbcType="VARCHAR" />
+    <result column="account_valid" property="accountValid" jdbcType="VARCHAR" />
+  </resultMap>
+        
+  <sql id="Base_Column_List" >
+    id, activity_name, dept_name, start_time, end_time, text1, text1_isNeed, text2, text2_isNeed, 
+    text3, text3_isNeed, text4, text4_isNeed, toll_limit, create_user, create_time, update_user, 
+    update_time, is_valid,code_url,account_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from activity_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from activity_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.activity.entity.ActivityInfo" >
+    insert into activity_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="activityName != null" >
+        activity_name,
+      </if>
+      <if test="deptName != null" >
+        dept_name,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="text1 != null" >
+        text1,
+      </if>
+      <if test="text1Isneed != null" >
+        text1_isNeed,
+      </if>
+      <if test="text2 != null" >
+        text2,
+      </if>
+      <if test="text2Isneed != null" >
+        text2_isNeed,
+      </if>
+      <if test="text3 != null" >
+        text3,
+      </if>
+      <if test="text3Isneed != null" >
+        text3_isNeed,
+      </if>
+      <if test="text4 != null" >
+        text4,
+      </if>
+      <if test="text4Isneed != null" >
+        text4_isNeed,
+      </if>
+      <if test="tollLimit != null" >
+        toll_limit,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="activityName != null" >
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null" >
+        #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="text1 != null" >
+        #{text1,jdbcType=VARCHAR},
+      </if>
+      <if test="text1Isneed != null" >
+        #{text1Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="text2 != null" >
+        #{text2,jdbcType=VARCHAR},
+      </if>
+      <if test="text2Isneed != null" >
+        #{text2Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="text3 != null" >
+        #{text3,jdbcType=VARCHAR},
+      </if>
+      <if test="text3Isneed != null" >
+        #{text3Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="text4 != null" >
+        #{text4,jdbcType=VARCHAR},
+      </if>
+      <if test="text4Isneed != null" >
+        #{text4Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="tollLimit != null" >
+        #{tollLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.activity.entity.ActivityInfo" >
+    update activity_info
+    <set >
+      <if test="activityName != null" >
+        activity_name = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null" >
+        dept_name = #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="text1 != null" >
+        text1 = #{text1,jdbcType=VARCHAR},
+      </if>
+      <if test="text1Isneed != null" >
+        text1_isNeed = #{text1Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="text2 != null" >
+        text2 = #{text2,jdbcType=VARCHAR},
+      </if>
+      <if test="text2Isneed != null" >
+        text2_isNeed = #{text2Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="text3 != null" >
+        text3 = #{text3,jdbcType=VARCHAR},
+      </if>
+      <if test="text3Isneed != null" >
+        text3_isNeed = #{text3Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="text4 != null" >
+        text4 = #{text4,jdbcType=VARCHAR},
+      </if>
+      <if test="text4Isneed != null" >
+        text4_isNeed = #{text4Isneed,jdbcType=VARCHAR},
+      </if>
+      <if test="tollLimit != null" >
+        toll_limit = #{tollLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="codeUrl != null" >
+        code_url = #{codeUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="accountValid != null" >
+        account_valid = #{accountValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 分页查询活动 -->  
+  <select id="query" resultMap="ActivityResultMap" parameterType="java.util.HashMap">
+	SELECT t.id,t.activity_name,
+	t.dept_name,CONCAT_WS('-',t.start_time,t.end_time)AS valid_time,t.code_url,t.account_valid,
+	t.create_time,t.create_user,t.proscenium_num,t.total_payMoney,t.refund_num,t.total_refundMoney,t.service_payMoney,
+	(t.total_payMoney-t.total_refundMoney-t.service_payMoney) AS total_surplusMoney
+	FROM(
+	SELECT a1.id,a1.activity_name,
+	a1.dept_name,a1.start_time,a1.end_time,a1.code_url,a1.account_valid,
+	a1.create_time,u.name AS create_user,
+	(SELECT COUNT(DISTINCT e1.id) FROM order_info ai3 JOIN buyer_info e1 ON ai3.order_no = e1.order_no  
+	AND e1.is_valid =1 
+	WHERE ai3.order_state=1 
+	AND ai3.is_valid=0 
+	AND e1.activity_id= a1.id) AS proscenium_num,
+	(SELECT IFNULL(SUM(ai3.real_cost),0.00) FROM order_info ai3 JOIN buyer_info e1 ON ai3.order_no = e1.order_no  
+	AND  e1.is_valid =1 
+	WHERE ai3.order_state=1 
+	AND ai3.is_valid=0 
+	AND e1.activity_id= a1.id) AS total_payMoney,
+	(SELECT COUNT(DISTINCT e1.id) FROM order_refund_info ai2 JOIN order_info ai3 ON ai2.order_no = ai3.order_no  
+	JOIN buyer_info e1 ON ai3.order_no = e1.order_no  AND  e1.is_valid =1
+	WHERE ai3.order_state=1 AND ai3.is_valid=0 AND e1.activity_id= a1.id) AS refund_num,
+	(SELECT IFNULL(SUM(ai2.refund_cost),0.00) FROM order_refund_info ai2 JOIN order_info ai3  ON ai2.order_no = ai3.order_no 
+	AND ai2.order_refund_state=2 
+	JOIN buyer_info e1 ON ai3.order_no = e1.order_no  AND e1.is_valid =1 AND e1.buy_state =5 
+	WHERE ai3.order_state=1 AND ai3.is_valid=0 AND e1.activity_id= a1.id) AS total_refundMoney,
+	(SELECT IFNULL(SUM(ai2.fee),0.00) FROM order_bill ai2 JOIN order_info ai3  ON ai2.bzorder = ai3.order_no 
+	JOIN buyer_info e1 ON ai3.order_no = e1.order_no  
+	AND  e1.is_valid =1 
+	WHERE ai3.order_state=1 
+	AND ai3.is_valid=0 
+	AND e1.activity_id= a1.id) AS service_payMoney
+	FROM activity_info a1
+	LEFT JOIN hr_user u ON a1.create_user=u.email_addr
+	WHERE a1.is_valid=1
+	  <if test="t.activityName != null and t.activityName !=''" >
+        AND a1.activity_name like CONCAT(CONCAT('%', #{t.activityName,jdbcType=VARCHAR}), '%')
+      </if>
+      <if test="t.deptName != null and t.deptName !=''" >
+        AND a1.dept_name like CONCAT(CONCAT('%', #{t.deptName,jdbcType=VARCHAR}), '%')
+      </if>
+      <if test="t.startTime != null and t.startTime !='' " >
+        AND a1.start_time >= #{t.startTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="t.endTime != null and t.endTime !=''" >
+        <![CDATA[AND a1.end_time <= #{t.endTime,jdbcType=TIMESTAMP}]]> 
+      </if>
+	ORDER BY a1.id DESC
+	)t 
+</select>
+  <!--导出活动列表 -->  
+   <select id="exportSelect" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+    SELECT t.id,t.activity_name AS activityName,
+	t.dept_name AS deptName,CONCAT_WS('-',t.start_time,t.end_time) AS validTime,
+	t.create_time AS createTime,t.create_user AS createUser,t.proscenium_num AS prosceniumNum,
+	t.total_payMoney AS totalPayMoney,t.refund_num AS refundNum,t.total_refundMoney AS totalRefundMoney,t.service_payMoney AS servicePayMoney,
+	(t.total_payMoney-t.total_refundMoney-t.service_payMoney) AS totalSurplusMoney
+	FROM(
+	SELECT a1.id,a1.activity_name,
+	a1.dept_name,a1.start_time,a1.end_time,
+	a1.create_time,u.name AS create_user,
+	(SELECT COUNT(DISTINCT e1.id) FROM order_info ai3 JOIN buyer_info e1 ON ai3.order_no = e1.order_no  
+	AND e1.is_valid =1 
+	WHERE ai3.order_state=1 
+	AND ai3.is_valid=0 
+	AND e1.activity_id= a1.id) AS proscenium_num,
+	(SELECT IFNULL(SUM(ai3.real_cost),0.00) FROM order_info ai3 JOIN buyer_info e1 ON ai3.order_no = e1.order_no  
+	AND  e1.is_valid =1 
+	WHERE ai3.order_state=1 
+	AND ai3.is_valid=0 
+	AND e1.activity_id= a1.id) AS total_payMoney,
+	(SELECT COUNT(DISTINCT e1.id) FROM order_refund_info ai2 JOIN order_info ai3 ON ai2.order_no = ai3.order_no  
+	JOIN buyer_info e1 ON ai3.order_no = e1.order_no  AND  e1.is_valid =1
+	WHERE ai3.order_state=1 AND ai3.is_valid=0 AND e1.activity_id= a1.id) AS refund_num,
+	(SELECT IFNULL(SUM(ai2.refund_cost),0.00) FROM order_refund_info ai2 JOIN order_info ai3  ON ai2.order_no = ai3.order_no 
+	AND ai2.order_refund_state=2 
+	JOIN buyer_info e1 ON ai3.order_no = e1.order_no  AND e1.is_valid =1 AND e1.buy_state =5 
+	WHERE ai3.order_state=1 AND ai3.is_valid=0 AND e1.activity_id= a1.id) AS total_refundMoney,
+	(SELECT IFNULL(SUM(ai2.fee),0.00) FROM order_bill ai2 JOIN order_info ai3  ON ai2.bzorder = ai3.order_no 
+	JOIN buyer_info e1 ON ai3.order_no = e1.order_no  
+	AND  e1.is_valid =1 
+	WHERE ai3.order_state=1 
+	AND ai3.is_valid=0 
+	AND e1.activity_id= a1.id) AS service_payMoney
+	FROM activity_info a1
+	LEFT JOIN hr_user u ON a1.create_user=u.email_addr
+	WHERE a1.is_valid=1
+    <if test="s != null">
+		AND a1.id IN
+		<foreach collection="s" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+	    </foreach>
+	</if>
+	ORDER BY a1.id DESC
+	)t 
+   </select>
+   
+   <!-- 活动封账-->
+	<update id="updateAccountStatusByIds" parameterType="java.util.HashMap">
+		update activity_info set account_valid=2,update_user=#{updateUser,jdbcType=VARCHAR},update_time = now() where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+	<!--通过买家用户Id查询活动是否封账 -->
+	<select id="selectByBuyInfoId" resultType="java.lang.String" parameterType="java.lang.Long" >
+	    SELECT a.account_valid
+        FROM activity_info a 
+        LEFT JOIN buyer_info b ON b.activity_id=a.id 
+        WHERE a.is_valid=1 
+        AND b.is_valid=1 
+        AND b.id=#{buyInfoId,jdbcType=BIGINT}	    
+  </select>
+</mapper>

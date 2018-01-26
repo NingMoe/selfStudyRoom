@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.continuation.dao.TeacherContinuationConfigDao" >
+  <resultMap id="BaseResultMap" type="com.human.continuation.entity.TeacherContinuationConfig" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="school_id" property="school_id" jdbcType="VARCHAR" />
+    <result column="manager_dept_code" property="manager_dept_code" jdbcType="VARCHAR" />
+    <result column="manager_dept_name" property="manager_dept_name" jdbcType="VARCHAR" />
+    <result column="old_fiscal_year" property="old_fiscal_year" jdbcType="VARCHAR" />
+    <result column="old_fiscal_name" property="old_fiscal_name" jdbcType="VARCHAR" />
+    <result column="old_class_quarter" property="old_class_quarter" jdbcType="INTEGER" />
+    <result column="new_fiscal_year" property="new_fiscal_year" jdbcType="VARCHAR" />
+    <result column="new_fiscal_name" property="new_fiscal_name" jdbcType="VARCHAR" />
+    <result column="new_class_quarter" property="new_class_quarter" jdbcType="INTEGER" />
+    <result column="continue_name" property="continue_name" jdbcType="VARCHAR" />
+    <result column="continue_id" property="continue_id" jdbcType="VARCHAR" />
+    <result column="sbq_config_name" property="sbq_config_name" jdbcType="VARCHAR" />
+    <result column="sWindowPeriodId" property="sWindowPeriodId" jdbcType="VARCHAR" />
+    <result column="sStageId" property="sStageId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, school_id, manager_dept_code, old_fiscal_year, old_class_quarter,
+    new_fiscal_year, new_class_quarter, continue_name, continue_id, sbq_config_name, sWindowPeriodId, sStageId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select *
+    from teacher_continuation_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="query" resultType="com.human.continuation.entity.TeacherContinuationConfig" parameterType="java.util.HashMap">
+  	select t.*, d.NAME manager_dept_name, y1.NAME old_fiscal_name, y2.NAME new_fiscal_name
+  	from teacher_continuation_config t
+  	left join dic_data d on d.DIC_CODE = 'managerDept' and t.manager_dept_code = d.DATA_VALUE
+  	left join dic_data y1 on y1.DIC_CODE = 'fiscalYear' and t.old_fiscal_year = y1.DATA_VALUE
+  	left join dic_data y2 on y2.DIC_CODE = 'fiscalYear' and t.new_fiscal_year = y2.DATA_VALUE
+  	where 1 = 1
+  	<if test="t.school_id != null and t.school_id != ''">
+  		and t.school_id = #{t.school_id,jdbcType=VARCHAR}
+  	</if>
+  	<if test="t.manager_dept_code != null and t.manager_dept_code != ''">
+  		and t.manager_dept_code = #{t.manager_dept_code,jdbcType=VARCHAR}
+  	</if>
+  	order by t.id desc
+  </select>
+  
+  <select id="getWindowConfig" resultType="com.human.continuation.entity.TeacherContinuationConfig" parameterType="java.util.HashMap">
+  	select * 
+  	from teacher_continuation_config 
+  	where school_id = #{school_id,jdbcType=VARCHAR}
+  	<if test="manager_dept_code != null and manager_dept_code != ''">
+  		and manager_dept_code = #{manager_dept_code,jdbcType=VARCHAR}
+  	</if>
+  	<if test="new_class_quarter != null and new_class_quarter != ''">
+  		and new_class_quarter = #{new_class_quarter,jdbcType=VARCHAR}
+  	</if>
+  	<if test="new_fiscal_year != null and new_fiscal_year != ''">
+  		and new_fiscal_year = #{new_fiscal_year,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from teacher_continuation_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.human.continuation.entity.TeacherContinuationConfig" >
+    insert into teacher_continuation_config (id, school_id, manager_dept_code, 
+      old_fiscal_year, old_class_quarter,
+      new_fiscal_year, new_class_quarter, continue_name, 
+      continue_id, sbq_config_name, sWindowPeriodId, sStageId)
+    values (#{id,jdbcType=INTEGER}, #{school_id,jdbcType=VARCHAR}, #{manager_dept_code,jdbcType=VARCHAR}, 
+      #{old_fiscal_year,jdbcType=VARCHAR}, #{old_class_quarter,jdbcType=INTEGER},
+      #{new_fiscal_year,jdbcType=VARCHAR}, #{new_class_quarter,jdbcType=INTEGER}, #{continue_name,jdbcType=VARCHAR}, 
+      #{continue_id,jdbcType=VARCHAR}, #{sbq_config_name,jdbcType=VARCHAR}, #{sWindowPeriodId,jdbcType=VARCHAR}), #{sStageId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.continuation.entity.TeacherContinuationConfig" >
+    insert into teacher_continuation_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="school_id != null" >
+        school_id,
+      </if>
+      <if test="manager_dept_code != null" >
+        manager_dept_code,
+      </if>
+      <if test="old_fiscal_year != null" >
+        old_fiscal_year,
+      </if>
+      <if test="old_class_quarter != null" >
+        old_class_quarter,
+      </if>
+      <if test="new_fiscal_year != null" >
+        new_fiscal_year,
+      </if>
+      <if test="new_class_quarter != null" >
+        new_class_quarter,
+      </if>
+      <if test="continue_name != null" >
+        continue_name,
+      </if>
+      <if test="continue_id != null" >
+        continue_id,
+      </if>
+      <if test="sbq_config_name != null" >
+        sbq_config_name,
+      </if>
+      <if test="sWindowPeriodName != null" >
+        sWindowPeriodName,
+      </if>
+      <if test="sWindowPeriodId != null" >
+        sWindowPeriodId,
+      </if>
+      <if test="sStageName != null" >
+        sStageName,
+      </if>
+      <if test="sStageId != null" >
+        sStageId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="school_id != null" >
+        #{school_id,jdbcType=VARCHAR},
+      </if>
+      <if test="manager_dept_code != null" >
+        #{manager_dept_code,jdbcType=VARCHAR},
+      </if>
+      <if test="old_fiscal_year != null" >
+        #{old_fiscal_year,jdbcType=VARCHAR},
+      </if>
+      <if test="old_class_quarter != null" >
+        #{old_class_quarter,jdbcType=INTEGER},
+      </if>
+      <if test="new_fiscal_year != null" >
+        #{new_fiscal_year,jdbcType=VARCHAR},
+      </if>
+      <if test="new_class_quarter != null" >
+        #{new_class_quarter,jdbcType=INTEGER},
+      </if>
+      <if test="continue_name != null" >
+        #{continue_name,jdbcType=VARCHAR},
+      </if>
+      <if test="continue_id != null" >
+        #{continue_id,jdbcType=VARCHAR},
+      </if>
+      <if test="sbq_config_name != null" >
+        #{sbq_config_name,jdbcType=VARCHAR},
+      </if>
+      <if test="sWindowPeriodName != null" >
+        #{sWindowPeriodName,jdbcType=VARCHAR},
+      </if>
+      <if test="sWindowPeriodId != null" >
+        #{sWindowPeriodId,jdbcType=VARCHAR},
+      </if>
+      <if test="sStageName != null" >
+        #{sStageName,jdbcType=VARCHAR},
+      </if>
+      <if test="sStageId != null" >
+        #{sStageId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.continuation.entity.TeacherContinuationConfig" >
+    update teacher_continuation_config
+    <set >
+      <if test="school_id != null" >
+        school_id = #{school_id,jdbcType=VARCHAR},
+      </if>
+      <if test="manager_dept_code != null" >
+        manager_dept_code = #{manager_dept_code,jdbcType=VARCHAR},
+      </if>
+      <if test="old_fiscal_year != null" >
+        old_fiscal_year = #{old_fiscal_year,jdbcType=VARCHAR},
+      </if>
+      <if test="old_class_quarter != null" >
+        old_class_quarter = #{old_class_quarter,jdbcType=INTEGER},
+      </if>
+      <if test="new_fiscal_year != null" >
+        new_fiscal_year = #{new_fiscal_year,jdbcType=VARCHAR},
+      </if>
+      <if test="new_class_quarter != null" >
+        new_class_quarter = #{new_class_quarter,jdbcType=INTEGER},
+      </if>
+      <if test="continue_name != null" >
+        continue_name = #{continue_name,jdbcType=VARCHAR},
+      </if>
+      <if test="continue_id != null" >
+        continue_id = #{continue_id,jdbcType=VARCHAR},
+      </if>
+      <if test="sbq_config_name != null" >
+        sbq_config_name = #{sbq_config_name,jdbcType=VARCHAR},
+      </if>
+      <if test="sWindowPeriodName != null" >
+       sWindowPeriodName = #{sWindowPeriodName,jdbcType=VARCHAR},
+      </if>
+      <if test="sWindowPeriodId != null" >
+        sWindowPeriodId = #{sWindowPeriodId,jdbcType=VARCHAR},
+      </if>
+      <if test="sStageName != null" >
+        sStageName = #{sStageName,jdbcType=VARCHAR},
+      </if>
+      <if test="sStageId != null" >
+        sStageId = #{sStageId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.continuation.entity.TeacherContinuationConfig" >
+    update teacher_continuation_config
+    set school_id = #{school_id,jdbcType=VARCHAR},
+      manager_dept_code = #{manager_dept_code,jdbcType=VARCHAR},
+      old_fiscal_year = #{old_fiscal_year,jdbcType=VARCHAR},
+      old_class_quarter = #{old_class_quarter,jdbcType=INTEGER},
+      new_fiscal_year = #{new_fiscal_year,jdbcType=VARCHAR},
+      new_class_quarter = #{new_class_quarter,jdbcType=INTEGER},
+      continue_name = #{continue_name,jdbcType=VARCHAR},
+      continue_id = #{continue_id,jdbcType=VARCHAR},
+      sbq_config_name = #{sbq_config_name,jdbcType=VARCHAR},
+      sWindowPeriodId = #{sWindowPeriodId,jdbcType=VARCHAR},
+      sStageId = #{sStageId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,50 @@
+body{ background:#ecebe9; overflow-x:hidden}
+*{ font-family:'微软雅黑';padding:0;margin:0}
+select{-webkit-appearance:none}
+input{-webkit-appearance:none;border:none !important;}
+.hide{display:none}
+/*top*/
+.top-box{background:#393d49;width:100%}
+.top-word{ color:#009688;float:left;font-size:1.3em;margin-top:15px;margin-left:10px}
+.top-img{float:left;padding:5px 15px;}
+/*banner*/
+.banner-box{width:100%}
+#openid{display:none}
+.classify-p{width:100%;background:#006960;color:#ffffff;padding:5px 15px}
+.classify-img{background:#ffffff;padding-bottom:20px}
+.classify-imgbox{width:25%;float:left;}
+.classify-imgbox img{width:70%;margin-left:15%;margin-top:15%}
+.menu-box{margin-top:15px}
+.menu-list{background:#ffffff}
+.menu-icon1{width:20%; text-align:center;padding-left:5% !important}
+.menu-icon2{width:50%;vertical-align:middle !important;}
+.menu-icon3{width:25%;vertical-align:middle !important;padding-left:10% !important}
+.menu-icon3 img{width:16%}
+.menu-jy{ color:#6c6c6c;font-size:1.3em}
+.menu-zs{ color:#6c6c6c;}
+.own-box{width:100%;margin-top:15px;background:#ffffff}
+.own-menu p{width:50%;display:inline-block; text-align:center;padding:5px 0;border-bottom:3px solid #d1d1d1; float:left;color:#a6a3a3}
+.own-active{border-bottom:3px solid #009688 !important;color:#3c3d3d !important}
+.own-list{width:90%; margin-left:5%;margin-top:15px}
+.own-list th,.own-list td{text-align:center; font-weight:normal}
+.own-list th{color:#a6a3a3;}
+.borrow-box{width:100%}
+.borrow th{ font-weight:normal;color:#484747; text-align:center}
+.borrow td{ font-weight:normal;color:#a6a3a3; text-align:center; vertical-align:middle !important}
+.borrow input{border-radius:5px;padding:3px 1px;margin-left:5px}
+.borrow-no{background:#fac622;color:#ffffff}
+.borrow-huan{background:#009688;color:#ffffff}
+.pop p{ width:90%;margin-left:5%;color:#a6a3a3;margin-top:3%}
+.anniu,.anniu2{width:90%;margin-left:5%}
+.anniu input{width:30%; text-align:center;color:#fac622;border:1px solid #fac622 !important; float:left;margin:5% 0 10% 0;padding:3px 10px}
+.anniu2 input{width:20%; text-align:center;color:#fac622;border:1px solid #fac622 !important; float:left;margin:5% 0 10% 0;padding:3px 8px}
+.layer-box{border-radius:5px;}
+.login-box{background:#dfe1ea;width:78%;margin-left:11%;margin-top:60%}
+.login-bg{ background:url(../images/login-bg.png); background-size:cover}
+.email,.idnum{color:#cfd1db;width:78%;margin-left:11%}
+.email input,.idnum input{ float:left;color:#9da0b0;line-height:35px}
+.email p{float:right;color:#9da0b0;line-height:35px}
+.email input{width:70%;background:#dfe1ea;}
+.email p{width:30%}
+.idnum input{width:100%;background:#dfe1ea;}
+.login-login{width:78%;margin-left:11%;padding:8px 0;background:url(../images/login-login.png); background-repeat:repeat-x;color:#ffffff;border-radius:3px;margin-top:8%}

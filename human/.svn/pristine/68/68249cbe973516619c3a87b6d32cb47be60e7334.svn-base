@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbPaperMonthLevelDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbPaperMonthLevel" >
+    <result column="ID" property="id" jdbcType="INTEGER" />
+    <result column="MONTH_CONFIG_ID" property="monthConfigId" jdbcType="INTEGER" />
+    <result column="DIC_ID" property="dicId" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="INTEGER" />
+    <result column="dataValue" property="dataValue" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="com.human.jzbTest.entity.JzbPaperMonthLevel" >
+    insert into jzb_paper_month_level (ID, MONTH_CONFIG_ID, DIC_ID, 
+      num)
+    values (#{id,jdbcType=INTEGER}, #{monthConfigId,jdbcType=INTEGER}, #{dicId,jdbcType=INTEGER}, 
+      #{num,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.jzbTest.entity.JzbPaperMonthLevel" >
+    insert into jzb_paper_month_level
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="monthConfigId != null" >
+        MONTH_CONFIG_ID,
+      </if>
+      <if test="dicId != null" >
+        DIC_ID,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="monthConfigId != null" >
+        #{monthConfigId,jdbcType=INTEGER},
+      </if>
+      <if test="dicId != null" >
+        #{dicId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="getMonthLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  		SELECT
+		 j.*,d.name AS NAME , d.data_value AS dataValue 
+		FROM 
+		(SELECT 
+				    * 
+				  FROM
+				    dic_data 
+				  WHERE dic_code = 'jzb_score_level' and DATA_VALUE!=0) d
+				  LEFT JOIN (SELECT *FROM jzb_paper_month_level  WHERE  month_config_id=#{monthId,jdbcType=INTEGER} )j
+				  ON d.data_value=j.dic_id
+  </select>
+  <delete id="deleteMonthLevel" parameterType="java.lang.Integer"> 
+  		delete from jzb_paper_month_level where MONTH_CONFIG_ID=#{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteMonthLevelByMainId" parameterType="java.util.HashMap">
+		  DELETE 
+		  FROM
+		    jzb_paper_month_level 
+		  WHERE MONTH_CONFIG_ID IN 
+		    (SELECT 
+		      MONTH_CONFIG_ID 
+		    FROM
+		      jzb_paper_month_config 
+		    WHERE MAIN_CONFIG_ID in
+		    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")" >
+		    	#{id,jdbcType=INTEGER}
+		    </foreach>
+		     )
+  </delete>
+  <select id="getMonthUseLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  		SELECT
+		 j.*,d.name AS NAME , d.data_value AS dataValue 
+		FROM 
+		(SELECT 
+				    * 
+				  FROM
+				    dic_data 
+				  WHERE dic_code = 'jzb_score_level' and DATA_VALUE!=0) d
+				  JOIN (SELECT *FROM jzb_paper_month_level  WHERE  month_config_id=#{monthId,jdbcType=INTEGER} )j
+				  ON d.data_value=j.dic_id
+  </select>
+  <delete id="deleteMonthLevelByMonthId" parameterType="java.lang.Integer" >
+  		delete from jzb_paper_month_level where MONTH_CONFIG_ID=#{#month,jdbcType=INTEGER}
+  </delete>
+</mapper>

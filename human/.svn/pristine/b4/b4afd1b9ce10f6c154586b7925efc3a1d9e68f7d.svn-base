@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.bpm.dao.BpmTransitionConfigDao" >
+  <resultMap id="BaseResultMap" type="com.human.bpm.entity.BpmTransitionConfig" >
+    <result column="transition_id" property="transitionId" jdbcType="VARCHAR" />
+    <result column="transition_name" property="transitionName" jdbcType="VARCHAR" />
+    <result column="processdef_id" property="processdefId" jdbcType="VARCHAR" />
+    <result column="process_name" property="processName" jdbcType="VARCHAR" />
+    <result column="source_node" property="sourceNode" jdbcType="VARCHAR" />
+    <result column="target_node" property="targetNode" jdbcType="VARCHAR" />
+    <result column="condition_text" property="conditionText" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    transition_id,transition_name, processdef_id, process_name,source_node ,target_node, condition_text
+  </sql>
+  
+  <select id="selectByPrimaryCondition" parameterType="com.human.bpm.entity.BpmTransitionConfig" 
+  	resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from act_transition_config
+		where processdef_id = #{processdefId,jdbcType=VARCHAR} 
+   	 	<if test="sourceNode != null and sourceNode !=''">
+			and source_node = #{sourceNode,jdbcType=VARCHAR}
+		</if>
+		<if test="conditionText != null and conditionText !=''">
+			and condition_text = #{conditionText,jdbcType=VARCHAR}
+		</if>
+		<if test="transitionId != null and transitionId !=''">
+			and transition_id = #{transitionId,jdbcType=VARCHAR}
+		</if>
+  </select>
+  
+  <select id="selectByCondition" parameterType="com.human.bpm.entity.BpmTransitionConfig" 
+  	resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from act_transition_config
+		where processdef_id = #{processdefId,jdbcType=VARCHAR} 
+		and transition_name != '直接通过'
+   	 	<if test="sourceNode != null and sourceNode !=''">
+			and source_node = #{sourceNode,jdbcType=VARCHAR}
+		</if>
+		<if test="conditionText != null and conditionText !=''">
+			and condition_text = #{conditionText,jdbcType=VARCHAR}
+		</if>
+		<if test="transitionId != null and transitionId !=''">
+			and transition_id = #{transitionId,jdbcType=VARCHAR}
+		</if>
+  </select>
+  
+  
+  <insert id="insert" parameterType="com.human.bpm.entity.BpmTransitionConfig" >
+    insert into act_transition_config (transition_id,transition_name, processdef_id, process_name,source_node ,target_node, condition_text)
+    values (#{transitionId,jdbcType=VARCHAR}, #{transitionName,jdbcType=VARCHAR}, #{processdefId,jdbcType=VARCHAR}, 
+      #{processName,jdbcType=VARCHAR}, #{sourceNode,jdbcType=VARCHAR}, #{targetNode,jdbcType=VARCHAR}, 
+      #{conditionText,jdbcType=VARCHAR})
+  </insert>
+</mapper>

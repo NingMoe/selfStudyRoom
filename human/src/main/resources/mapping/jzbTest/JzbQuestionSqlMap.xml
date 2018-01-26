@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.jzbTest.dao.JzbQuestionDao" >
+  <resultMap id="BaseResultMap" type="com.human.jzbTest.entity.JzbQuestion" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="IDS" property="ids" jdbcType="VARCHAR" />
+    <result column="Q_TYPE" property="qType" jdbcType="VARCHAR" />
+    <result column="Q_GRADE" property="qGrade" jdbcType="VARCHAR" />
+    <result column="Q_DIFFICULTY" property="qDifficulty" jdbcType="VARCHAR" />
+    <result column="Q_SUBJECT" property="qSubject" jdbcType="VARCHAR" />
+    <result column="Q_CLASSTYPE" property="qClasstype" jdbcType="VARCHAR" />
+    <result column="Q_MONTH" property="qMonth" jdbcType="VARCHAR" />
+    <result column="Q_CONTENT" property="qContent" jdbcType="VARCHAR" />
+    <result column="Q_MAIN_DESC" property="qMainDesc" jdbcType="VARCHAR" />
+    <result column="Q_DEPT" property="qDept" jdbcType="VARCHAR" />
+    <result column="Q_SCORE" property="qScore" jdbcType="VARCHAR" />
+    <result column="Q_CODE" property="qCode" jdbcType="VARCHAR" />
+    <result column="Q_REMARK" property="qRemark" jdbcType="VARCHAR" />
+    <result column="Q_STATE" property="qState" jdbcType="VARCHAR" />
+    <result column="classTypeName" property="classTypeName" jdbcType="VARCHAR" />
+    <result column="KNOWLEDGE" property="qKnowledge" jdbcType="VARCHAR" />
+    <result column="gradeName" property="gradeName" jdbcType="VARCHAR" />
+    <result column="subjectName" property="subjectName" jdbcType="VARCHAR" />
+    <result column="TK_ANSWER" property="tkAnswer" jdbcType="VARCHAR" />
+    <result column="IS_TK" property="isTk" jdbcType="INTEGER" />
+    <result column="TK_NUM" property="tkNum" jdbcType="INTEGER" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, Q_TYPE, Q_GRADE, Q_DIFFICULTY, Q_SUBJECT, Q_CLASSTYPE, Q_MONTH, Q_CONTENT, Q_SCORE,Q_CODE,Q_REMARK,Q_STATE,
+    Q_MAIN_DESC,Q_DEPT,TK_ANSWER,IS_TK,TK_NUM 
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from jzb_question
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from jzb_question
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.human.jzbTest.entity.JzbQuestion" >
+    insert into jzb_question (Q_TYPE, Q_GRADE, 
+      Q_DIFFICULTY, Q_SUBJECT, Q_CLASSTYPE, 
+      Q_MONTH, Q_CONTENT, Q_SCORE,Q_CODE,Q_REMARK,
+      Q_MAIN_DESC,Q_DEPT,TK_ANSWER,IS_TK,TK_NUM)
+    values (#{qType,jdbcType=VARCHAR}, #{qGrade,jdbcType=VARCHAR}, 
+      #{qDifficulty,jdbcType=VARCHAR}, #{qSubject,jdbcType=VARCHAR}, #{qClasstype,jdbcType=VARCHAR}, 
+      #{qMonth,jdbcType=VARCHAR}, #{qContent,jdbcType=VARCHAR}, #{qScore,jdbcType=VARCHAR},#{qCode,jdbcType=VARCHAR},#{qRemark,jdbcType=VARCHAR},
+      #{qMainDesc,jdbcType=VARCHAR}, #{qDept,jdbcType=VARCHAR}, #{tkAnswer,jdbcType=VARCHAR}, #{isTk,jdbcType=INTEGER}, #{tkNum,jdbcType=INTEGER})
+  </insert>
+  
+  
+  <insert id="insertQuestionAnswers" parameterType="java.util.List">
+        insert into jzb_question_answer(QUESTION_ID,A_CONTENT,IS_CORRECT,XH,A_IMG) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.questionId},#{item.aContent},#{item.isCorrect},#{item.xh},#{item.aImg})
+        </foreach>
+  </insert>
+  
+  <insert id="insertQuestionKnowledges" parameterType="java.util.List">
+        insert into jzb_question_knowledge(QUESTION_ID,KNOWLEDGE_ID) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.questionId},#{item.knowledgeId})
+        </foreach>
+  </insert>
+  
+   <delete id="deleteQuestionKnowledges" parameterType="java.lang.Integer" >
+    delete from jzb_question_knowledge
+    where QUESTION_ID = #{questionId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteQuestionAnswers" parameterType="java.lang.Integer" >
+    delete from jzb_question_answer 
+    where QUESTION_ID = #{questionId,jdbcType=INTEGER}
+  </delete>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.jzbTest.entity.JzbQuestion" >
+    update jzb_question
+    <set >
+      <if test="qType != null" >
+        Q_TYPE = #{qType,jdbcType=VARCHAR},
+      </if>
+      <if test="qGrade != null" >
+        Q_GRADE = #{qGrade,jdbcType=VARCHAR},
+      </if>
+      <if test="qDifficulty != null" >
+        Q_DIFFICULTY = #{qDifficulty,jdbcType=VARCHAR},
+      </if>
+      <if test="qSubject != null" >
+        Q_SUBJECT = #{qSubject,jdbcType=VARCHAR},
+      </if>
+      <if test="qClasstype != null" >
+        Q_CLASSTYPE = #{qClasstype,jdbcType=VARCHAR},
+      </if>
+      <if test="qScore != null" >
+        Q_SCORE = #{qScore,jdbcType=VARCHAR},
+      </if>
+      <if test="qCode != null" >
+        Q_CODE = #{qCode,jdbcType=VARCHAR},
+      </if>
+      <if test="qRemark != null" >
+        Q_REMARK = #{qRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="qState != null" >
+        Q_STATE = #{qState,jdbcType=VARCHAR},
+      </if>
+      <if test="qMonth != null" >
+        Q_MONTH = #{qMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="qContent != null" >
+        Q_CONTENT = #{qContent,jdbcType=VARCHAR},
+      </if>
+      <if test="qMainDesc != null" >
+        Q_MAIN_DESC = #{qMainDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="qDept != null" >
+        Q_DEPT = #{qDept,jdbcType=INTEGER},
+      </if>
+      <if test="tkAnswer != null" >
+        tk_answer = #{tkAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="isTk != null" >
+        is_tk = #{isTk,jdbcType=INTEGER},
+      </if>
+       <if test="tkNum != null" >
+        tk_num = #{tkNum,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateStatus" parameterType="com.human.jzbTest.entity.JzbQuestion" >
+    update jzb_question set Q_STATE = #{qState,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.jzbTest.entity.JzbQuestion" >
+    update jzb_question
+    set Q_TYPE = #{qType,jdbcType=VARCHAR},
+      Q_GRADE = #{qGrade,jdbcType=VARCHAR},
+      Q_DIFFICULTY = #{qDifficulty,jdbcType=VARCHAR},
+      Q_SUBJECT = #{qSubject,jdbcType=VARCHAR},
+      Q_CLASSTYPE = #{qClasstype,jdbcType=VARCHAR},
+      Q_MONTH = #{qMonth,jdbcType=VARCHAR},
+      Q_SCORE = #{qScore,jdbcType=VARCHAR},
+      Q_CODE = #{qCode,jdbcType=VARCHAR},
+      Q_CONTENT = #{qContent,jdbcType=VARCHAR},
+      Q_MAIN_DESC = #{qMainDesc,jdbcType=VARCHAR},
+      Q_DEPT = #{qDept,jdbcType=VARCHAR},
+      Q_STATE = #{qState,jdbcType=VARCHAR},
+      Q_REMARK = #{qRemark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectQuestionPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select q.ID,q.ID IDS, q.Q_TYPE, q.Q_GRADE,grade.grade_name gradeName, q.Q_DIFFICULTY, q.Q_SUBJECT,q.Q_SCORE,sub.NAME subjectName, q.Q_CLASSTYPE,q.KNOWLEDGE,
+    ct.NAME classTypeName, q.Q_MONTH,q.Q_DEPT,q.Q_STATE,q.Q_REMARK,q.Q_CODE,q.IS_TK,q.TK_ANSWER,q.TK_NUM  from v_jzb_question q 
+    left join (select NAME,DATA_VALUE from dic_data where DIC_CODE= 'class_type') ct on ct.DATA_VALUE = q.Q_CLASSTYPE
+    left join (
+    select NAME,DATA_VALUE from dic_data where DIC_CODE= 'subject') sub on sub.DATA_VALUE = q.Q_SUBJECT 
+    left join jzb_grade grade on grade.id = q.Q_GRADE 
+    where q.Q_DEPT = #{t.qDept,jdbcType=VARCHAR}
+		<if test="t.qGrade != null and t.qGrade !=''">
+			and q.Q_GRADE = #{t.qGrade,jdbcType=VARCHAR}
+		</if>
+		<if test="t.qSubject != null and t.qSubject !=''">
+			and q.Q_SUBJECT = #{t.qSubject,jdbcType=VARCHAR}
+		</if>
+		<if test="t.qClasstype != null and t.qClasstype !=''">
+			and q.Q_CLASSTYPE = #{t.qClasstype,jdbcType=VARCHAR}
+		</if>
+		<if test="t.searchKnowledge != null and t.searchKnowledge !=''">
+			and exists (select 1 from jzb_question_knowledge where QUESTION_ID = q.id and KNOWLEDGE_ID = #{t.searchKnowledge,jdbcType=INTEGER})
+		</if>
+		<if test="t.qMonth != null and t.qMonth !=''">
+			and q.Q_MONTH like CONCAT('%',#{t.qMonth,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="t.qCode != null and t.qCode !=''">
+			and q.q_code like CONCAT('%',#{t.qCode,jdbcType=VARCHAR},'%')
+		</if>
+  </select>
+  <select id="selectForQuestion" resultType="java.lang.Integer" parameterType="java.util.Map">
+  	   SELECT DISTINCT id FROM jzb_question WHERE Q_MONTH LIKE  CONCAT(CONCAT('%', #{month,jdbcType=VARCHAR}), '%')
+  	   and q_subject= #{subject,jdbcType=INTEGER} and q_classType= #{classType,jdbcType=INTEGER}
+  	   and q_grade=#{grade,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getMaxCodeByCodePre" resultType="java.lang.String" parameterType="java.lang.String" >
+    select MAX(Q_CODE) from jzb_question where Q_CODE like CONCAT(#{codePre,jdbcType=VARCHAR},'%')
+  </select>
+  
+   <select id="getQuesAnswerList" resultType="com.human.jzbTest.entity.JzbQuestionAnswer" parameterType="java.lang.Integer" >
+    select a.`ID` id,a.`A_IMG` aImg,a.`A_CONTENT` aContent,a.`IS_CORRECT` isCorrect,a.`XH` xh from jzb_question_answer a where a.QUESTION_ID = #{questionId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectQuestionById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+     select q.ID, q.ID IDS,q.Q_TYPE, q.Q_GRADE, q.Q_DIFFICULTY, q.Q_SUBJECT,q.Q_SCORE,q.Q_CLASSTYPE,q.KNOWLEDGE,q.Q_CONTENT,
+    q.Q_MONTH,q.Q_DEPT,q.Q_STATE,q.Q_REMARK,q.Q_CODE,Q_MAIN_DESC,q.IS_TK,q.TK_ANSWER,q.TK_NUM  from v_jzb_question q 
+    where q.ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectQuestionByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+     select q.ID, q.ID IDS,q.Q_TYPE, q.Q_GRADE, q.Q_DIFFICULTY, q.Q_SUBJECT,q.Q_SCORE,q.Q_CLASSTYPE,q.KNOWLEDGE,q.Q_CONTENT,
+    q.Q_MONTH,q.Q_DEPT,q.Q_STATE,q.Q_REMARK,q.Q_CODE,Q_MAIN_DESC,q.IS_TK,q.TK_ANSWER,q.TK_NUM  from v_jzb_question q 
+    where q.Q_CODE = #{qCode,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectMultiQuestionById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+     select q.ID,q.ID IDS, q.Q_TYPE, q.Q_GRADE,grade.grade_name gradeName, q.Q_DIFFICULTY, q.Q_SUBJECT,q.Q_SCORE,sub.NAME subjectName, q.Q_CLASSTYPE,
+    ct.NAME classTypeName, q.Q_MONTH,q.Q_DEPT,q.Q_STATE,q.Q_REMARK,q.Q_CODE,Q_MAIN_DESC,q.KNOWLEDGE,q.IS_TK,q.TK_ANSWER,q.TK_NUM  from v_jzb_question q 
+    left join (select NAME,DATA_VALUE from dic_data where DIC_CODE= 'class_type') ct on ct.DATA_VALUE = q.Q_CLASSTYPE
+    left join (
+    select NAME,DATA_VALUE from dic_data where DIC_CODE= 'subject') sub on sub.DATA_VALUE = q.Q_SUBJECT 
+    left join jzb_grade grade on grade.id = q.Q_GRADE
+    left join jzb_knowledge_point kp on kp.id = q.knowledge
+    where q.ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+   <update id="updateAnswerByQuestionIdAndXh" parameterType="com.human.jzbTest.entity.JzbQuestion" >
+   		update jzb_question_answer 
+   		<set >
+	      <if test="aContent != null" >
+	        A_CONTENT = #{aContent,jdbcType=VARCHAR},
+	      </if>
+	      <if test="isCorrect != null" >
+	        IS_CORRECT = #{isCorrect,jdbcType=VARCHAR},
+	      </if>
+	      <if test="aImg != null" >
+	        A_IMG = #{aImg,jdbcType=VARCHAR},
+	      </if>
+	    </set> 
+	    where QUESTION_ID = #{questionId,jdbcType=INTEGER} and XH = #{xh,jdbcType=VARCHAR}
+   </update>
+   
+   <select id="getAreaByGrade" resultType="com.human.basic.entity.AreaInfo" parameterType="java.lang.Integer" >
+      SELECT a.id id,a.area_name areaName FROM area_info a
+		JOIN hr_company c ON c.city_code = a.parent_area_code
+		JOIN jzb_dept d ON d.company = c.company_id
+		JOIN jzb_grade g ON g.dept_id = d.id 
+		WHERE g.id = #{gradeId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="getKsTitleByMonthConfig" resultType="java.lang.String" parameterType="java.lang.Integer" >
+      SELECT CONCAT(hc.company_name,d.grade_name,sub.name,ct.name,'入班测试')
+		FROM jzb_paper_main_config c
+		JOIN jzb_paper_month_config mc ON mc.main_config_id = c.id 
+		JOIN jzb_grade d ON d.id = c.grade
+		JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'class_type') ct ON ct.DATA_VALUE = c.`CLASS_TYPE`
+		JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'subject') sub ON sub.DATA_VALUE = c.`SUBJECT`
+		JOIN jzb_dept dept ON dept.id = c.dept 
+		JOIN hr_company hc ON hc.company_id = dept.company 
+		WHERE mc.id = #{monthConfigId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectCacheAnswerByPrecode" resultType="com.human.jzbTest.entity.JzbCacheAnswer" parameterType="java.lang.String" >
+   		SELECT q.ID,q.IS_TK,a.`ID` answer FROM jzb_question q 
+		JOIN jzb_question_answer a ON a.QUESTION_ID = q.id AND a.IS_CORRECT = 1
+		WHERE q.q_code LIKE CONCAT(#{preCode,jdbcType=VARCHAR},'%') AND q.`IS_TK` = 1
+		UNION
+		SELECT q.ID,q.IS_TK,q.tk_answer answer FROM jzb_question q 
+		WHERE q.q_code LIKE CONCAT(#{preCode,jdbcType=VARCHAR},'%') AND q.`IS_TK` = 2
+  </select>
+  
+   <select id="selectSimpleQuestionsByPrecode" resultType="com.human.jzbTest.entity.CacheQuestion" parameterType="java.lang.String" >
+   	SELECT q.id questionId,q.q_difficulty difficulty,q.q_month months,q.q_type qType,k.knowledge_id knowledge,q.q_code qCode FROM jzb_question q 
+	JOIN jzb_question_knowledge k ON k.question_id =q.id
+	WHERE q.q_code like CONCAT(#{preCode,jdbcType=VARCHAR},'%') and q.q_type=1 and q.Q_STATE=1
+	GROUP BY q.id,q.q_difficulty,q.q_month,q.q_type,q.q_code
+   </select>
+   
+   <select id="selectMultiQuestionsByPrecode" resultType="com.human.jzbTest.entity.CacheQuestion" parameterType="java.lang.String" >
+   	SELECT group_concat(q.id) questionIds,q.q_difficulty difficulty,q.q_month months,q.q_type qType,k.knowledge_id knowledge,q.q_code qCode FROM jzb_question q 
+	JOIN jzb_question_knowledge k ON k.question_id =q.id
+	WHERE q.q_code like CONCAT(#{preCode,jdbcType=VARCHAR},'%')and q.q_type=2 and q.Q_STATE=1
+	GROUP BY q.q_difficulty,q.q_month,q.q_type,k.knowledge_id ,q.q_code
+   </select>
+   
+   <select id="getQuestionClassType" resultType="com.human.basic.entity.DicData">
+  	SELECT a.NAME,a.DATA_VALUE dataValue FROM dic_data a WHERE a.DIC_CODE= 'class_type' AND 
+	 EXISTS(
+	 SELECT 1 FROM jzb_question WHERE Q_CLASSTYPE = a.`DATA_VALUE`
+	)
+   </select>
+   
+   <select id="getQuestionSubjectByGrade" resultType="com.human.basic.entity.DicData" parameterType="java.lang.String" >
+  	SELECT a.NAME,a.DATA_VALUE dataValue FROM dic_data a WHERE a.DIC_CODE= 'subject' AND 
+	 EXISTS(
+	 SELECT 1 FROM jzb_question WHERE Q_SUBJECT = a.`DATA_VALUE` and Q_GRADE = #{grade,jdbcType=VARCHAR}
+	)
+   </select>
+   <select id="getquestionArr" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select q_code ,Q_MAIN_DESC,is_tk ,q_type  from jzb_question q
+		JOIN jzb_question_knowledge k ON q.id=k.question_id
+		where id in 
+		<foreach collection="ids" item="id" index="index" open="("
+			separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+		AND q_classtype = #{jq.qClasstype,jdbcType=INTEGER}
+		 AND q_dept = #{jq.qDept,jdbcType=INTEGER}
+		 AND q_grade = #{jq.qGrade,jdbcType=INTEGER}
+		 AND q_subject=#{jq.qSubject,jdbcType=INTEGER}
+		 group by q_code,Q_MAIN_DESC,is_tk,q_type
+	</select>
+	<select id="selectPrimaryKey" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select * from jzb_question where id=#{id=jdbcType=INTEGER}
+	</select>
+</mapper>

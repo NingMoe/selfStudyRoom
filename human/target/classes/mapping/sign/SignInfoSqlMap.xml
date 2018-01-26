@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.sign.dao.SignInfoDao" >
+  <resultMap id="BaseResultMap" type="com.human.sign.entity.SignInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="activity_id" property="activityId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="card_no" property="cardNo" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="deptOrSchool" property="deptorschool" jdbcType="VARCHAR" />
+    <result column="export_date" property="exportDate" jdbcType="VARCHAR" />
+    <result column="text1" property="text1" jdbcType="VARCHAR" />
+    <result column="text2" property="text2" jdbcType="VARCHAR" />
+    <result column="text3" property="text3" jdbcType="VARCHAR" />
+    <result column="is_sign" property="isSign" jdbcType="VARCHAR" />
+    <result column="sign_time" property="signTime" jdbcType="TIMESTAMP" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, activity_id, name, telephone, card_no, sex, email, deptOrSchool, export_date, 
+    text1, text2, text3, is_sign, sign_time, class_code, create_user, create_time, update_user, 
+    update_time, is_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sign_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="checkSignInfo" resultMap="BaseResultMap" parameterType="com.human.sign.entity.SignInfo" >
+    select id,activity_id,is_sign
+    from sign_info
+    where activity_id = #{activityId,jdbcType=BIGINT}
+    and telephone = #{telephone,jdbcType=VARCHAR}
+    and is_valid=1
+  </select>
+  
+  <select id="selectByPamas" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from sign_info
+    where is_valid=1
+    AND activity_id= #{activityId,jdbcType=BIGINT}
+    AND (telephone LIKE  CONCAT('%', #{telOrCardNo,jdbcType=VARCHAR})  OR  card_no LIKE CONCAT('%', #{telOrCardNo,jdbcType=VARCHAR}))
+  </select>
+    
+  <select id="selectByIds" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from sign_info
+    where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sign_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <!-- 批量插入 -->
+  <insert id="insertByBatch" parameterType="java.util.List">
+        insert into sign_info (activity_id, name, telephone, card_no, sex, email, deptOrSchool, export_date, 
+                text1, text2, text3, create_time, create_user)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+           (#{item.activityId,jdbcType=BIGINT},#{item.name,jdbcType=VARCHAR}, #{item.telephone,jdbcType=VARCHAR}, 
+            #{item.cardNo,jdbcType=VARCHAR}, #{item.sex,jdbcType=VARCHAR}, #{item.email,jdbcType=VARCHAR}, #{item.deptorschool,jdbcType=VARCHAR},
+            #{item.exportDate,jdbcType=VARCHAR}, #{item.text1,jdbcType=VARCHAR}, #{item.text2,jdbcType=VARCHAR}, #{item.text3,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.createUser,jdbcType=VARCHAR})
+        </foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.human.sign.entity.SignInfo" >
+    insert into sign_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="cardNo != null" >
+        card_no,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="deptorschool != null" >
+        deptOrSchool,
+      </if>
+      <if test="exportDate != null" >
+        export_date,
+      </if>
+      <if test="text1 != null" >
+        text1,
+      </if>
+      <if test="text2 != null" >
+        text2,
+      </if>
+      <if test="text3 != null" >
+        text3,
+      </if>
+      <if test="isSign != null" >
+        is_sign,
+      </if>
+      <if test="signTime != null" >
+        sign_time,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="cardNo != null" >
+        #{cardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="deptorschool != null" >
+        #{deptorschool,jdbcType=VARCHAR},
+      </if>
+      <if test="exportDate != null" >
+        #{exportDate,jdbcType=VARCHAR},
+      </if>
+      <if test="text1 != null" >
+        #{text1,jdbcType=VARCHAR},
+      </if>
+      <if test="text2 != null" >
+        #{text2,jdbcType=VARCHAR},
+      </if>
+      <if test="text3 != null" >
+        #{text3,jdbcType=VARCHAR},
+      </if>
+      <if test="isSign != null" >
+        #{isSign,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null" >
+        #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.sign.entity.SignInfo" >
+    update sign_info
+    <set >
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="cardNo != null" >
+        card_no = #{cardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="deptorschool != null" >
+        deptOrSchool = #{deptorschool,jdbcType=VARCHAR},
+      </if>
+      <if test="exportDate != null" >
+        export_date = #{exportDate,jdbcType=VARCHAR},
+      </if>
+      <if test="text1 != null" >
+        text1 = #{text1,jdbcType=VARCHAR},
+      </if>
+      <if test="text2 != null" >
+        text2 = #{text2,jdbcType=VARCHAR},
+      </if>
+      <if test="text3 != null" >
+        text3 = #{text3,jdbcType=VARCHAR},
+      </if>
+      <if test="isSign != null" >
+        is_sign = #{isSign,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null" >
+        sign_time = #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- 分页查询签到明细 -->  
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  SELECT
+	s.id, s.activity_id, s.name, s.telephone, s.card_no, s.sex, s.email, s.deptOrSchool, s.export_date, 
+	s.text1, s.text2, s.text3, s.is_sign, s.sign_time, s.class_code, u.name AS create_user, s.create_time
+	FROM sign_info s
+	LEFT  JOIN hr_user u ON s.create_user=u.email_addr
+	WHERE s.is_valid=1
+	AND s.activity_id=#{t.activityId,jdbcType=BIGINT}
+	<if test="t.name != null and t.name !=''" >
+        AND s.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%')
+    </if>
+    <if test="t.telephone != null and t.telephone !=''" >
+        AND s.telephone like CONCAT(CONCAT('%', #{t.telephone,jdbcType=VARCHAR}), '%')
+    </if>
+	<if test="t.isSign != null and t.isSign !=''" >
+        AND s.is_sign= #{t.isSign,jdbcType=VARCHAR}
+    </if>
+	ORDER BY s.id DESC 
+  </select>
+  
+  <!-- 删除签到人员（逻辑删除）-->
+	<update id="updateStatusByIds" parameterType="java.util.HashMap">
+		update sign_info set is_valid=2,update_user=#{updateUser,jdbcType=VARCHAR},update_time = now() where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+  
+  <!--导出签到人员明细 -->  
+   <select id="exportSelectInfo" resultType="java.util.HashMap"  parameterType="java.lang.Long">
+   SELECT
+	s.name, s.telephone, s.card_no AS cardNo, 
+	(CASE s.sex WHEN 'M' THEN '男' WHEN 'F' THEN '女'  ELSE '' END ) AS sex, 
+	s.email, s.deptOrSchool AS deptorschool , s.export_date AS exportDate, 
+	s.text1, s.text2, s.text3, s.sign_time AS signTime, s.class_code AS classCode, u.name AS createUser, 
+	s.create_time AS createTime
+	FROM sign_info s
+	LEFT  JOIN hr_user u ON s.create_user=u.email_addr
+	WHERE s.is_valid=1
+	AND s.activity_id=#{activityId,jdbcType=BIGINT}
+	ORDER BY s.id DESC
+   </select>
+   
+   <select id="getClassCodeList" resultType="java.lang.String"  parameterType="java.lang.Long">
+	   SELECT class_code
+	   FROM  sign_info
+	   WHERE activity_id=#{activityId,jdbcType=BIGINT}
+	   AND is_valid=1
+	   AND class_code IS NOT NULL 
+   </select>
+   
+   <!--撤销签到-->  
+   <update id="updateIsSign" parameterType="java.lang.Long" >
+     UPDATE sign_info SET is_sign=2,sign_time = NULL  WHERE id=#{id,jdbcType=BIGINT}
+   </update>
+   
+  <!-- 查询各个部门的总人数 --> 
+ <select id="selectInfoGroupByDept" resultType="com.human.sign.entity.SignInfoDto"  parameterType="java.lang.Long">
+     SELECT t.deptOrSchool,t.total
+     FROM(  
+		 SELECT deptOrSchool,COUNT(id)AS total
+		 FROM sign_info
+		 WHERE activity_id= #{activityId,jdbcType=BIGINT}
+		 AND is_valid=1
+		 AND (deptOrSchool IS NOT NULL AND  deptOrSchool!="")
+		 GROUP BY deptOrSchool
+		 UNION 
+		 SELECT '空',COUNT(id)AS total
+		 FROM sign_info
+		 WHERE activity_id= #{activityId,jdbcType=BIGINT} 
+		 AND is_valid=1
+		 AND (deptOrSchool IS NULL OR deptOrSchool="")
+	 )t WHERE t.total!=0
+ </select>
+ <!-- 查询各个部门的签到人数 -->
+ <select id="selectHasSignGroupByDept" resultType="java.lang.Long"  parameterType="java.util.HashMap">
+    SELECT COUNT(id) AS signTotal
+	FROM sign_info
+	WHERE activity_id= #{activityId,jdbcType=BIGINT}
+	AND is_valid=1 AND is_sign=1
+	<if test="deptorschool != null" >
+        AND deptOrSchool= #{deptorschool,jdbcType=VARCHAR}
+    </if>
+    <if test="deptorschool == null" >
+        AND (deptOrSchool IS NULL OR deptOrSchool="")
+    </if>	
+</select>
+<!--查询某个部门的签到明细  -->
+<select id="selectDeptSignDetails" resultMap="BaseResultMap" parameterType="com.human.sign.entity.SignInfo" >
+    select 
+    <include refid="Base_Column_List" />
+    from sign_info
+    where activity_id = #{activityId,jdbcType=BIGINT}
+    <if test="deptorschool != null" >
+        and deptOrSchool= #{deptorschool,jdbcType=VARCHAR}
+    </if>
+    <if test="deptorschool == null" >
+        and (deptOrSchool IS NULL or deptOrSchool="")
+    </if>
+    <if test="name != null and name !='' " >
+        and name like CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR}), '%')
+      </if>
+    and is_valid=1
+    order by sign_time desc
+ </select>
+ 
+ <select id="selectByActivityId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, activity_id, name, telephone
+    from sign_info
+    where activity_id = #{activityId,jdbcType=BIGINT}
+    and is_valid=1
+  </select>
+</mapper>

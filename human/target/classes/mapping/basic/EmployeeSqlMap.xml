@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.basic.dao.EmployeeDao">
+	<resultMap id="BaseResultMap" type="com.human.manager.entity.Users">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="empl_id" property="empId" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="syn_time" property="synTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="birth_date" property="birthDate" jdbcType="TIMESTAMP" />
+		<result column="busn_phone" property="busPhone" jdbcType="VARCHAR" />
+		<result column="com_name" property="comName" jdbcType="VARCHAR" />
+		<result column="company" property="companyId" jdbcType="VARCHAR" />
+		<result column="company_name" property="companyName" jdbcType="VARCHAR" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="BIT" />
+		<result column="dept_id" property="deptId" jdbcType="VARCHAR" />
+		<result column="dept_name" property="deptName" jdbcType="VARCHAR" />
+		<result column="email_addr" property="emailAddr" jdbcType="VARCHAR" />
+		<result column="empl_phone" property="empPhone" jdbcType="VARCHAR" />
+		<result column="ethic" property="ethic" jdbcType="VARCHAR" />
+		<result column="graduage_sch" property="graduageSch" jdbcType="VARCHAR" />
+		<result column="highest_educ" property="highestEduc" jdbcType="VARCHAR" />
+		<result column="hr_status" property="hrStatus" jdbcType="VARCHAR" />
+		<result column="job_code" property="jobCode" jdbcType="VARCHAR" />
+		<result column="join_date" property="joinDate" jdbcType="TIMESTAMP" />
+		<result column="major" property="major" jdbcType="VARCHAR" />
+		<result column="natioanl_descr" property="nationnlDesc"
+			jdbcType="VARCHAR" />
+		<result column="national_id" property="nationalId" jdbcType="VARCHAR" />
+		<result column="xdf_job_zhiji" property="jobZhiji" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<collection property="listSuper" ofType="com.human.basic.entity.EmpSuper">
+			<result property="empId" column="esId" />
+			<result property="superId" column="superId" />
+			<result property="superName" column="esName" />
+		</collection>
+		<collection property="listTeach" ofType="com.human.basic.entity.EmpTeach">
+			<result property="empId" column="etId" />
+			<result property="teachId" column="teachId" />
+			<result property="teachName" column="etname" />
+		</collection>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		u.`id`,
+		u.`name`,
+		u.`syn_time`,
+		u.`status`,
+		u.`birth_date`,
+		u.`busn_phone`,
+		u.`com_name`,
+		u.`company`,
+		u.`company_name`,
+		u.`create_name`,
+		u.`create_user`,
+		u.`dept_id`,
+		u.`dept_name`,
+		u.`email_addr`,
+		u.`empl_id`,
+		u.`empl_phone`,
+		u.`ethic`,
+		u.`graduage_sch`,
+		u.`highest_educ`,
+		u.`hr_status`,
+		u.`job_code`,
+		u.`join_date`,
+		u.`major`,
+		u.`natioanl_descr`,
+		u.`national_id`,
+		u.`sex`,
+		u.`xdf_job_zhiji`,
+		es.emp_id esId,
+		es.name esName,
+		et.emp_id etId,
+		et.`name` etname
+	</sql>
+
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		<include refid="Base_Column_List" />
+		FROM
+		users u
+		LEFT JOIN
+		(SELECT
+		es.`emp_id`,
+		hu.name
+		FROM
+		emp_super es
+		LEFT JOIN hr_user hu
+		ON es.`super_id` = hu.`empl_id`) es
+		ON es.`emp_id` = u.`empl_id`
+		LEFT JOIN
+		(SELECT
+		et.`emp_id`,
+		hu.name
+		FROM
+		emp_teach et
+		LEFT JOIN hr_user hu
+		ON et.`teach_id` = hu.`empl_id`) et
+		ON et.`emp_id` = u.`empl_id`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.companyId !=null and t.companyId !=''">
+				AND u.`company`=#{t.companyId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.deptId !=null and t.deptId !=''">
+				AND u.`dept_id`=#{t.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="deptIds !=null ">
+				AND u.`dept_id` in 
+				<foreach collection="deptIds" item="deptId" index="index"
+			open="(" separator="," close=")">
+			#{deptId,jdbcType=VARCHAR}
+		</foreach>
+		</if>
+		
+		<if test="t.hrStatus !=null and t.hrStatus !=''">
+				AND u.`hr_status`=#{t.hrStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="t.graduageSch!=null and t.graduageSch!=''">
+				AND u.`graduage_sch` LIKE CONCAT('%', #{t.graduageSch,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.empId!=null and t.empId!=''">
+				AND u.`empl_id` = #{t.empId,jdbcType=VARCHAR}
+		</if>
+		<if test="t.name!=null and t.name!=''">
+				AND  u.`name`  LIKE CONCAT('%', #{t.name,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="t.empPhone!=null and t.empPhone!=''">
+				AND  u.`empl_phone` =#{t.empPhone,jdbcType=VARCHAR}
+		</if>
+		<if test="t.emailAddr!=null and t.emailAddr!=''">
+				AND  u.`email_addr` =#{t.emailAddr,jdbcType=VARCHAR}
+		</if>
+		<if test="t.joinStart!=null and t.joinStart!=''">
+				AND  DATE_FORMAT(u.`join_date`,'%Y-%m-%d') &gt;=#{t.joinStart,jdbcType=VARCHAR}
+		</if>
+		<if test="t.joinEnd!=null and t.joinEnd!=''">
+				AND  DATE_FORMAT(u.`join_date`,'%Y-%m-%d') &lt;=#{t.joinEnd,jdbcType=VARCHAR}
+		</if>
+		<if test="t.birthStart!=null and t.birthStart!=''">
+				AND  DATE_FORMAT(u.`birth_date`,'%Y-%m-%d') &gt;=#{t.birthStart,jdbcType=VARCHAR}
+		</if>
+		<if test="t.birthEnd!=null and t.birthEnd!=''">
+				AND  DATE_FORMAT(u.`birth_date`,'%Y-%m-%d')  &lt;=#{t.birthEnd,jdbcType=VARCHAR}
+		</if>
+		<if test="t.id!=null">
+				AND u.`company` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.id,jdbcType=BIGINT}) AND u.`dept_id` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.id,jdbcType=BIGINT})
+		</if>
+			AND u.`emp_source`=1
+		</trim>
+		order By u.empl_id DESC
+	</select>
+	
+	<select id="querySupserList" resultType="com.human.basic.entity.EmpSuper"
+	parameterType="java.lang.String">
+	SELECT es.`super_id` superId,
+	hu.`name` superName,
+	hu.`email_addr` emailAddr,
+	hu.`company_name` comName,
+	hu.`dept_name`
+	deptName FROM
+	emp_super es
+	INNER JOIN hr_user hu ON
+	hu.`empl_id`=es.`super_id`
+	WHERE es.`emp_id`=#{empId,jdbcType=VARCHAR}
+</select>
+
+<insert id="saveUserSupser" parameterType="com.human.basic.entity.EmpSuper">
+		insert into emp_super (emp_id,super_id) values(#{empId,jdbcType=VARCHAR},#{superId,jdbcType=VARCHAR})
+</insert>
+
+<delete id="delSuper" parameterType="com.human.basic.entity.EmpSuper">
+		DELETE FROM emp_super WHERE emp_id=#{empId,jdbcType=VARCHAR} and super_id=#{superId,jdbcType=VARCHAR}
+</delete>
+
+	<select id="queryTeachList" resultType="com.human.basic.entity.EmpTeach"
+	parameterType="java.lang.String">
+SELECT 	et.`teach_id` teachId,
+	hu.`name` teachName,
+	hu.`email_addr` emailAddr,
+	hu.`company_name` comName,
+	hu.`dept_name`
+	deptName FROM
+	emp_teach et
+	INNER JOIN hr_user hu ON
+	hu.`empl_id`=et.`teach_id`
+	WHERE et.`emp_id`=#{empId,jdbcType=VARCHAR}
+</select>
+<insert id="saveUserTeach" parameterType="com.human.basic.entity.EmpTeach">
+		insert into emp_teach (emp_id,teach_id) values(#{empId,jdbcType=VARCHAR},#{teachId,jdbcType=VARCHAR})
+</insert>
+<delete id="delTeach" parameterType="com.human.basic.entity.EmpTeach">
+		DELETE FROM emp_teach WHERE emp_id=#{empId,jdbcType=VARCHAR} and teach_id=#{teachId,jdbcType=VARCHAR}
+</delete>
+
+<!-- 查询当前用户具有权限的员工列表 -->
+<select id="queryUserEmps" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		u.`id`,
+		u.`name`,
+		u.`syn_time`,
+		u.`status`,
+		u.`birth_date`,
+		u.`busn_phone`,
+		u.`com_name`,
+		u.`company`,
+		u.`company_name`,
+		u.`create_name`,
+		u.`create_user`,
+		u.`dept_id`,
+		u.`dept_name`,
+		u.`email_addr`,
+		u.`empl_id`,
+		u.`empl_phone`,
+		u.`ethic`,
+		u.`graduage_sch`,
+		u.`highest_educ`,
+		u.`hr_status`,
+		u.`job_code`,
+		u.`join_date`,
+		u.`major`,
+		u.`natioanl_descr`,
+		u.`national_id`,
+		u.`sex`,
+		u.`xdf_job_zhiji`
+		<if test="showEs!=null">,
+		es.emp_id esId,
+		es.superId,
+		es.name esName
+		</if>
+		<if test="showEt!=null">,
+		et.emp_id etId,
+		 et.teachId,
+		et.`name` etname</if>
+		FROM
+		users u
+		<if test="showEs!=null">
+		LEFT JOIN
+		(SELECT
+		es.`emp_id`,
+		hu.`empl_id` superId,
+		hu.name
+		FROM
+		emp_super es
+		LEFT JOIN hr_user hu
+		ON es.`super_id` = hu.`empl_id`) es
+		ON es.`emp_id` = u.`empl_id`
+		</if>
+		<if test="showEt!=null">
+		LEFT JOIN
+		(SELECT
+		et.`emp_id`,
+		hu.`empl_id` teachId,
+		hu.name
+		FROM
+		emp_teach et
+		LEFT JOIN hr_user hu
+		ON et.`teach_id` = hu.`empl_id`) et
+		ON et.`emp_id` = u.`empl_id`
+		</if>
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="id!=null">
+				AND u.`company` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{id,jdbcType=BIGINT}) AND u.`dept_id` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{id,jdbcType=BIGINT})
+		</if>
+			AND u.`emp_source`=1
+		</trim>
+	</select>
+
+    <!--根据员工姓名查找其邮箱  -->
+    <select id="queryUserByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+     SELECT name ,CONCAT(email_addr,'@xdf.cn') AS email_addr
+     FROM users
+     WHERE company =128 AND name=#{name,jdbcType=VARCHAR} LIMIT 1
+    </select>
+    
+</mapper>

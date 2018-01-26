@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:task="http://www.springframework.org/schema/task"  
+	xsi:schemaLocation="  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context.xsd  
+    http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans.xsd  
+    http://www.springframework.org/schema/tx  
+    http://www.springframework.org/schema/tx/spring-tx.xsd  
+    http://www.springframework.org/schema/jdbc  
+    http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd  
+    http://www.springframework.org/schema/aop  
+    http://www.springframework.org/schema/aop/spring-aop.xsd  
+    http://www.springframework.org/schema/util  
+    http://www.springframework.org/schema/util/spring-util.xsd
+    http://www.springframework.org/schema/task  
+    http://www.springframework.org/schema/task/spring-task.xsd ">
+
+	<!-- 自动扫描web包 ,将带有注解的类 纳入spring容器管理 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.human">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<!-- 自动扫描web包 ,将带有注解的类 纳入spring容器管理 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:properties/*.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+	</bean>
+
+	<!-- dataSource 配置 -->
+	<bean id="userDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.user.url}" />
+		<property name="username" value="${jdbc.user.username}" />
+		<property name="password" value="${jdbc.user.password}" />
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="${jdbc.initialSize}"></property>
+		<!-- 连接池最大数量 -->
+		<property name="maxActive" value="${jdbc.maxActive}"></property>
+		<!-- 连接池最大空闲 -->
+		<property name="maxIdle" value="${jdbc.maxIdle}"></property>
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${jdbc.minIdle}"></property>
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="${jdbc.maxWait}"></property>
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+		<property name="validationQuery" value="SELECT 'X' from dual" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+	</bean>
+	
+	 <!-- 动态配置数据源 -->  
+   <bean id ="dataSource" class= "com.human.pulgin.jdbc.DynamicDataSource" >  
+          <property name ="targetDataSources">  
+                <map key-type ="java.lang.String">  
+                      <entry value-ref ="userDataSource" key= "userDataSource"></entry >  
+                      <entry value-ref ="sqlServerSource" key= "sqlServerSource"></entry >  
+                </map >  
+          </property >  
+          <property name ="defaultTargetDataSource" ref= "userDataSource"></property >      <!-- 默认使用userDataSource的数据源 -->  
+   </bean > 
+	
+	
+	<bean id="sqlServerSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.sqlserver.driverClassName}" />
+		<property name="url" value="${jdbc.sqlserver.url}" />
+		<property name="username" value="${jdbc.sqlserver.username}" />
+		<property name="password" value="${jdbc.sqlserver.password}" />
+	</bean>
+	<!-- 异步线程池 --> 
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"> 
+	    <!-- 核心线程数  -->  
+	    <property name="corePoolSize" value="25" />  
+	    <!-- 最大线程数 -->  
+	    <property name="maxPoolSize" value="50" />  
+	    <!-- 线程池所使用的缓冲队列 -->  
+	    <property name="queueCapacity" value="500" />  
+	    <!-- 线程池维护线程所允许的空闲时间 -->  
+	    <property name="keepAliveSeconds" value="50" />  
+	    <!-- 线程池对拒绝任务(无线程可用)的处理策略 --> 
+	    <!-- 若不作该处理，当线程满了，队列满了之后，继续往下增加任务，则抛出异常，拒绝该任务 --> 
+	    <property name="rejectedExecutionHandler">  
+	      <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />  
+	    </property>
+	</bean>
+	  
+	<bean id="taskExecutorUtil" class="com.human.jobs.TaskExecutorUtil">    
+	    <property name="taskExecutor" ref="taskExecutor" /> 
+	</bean>
+		 
+    <task:executor id="asynExecutor" pool-size="20-1000" queue-capacity="20" keep-alive="30" rejection-policy="CALLER_RUNS"/>
+	<task:annotation-driven executor="asynExecutor"/>
+	 <!--注解定时任务-->  
+	<bean id="mapScheduler" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		destroy-method="destroy">
+		<property name="dataSource">
+			<ref bean="userDataSource" />
+		</property>
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="startupDelay" value="5" />
+		<property name="autoStartup" value="true" />
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+		<property name="configLocation" value="classpath:properties/quartz.properties" />
+	</bean> 
+	 
+	
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath:mapping/**/*SqlMap.xml"></property>
+		<property name="plugins">
+			<array>
+				<ref bean="pagePlugin" />
+			</array>
+		</property>
+	</bean>
+	<bean id="pagePlugin" class="com.human.pulgin.mybatis.plugin.PagePlugin">
+		<property name="properties">
+			<props>
+				<prop key="dialect">com.human.pulgin.jdbc.dialet.H2Dialect</prop>
+				<prop key="pageSqlId">.*query.*</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- spring与mybatis整合配置，扫描所有dao -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+		p:basePackage="com.human.*.dao" p:sqlSessionFactoryBeanName="sqlSessionFactory" />
+	<!-- 启用对事务注解的支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
+	<!-- 对dataSource 数据源进行事务管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="userDataSource" />
+		
+	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">  
+        <property name="dataSource" ref="userDataSource" />  
+        <property name="jobExecutorActivate" value="false"/>  
+        <property name="history" value="full"/>  
+        <property name="transactionManager" ref="transactionManager" />  
+        <!-- 配置事务管理器，统一事务 -->  
+          
+        <!-- 设置建表策略，如果没有表，自动创建表 -->  
+        <property name="databaseSchemaUpdate" value="true" />  
+        <property name="activityFontName" value="宋体"/>
+		<property name="labelFontName" value="宋体"/>
+    </bean>  
+		
+	<!-- 创建流程引擎对象 -->  
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">  
+        <property name="processEngineConfiguration" ref="processEngineConfiguration" />  
+    </bean>  
+    <!-- 由流程引擎对象，提供的方法，创建项目中使用的Activiti工作流的Service -->  
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />  
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />  
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />  
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />  
+    <bean id="formService" factory-bean="processEngine" factory-method="getFormService" />  
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
+    <!-- 会签处理 -->
+    <bean id="dispatchWorkflowService" class="com.human.bpm.service.impl.DispatchWorkflowServiceImpl" />  
+    <bean id="huiqianListener" class="com.human.bpm.listener.HumanHuiqianListener" />  
+    <bean id="instanceEndListener" class="com.human.bpm.listener.InstanceEndListener" /> 
+    
+</beans>

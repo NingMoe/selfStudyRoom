@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.resume.dao.ResumeTrainHistoryDao" >
+  <resultMap id="BaseResultMap" type="com.human.resume.entity.ResumeTrainHistory" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="resume_id" property="resumeId" jdbcType="BIGINT" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="train_company" property="trainCompany" jdbcType="VARCHAR" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
+    <result column="train_time" property="trainTime" jdbcType="INTEGER" />
+    <result column="train_name" property="trainName" jdbcType="VARCHAR" />
+    <result column="certificate" property="certificate" jdbcType="VARCHAR" />
+    <result column="certificate_time" property="certificateTime" jdbcType="TIMESTAMP" />
+    <result column="describes" property="describes" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, resume_id, start_time, end_time, train_company, place, train_time, train_name, 
+    certificate, certificate_time, describes, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from resume_train_history
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from resume_train_history
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.human.resume.entity.ResumeTrainHistory" >
+    insert into resume_train_history (resume_id, start_time, 
+      end_time, train_company, place, 
+      train_time, train_name, certificate, 
+      certificate_time, describes, is_valid
+      )
+    values (#{resumeId,jdbcType=BIGINT}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{trainCompany,jdbcType=VARCHAR}, #{place,jdbcType=VARCHAR}, 
+      #{trainTime,jdbcType=INTEGER}, #{trainName,jdbcType=VARCHAR}, #{certificate,jdbcType=VARCHAR}, 
+      #{certificateTime,jdbcType=TIMESTAMP}, #{describes,jdbcType=VARCHAR}, #{isValid,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.human.resume.entity.ResumeTrainHistory" >
+    insert into resume_train_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="resumeId != null" >
+        resume_id,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="trainCompany != null" >
+        train_company,
+      </if>
+      <if test="place != null" >
+        place,
+      </if>
+      <if test="trainTime != null" >
+        train_time,
+      </if>
+      <if test="trainName != null" >
+        train_name,
+      </if>
+      <if test="certificate != null" >
+        certificate,
+      </if>
+      <if test="certificateTime != null" >
+        certificate_time,
+      </if>
+      <if test="describes != null" >
+        describes,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resumeId != null" >
+        #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trainCompany != null" >
+        #{trainCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null" >
+        #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="trainTime != null" >
+        #{trainTime,jdbcType=INTEGER},
+      </if>
+      <if test="trainName != null" >
+        #{trainName,jdbcType=VARCHAR},
+      </if>
+      <if test="certificate != null" >
+        #{certificate,jdbcType=VARCHAR},
+      </if>
+      <if test="certificateTime != null" >
+        #{certificateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="describes != null" >
+        #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.resume.entity.ResumeTrainHistory" >
+    update resume_train_history
+    <set >
+      <if test="resumeId != null" >
+        resume_id = #{resumeId,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trainCompany != null" >
+        train_company = #{trainCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null" >
+        place = #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="trainTime != null" >
+        train_time = #{trainTime,jdbcType=INTEGER},
+      </if>
+      <if test="trainName != null" >
+        train_name = #{trainName,jdbcType=VARCHAR},
+      </if>
+      <if test="certificate != null" >
+        certificate = #{certificate,jdbcType=VARCHAR},
+      </if>
+      <if test="certificateTime != null" >
+        certificate_time = #{certificateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="describes != null" >
+        describes = #{describes,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.human.resume.entity.ResumeTrainHistory" >
+    update resume_train_history
+    set resume_id = #{resumeId,jdbcType=BIGINT},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      train_company = #{trainCompany,jdbcType=VARCHAR},
+      place = #{place,jdbcType=VARCHAR},
+      train_time = #{trainTime,jdbcType=INTEGER},
+      train_name = #{trainName,jdbcType=VARCHAR},
+      certificate = #{certificate,jdbcType=VARCHAR},
+      certificate_time = #{certificateTime,jdbcType=TIMESTAMP},
+      describes = #{describes,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <delete id="deleteByResumeId"  parameterType="java.lang.Long" >
+	    delete  
+	    from resume_train_history
+	    where resume_id = #{resumeId,jdbcType=BIGINT} 
+   </delete>
+</mapper>

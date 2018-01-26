@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.ielts.dao.IeltsTeacherCertificateDao" >
+  <resultMap id="BaseResultMap" type="com.human.ielts.entity.IeltsTeacherCertificate" >
+    <id column="teacher_id" property="teacher_id" jdbcType="INTEGER" />
+    <result column="is_teacher_certificate" property="is_teacher_certificate" jdbcType="INTEGER" />
+    <result column="is_celta" property="is_celta" jdbcType="INTEGER" />
+    <result column="create_time" property="create_time" jdbcType="TIMESTAMP" />
+    <result column="valid" property="valid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    teacher_id, is_teacher_certificate, is_celta, create_time, valid
+  </sql>
+  
+  <select id="selectcertificatecount" resultType="java.lang.Integer">
+  	select count(1) from ielts_teacher_certificate
+  	where is_teacher_certificate = 1
+  </select>
+  
+  <select id="selectceltazcount" resultType="java.lang.Integer">
+  	select count(1) from ielts_teacher_certificate
+  	where is_celta = 1
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ielts_teacher_certificate
+    where teacher_id = #{teacher_id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByEmailaddr" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select c.* 
+    from ielts_teacher_certificate c
+    right join ielts_teacher_info t
+    on c.teacher_id = t.id
+    where t.email_addr = #{emailAddr,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ielts_teacher_certificate
+    where teacher_id = #{teacher_id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.human.ielts.entity.IeltsTeacherCertificate" >
+    insert into ielts_teacher_certificate (teacher_id, is_teacher_certificate, 
+      is_celta, create_time, valid
+      )
+    values (#{teacher_id,jdbcType=INTEGER}, #{is_teacher_certificate,jdbcType=INTEGER}, 
+      #{is_celta,jdbcType=INTEGER}, #{create_time,jdbcType=TIMESTAMP}, #{valid,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.human.ielts.entity.IeltsTeacherCertificate" >
+    insert into ielts_teacher_certificate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="teacher_id != null" >
+        teacher_id,
+      </if>
+      <if test="is_teacher_certificate != null" >
+        is_teacher_certificate,
+      </if>
+      <if test="is_celta != null" >
+        is_celta,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+      <if test="valid != null" >
+        valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="teacher_id != null" >
+        #{teacher_id,jdbcType=INTEGER},
+      </if>
+      <if test="is_teacher_certificate != null" >
+        #{is_teacher_certificate,jdbcType=INTEGER},
+      </if>
+      <if test="is_celta != null" >
+        #{is_celta,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="valid != null" >
+        #{valid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByTeacherId" parameterType="com.human.ielts.entity.IeltsTeacherCertificate">
+  	update ielts_teacher_certificate
+    <set >
+      <if test="is_teacher_certificate != null" >
+        is_teacher_certificate = #{is_teacher_certificate,jdbcType=INTEGER},
+      </if>
+      <if test="is_celta != null" >
+        is_celta = #{is_celta,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="valid != null" >
+        valid = #{valid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where teacher_id = #{teacher_id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.human.ielts.entity.IeltsTeacherCertificate" >
+    update ielts_teacher_certificate
+    <set >
+      <if test="is_teacher_certificate != null" >
+        is_teacher_certificate = #{is_teacher_certificate,jdbcType=INTEGER},
+      </if>
+      <if test="is_celta != null" >
+        is_celta = #{is_celta,jdbcType=INTEGER},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="valid != null" >
+        valid = #{valid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where teacher_id = #{teacher_id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.human.ielts.entity.IeltsTeacherCertificate" >
+    update ielts_teacher_certificate
+    set is_teacher_certificate = #{is_teacher_certificate,jdbcType=INTEGER},
+    is_celta = #{is_celta,jdbcType=INTEGER},
+    create_time = #{create_time,jdbcType=TIMESTAMP},
+    valid = #{valid,jdbcType=INTEGER}
+    where teacher_id = #{teacher_id,jdbcType=INTEGER}
+  </update>
+</mapper>
