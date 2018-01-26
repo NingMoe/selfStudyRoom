@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.student.dao.StudentUserDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.student.entity.StudentUser" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="CHAR" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="gl_school" property="glSchool" jdbcType="VARCHAR" />
+    <result column="xdf_school" property="xdfSchool" jdbcType="VARCHAR" />
+    <result column="xdf_number" property="xdfNumber" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, phone, name, password, sex, grade, gl_school, xdf_school, xdf_number, 
+    create_time, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from student_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 通过手机号获取学生信息 -->
+  <select id="selectByPhone" resultType="com.ls.spt.student.entity.StudentUser" parameterType="java.util.HashMap">
+  	select *
+    from student_user
+    where phone = #{phone,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 通过unionid获取学生信息 -->
+  <select id="selectByUnionid" resultType="com.ls.spt.student.entity.StudentUser" parameterType="java.lang.String">
+  	select s.*
+    from student_unionid u
+    left join student_user s
+    on u.student_id = s.ID
+    where u.unionid = #{unionid,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from student_user
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.ls.spt.student.entity.StudentUser" >
+    insert into student_user (ID, phone, 
+      name, password, sex, grade, 
+      gl_school, xdf_school, xdf_number, 
+      create_time, status)
+    values (#{id,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{grade,jdbcType=VARCHAR}, 
+      #{glSchool,jdbcType=VARCHAR}, #{xdfSchool,jdbcType=VARCHAR}, #{xdfNumber,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR})
+  </insert>
+  
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.ls.spt.student.entity.StudentUser" >
+    insert into student_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="glSchool != null" >
+        gl_school,
+      </if>
+      <if test="xdfSchool != null" >
+        xdf_school,
+      </if>
+      <if test="xdfNumber != null" >
+        xdf_number,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="glSchool != null" >
+        #{glSchool,jdbcType=VARCHAR},
+      </if>
+      <if test="xdfSchool != null" >
+        #{xdfSchool,jdbcType=VARCHAR},
+      </if>
+      <if test="xdfNumber != null" >
+        #{xdfNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.student.entity.StudentUser" >
+    update student_user
+    <set >
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="glSchool != null" >
+        gl_school = #{glSchool,jdbcType=VARCHAR},
+      </if>
+      <if test="xdfSchool != null" >
+        xdf_school = #{xdfSchool,jdbcType=VARCHAR},
+      </if>
+      <if test="xdfNumber != null" >
+        xdf_number = #{xdfNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.student.entity.StudentUser" >
+    update student_user
+    set 
+      phone = #{phone,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      grade = #{grade,jdbcType=VARCHAR},
+      gl_school = #{glSchool,jdbcType=VARCHAR},
+      xdf_school = #{xdfSchool,jdbcType=VARCHAR},
+      xdf_number = #{xdfNumber,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=CHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 查询教师用户 -->
+  <select id="queryUser" resultMap="BaseResultMap" parameterType="com.ls.spt.student.entity.StudentUser">
+		select
+		<include refid="Base_Column_List" />
+		from student_user  
+		where phone= #{phone,jdbcType=VARCHAR}
+		<if test="password != null and password != ''" >
+           AND password= #{password,jdbcType=VARCHAR}
+        </if>		
+		AND status = #{status,jdbcType=VARCHAR}	
+  </select>
+</mapper>

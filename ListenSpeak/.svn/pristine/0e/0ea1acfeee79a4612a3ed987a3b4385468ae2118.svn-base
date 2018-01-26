@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.lstClass.dao.LstClassDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.lstClass.entity.LstClass" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="invitation_code" property="invitationCode" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="valid_time" property="validTime" jdbcType="TIMESTAMP" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="subject" property="subject" jdbcType="VARCHAR" />
+    <result column="teacher" property="teacher" jdbcType="BIGINT" />
+    <result column="teacher_name" property="teacher_name" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="userName" property="userName" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, class_code, class_name, invitation_code, start_time, valid_time, grade, subject, 
+    teacher, create_time, create_user, update_time, update_user, status
+  </sql>
+  
+   <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT 
+    l.id, l.class_code , l.class_name, l.invitation_code, l.start_time, l.valid_time, l.grade, l.subject, 
+    l.teacher, l.create_time, l.create_user, l.update_time, l.update_user, l.status,t.name as userName
+    from lst_class l
+    LEFT JOIN teacher_user t ON  l.`create_user`=t.`id`
+    where 1=1 and l.teacher = #{t.teacher,jdbcType=BIGINT}
+    <if test="t.status != null and t.status !=''">
+	   AND l.status = #{t.status,jdbcType=VARCHAR} 
+	</if>
+	<if test="t.subject != null and t.subject !=''">
+	   AND l.subject like CONCAT(CONCAT('%', #{t.subject,jdbcType=VARCHAR}), '%') 
+	</if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_class
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 通过学生id和审核状态获取学生班级 -->
+  <select id="selectByStudentUser" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	select c.id, c.class_code, c.class_name, c.valid_time, d.NAME grade, d1.NAME subject, t.name teacher_name
+  	from student_class s
+  	left join lst_class c
+  	on s.class_code = c.class_code
+  	left join dic_data d
+  	on d.STATUS and d.DIC_CODE = 'grade' and c.grade = d.DATA_VALUE
+  	left join dic_data d1
+  	on d1.STATUS and d1.DIC_CODE = 'subject' and c.subject = d1.DATA_VALUE
+  	left join teacher_user t
+  	on c.teacher = t.id
+  	where s.student_id = #{student_id,jdbcType=BIGINT}
+  	<if test="valid_time_left != null and valid_time_left != ''">
+  		and c.valid_time &lt;= NOW()
+  	</if>
+  	<if test="valid_time_right != null and valid_time_right != ''">
+  		and c.valid_time &gt;= NOW()
+  	</if>
+  	<if test="status != null and status != ''">
+  		and s.status = #{status,jdbcType=VARCHAR}
+  	</if>
+  	and s.is_valid = 1
+  	and c.status = 1
+  </select>
+  
+  <!-- 通过学生id和审核状态获取学生班级 -->
+  <select id="selectClassCountByStudentUser" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	select count(1)
+  	from student_class s
+  	left join lst_class c
+  	on s.class_code = c.class_code
+  	where s.student_id = #{student_id,jdbcType=BIGINT}
+  	and s.is_valid = 1
+  	<if test="status != null and status != ''">
+  		and s.status = #{status,jdbcType=VARCHAR}
+  	</if>
+  	and c.status = 1
+  	and c.valid_time &gt;= NOW();
+  </select>
+  
+  <!-- 通过申请码和教师手机号获取班级信息 -->
+  <select id="selectByInvitationcodeAndPhone" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	SELECT c.*, t.id, t.phone
+	FROM lst_class c
+	JOIN teacher_user t ON c.teacher = t.id
+	WHERE c.invitation_code = #{invitation_code, jdbcType=VARCHAR} AND t.phone = #{phone, jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from lst_class
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.lstClass.entity.LstClass" >
+    insert into lst_class (id, class_code, class_name, 
+      invitation_code, start_time, valid_time, 
+      grade, subject, teacher, 
+      create_time, create_user, update_time, 
+      update_user, status)
+    values (#{id,jdbcType=BIGINT}, #{classCode,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, 
+      #{invitationCode,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{validTime,jdbcType=TIMESTAMP}, 
+      #{grade,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR}, #{teacher,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=BIGINT}, #{status,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.lstClass.entity.LstClass" >
+    insert into lst_class
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="invitationCode != null" >
+        invitation_code,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="validTime != null" >
+        valid_time,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="subject != null" >
+        subject,
+      </if>
+      <if test="teacher != null" >
+        teacher,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="invitationCode != null" >
+        #{invitationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validTime != null" >
+        #{validTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher != null" >
+        #{teacher,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.lstClass.entity.LstClass" >
+    update lst_class
+    <set >
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="invitationCode != null" >
+        invitation_code = #{invitationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validTime != null" >
+        valid_time = #{validTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        subject = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher != null" >
+        teacher = #{teacher,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.lstClass.entity.LstClass" >
+    update lst_class
+    set class_code = #{classCode,jdbcType=VARCHAR},
+      class_name = #{className,jdbcType=VARCHAR},
+      invitation_code = #{invitationCode,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      valid_time = #{validTime,jdbcType=TIMESTAMP},
+      grade = #{grade,jdbcType=VARCHAR},
+      subject = #{subject,jdbcType=VARCHAR},
+      teacher = #{teacher,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=BIGINT},
+      status = #{status,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+    <select id="selectByPrimaryKeyMap" resultType="java.util.HashMap" parameterType="java.lang.Long" >
+    select 
+    id, class_code, class_name, invitation_code, LEFT(start_time,10) as start_time, LEFT(valid_time,10) as valid_time, grade, subject, 
+    teacher, LEFT(create_time,10) as create_time, create_user, LEFT(update_time,10) as update_time, update_user, status
+    from lst_class
+     where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <update id="deleteByIds" parameterType="java.util.HashMap" >
+    update lst_class set status= 2
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </update>
+  <update id="goUse" parameterType="java.lang.Integer" >
+    update lst_class set status= 1
+    where id =#{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectCount" resultType="java.lang.String" parameterType="java.lang.String" >
+  	select count(*) from student_class where class_code=#{classCode}  and status='2'
+  </select>
+  <select id="selectPrimaryKeyInfo" resultMap="BaseResultMap"  parameterType="java.lang.Long">
+  	select * from lst_class where teacher=#{userId,jdbcType=BIGINT}
+  </select>
+</mapper>

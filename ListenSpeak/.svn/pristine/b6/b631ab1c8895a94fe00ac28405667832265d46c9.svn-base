@@ -1,0 +1,56 @@
+layui.use(['form'], function(){
+	var form = layui.form;
+	//监听提交
+	form.on('submit(edit)', function(){
+		var id=$("#id").val();
+		var name=$("#name").val();
+		var subject=$("#subject").val();
+		var isNeedGuide=$("#isNeedGuide").val();
+		var isNeedParse =$("#isNeedParse").val();
+		var isNeedEssay=$("#isNeedEssay").val();
+		var questionNum=$("#questionNum").val();
+		var remark=$("#remark").val();		
+	  
+		var data = {
+			id:id,
+			name : name,
+			subject : subject,
+			isNeedGuide : isNeedGuide,
+			isNeedParse : isNeedParse,
+			isNeedEssay : isNeedEssay,
+			questionNum : questionNum,
+			remark : remark
+		}; 
+		
+	  var index = layer.load(3, {shade: [0.3]});
+	  $.ajax({
+			url : jsBasePath+"/questionType/edit.html",
+			data : data,
+			async:false,
+			dataType : "json",
+			type : "post",
+			success:function(res){
+				layer.close(index);
+				if(!res.flag){
+					layer.alert(res.message,{icon:2});
+				}else{
+					layer.alert(res.message,{icon:1},function(){						
+						parent.location.reload();	
+						closeFrame();
+					});
+				}
+			}
+		});
+	  return false;
+  });
+  
+  form.on('select(needEssay)', function(data){
+		var isNeedEssay = data.value;
+		if(isNeedEssay=="1"){
+			$("#questionNum").removeAttr("readonly");
+		}else{
+			$("#questionNum").val("1").attr("readonly",true);
+		}
+	});
+});	
+

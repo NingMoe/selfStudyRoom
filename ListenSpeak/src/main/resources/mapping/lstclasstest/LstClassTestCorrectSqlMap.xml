@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.lstClassTest.dao.LstClassTestCorrectDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.lstClassTest.entity.LstClassTestCorrect" >
+  </resultMap>
+  
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+  	  	SELECT * FROM ( SELECT COUNT(1) AS allStudent ,
+  	 	`lst`.`test_id`    AS `testId`,
+  		`lct`.`create_time` AS `	createTime`,
+  		`lct`.`NAME`         AS ` testName`,
+  		`lst`.`end_time`    AS `endTime`,
+  		`lst`.`class_code`  AS `classCode`,
+  		`lst`.`class_name`  AS `className` ,
+  		SUM((CASE WHEN (`lst`.`status` = '3') THEN 1 ELSE 0 END)) AS `pgNum`,
+  		SUM((CASE WHEN (`lst`.`status` = '1') THEN 1 ELSE 0 END)) AS `notjNum`,
+  		(SUM((CASE WHEN (`lst`.`status` = '3') THEN `lst`.`overall_teacher` ELSE 0 END)) / SUM((CASE WHEN (`lst`.`status` = '3') THEN 1 ELSE 0 END))) AS `overallTeacher`,
+  		(SUM((CASE WHEN (`lst`.`status` = '3') THEN `lst`.`accuracy_teacher` ELSE 0 END)) / SUM((CASE WHEN (`lst`.`status` = '3') THEN 1 ELSE 0 END))) AS `accuracyTeacher`,
+  		(SUM((CASE WHEN (`lst`.`status` = '3') THEN `lst`.`fluency_teacher` ELSE 0 END)) / SUM((CASE WHEN (`lst`.`status` = '3') THEN 1 ELSE 0 END))) AS `fluencyTeacher`,
+  		(SUM((CASE WHEN (`lst`.`status` = '3') THEN `lst`.`integrity_teacher` ELSE 0 END)) / SUM((CASE WHEN (`lst`.`status` = '3') THEN 1 ELSE 0 END))) AS `integrityTeacher`
+  		FROM (`lst_student_test` `lst`
+   		JOIN `lst_class_test` `lct`
+     	ON ((`lct`.`ID` = `lst`.`test_id`)))
+     	WHERE 
+     	LEFT( lst.`submission_time`,10) <![CDATA[< ]]> LEFT(SYSDATE(),10) 
+     	GROUP BY `lst`.`class_code`,`lst`.`test_id`,`lst`.`class_name`,`lct`.`create_time`,`lst`.`end_time`,`lct`.`NAME`) v
+     	WHERE EXISTS(SELECT 1 FROM lst_class WHERE teacher=#{teacherId,jdbcType=INTEGER} and class_code =v.classCode)    
+<!--   	SELECT COUNT(1) AS COUNT,t.createTime AS createTime,lc.`class_name` as className,t.classCode,t.testId,t.testName FROM ( SELECT lst.`creaate_time` AS createTime, lst.`STATUS` AS STATUS ,lct.`name` AS testName , lst.class_code AS classCode ,lct.id AS testId FROM lst_student_test lst -->
+<!--   	 JOIN lst_class_test lct ON  lct.`id`=lst.test_id -->
+<!--   	 WHERE LEFT( lst.`submission_time`,10) <![CDATA[ < ]]> LEFT(SYSDATE(),10)  GROUP BY lst.`creaate_time`, lst.`STATUS`,lct.`name` , lst.class_code ,lct.id) -->
+<!--   	 t  -->
+<!-- 	JOIN lst_class lc ON lc.class_code=t.classCode  	  -->
+<!--   	 GROUP BY t.classCode,t.testId,lc.`class_name`,t.testName,t.createTime HAVING COUNT=1 -->
+  	 
+  </select>
+  <select id="getClassCode" resultType="java.lang.String" parameterType="java.util.HashMap">
+  		 SELECT * FROM lst_class_test_cl WHERE test_id=6
+  </select>
+  <select id="getScore" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+  		SELECT TRUNCATE(AVG(a.accuracyTeacher),1) AS accuracyTeacher, TRUNCATE(AVG(a.fluencyTeacher),1) AS fluencyTeacher,TRUNCATE(AVG(a.integrityTeacher),1)  AS integrityTeacher,
+  		TRUNCATE(AVG(a.overallTeacher),1) AS overallTeacher FROM 
+  		(SELECT  t.test_id,t.student_id, SUM(t.accuracy_teacher) AS accuracyTeacher  ,  SUM(t.fluency_teacher)  AS fluencyTeacher , 
+  		 SUM(t.integrity_teacher) AS integrityTeacher, TRUNCATE(SUM(t.overall_teacher),1) AS overallTeacher FROM (SELECT * FROM lst_test_student_answer 
+  		WHERE STUDENT_ID IN (SELECT student_id FROM student_class) AND test_id=#{testId,jdbcType=INTEGER}) AS t
+  		GROUP BY t.test_id,t.student_id) AS a GROUP BY a.test_id
+  </select>
+  <select id="getTatalNum" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	 SELECT ifnull(COUNT(1),0) AS totleN FROM lst_student_test WHERE student_id IN (SELECT id FROM student_class WHERE class_code=#{classCode,jdbcType=VARCHAR})
+  	 AND test_num=test_end_num	AND test_id=#{testId,jdbcType=INTEGER}
+  </select>
+  <select id="getTiNum" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	 SELECT ifnull(COUNT(1),0) AS totleN FROM lst_student_test WHERE student_id IN (SELECT id FROM student_class WHERE class_code=#{classCode,jdbcType=VARCHAR})
+  	 AND test_id=#{testId,jdbcType=INTEGER}
+  </select>
+  <select id="queryCorrect" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+  		SELECT * FROM ( SELECT COUNT(1) AS allStudent ,
+  	 	`sz`.`test_id`    AS `testId`,
+  		`z`.`create_time` AS `	createTime`,
+  		`z`.`NAME`         AS ` testName`,
+  		`sz`.`end_time`    AS `endTime`,
+  		`sz`.`class_code`  AS `classCode`,
+  		`sz`.`class_name`  AS `className` ,
+  		SUM((CASE WHEN (`sz`.`status` = '3') THEN 1 ELSE 0 END)) AS `pgNum`,
+  		SUM((CASE WHEN (`sz`.`status` = '1') THEN 1 ELSE 0 END)) AS `notjNum`,
+  		(SUM((CASE WHEN (`sz`.`status` = '3') THEN `sz`.`overall_teacher` ELSE 0 END)) / SUM((CASE WHEN (`sz`.`status` = '3') THEN 1 ELSE 0 END))) AS `overallDfl`,
+  		(SUM((CASE WHEN (`sz`.`status` = '3') THEN `sz`.`accuracy_teacher` ELSE 0 END)) / SUM((CASE WHEN (`sz`.`status` = '3') THEN 1 ELSE 0 END))) AS `accuracyDfl`,
+  		(SUM((CASE WHEN (`sz`.`status` = '3') THEN `sz`.`fluency_teacher` ELSE 0 END)) / SUM((CASE WHEN (`sz`.`status` = '3') THEN 1 ELSE 0 END))) AS `fluencyDfl`,
+  		(SUM((CASE WHEN (`sz`.`status` = '3') THEN `sz`.`integrity_teacher` ELSE 0 END)) / SUM((CASE WHEN (`sz`.`status` = '3') THEN 1 ELSE 0 END))) AS `integrityDfl`
+  		FROM (`lst_student_test` `sz`
+   		JOIN `lst_class_test` `z`
+     	ON ((`z`.`ID` = `sz`.`test_id`)))
+     	WHERE
+     	LEFT( sz.`submission_time`,10)  <![CDATA[< ]]> LEFT(SYSDATE(),10)
+     	 GROUP BY `sz`.`class_code`,`sz`.`test_id`,`sz`.`class_name`,`z`.`create_time`,`sz`.`end_time`,`z`.`NAME`) v
+     	WHERE EXISTS(SELECT 1 FROM lst_class WHERE teacher=#{teacherId,jdbcType=INTEGER} and class_code =v.classCode)
+  </select>
+</mapper>

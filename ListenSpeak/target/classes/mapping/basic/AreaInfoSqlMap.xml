@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ls.spt.basic.dao.AreaInfoDao">
+  <resultMap id="BaseResultMap" type="com.ls.spt.basic.entity.AreaInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="area_code" property="areaCode" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="area_level" property="areaLevel" jdbcType="INTEGER" />
+    <result column="parent_area_code" property="parentAreaCode" jdbcType="INTEGER" />
+    <result column="relation" property="relation" jdbcType="INTEGER"/>
+    <result column="is_valid" property="isValid" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="province_Code" property="provinceCodeByArea" jdbcType="VARCHAR" />
+    <result column="city_Code" property="cityCodeByArea" jdbcType="VARCHAR" />
+  </resultMap>
+   
+   <!-- 以下与实体类的字段一致 -->
+   <sql id="selectId">
+       id,area_code, area_name, area_level,
+       parent_area_code, is_valid, create_time, create_user
+   </sql>
+   
+   <!-- 分页获取地区 -->
+   <select id="getAreaPage"  resultMap="BaseResultMap" parameterType="java.util.HashMap">
+   	  SELECT ai.id, ai.area_code, ai.area_name, ai.parent_area_code,  ai.create_time, h.name AS create_user
+   	  <if test="t.areaLevel != null and t.areaLevel != 3">
+	 	, COUNT(ai2.id) relation
+	 </if>
+		FROM area_info ai
+	<if test="t.areaLevel != null and t.areaLevel != 3">
+	 	LEFT JOIN area_info ai2 ON ai2.parent_area_code = ai.id AND ai2.area_level= ai.area_level+1
+	 </if>
+	LEFT JOIN student_user h ON ai.create_user=h.id 
+    WHERE ai.area_level = #{t.areaLevel}
+    <if test="t.parentAreaCode != null and t.parentAreaCode !=''">
+	  AND ai.parent_area_code = #{t.parentAreaCode}
+	</if>
+   	AND ai.is_valid = 0
+    GROUP BY  ai.id, ai.area_code, ai.area_name, ai.parent_area_code, ai.create_time, ai.create_user,h.name 
+    ORDER BY  ai.area_name 
+   </select>
+   
+   <!-- 非分页获取地区信息 -->
+   <select id="getAreaNoPage" resultMap="BaseResultMap">
+   	  select * from area_info where
+   	  area_level = #{areaLevel}
+   	  <if test="parentAreaCode != null">
+	  	AND parent_area_code = #{parentAreaCode}
+	  </if>
+	  and is_valid = 0
+   </select>
+   
+   <!-- 非分页获取地区信息 -->
+   <select id="getAreaCodeByParentCode" resultType="java.lang.String" parameterType="java.lang.String">
+   	  select area_code from area_info where
+   	  parent_area_code = #{parentCode}
+	  and is_valid = 0
+   </select>
+   
+   
+    <!-- 根据名称获取省市区 -->
+   <select id="getAreaByAreaName" resultMap="BaseResultMap" parameterType="java.lang.String">
+   	  select * from area_info  where area_name= #{areaName,jdbcType=VARCHAR}  	  
+   </select>
+   
+  <!-- 根据主键获取省市区 -->
+   <select id="getAreaByPrimaryKey" resultMap="BaseResultMap" parameterType="com.ls.spt.basic.entity.AreaInfo">
+   	  select * from area_info where 1=1 
+   	  <if test="id != null">
+	  	AND id =  #{id,jdbcType=INTEGER}
+	  </if>
+   </select>
+   
+   <!-- 获取全部地区 -->
+   <select id="getAllArea" resultMap="BaseResultMap">
+   	  select * from area_info 
+   </select>
+   <!-- 根据父ID获取地区信息 -->
+   <select id="getParentArea" resultMap="BaseResultMap" parameterType="com.ls.spt.basic.entity.AreaInfo">
+   	 SELECT * FROM area_info 
+ 	   WHERE parent_area_code = #{id,jdbcType=INTEGER}
+   </select>      
+   
+      <!-- 获取同级别地区 -->
+   <select id="getSiblingArea" resultMap="BaseResultMap" parameterType="com.ls.spt.basic.entity.AreaInfo">
+   	 SELECT * FROM area_info WHERE parent_area_code = (SELECT parent_area_code FROM area_info WHERE id=#{id,jdbcType=INTEGER} AND area_level=#{areaLevel,jdbcType=INTEGER}) AND area_level=#{areaLevel,jdbcType=INTEGER}
+   </select>      
+   
+   <!-- 插入地区信息 -->
+   <insert id="insertPro"  parameterType="com.ls.spt.basic.entity.AreaInfo">
+   	  insert into area_info
+	<trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="areaCode != null" >
+        area_Code,
+      </if>
+      <if test="areaName != null" >
+        area_Name,
+      </if>
+      <if test="areaLevel != null" >
+        area_Level,
+      </if>
+      <if test="parentAreaCode != null" >
+        parent_area_code,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null" >
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaLevel != null" >
+        #{areaLevel,jdbcType=INTEGER},
+      </if>
+      <if test="parentAreaCode != null" >
+        #{parentAreaCode,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+   </insert>
+   
+  
+   <!-- 修改地区信息 -->
+   <update id="updateArea" parameterType="com.ls.spt.basic.entity.AreaInfo">
+   	    update area_info
+    <set >
+      <if test="areaName != null" >
+        area_name = #{areaName},
+      </if>
+      <if test="areaLevel != null" >
+        area_level = #{areaLevel},
+      </if>
+      <if test="parentAreaCode != null" >
+        parent_area_code = #{parentAreaCode},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser},
+      </if>
+    </set>
+    where id = #{id}
+   </update>
+   
+   <!-- 删除行政区信息 -->
+   <delete id="deleteArea">
+   		delete from area_info where id = #{id}
+   </delete>
+   
+    <!-- 删除城市信息 -->
+   <delete id="deleteCity">
+   		delete from area_info where id = #{id}  or parent_area_code=#{id}
+   </delete>
+     
+</mapper>

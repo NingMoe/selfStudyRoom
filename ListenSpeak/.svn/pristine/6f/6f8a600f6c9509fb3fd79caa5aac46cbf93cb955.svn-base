@@ -1,0 +1,227 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- load css -->
+<%@include file="/WEB-INF/view/common/taglib.jsp"%>
+<link rel="stylesheet" href="<%=basePath %>/static/zuoye/question.css">
+<style>
+.jxzzy{
+	height:70px;
+	text-align: center;
+	color: #222;
+  	font-size:15px;
+  	border: 1px solid #eee;
+  	padding: 20px 0px 30px 0;
+}	
+.jxzzy .xslb{
+	vertical-align: middle;
+}
+
+.jxzzy .bj{
+	height: 70px;
+	line-height: 70px;
+}
+.bt{
+    height:40px;
+    line-height:14px;
+	padding-left:3%;
+}
+.bt span{
+color: #319b5e;
+margin-right: 20px;
+font-size:16px;
+}
+</style>
+</head>
+<body>
+<div class="layui-form">
+	<div class="layui-collapse" lay-accordion="" style="width: 90%;margin: 10px auto;">
+		<div class="layui-colla-item">
+			<h2 class="layui-colla-title">批改作业</h2>
+			<div class="layui-colla-content layui-show">
+				<c:forEach items="${noCompleteList }" var="zuoye">
+					<div style="background:#f9f9f9;box-shadow:1px 1px  1px 1px #ccc;margin-bottom:10px">
+						<div class="layui-row">
+							<div class="layui-col-md12 bt">
+								<span>作业名称：${zuoye.zuoyeName }
+								布置时间：<fmt:formatDate value="${zuoye.releaseTime }" pattern="yyyy年MM月dd日"/>
+								截止时间：<fmt:formatDate value="${zuoye.endTime }" pattern="yyyy年MM月dd日"/></span>
+							</div>
+						</div>
+						
+						<div class="layui-row jxzzy">
+							<div class="layui-col-xs3">
+								<p class="bj">
+									${zuoye.className }
+								</p>
+							</div>
+							<div class="layui-col-xs5">
+								<c:if test="${empty zuoye.overallDfl }">
+									<p class="bj">
+										暂未批改
+									</p>
+								</c:if>
+								<c:if test="${!empty zuoye.overallDfl }"> 
+									<p>总分得分率：${zuoye.overallDfl }%</p>
+									<p>准确：${zuoye.accuracyDfl }%</p>
+									<p>完整：${zuoye.integrityDfl }%</p>
+									<p>流利：${zuoye.fluencyDfl }%</p>
+								</c:if>
+							</div>
+							<div class="layui-col-xs4 xslb">
+								<p class="bj">
+									<input type="hidden" name="zuoyeId" value="${zuoye.zuoyeId}">
+									<input type="hidden" name="classCode" value="${zuoye.classCode}">
+									<input type="hidden" name="zuoyeName" value="${zuoye.zuoyeName}">
+									<input type="hidden" name="className" value="${zuoye.className}">
+									<a class="layui-btn viewxs">学生列表</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</c:forEach>
+			</div>
+		</div>
+	</div>
+	
+	<div class="layui-collapse" lay-accordion="" style="width: 90%;margin: 10px auto;">
+		<div class="layui-colla-item">
+			<h2 class="layui-colla-title">历史作业</h2>
+			<div class="layui-colla-content layui-show">
+			  	<div style="width: 90%;margin: 0px auto;">
+			  		<table class="layui-table" id="completeZuoyeTable" lay-filter="completeZuoyeTable"></table>
+			  	</div>
+		  	</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/html" id="tjStatusTpl">
+ {{(d.alltjStudentNum/d.totalStudentNum)*100}}%
+</script>
+
+<script type="text/html" id="diffTpl">
+ {{ d.difficulty == 'A' ? '简单' : (d.difficulty == 'B' ? '中等' : '较难') }}
+</script>
+
+<script type="text/html" id="zuoyebar">
+ <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">进入作业</a> 
+</script>
+<script type="text/javascript">
+layui.use(['table', 'laypage','element' ],function(){
+	var table = layui.table, laypage = layui.laypage, element = layui.element, laypage = layui.laypage;
+	var completeZuoyeTable = table.render({
+		elem : '#completeZuoyeTable',
+		skin : 'line',
+		url : jsBasePath
+				+ '/zuoyeScore/getCompleteZuoye.html',
+		page: {
+			first: false,
+			last: false,
+			curr: location.hash.replace('#!fenye=', ''),
+			hash: 'fenye'
+		},
+		cols : [ [ {
+			field : 'zuoyeName',
+			width : "12%",
+			title : '考试名称',
+			align : "center"
+		}, {
+			field : '',
+			width : "12%",
+			title : '提交状态',
+			align : "center",
+			templet : "#tjStatusTpl"
+		}, {
+			field : 'releaseTime',
+			width : "12%",
+			title : '布置时间',
+			align : "center"
+		}, {
+			field : 'overallDfl',
+			title : '总分得分率',
+			width : '12%',
+			align : "center",
+		}, {
+			field : 'accuracyDfl',
+			width : "12%",
+			title : '准确度',
+			align : "center"
+		}, {
+			field : 'integrityDfl',
+			title : '完整度',
+			width : '12%',
+			align : "center",
+		}, {
+			field : 'fluencyDfl',
+			width : "12%",
+			title : '流利度',
+			align : "center"
+		}, {
+			width : "16%",
+			title : '操作',
+			align : 'center',
+			toolbar : '#zuoyebar'
+		} ] ]
+	});
+	
+	table.on('tool(completeZuoyeTable)', function(obj){
+		var data = obj.data;
+		if(obj.event === 'detail'){
+			var zuoyeId = data.zuoyeId;
+			var classCode = data.classCode;
+			var zuoyeName = data.zuoyeName;
+			var className = data.className;
+			var url = jsBasePath + "/zuoyeScore/toStudentList.html?zuoye_id="+zuoyeId+"&class_code="+classCode+"&zuoye_name="+zuoyeName+"&class_name="+className;
+			layer.open({
+				type : 2,
+				shade : [ 0.5, '#000' ],
+				title : "学生列表", 
+				offset : ['3%'],
+				area : ['90%','95%'],
+				content : url, //捕获的元素
+				cancel : function(index) {
+					layer.close(index);
+				},
+				end : function() {
+					completeZuoyeTable.reload();
+				}
+			});
+			return false;
+			
+		}
+	});
+	
+	$(".viewxs").bind("click",function(){
+		var zuoyeId = $(this).parent().find("input[name='zuoyeId']").val();
+		var classCode = $(this).parent().find("input[name='classCode']").val();
+		var zuoyeName = $(this).parent().find("input[name='zuoyeName']").val();
+		var className = $(this).parent().find("input[name='className']").val();
+		var url = jsBasePath + "/zuoyeScore/toStudentList.html?zuoye_id="+zuoyeId+"&class_code="+classCode+"&zuoye_name="+zuoyeName+"&class_name="+className;
+		layer.open({
+			type : 2,
+			shade : [ 0.5, '#000' ],
+			title : "学生列表", 
+			offset : ['3%'],
+			area : ['90%','95%'],
+			content : url, //捕获的元素
+			cancel : function(index) {
+				layer.close(index);
+			},
+			end : function() {
+				completeZuoyeTable.reload();
+			}
+		});
+		return false;
+	});
+});
+
+
+</script>
+</html>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.question.dao.LstQuestionTypeDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.question.entity.LstQuestionType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="l_type" property="lType" jdbcType="VARCHAR" />
+    <result column="subject" property="subject" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="is_need_guide" property="isNeedGuide" jdbcType="CHAR" />
+    <result column="is_need_parse" property="isNeedParse" jdbcType="CHAR" />
+    <result column="is_need_essay" property="isNeedEssay" jdbcType="CHAR" />
+    <result column="question_num" property="questionNum" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="mr_content_time" property="mrContentTime" jdbcType="INTEGER" />
+    <result column="mr_topic_time" property="mrTopicTime" jdbcType="INTEGER" />
+    <result column="mr_answer_time" property="mrAnswerTime" jdbcType="INTEGER" />
+    <result column="mr_zdmessage" property="mrZdmessage" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name,l_type, subject, remark, is_need_guide, is_need_parse, is_need_essay, question_num, 
+    status,mr_content_time,mr_topic_time,mr_answer_time,mr_zdmessage
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_question_type
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from lst_question_type
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_question_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT <include refid="Base_Column_List" /> 
+    from lst_question_type 
+  </select>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.ls.spt.question.entity.LstQuestionType" >
+    insert into lst_question_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="lType != null" >
+        l_type,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="subject != null" >
+        subject,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="isNeedGuide != null" >
+        is_need_guide,
+      </if>
+      <if test="isNeedParse != null" >
+        is_need_parse,
+      </if>
+      <if test="isNeedEssay != null" >
+        is_need_essay,
+      </if>
+      <if test="questionNum != null" >
+        question_num,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="mrContentTime != null &amp; mrContentTime!=0" >
+        mr_content_time,
+      </if>
+      <if test="mrTopicTime != null &amp; mrTopicTime!=0" >
+        mr_topic_time,
+      </if>
+      <if test="mrAnswerTime != null &amp; mrAnswerTime!=0" >
+        mr_answer_time,
+      </if>
+      <if test="mrZdmessage != null" >
+        mr_zdmessage,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="lType != null" >
+        #{lType,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isNeedGuide != null" >
+        #{isNeedGuide,jdbcType=CHAR},
+      </if>
+      <if test="isNeedParse != null" >
+        #{isNeedParse,jdbcType=CHAR},
+      </if>
+      <if test="isNeedEssay != null" >
+        #{isNeedEssay,jdbcType=CHAR},
+      </if>
+      <if test="questionNum != null" >
+        #{questionNum,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="mrContentTime != null  &amp; mrContentTime!=0" >
+        #{mrContentTime,jdbcType=INTEGER},
+      </if>
+      <if test="mrTopicTime != null  &amp;  mrTopicTime!=0" >
+        #{mrTopicTime,jdbcType=INTEGER},
+      </if>
+      <if test="mrAnswerTime != null  &amp;  mrAnswerTime!=0" >
+        #{mrAnswerTime,jdbcType=INTEGER},
+      </if>
+      <if test="mrZdmessage != null" >
+        #{mrZdmessage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.ls.spt.question.entity.LstQuestionType" >
+    insert into lst_question_type (id,l_type, name, subject,remark, is_need_guide, 
+      is_need_parse, is_need_essay, question_num, 
+      status)
+    values (#{id,jdbcType=INTEGER},#{lType,jdbcType=VARCHAR},  #{name,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{isNeedGuide,jdbcType=CHAR}, 
+      #{isNeedParse,jdbcType=CHAR}, #{isNeedEssay,jdbcType=CHAR}, #{questionNum,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.question.entity.LstQuestionType" >
+    update lst_question_type
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="lType != null" >
+        l_type = #{lType,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        subject = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isNeedGuide != null" >
+        is_need_guide = #{isNeedGuide,jdbcType=CHAR},
+      </if>
+      <if test="isNeedParse != null" >
+        is_need_parse = #{isNeedParse,jdbcType=CHAR},
+      </if>
+      <if test="isNeedEssay != null" >
+        is_need_essay = #{isNeedEssay,jdbcType=CHAR},
+      </if>
+      <if test="questionNum != null" >
+        question_num = #{questionNum,jdbcType=INTEGER},
+      </if>
+      <if test="mrContentTime != null  &amp; mrContentTime!=0" >
+       	mr_content_time= #{mrContentTime,jdbcType=INTEGER},
+      </if>
+      <if test="mrTopicTime != null  &amp;  mrTopicTime!=0" >
+        mr_topic_time=#{mrTopicTime,jdbcType=INTEGER},
+      </if>
+      <if test="mrAnswerTime != null  &amp;  mrAnswerTime!=0" >
+         mr_answer_time= #{mrAnswerTime,jdbcType=INTEGER},
+      </if>
+      <if test="mrZdmessage != null" >
+       	mr_zdmessage= #{mrZdmessage,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.question.entity.LstQuestionType" >
+    update lst_question_type
+    set name = #{name,jdbcType=VARCHAR},
+      l_type = #{lType,jdbcType=VARCHAR},
+      subject = #{subject,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      is_need_guide = #{isNeedGuide,jdbcType=CHAR},
+      is_need_parse = #{isNeedParse,jdbcType=CHAR},
+      is_need_essay = #{isNeedEssay,jdbcType=CHAR},
+      question_num = #{questionNum,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

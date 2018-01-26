@@ -1,0 +1,18 @@
+.my-logos{
+	margin-left: 14%;
+    float: left;
+    color: #64dcdc;
+    border: 2px solid #64dcdc !important;
+    line-height: 30px;
+    margin-top: 13px;
+}
+
+.layui-tab-content .layui-tab-item iframe{
+	width: 100%;
+	border: 0;
+	height: 100%;
+}
+
+.admin-home i.layui-icon{
+	display: none;
+}

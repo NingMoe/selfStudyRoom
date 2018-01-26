@@ -1,0 +1,64 @@
+package com.ls.spt.studentpc.student.service;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.ls.spt.question.entity.QuestionVoiceParam;
+
+public interface StudentZuoyeService {
+    
+    /**
+     * 获取正在做题的题目
+     * @param request
+     * @param response
+     * @param class_code
+     * @param zuoye_id
+     * @param question_id
+     * @return
+     */
+    public Map<String, Object> getZuoyeQuestion(HttpServletRequest request, HttpServletResponse response, String class_code, Integer zuoye_id, Integer th);
+    
+    /**
+     * 作业基础信息
+     * @param request
+     * @param response
+     * @return
+     */
+    public Object getZuoyeInfo(HttpServletRequest request, HttpServletResponse response, Integer zuoye_id, String class_code);
+    
+    /**
+     * 获取学生成长轨迹
+     * @param request
+     * @param response
+     * @return
+     */
+    public Map<String, Object> selectGrowthTrajectory(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 获取学生已完成作业
+     * @param request
+     * @param response
+     * @return
+     */
+    public Map<String, Object> getStudentEndZuoye(HttpServletRequest request, HttpServletResponse response, Integer pageNow, Integer pageSize);
+
+    /**
+     * 获取学生未完成考试
+     * @param request
+     * @param response
+     * @return
+     */
+    public Map<String, Object> getStudentNotEndZuoye(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 作业上传语音
+     * @param param
+     * @param request
+     * @param response
+     * @return
+     */
+    public Map<String, Object> sogouParseZuoye(QuestionVoiceParam param, HttpServletRequest request, HttpServletResponse response);
+
+}

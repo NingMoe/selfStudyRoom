@@ -1,0 +1,7 @@
+ApiRootUrl=http://testapi.staff.xdf.cn/
+appId=101
+appKey=test_api_AppKey
+
+#ApiRootUrl=http://smsapi.xdf.cn/api/
+#appId=90166
+#appKey=u2-spt-401e8d0b87b4

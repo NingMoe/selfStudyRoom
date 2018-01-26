@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.lstClassTest.dao.LstTestStudentAnswerDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="STUDENT_ID" property="studentId" jdbcType="INTEGER" />
+    <result column="TEST_ID" property="testId" jdbcType="INTEGER" />
+    <result column="QUESTION_ID" property="questionId" jdbcType="INTEGER" />
+    <result column="STUDENT_ANSWER" property="studentAnswer" jdbcType="VARCHAR" />
+    <result column="accuracy_sogou" property="accuracySogou" jdbcType="DOUBLE" />
+    <result column="fluency_sogou" property="fluencySogou" jdbcType="DOUBLE" />
+    <result column="integrity_sogou" property="integritySogou" jdbcType="DOUBLE" />
+    <result column="overall_sogou" property="overallSogou" jdbcType="DOUBLE" />
+    <result column="accuracy_teacher" property="accuracyTeacher" jdbcType="DOUBLE" />
+    <result column="fluency_teacher" property="fluencyTeacher" jdbcType="DOUBLE" />
+    <result column="integrity_teacher" property="integrityTeacher" jdbcType="DOUBLE" />
+    <result column="overall_teacher" property="overallTeacher" jdbcType="DOUBLE" />
+    <result column="answer_comment" property="answerComment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, STUDENT_ID, TEST_ID, QUESTION_ID, STUDENT_ANSWER, accuracy_sogou, fluency_sogou, 
+    integrity_sogou, overall_sogou, accuracy_teacher, fluency_teacher, integrity_teacher, 
+    overall_teacher,answer_comment
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_test_student_answer
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_test_student_answer
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+    insert into lst_test_student_answer (ID, STUDENT_ID, TEST_ID, 
+      QUESTION_ID, STUDENT_ANSWER, accuracy_sogou, 
+      fluency_sogou, integrity_sogou, overall_sogou, 
+      accuracy_teacher, fluency_teacher, integrity_teacher, 
+      overall_teacher)
+    values (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{testId,jdbcType=INTEGER}, 
+      #{questionId,jdbcType=INTEGER}, #{studentAnswer,jdbcType=VARCHAR}, #{accuracySogou,jdbcType=DOUBLE}, 
+      #{fluencySogou,jdbcType=DOUBLE}, #{integritySogou,jdbcType=DOUBLE}, #{overallSogou,jdbcType=DOUBLE}, 
+      #{accuracyTeacher,jdbcType=DOUBLE}, #{fluencyTeacher,jdbcType=DOUBLE}, #{integrityTeacher,jdbcType=DOUBLE}, 
+      #{overallTeacher,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+    insert into lst_test_student_answer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="studentId != null" >
+        STUDENT_ID,
+      </if>
+      <if test="testId != null" >
+        TEST_ID,
+      </if>
+      <if test="questionId != null" >
+        QUESTION_ID,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="studentAnswer != null" >
+        STUDENT_ANSWER,
+      </if>
+      <if test="accuracySogou != null" >
+        accuracy_sogou,
+      </if>
+      <if test="fluencySogou != null" >
+        fluency_sogou,
+      </if>
+      <if test="integritySogou != null" >
+        integrity_sogou,
+      </if>
+      <if test="overallSogou != null" >
+        overall_sogou,
+      </if>
+      <if test="accuracyTeacher != null" >
+        accuracy_teacher,
+      </if>
+      <if test="fluencyTeacher != null" >
+        fluency_teacher,
+      </if>
+      <if test="integrityTeacher != null" >
+        integrity_teacher,
+      </if>
+      <if test="overallTeacher != null" >
+        overall_teacher,
+      </if>
+      <if test="answerComment != null" >
+        answer_comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="studentId != null" >
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="testId != null" >
+        #{testId,jdbcType=INTEGER},
+      </if>
+      <if test="questionId != null" >
+        #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="studentAnswer != null" >
+        #{studentAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracySogou != null" >
+        #{accuracySogou,jdbcType=DOUBLE},
+      </if>
+      <if test="fluencySogou != null" >
+        #{fluencySogou,jdbcType=DOUBLE},
+      </if>
+      <if test="integritySogou != null" >
+        #{integritySogou,jdbcType=DOUBLE},
+      </if>
+      <if test="overallSogou != null" >
+        #{overallSogou,jdbcType=DOUBLE},
+      </if>
+      <if test="accuracyTeacher != null" >
+        #{accuracyTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="fluencyTeacher != null" >
+        #{fluencyTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="integrityTeacher != null" >
+        #{integrityTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="overallTeacher != null" >
+        #{overallTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="answerComment != null" >
+        #{answerComment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+    update lst_test_student_answer
+    <set >
+      <if test="studentId != null" >
+        STUDENT_ID = #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="testId != null" >
+        TEST_ID = #{testId,jdbcType=INTEGER},
+      </if>
+      <if test="questionId != null" >
+        QUESTION_ID = #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="studentAnswer != null" >
+        STUDENT_ANSWER = #{studentAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracySogou != null" >
+        accuracy_sogou = #{accuracySogou,jdbcType=DOUBLE},
+      </if>
+      <if test="fluencySogou != null" >
+        fluency_sogou = #{fluencySogou,jdbcType=DOUBLE},
+      </if>
+      <if test="integritySogou != null" >
+        integrity_sogou = #{integritySogou,jdbcType=DOUBLE},
+      </if>
+      <if test="overallSogou != null" >
+        overall_sogou = #{overallSogou,jdbcType=DOUBLE},
+      </if>
+      <if test="accuracyTeacher != null" >
+        accuracy_teacher = #{accuracyTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="fluencyTeacher != null" >
+        fluency_teacher = #{fluencyTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="integrityTeacher != null" >
+        integrity_teacher = #{integrityTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="overallTeacher != null" >
+        overall_teacher = #{overallTeacher,jdbcType=DOUBLE},
+      </if>
+      <if test="answerComment != null" >
+        answer_comment = #{answerComment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+    update lst_test_student_answer
+    set STUDENT_ID = #{studentId,jdbcType=INTEGER},
+      TEST_ID = #{testId,jdbcType=INTEGER},
+      QUESTION_ID = #{questionId,jdbcType=INTEGER},
+      STUDENT_ANSWER = #{studentAnswer,jdbcType=VARCHAR},
+      accuracy_sogou = #{accuracySogou,jdbcType=DOUBLE},
+      fluency_sogou = #{fluencySogou,jdbcType=DOUBLE},
+      integrity_sogou = #{integritySogou,jdbcType=DOUBLE},
+      overall_sogou = #{overallSogou,jdbcType=DOUBLE},
+      accuracy_teacher = #{accuracyTeacher,jdbcType=DOUBLE},
+      fluency_teacher = #{fluencyTeacher,jdbcType=DOUBLE},
+      integrity_teacher = #{integrityTeacher,jdbcType=DOUBLE},
+      overall_teacher = #{overallTeacher,jdbcType=DOUBLE}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="insertGradeSelective" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+    update lst_test_student_answer
+    <set >
+      <if test="studentId != null" >
+        STUDENT_ID = #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="testId != null" >
+        TEST_ID = #{testId,jdbcType=INTEGER},
+      </if>
+      <if test="questionId != null" >
+        QUESTION_ID = #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="studentAnswer != null" >
+        STUDENT_ANSWER = #{studentAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracySogou != null" >
+        accuracy_sogou = #{accuracySogou},
+      </if>
+      <if test="fluencySogou != null" >
+        fluency_sogou = #{fluencySogou},
+      </if>
+      <if test="integritySogou != null" >
+        integrity_sogou = #{integritySogou},
+      </if>
+      <if test="overallSogou != null" >
+        overall_sogou = #{overallSogou},
+      </if>
+      <if test="accuracyTeacher != null" >
+        accuracy_teacher = #{accuracyTeacher},
+      </if>
+      <if test="fluencyTeacher != null" >
+        fluency_teacher = #{fluencyTeacher},
+      </if>
+      <if test="integrityTeacher != null" >
+        integrity_teacher = #{integrityTeacher},
+      </if>
+      <if test="overallTeacher != null" >
+        overall_teacher = #{overallTeacher},
+      </if>
+    </set>
+    where STUDENT_ID = #{studentId,jdbcType=INTEGER} and TEST_ID = #{testId,jdbcType=INTEGER} and QUESTION_ID = #{questionId,jdbcType=INTEGER}
+  </update>
+   <select id="getGradeInfo" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" resultMap="BaseResultMap">
+  	select * from lst_test_student_answer where test_id=#{testId,jdbcType=INTEGER} and student_id=#{studentId,jdbcType=INTEGER} and question_id=#{questionId,jdbcType=INTEGER}
+  </select>
+  <update id="updateStudentTestStatus" parameterType="java.util.HashMap">
+  	update lst_student_test set status=3 where student_id=#{studentId,jdbcType=INTEGER} and test_id=#{testId,jdbcType=INTEGER}
+  </update>
+  <select id="getStatus" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	select id, status from lst_student_test where test_id=#{testId,jdbcType=INTEGER} and student_id=#{studentId,jdbcType=INTEGER} and class_code=#{classCode,jdbcType=VARCHAR}
+  </select>
+  <select id="getStudentTestAnswerInfo" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	SELECT lpq.question_id AS questionId,lctc.class_code as classCode,lct.`id` AS testId ,sc.`student_id` AS studentId FROM lst_class_test lct
+	JOIN  lst_class_test_cl lctc ON lct.`id`=lctc.`test_id` 
+	JOIN student_class sc ON sc.`class_code`=lctc.`class_code`
+	JOIN lst_paper_question lpq ON lpq.paper_id=lct.`paper_id`
+	 WHERE lct.`id`= #{id,jdbcType=INTEGER}	AND sc.`status`=2	
+  </select>
+  <!-- 获取正数前五 -->
+  <select id="getDescTopFive" resultMap="BaseResultMap" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+  	SELECT su.name ,lst.id ,lst.student_id,lst.test_id,lst.paper_id,lst.class_code,lst.class_name ,ROUND(lst.overall_teacher,1) AS overallTeacher  FROM lst_student_test lst 
+	LEFT JOIN student_user su ON su.id=lst.`student_id`
+	WHERE test_id=#{testId,jdbcType=INTEGER} AND class_code=#{classCode,jdbcType=VARCHAR}
+	ORDER BY overall_teacher DESC LIMIT 0,5
+  </select>
+  <!-- 倒数前五 -->
+   <select id="getDescBackwardFive" resultMap="BaseResultMap" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" >
+  	SELECT su.name ,lst.id ,lst.student_id,lst.test_id,lst.paper_id,lst.class_code,lst.class_name ,ROUND(lst.overall_teacher,1) AS overallTeacher FROM lst_student_test lst 
+	LEFT JOIN student_user su ON su.id=lst.`student_id`
+	WHERE test_id=#{testId,jdbcType=INTEGER} AND class_code=#{classCode,jdbcType=VARCHAR}
+	ORDER BY overall_teacher asc LIMIT 0,5
+  </select>
+  <select id="getScoreList" resultType="java.util.HashMap" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer">
+	SELECT COUNT(1) as count ,round(MAX(overall_teacher),1)  as maxScore,round(MIN(overall_teacher),1) as minScore ,round(AVG(overall_teacher),1) as avgScore
+	FROM lst_student_test WHERE test_id=#{testId,jdbcType=INTEGER} AND class_code=#{classCode,jdbcType=VARCHAR} and status=3
+  </select>
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer">
+  	SELECT 
+	<include refid="Base_Column_List" />				
+    FROM lst_test_student_answer
+    WHERE student_id = #{studentId,jdbcType=INTEGER} and class_code = #{classCode,jdbcType=VARCHAR}
+    AND test_id = #{testId,jdbcType=INTEGER} and question_id=#{questionId,jdbcType=INTEGER}
+  </select>
+  <select id="getclassAvgScore" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" resultType="java.util.HashMap">
+  	 SELECT lqt.id,lqt.name,ROUND(AVG(lta.overall_teacher)*10,2) as avgScore FROM lst_test_student_answer lta 
+ 	JOIN lst_question lq ON lq.id=lta.question_id
+ 	JOIN lst_question_type lqt ON lqt.id=lq.question_type  WHERE lta.class_code=#{classCode,jdbcType=VARCHAR} AND lta.test_id=#{testId,jdbcType=INTEGER}   GROUP BY NAME ,lqt.id ORDER BY lqt.id ASC
+  </select>
+   <select id="getTotalAvgScore" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" resultType="java.util.HashMap">
+  	 SELECT lqt.id,lqt.name,ROUND(AVG(lta.overall_teacher)*10,2) as avgScore  FROM lst_test_student_answer lta 
+ 	JOIN lst_question lq ON lq.id=lta.question_id
+ 	JOIN lst_question_type lqt ON lqt.id=lq.question_type  WHERE  lta.test_id=#{testId,jdbcType=INTEGER}   GROUP BY NAME ,lqt.id ORDER BY lqt.id ASC
+  </select>
+  <select id="updateStudentTestTeacherScore" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer">
+		UPDATE lst_student_test lst
+		SET integrity_teacher=#{integrityTeacher,jdbcType=DOUBLE},overall_teacher=#{overallTeacher,jdbcType=DOUBLE},accuracy_teacher=#{accuracyTeacher,jdbcType=DOUBLE}
+		,fluency_teacher=#{fluencyTeacher,jdbcType=DOUBLE} 
+		<if test="flag==3">
+		,status=3
+		</if>
+		WHERE lst.test_id = #{testId,jdbcType=INTEGER} and lst.class_code = #{classCode,jdbcType=VARCHAR} and lst.student_id = #{studentId,jdbcType=BIGINT}
+	
+  </select>
+  <select id="getOverallScore" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" resultMap="BaseResultMap" >
+  	 SELECT SUM(overall_teacher) as overallTeacher FROM lst_test_student_answer WHERE test_id =#{testId,jdbcType=INTEGER} AND class_code = #{classCode,jdbcType=VARCHAR} AND student_id = #{studentId,jdbcType=INTEGER} 
+  </select>
+  <select id="getStuAvgScore"  parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" resultType="java.util.HashMap">
+  	  SELECT lqt.id,lqt.name,ROUND(AVG(lta.overall_teacher)*10,2 ) AS avgScore FROM lst_test_student_answer lta 
+ 		JOIN lst_question lq ON lq.id=lta.question_id
+ 		JOIN lst_question_type lqt ON lqt.id=lq.question_type  WHERE lta.student_id=#{studentId,jdbcType=INTEGER} AND 
+ 		lta.test_id=#{testId,jdbcType=INTEGER}   
+ 		GROUP BY NAME ,lqt.id ORDER BY lqt.id ASC 
+  </select>
+  <select id ="selectAllQuesForStu" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" resultType="java.util.HashMap" >
+  		SELECT lqt.name ,d.name AS difficulty ,lq.parse_audio as parseAudio ,ltsa.student_answer AS studentAnswer,ROUND(ltsa.overall_teacher) as overallTeacher  FROM lst_test_student_answer 	ltsa
+ 		JOIN lst_question lq ON lq.id=ltsa.question_id
+		JOIN lst_question_type lqt ON  lq.question_type=lqt.id
+		LEFT JOIN (SELECT * FROM dic_data WHERE dic_code='diff_level' ) d ON lq.difficulty =d.data_value
+		where ltsa.test_id=#{testId,jdbcType=INTEGER} and student_id=#{studentId,jdbcType=INTEGER}
+		ORDER BY lqt.id
+  </select>
+  <select id="getScore" parameterType="com.ls.spt.lstClassTest.entity.LstTestStudentAnswer" resultMap="BaseResultMap">
+  	SELECT  FORMAT(SUM(s.accuracy_teacher),2) accuracyTeacher,FORMAT(SUM(s.fluency_teacher),2) fluencyTeacher,
+	FORMAT(SUM(s.integrity_teacher),2) integrityTeacher,FORMAT(SUM(s.overall_teacher),2) overallTeacher FROM (
+	SELECT 
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.accuracy_teacher*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.accuracy_teacher*0.15  
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.accuracy_teacher*0.5 
+	END) accuracy_teacher,
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.fluency_teacher*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.fluency_teacher*0.15  
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.fluency_teacher*0.5 
+	END) fluency_teacher,
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.integrity_teacher*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.integrity_teacher*0.15 
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.integrity_teacher*0.5 
+	END) integrity_teacher,
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.overall_teacher*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.overall_teacher*0.15 
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.overall_teacher*0.5 
+	END) overall_teacher
+	FROM lst_test_student_answer a 
+	JOIN lst_question q ON a.`question_id`=q.id 
+	JOIN lst_question_type qt ON qt.`id` = q.`question_type` 
+	WHERE student_id = #{studentId,jdbcType=INTEGER} 
+	AND class_code = #{classCode,jdbcType=VARCHAR} AND test_id = #{testId,jdbcType=INTEGER}
+	)s 
+</select>
+</mapper>

@@ -1,0 +1,87 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- load css -->
+<%@include file="/WEB-INF/view/common/taglib.jsp"%>
+<link rel="stylesheet" href="<%=basePath%>/static/zuoye/question.css">
+</head>
+<style>
+#layui-table-page1 {
+	display: none;
+}
+</style>
+<body>
+	<div class="layui-form">
+		<input type="hidden" id="id" value="${lct.id}"> <input
+			type="hidden" id="paperId" value="${lct.paperId}">
+		<div class="layui-collapse" lay-accordion=""
+			style="width: 90%; margin: 10px auto;">
+			<div class="layui-colla-item">
+				<h2 class="layui-colla-title">已配试卷</h2>
+				<div class="layui-colla-content layui-show">
+					<div style="width: 90%; margin: 0px auto;">
+						<table class="layui-table" id="configPaper" lay-filter="ypPaper"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-collapse" lay-accordion=""
+			style="width: 90%; margin: 10px auto;">
+			<div class="layui-colla-item">
+				<h2 class="layui-colla-title">可选题目</h2>
+				<div class="layui-colla-content layui-show">
+					<div class="layui-form-item" style="margin-bottom: 20px;">
+						<label class="layui-form-label" style="width: 7%;">试卷类型:</label>
+						<div class="layui-input-inline" style="width: 12%;">
+							<select name="questionType" id="questionType">
+								<option value="">请选择</option>
+								<c:forEach items="${sourceType }" var="source">
+									<option value="${source.dataValue }">${source.name }</option>
+								</c:forEach>
+							</select>
+						</div>
+						<label class="layui-form-label" style="width: 7%;">年份:</label>
+						<div class="layui-input-inline" style="width: 12%;">
+							<select name="year" id="year">
+								<option value="">请选择</option>
+								<c:forEach items="${year }" var="ye">
+									<option value="${ye.name }">${ye.name }</option>
+								</c:forEach>
+							</select>
+						</div>
+						<div class="layui-input-inline">
+							<button id="searchBtn" class="layui-btn">搜索</button>
+						</div>
+					</div>
+					<div style="width: 90%; margin: 0px auto;">
+						<table class="layui-table" id="allPaper" lay-filter="allPaper"></table>
+					</div>
+					<!-- <table class="layui-table" id="questionTable" lay-filter="question"></table> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+<script type="text/html" id="paperStatusTpl">
+ 			{{ d.status == '1' ? '未发布' : (d.status == '2' ? '已发布' : '无效') }}
+		</script>
+<script type="text/html" id="paperBar">
+  			<a class="layui-btn layui-btn-xs" lay-event="del">删除</a>
+			<a class="layui-btn layui-btn-xs" lay-event="paperView">预览试卷</a>
+		</script>
+<script type="text/html" id="allPaperBar">
+  			<a class="layui-btn layui-btn-xs" lay-event="usePaper">使用试卷</a>
+			<a class="layui-btn layui-btn-xs" lay-event="paperView">预览试卷</a>
+		</script>
+<script type="text/javascript"
+	src="<%=basePath%>/static/lstclasstest/config_list.js">
+</script>
+</html>

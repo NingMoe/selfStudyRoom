@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.lstBasePaper.dao.LstQuesDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="CHAR" />
+    <result column="question_type" property="questionType" jdbcType="INTEGER" />
+    <result column="difficulty" property="difficulty" jdbcType="CHAR" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="zdmessage" property="zdmessage" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="content_time" property="contentTime" jdbcType="INTEGER" />
+    <result column="TOPIC" property="topic" jdbcType="VARCHAR" />
+    <result column="topic_time" property="topicTime" jdbcType="INTEGER" />
+    <result column="answer_time" property="answerTime" jdbcType="INTEGER" />
+    <result column="parse_audio" property="parseAudio" jdbcType="VARCHAR" />
+    <result column="parse_text" property="parseText" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, code, type, question_type, difficulty, grade, zdmessage, content, content_time, 
+    TOPIC, topic_time, parse_audio, parse_text, create_time, status,answer_time
+  </sql>
+    <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  		SELECT GROUP_CONCAT(l.id) ids,MAX(l.content) content,MAX(l.topic) topic,l.code,l.type,
+ 		l.question_type,l.difficulty,l.create_time,l.grade,l.create_user,u.name CREATE_USER_NAME,lp.name questionTypeName,gra.name grade_name FROM lst_question l 	
+ 		JOIN teacher_user u ON u.id = l.create_user 
+  		JOIN lst_question_type lp ON lp.id = l.question_type
+  		JOIN (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'grade') gra ON gra.DATA_VALUE = l.grade 
+  		WHERE 1 = 1 AND lp.l_type=2
+  		and l.`code` not in (SELECT question_code FROM lst_paper_question WHERE paper_id =#{t.paperId,jdbcType=INTEGER} )
+		 	<if test="t.grade != null and t.grade !=''"> 
+			AND l.grade  =#{t.grade,jdbcType=VARCHAR}
+			</if>
+			<if test="t.difficulty != null and t.difficulty !=''">
+			AND l.difficulty=#{t.difficulty,jdbcType=VARCHAR}
+			</if>
+			<if test="t.questionType != null and t.questionType !=''">
+			AND l.question_type=#{t.questionType,jdbcType=INTEGER}
+			</if>
+			and l.yongtu=2
+  		GROUP BY l.code,l.type,l.question_type,l.difficulty,l.grade,l.create_user,u.name,lp.name,gra.name,l.create_time  
+<!-- 	SELECT DISTINCT l.`type` as type,l.`create_time` as createName,l.`content` AS content,l.`TOPIC` AS topic,l.`code` AS code ,lqt.name AS name,l.`question_type` AS questionType ,g.name AS gradeName,d.name as difficultyName ,t.name AS userName FROM lst_question l -->
+<!-- 	LEFT JOIN lst_question_type  lqt ON lqt.`id`=l.`question_type`  -->
+<!-- 	LEFT JOIN teacher_user t ON l.create_user =t.`id` -->
+<!-- 	LEFT JOIN (SELECT* FROM dic_data WHERE dic_code='grade') g ON l.`grade` =g.data_value -->
+<!-- 	LEFT JOIN (SELECT * FROM dic_data WHERE dic_code='diff_level') d ON d.data_value=l.difficulty -->
+<!--     where 1=1  -->
+<!--     and l.`code` not in (SELECT question_code FROM lst_paper_question WHERE paper_id =#{t.paperId,jdbcType=INTEGER} ) -->
+<!--     <if test="grades != null and grades !=''"> -->
+<!-- 	AND l.grade  in -->
+<!--     <foreach collection="grades" item="gr" index="index" -->
+<!-- 			open="(" separator="," close=")"> -->
+<!-- 			#{gr,jdbcType=VARCHAR} -->
+<!-- 	</foreach> -->
+<!-- 	</if> -->
+<!-- 	<if test="t.difficulty != null and t.difficulty !=''"> -->
+<!-- 	AND difficulty=#{t.difficulty,jdbcType=VARCHAR} -->
+<!-- 	</if> -->
+<!-- 	<if test="t.questionType != null and t.questionType !=''"> -->
+<!-- 	AND question_type=#{t.questionType,jdbcType=INTEGER} -->
+<!-- 	</if> -->
+<!-- 	AND lqt.l_type ='2' -->
+<!-- 	group by l.id ,l.`code` ,l.`question_type`,d.name ,t.name ,g.name,l.`question_type`,l.`type`,l.`create_time`,l.`content`,l.`TOPIC`  -->
+ 	 </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_question
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_question
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+    insert into lst_question (id, code, type, 
+      question_type, difficulty, grade, 
+      MESSAGE, content, content_time, 
+      TOPIC, topic_time, parse_audio, 
+      parse_text, create_time, status,answer_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, 
+      #{questionType,jdbcType=INTEGER}, #{difficulty,jdbcType=CHAR}, #{grade,jdbcType=VARCHAR}, 
+      #{message,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{contentTime,jdbcType=INTEGER}, 
+      #{topic,jdbcType=VARCHAR}, #{topicTime,jdbcType=INTEGER}, #{parseAudio,jdbcType=VARCHAR}, 
+      #{parseText,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR},
+      #{answerTime,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+    insert into lst_question
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="questionType != null" >
+        question_type,
+      </if>
+      <if test="difficulty != null" >
+        difficulty,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="message != null" >
+        MESSAGE,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="contentTime != null" >
+        content_time,
+      </if>
+      <if test="topic != null" >
+        TOPIC,
+      </if>
+      <if test="topicTime != null" >
+        topic_time,
+      </if>
+      <if test="parseAudio != null" >
+        parse_audio,
+      </if>
+      <if test="parseText != null" >
+        parse_text,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="status != null" >
+        answer_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="questionType != null" >
+        #{questionType,jdbcType=INTEGER},
+      </if>
+      <if test="difficulty != null" >
+        #{difficulty,jdbcType=CHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null" >
+        #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="contentTime != null" >
+        #{contentTime,jdbcType=INTEGER},
+      </if>
+      <if test="topic != null" >
+        #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="topicTime != null" >
+        #{topicTime,jdbcType=INTEGER},
+      </if>
+      <if test="parseAudio != null" >
+        #{parseAudio,jdbcType=VARCHAR},
+      </if>
+      <if test="parseText != null" >
+        #{parseText,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="answerTime != null" >
+        #{answerTime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+   <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+    update lst_question
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="questionType != null" >
+        question_type = #{questionType,jdbcType=INTEGER},
+      </if>
+      <if test="difficulty != null" >
+        difficulty = #{difficulty,jdbcType=CHAR},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null" >
+        MESSAGE = #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="contentTime != null" >
+        content_time = #{contentTime,jdbcType=INTEGER},
+      </if>
+      <if test="topic != null" >
+        TOPIC = #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="topicTime != null" >
+        topic_time = #{topicTime,jdbcType=INTEGER},
+      </if>
+      <if test="parseAudio != null" >
+        parse_audio = #{parseAudio,jdbcType=VARCHAR},
+      </if>
+      <if test="parseText != null" >
+        parse_text = #{parseText,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+    update lst_question
+    set code = #{code,jdbcType=VARCHAR},
+      type = #{type,jdbcType=CHAR},
+      question_type = #{questionType,jdbcType=INTEGER},
+      difficulty = #{difficulty,jdbcType=CHAR},
+      grade = #{grade,jdbcType=VARCHAR},
+      MESSAGE = #{message,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      content_time = #{contentTime,jdbcType=INTEGER},
+      TOPIC = #{topic,jdbcType=VARCHAR},
+      topic_time = #{topicTime,jdbcType=INTEGER},
+      parse_audio = #{parseAudio,jdbcType=VARCHAR},
+      parse_text = #{parseText,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=CHAR},
+      answer_time = #{answerTime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getLstQuestion" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+    SELECT 
+	 *	
+    FROM lst_paper_question lpq
+	JOIN lst_question lq ON lpq.question_id=lq.id
+	WHERE lpq.question_id IN (SELECT DISTINCT question_id  FROM lst_paper_question l WHERE l.paper_id=#{id,jdbcType=INTEGER})
+	ORDER BY lpq.xh ASC limit #{page,jdbcType=INTEGER},1
+  </select>
+  
+  <select id="getAreaName" resultType="java.lang.String" parameterType="java.lang.Integer" >
+   SELECT area_name FROM area_info where id=#{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getTotalNum" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+     SELECT COUNT(1)  FROM (SELECT * FROM (   SELECT 
+	 lq.`code` AS code,lq.question_type	AS question_type
+    FROM lst_paper_question lpq
+	JOIN lst_question lq ON lpq.question_id=lq.id
+	WHERE lpq.question_id IN (SELECT DISTINCT question_id  FROM lst_paper_question l WHERE l.paper_id=#{id,jdbcType=INTEGER})  
+	ORDER BY lpq.xh ASC    ) t GROUP BY t.`code` ,t.question_type) s
+  </select>
+<!--   获取类型 -->
+    <select id="getQuestionType" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+   	SELECT * FROM (   SELECT 
+	 lq.`code` AS code,lq.type	AS type
+    FROM lst_paper_question lpq
+	JOIN lst_question lq ON lpq.question_id=lq.id
+	WHERE lpq.question_id IN (SELECT DISTINCT question_id  FROM lst_paper_question l WHERE l.paper_id=#{id,jdbcType=INTEGER})  
+	ORDER BY lpq.xh ASC  limit #{page,jdbcType=INTEGER},1 ) t GROUP BY t.`code` ,t.type
+  </select>
+  
+   <select id="getQuestion" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+   		SELECT  DISTINCT lq.* ,lqt.name FROM lst_question lq LEFT JOIN 
+		lst_paper_question lpq ON lpq.question_id=lq.id LEFT JOIN lst_question_type lqt ON
+ 		lqt.id =lq.`question_type` WHERE lq.id IN  (SELECT DISTINCT question_id  FROM lst_paper_question l WHERE l.paper_id=#{id,jdbcType=INTEGER})
+	AND  lq.code=#{code,jdbcType=VARCHAR}
+  </select>
+  <select id="getAllQuestion" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+  	 	SELECT  DISTINCT lq.* ,lqt.name FROM lst_question lq LEFT JOIN 
+		lst_paper_question lpq ON lpq.question_id=lq.id LEFT JOIN lst_question_type lqt ON
+ 		lqt.id =lq.`question_type` WHERE lq.id IN  (SELECT DISTINCT question_id  FROM lst_paper_question l WHERE l.paper_id=#{id,jdbcType=INTEGER})
+		AND  lq.code=#{code,jdbcType=VARCHAR}
+  </select>
+  <select id="queryQuesByMonAndDiff" resultMap="BaseResultMap" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+     SELECT `lst_question`.* FROM lst_question 
+     WHERE grade =#{grade,jdbcType=INTEGER} AND  
+     difficulty=#{difficulty,jdbcType=VARCHAR} AND
+     question_type=#{questionType,jdbcType=VARCHAR}
+  </select>
+   <insert id="insertToQuestion" useGeneratedKeys="true" keyProperty="id"  parameterType="java.util.HashMap" >
+     insert into lst_paper_question (paper_id,question_id,xh) values(#{paperId,jdbcType=INTEGER},#{questionId,jdbcType=INTEGER},#{xh,jdbcType=INTEGER})
+   </insert>
+	<!--    查询试题试卷配置表是否存在数据 -->
+	<select id="getPaperQuestionList" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+		select * from lst_paper_question where paper_id=#{paperId,jdbcType=INTEGER} and question_id=#{questionId,jdbcType=INTEGER} 
+	</select>
+<!-- 	根据难度年级等查询出试题的code -->
+	<select id="getCodeByDiffAndGrade" resultMap="BaseResultMap" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+		SELECT code ,TOPIC FROM lst_question WHERE  question_type =#{questionType,jdbcType=VARCHAR} AND  difficulty=#{difficulty,jdbcType=VARCHAR} AND grade=#{grade,jdbcType=VARCHAR} GROUP BY code,TOPIC
+	</select>
+<!-- 	查询出普通题型 -->
+	<select id="getCommentCodeByDiffAndGrade" resultMap="BaseResultMap" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+		SELECT * FROM lst_question WHERE  question_type =#{questionType,jdbcType=VARCHAR} AND  difficulty=#{difficulty,jdbcType=VARCHAR} AND grade=#{grade,jdbcType=VARCHAR} 
+	</select>
+	<select id="getSceneQuestion" resultMap="BaseResultMap" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+		 SELECT `lst_question`.* FROM lst_question 
+     WHERE grade =#{grade,jdbcType=VARCHAR} AND  
+     difficulty=#{difficulty,jdbcType=VARCHAR} AND
+     code =#{code,jdbcType=VARCHAR}
+     </select>
+<!--      根据难度，年级等获取题目code -->
+	<select id="getCodeNum" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" resultType="java.lang.Integer">
+		select count(*)  from lst_question where question_type =#{questionType,jdbcType=VARCHAR} AND  difficulty=#{difficulty,jdbcType=VARCHAR} AND grade=#{grade,jdbcType=VARCHAR} GROUP BY code
+	</select>
+    <select id="selectByKey" resultType="java.util.HashMap" parameterType="java.lang.Integer">
+	    SELECT l.* ,g.name AS gradeName,d.name As difficultyName FROM lst_question l
+		JOIN  (SELECT* FROM dic_data WHERE dic_code='grade') g ON l.`grade` =g.data_value
+		JOIN  (SELECT* FROM dic_data WHERE dic_code='diff_level') d  ON l.`difficulty` =d.data_value
+		where l.code=#{code,jdbcType=VARCHAR}
+    </select> 
+    <select id="getQuestionByCode" resultType="java.util.HashMap" parameterType="java.lang.Integer">
+	    SELECT l.* ,g.name AS gradeName,d.name As difficultyName,lqt.`is_need_essay` AS isNeedEssay,lqt.`is_need_guide` AS isNeedGuide,lqt.`is_need_parse` AS isNeedParse FROM lst_question l
+		JOIN  (SELECT* FROM dic_data WHERE dic_code='grade') g ON l.`grade` =g.data_value
+		JOIN  (SELECT* FROM dic_data WHERE dic_code='diff_level') d  ON l.`difficulty` =d.data_value
+		JOIN  lst_question_type lqt ON lqt.`id`=l.question_type
+		where l.code=#{code,jdbcType=VARCHAR}
+    </select> 
+    	<select id="selectQuestionCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+    	select count(*) from(
+    	SELECT COUNT(*) FROM lst_paper_question lpq
+		LEFT JOIN lst_question  l ON lpq.question_id=l.id
+		WHERE l.question_type=#{questionType,jdbcType=INTEGER} AND lpq.paper_id=#{paperId,jdbcType=INTEGER} GROUP BY code
+    	) t
+	</select>
+	<select id="getQuestionInfoByCode" resultMap="BaseResultMap" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion">
+		SELECT l.* ,q.`is_need_essay` AS isNeedEssay,q.`is_need_guide` AS isNeedGuide,q.`is_need_parse` AS isNeedParse FROM lst_question l
+		LEFT JOIN lst_question_type q ON l.question_type =q.id
+ 		WHERE l.code=#{code,jdbcType=VARCHAR}
+	</select>
+	<select id="getCodes" resultType="java.lang.String" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion">
+		SELECT code FROM lst_paper_question lpq
+		LEFT JOIN lst_question l ON lpq.`question_id`=l.`id`
+		WHERE lpq.`paper_id`=#{id ,jdbcType=INTEGER}
+ 		GROUP BY code ,lpq.`xh` ORDER BY lpq.xh asc
+	</select>
+	<select id="getSenceQuestion" resultMap="BaseResultMap" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion">
+		SELECT l.* FROM lst_paper_question lsp
+		LEFT JOIN lst_question l ON lsp.`question_id`=l.`id`
+		WHERE lsp.`paper_id`=#{id,jdbcType=VARCHAR}  AND l.`code`=#{code,jdbcType=VARCHAR}
+	</select >
+	<select id="selectQuestionTypeName" resultType="java.lang.String"  parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion">
+		select name from lst_question_type where id=#{questionType,jdbcType=INTEGER}
+	</select>
+	<update id="updateById"  parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+		update lst_base_paper SET status= #{status,jdbcType=INTEGER} where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectInfoByCode" resultMap="BaseResultMap"  parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion">
+		select * from lst_question where code=#{code,jdbcType=VARCHAR}
+	</select>
+	<insert id="insertToPaperQuestion" parameterType="com.ls.spt.lstBasePaper.entity.LstQuestion" >
+    insert into lst_paper_question
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="paperId != null" >
+        paper_id,
+      </if>
+      <if test="id != null" >
+        question_id,
+      </if>
+      <if test="code != null" >
+        question_code,
+      </if>
+      <if test="xh != null" >
+        xh,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="paperId != null" >
+        #{paperId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="xh != null" >
+        #{xh,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="getMaxXh" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  	SELECT IFNULL(MAX(xh),0) AS maxXh FROM lst_paper_question WHERE paper_id=#{paperId,jdbcType=INTEGER} GROUP BY paper_id,question_code,xh ORDER BY xh DESC LIMIT 0,1
+  </select>
+  <select id='used' parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT lsp.name ,l.question_code, lsp.id  FROM lst_paper_question l
+		JOIN  lst_base_paper lsp ON  lsp.id=l.paper_id
+		JOIN teacher_user t ON t.id= lsp.create_user
+		WHERE l.question_code=#{code,jdbcType=VARCHAR}
+		 AND lsp.create_user=#{teacherId,jdbcType=INTEGER}
+		 GROUP BY lsp.name ,l.question_code, lsp.id
+  </select>
+</mapper>

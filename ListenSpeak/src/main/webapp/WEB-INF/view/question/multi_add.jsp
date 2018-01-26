@@ -1,0 +1,208 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<%@include file="/WEB-INF/view/common/taglib.jsp"%></head>
+</head>
+<body style="padding: 20px;">
+	<form class="layui-form">
+		<input type="hidden" id="grade" name="grade" value="${param.grade }">
+		<input type="hidden" id="subject" name="subject" value="${param.subject }">
+		<input type="hidden" id="questionType" name="questionType" value="${param.questionType }">
+		<input type="hidden" id="difficulty" name="difficulty" value="${param.difficulty }">
+		<input type="hidden" id="questionNum" name="questionNum" value="${questionType.questionNum }">
+		<input type="hidden" id="yongtu" name="yongtu" value="${param.yongtu }">
+		<div id="quesDiv1">
+			<c:if test="${questionType.isNeedGuide eq '1' }">
+				<div class="layui-form-item" style="margin-bottom: 10px;">
+					<label class="layui-form-label" style="width:50%;text-align: left;margin-left: 12%;padding:9px 0px;">指导语：请在下框内编辑指导语&nbsp;&nbsp;</label>
+				</div>
+				<div class="layui-form-item layui-form-text" style="margin-bottom: 10px;">
+					<div class="layui-input-inline" style="width:72%;margin-left: 12%;margin-right: 0px">
+						<textarea name="zdmessage" id="zdmessage" class="layui-textarea" lay-verify="required">${questionType.mrZdmessage }</textarea>
+					</div>
+				</div>
+			</c:if>
+			
+			<c:if test="${questionType.isNeedEssay eq '1' }">
+				<div class="layui-form-item" style="margin-top: 20px;margin-bottom: 10px;">
+					<label class="layui-form-label" style="width:30%;text-align: left;margin-left: 12%;padding:9px 0px;">大题干：请在下框内输入试题题干&nbsp;&nbsp;</label>
+					<label class="layui-form-label" style="width:20%;padding:9px 0px;">题干熟悉时间(单位为秒)&nbsp;&nbsp;</label>
+					<div class="layui-input-inline" style="width:22%;margin-right: 0px">
+						<input type="text" name="topicTime" id="topicTime" class="layui-input" value="${questionType.mrTopicTime}" lay-verify="required" style="width: 100%"> 
+					</div>
+				</div>
+				
+				<div class="layui-form-item layui-form-text" style="margin-bottom: 10px;">
+					<div class="layui-input-inline" style="width:72%;margin-left: 12%;margin-right: 0px">
+						<textarea name="topic" id="topic" class="layui-textarea topicTa" lay-verify="required"></textarea>
+					</div>
+				</div>
+			</c:if>
+			
+			
+			
+			<c:forEach begin="1" end="${questionType.questionNum }" var="v" >
+		  	<div class="layui-collapse" lay-accordion="" style="width:74%;margin-left: 11%;margin-top: 12px;">
+              	<div class="layui-colla-item">
+              		<h2 class="layui-colla-title">题目${v }</h2>
+              		<div class="layui-colla-content detail">
+				
+				
+				
+				<div id="qu${v }">
+			    <div class="layui-form-item" style="margin-top: 20px;margin-bottom: 10px;">
+					<label class="layui-form-label" style="width:49%;text-align: left;padding:9px 0px;">题干：请在下框内输入试题题干&nbsp;&nbsp;</label>
+					<%-- <c:if test="${questionType.lType eq '2' }">
+					<label class="layui-form-label" style="width:29%;padding:9px 0px;">题干熟悉时间(单位为秒)&nbsp;&nbsp;</label>
+					<div class="layui-input-inline" style="width:22%;margin-right: 0px">
+						<input type="text" name="contentTime" class="layui-input" lay-verify="required" style="width: 100%"> 
+					</div>
+					</c:if> --%>
+				</div>
+				<div class="layui-form-item layui-form-text" style="margin-bottom: 10px;">
+					<div class="layui-input-inline" style="width:100%;margin-right: 0px">
+						<textarea name="content" class="layui-textarea contentTa" lay-verify="required"></textarea>
+					</div>
+				</div>
+				
+				<div class="layui-form-item" style="margin-top: 20px;margin-bottom: 10px;">
+					<label class="layui-form-label" style="width:49%;text-align: left;padding:9px 0px;">关键字：请在下框内输入关键字，目前只支持一个关键字&nbsp;&nbsp;</label>
+				</div>
+				<div class="layui-form-item layui-form-text" style="margin-bottom: 10px;">
+    				<div class="layui-input-inline" style="width:100%;margin-right: 0px">
+    					<textarea name="alias" class="layui-textarea" lay-verify="required"></textarea>
+    				</div>
+    			</div>
+					
+				<div class="layui-form-item" style="margin-bottom: 10px;">
+					<label class="layui-form-label" style="width:49%;text-align: left;padding:9px 0px;">题干音频：点击图标录入题干音频&nbsp;&nbsp;</label>
+				</div>
+				<div class="layui-form-item" style="margin-bottom: 10px;">
+					<div class="layui-input-inline" id="recordDiv" style="width:90%;height:71px;padding:8px 10px;margin-right: 0px;">
+						<div class="layui-input-inline" style="width:80px;">
+							<img id="record${v+questionType.questionNum }" class="strecord"  style="width:55px;cursor: pointer;" src="<%=basePath%>/static/question/image/luyin.png" width="10px">
+						</div>
+						<div class="layui-input-inline" style="width:80px;margin-left:40px;">
+							<img id="stop${v+questionType.questionNum }" style="width:55px;cursor: pointer;" src="<%=basePath%>/static/question/image/stop.png" width="10px">
+						</div>
+						<div id="audioDiv${v+questionType.questionNum }" class="detailAudio" class="layui-input-inline" style="float:left; width:46%;margin-left:40px;margin-top: 14px;">
+							
+						</div>
+						 
+					</div>
+				</div>					
+				
+				<div class="layui-form-item" style="margin-bottom: 10px;">
+					<label class="layui-form-label" style="width:49%;text-align: left;padding:9px 0px;">
+						<c:if test="${questionType.isNeedParse eq '1' }">
+							解析：请在下框内输入试题的音标和翻译&nbsp;&nbsp;
+						</c:if>
+						<c:if test="${questionType.isNeedParse eq '2' }">
+							解析：该题型无文本解析&nbsp;&nbsp;
+						</c:if>
+					</label>
+					<c:if test="${questionType.lType eq '2' }">
+					<label class="layui-form-label" style="width:29%;padding:9px 0px;">作答时间(单位为秒)&nbsp;&nbsp;</label>
+					<div class="layui-input-inline" style="width:22%;margin-right: 0px">
+						<input type="text" name="answerTime" class="layui-input" value="${questionType.mrAnswerTime}" lay-verify="required" style="width: 100%">  
+					</div>
+					</c:if>
+				</div>
+				<c:if test="${questionType.isNeedParse eq '1' }">
+				<div class="layui-form-item layui-form-text" style="margin-bottom: 10px;">
+					<div class="layui-input-inline" style="width:100%;margin-right: 0px">
+						<textarea name="parseText" class="layui-textarea parseTextTa" lay-verify="required"></textarea>
+					</div>
+				</div>
+				</c:if>
+				
+				
+				
+				<div class="layui-form-item" style="margin-bottom: 10px;">
+					<label class="layui-form-label" style="width:49%;text-align: left;padding:9px 0px;">音频解析：点击图标录入音频解析&nbsp;&nbsp;</label>
+				</div>
+				<div class="layui-form-item" style="margin-bottom: 10px;">
+					<div class="layui-input-inline" id="recordDiv" style="width:90%;height:71px;padding:8px 10px;margin-right: 0px;">
+						<div class="layui-input-inline" style="width:80px;">
+							<img id="record${v }" class="strecord"  style="width:55px;cursor: pointer;" src="<%=basePath%>/static/question/image/luyin.png" width="10px">
+						</div>
+						<div class="layui-input-inline" style="width:80px;margin-left:40px;">
+							<img id="stop${v }" style="width:55px;cursor: pointer;" src="<%=basePath%>/static/question/image/stop.png" width="10px">
+						</div>
+						<div id="audioDiv${v }" class="detailAudio" class="layui-input-inline" style="float:left; width:46%;margin-left:40px;margin-top: 14px;">
+							
+						</div>
+						 
+					</div>
+				</div>
+				     </div>
+				     </div>
+				     </div>
+				     </div>
+				</c:forEach>
+			</div>
+		
+		<div class="layui-form-item" style="margin-top: 10px;">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" lay-filter="tj">保存</button>
+			</div>
+		</div>
+	</form>
+<script type="text/javascript" src="<%=basePath%>/static/studentpc/js/initRecorder.js"></script>
+<script src="<%=basePath%>/static/HZRecorder.js"></script>
+<script type="text/javascript" src="<%=basePath%>/static/question/multi_add.js"></script>
+<script type="text/javascript">
+var editor;
+var audioBlob=[];
+
+$(".strecord").bind("click",function(){
+	var id = $(this).attr("id");
+	var index = id.substr(id.length-1,1)
+	startRecording(index);
+});
+	
+function startRecording(index) {
+	recorder && recorder.record();
+	$("#record"+index).attr("src","<%=basePath%>/static/question/image/luyin_dis.png"); 
+	$("#record"+index).unbind("click");
+	$("#stop"+index).attr("src","<%=basePath%>/static/question/image/stop.png");
+	$("#stop"+index).bind("click",function(){
+		stopRecording(index);
+	});
+}
+
+function stopRecording(index) {
+	recorder && recorder.stop();
+	$("#stop"+index).attr("src","<%=basePath%>/static/question/image/stop_dis.png");
+	$("#stop"+index).unbind("click");
+	$("#record"+index).attr("src","<%=basePath%>/static/question/image/luyin.png");
+	$("#record"+index).bind("click",function(){
+		startRecording(index);
+	});
+	createDownloadLink(index);
+	recorder.clear();
+}
+
+function createDownloadLink(index) {
+	recorder && recorder.exportWAV(function(blob) {
+		audioBlob[index-1] = blob;
+		var url = URL.createObjectURL(blob);
+		var au = document.createElement('audio');
+		au.controls = true;
+		au.src = url;
+		$("#audioDiv"+index).html("").append(au);
+	});
+}	
+</script>
+</body>
+</html>

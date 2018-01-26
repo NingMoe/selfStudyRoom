@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.zuoye.dao.LstZuoyeReportDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="BIGINT" />
+    <result column="zuoye_id" property="zuoye_id" jdbcType="INTEGER" />
+    <result column="zuoye_name" property="zuoye_name" jdbcType="VARCHAR" />
+    <result column="class_code" property="class_code" jdbcType="VARCHAR" />
+    <result column="class_name" property="class_name" jdbcType="VARCHAR" />
+    <result column="zuoye_num" property="zuoye_num" jdbcType="INTEGER" />
+    <result column="zuoye_end_num" property="zuoye_end_num" jdbcType="INTEGER" />
+    <result column="end_time" property="end_time" jdbcType="TIMESTAMP" />
+    <result column="tj_tme" property="tj_tme" jdbcType="TIMESTAMP" />
+    <result column="accuracy_sogou" property="accuracy_sogou" jdbcType="DOUBLE" />
+    <result column="fluency_sogou" property="fluency_sogou" jdbcType="DOUBLE" />
+    <result column="integrity_sogou" property="integrity_sogou" jdbcType="DOUBLE" />
+    <result column="overall_sogou" property="overall_sogou" jdbcType="DOUBLE" />
+    <result column="accuracy_teacher" property="accuracy_teacher" jdbcType="DOUBLE" />
+    <result column="fluency_teacher" property="fluency_teacher" jdbcType="DOUBLE" />
+    <result column="integrity_teacher" property="integrity_teacher" jdbcType="DOUBLE" />
+    <result column="overall_teacher" property="overall_teacher" jdbcType="DOUBLE" />
+    <result column="tj_status" property="tj_status" jdbcType="INTEGER" />
+    <result column="pg_status" property="pg_status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, zuoye_id, zuoye_name, class_code, class_name, zuoye_num, zuoye_end_num, 
+    end_time, tj_tme, accuracy_sogou, fluency_sogou, integrity_sogou, overall_sogou, 
+    accuracy_teacher, fluency_teacher, integrity_teacher, overall_teacher, tj_status, 
+    pg_status
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_student_zuoye
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_student_zuoye
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    insert into lst_student_zuoye (id, student_id, zuoye_id, 
+      zuoye_name, class_code, class_name, 
+      zuoye_num, zuoye_end_num, end_time, 
+      tj_tme, accuracy_sogou, fluency_sogou, 
+      integrity_sogou, overall_sogou, accuracy_teacher, 
+      fluency_teacher, integrity_teacher, overall_teacher, 
+      tj_status, pg_status)
+    values (#{id,jdbcType=INTEGER}, #{student_id,jdbcType=BIGINT}, #{zuoye_id,jdbcType=INTEGER}, 
+      #{zuoye_name,jdbcType=VARCHAR}, #{class_code,jdbcType=VARCHAR}, #{class_name,jdbcType=VARCHAR}, 
+      #{zuoye_num,jdbcType=INTEGER}, #{zuoye_end_num,jdbcType=INTEGER}, #{end_time,jdbcType=TIMESTAMP}, 
+      #{tj_tme,jdbcType=TIMESTAMP}, #{accuracy_sogou,jdbcType=DOUBLE}, #{fluency_sogou,jdbcType=DOUBLE}, 
+      #{integrity_sogou,jdbcType=DOUBLE}, #{overall_sogou,jdbcType=DOUBLE}, #{accuracy_teacher,jdbcType=DOUBLE}, 
+      #{fluency_teacher,jdbcType=DOUBLE}, #{integrity_teacher,jdbcType=DOUBLE}, #{overall_teacher,jdbcType=DOUBLE}, 
+      #{tj_status,jdbcType=INTEGER}, #{pg_status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    insert into lst_student_zuoye
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="zuoye_id != null" >
+        zuoye_id,
+      </if>
+      <if test="zuoye_name != null" >
+        zuoye_name,
+      </if>
+      <if test="class_code != null" >
+        class_code,
+      </if>
+      <if test="class_name != null" >
+        class_name,
+      </if>
+      <if test="zuoye_num != null" >
+        zuoye_num,
+      </if>
+      <if test="zuoye_end_num != null" >
+        zuoye_end_num,
+      </if>
+      <if test="end_time != null" >
+        end_time,
+      </if>
+      <if test="tj_tme != null" >
+        tj_tme,
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou,
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou,
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou,
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou,
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher,
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher,
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher,
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher,
+      </if>
+      <if test="tj_status != null" >
+        tj_status,
+      </if>
+      <if test="pg_status != null" >
+        pg_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=BIGINT},
+      </if>
+      <if test="zuoye_id != null" >
+        #{zuoye_id,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_name != null" >
+        #{zuoye_name,jdbcType=VARCHAR},
+      </if>
+      <if test="class_code != null" >
+        #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="zuoye_num != null" >
+        #{zuoye_num,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_end_num != null" >
+        #{zuoye_end_num,jdbcType=INTEGER},
+      </if>
+      <if test="end_time != null" >
+        #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tj_tme != null" >
+        #{tj_tme,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accuracy_sogou != null" >
+        #{accuracy_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="fluency_sogou != null" >
+        #{fluency_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="integrity_sogou != null" >
+        #{integrity_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="overall_sogou != null" >
+        #{overall_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="accuracy_teacher != null" >
+        #{accuracy_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="fluency_teacher != null" >
+        #{fluency_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="integrity_teacher != null" >
+        #{integrity_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="overall_teacher != null" >
+        #{overall_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="tj_status != null" >
+        #{tj_status,jdbcType=INTEGER},
+      </if>
+      <if test="pg_status != null" >
+        #{pg_status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    update lst_student_zuoye
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=BIGINT},
+      </if>
+      <if test="zuoye_id != null" >
+        zuoye_id = #{zuoye_id,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_name != null" >
+        zuoye_name = #{zuoye_name,jdbcType=VARCHAR},
+      </if>
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        class_name = #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="zuoye_num != null" >
+        zuoye_num = #{zuoye_num,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_end_num != null" >
+        zuoye_end_num = #{zuoye_end_num,jdbcType=INTEGER},
+      </if>
+      <if test="end_time != null" >
+        end_time = #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tj_tme != null" >
+        tj_tme = #{tj_tme,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou = #{accuracy_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou = #{fluency_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou = #{integrity_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou = #{overall_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher = #{accuracy_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher = #{fluency_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher = #{integrity_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher = #{overall_teacher,jdbcType=DOUBLE},
+      </if>
+      <if test="tj_status != null" >
+        tj_status = #{tj_status,jdbcType=INTEGER},
+      </if>
+      <if test="pg_status != null" >
+        pg_status = #{pg_status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    update lst_student_zuoye
+    set student_id = #{student_id,jdbcType=BIGINT},
+      zuoye_id = #{zuoye_id,jdbcType=INTEGER},
+      zuoye_name = #{zuoye_name,jdbcType=VARCHAR},
+      class_code = #{class_code,jdbcType=VARCHAR},
+      class_name = #{class_name,jdbcType=VARCHAR},
+      zuoye_num = #{zuoye_num,jdbcType=INTEGER},
+      zuoye_end_num = #{zuoye_end_num,jdbcType=INTEGER},
+      end_time = #{end_time,jdbcType=TIMESTAMP},
+      tj_tme = #{tj_tme,jdbcType=TIMESTAMP},
+      accuracy_sogou = #{accuracy_sogou,jdbcType=DOUBLE},
+      fluency_sogou = #{fluency_sogou,jdbcType=DOUBLE},
+      integrity_sogou = #{integrity_sogou,jdbcType=DOUBLE},
+      overall_sogou = #{overall_sogou,jdbcType=DOUBLE},
+      accuracy_teacher = #{accuracy_teacher,jdbcType=DOUBLE},
+      fluency_teacher = #{fluency_teacher,jdbcType=DOUBLE},
+      integrity_teacher = #{integrity_teacher,jdbcType=DOUBLE},
+      overall_teacher = #{overall_teacher,jdbcType=DOUBLE},
+      tj_status = #{tj_status,jdbcType=INTEGER},
+      pg_status = #{pg_status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getStudentZuoyePage" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    select zy.*,u.name student_name 
+    from lst_student_zuoye zy
+    join student_user u on u.id = zy.student_id 
+    where zy.class_code = #{t.class_code,jdbcType=VARCHAR} and zy.zuoye_id = #{t.zuoye_id,jdbcType=INTEGER} 
+  </select>
+  <select id ="getTjNum" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  		SELECT count(1)  FROM lst_student_zuoye WHERE 1=1
+	  	AND class_code=#{t.class_code,jdbcType=VARCHAR} and zuoye_id=#{t.zuoye_id,jdbcType=INTEGER}
+	  	<if test="zs == 'zs'" >
+        and	LEFT(tj_tme,10) <![CDATA[<]]>LEFT(end_time,10) 
+      	</if>
+      	<if test="zs == 'nzs'" >
+       	and	LEFT(tj_tme,10) <![CDATA[>]]>LEFT(end_time,10) 
+      	</if>
+  </select>
+  <select id="getZuoyeDfl" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  		SELECT COUNT(1) as num ,CASE WHEN IFNULL(overall_sogou,overall_teacher)<![CDATA[ >=]]>2.5 AND 
+		IFNULL(overall_sogou,overall_teacher)<![CDATA[<]]>5 THEN 'twoPointFive' 
+		WHEN IFNULL(overall_sogou,overall_teacher)<![CDATA[>=]]>5 AND 
+		IFNULL(overall_sogou,overall_teacher)<![CDATA[<]]>7.5 THEN 'five'
+		WHEN IFNULL(overall_sogou,overall_teacher)<![CDATA[>=]]>7.5 AND 
+		IFNULL(overall_sogou,overall_teacher)<![CDATA[<]]>10 THEN 'sevenPointFive'
+		ELSE 'zero' END as scoreSec FROM lst_student_zuoye
+		WHERE class_code=#{class_code} AND zuoye_id=#{zuoye_id}
+		GROUP BY 
+		CASE WHEN IFNULL(overall_sogou,overall_teacher)<![CDATA[>=]]>2.5 AND 
+		IFNULL(overall_sogou,overall_teacher)<![CDATA[<]]>5 THEN 'twoPointFive' 
+		WHEN IFNULL(overall_sogou,overall_teacher)<![CDATA[>=]]>5 AND 
+		IFNULL(overall_sogou,overall_teacher)<![CDATA[<]]>7.5 THEN 'five'
+		WHEN IFNULL(overall_sogou,overall_teacher)<![CDATA[>=]]>7.5 AND 
+		IFNULL(overall_sogou,overall_teacher)<![CDATA[<]]>10 THEN 'sevenPointFive'
+		ELSE 'zero' END 
+		
+  </select>
+  <select id="getZuoyeSitu" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+  		
+		SELECT  lqt.name ,d.name as difficulty,ROUND(AVG(IFNULL(overall_teacher,overall_sogou))) AS overall , ROUND(AVG(IFNULL(accuracy_teacher,accuracy_sogou))) AS accuracy  ,
+		ROUND(AVG(IFNULL(fluency_teacher,fluency_sogou))) AS fluency ,
+		ROUND(AVG(IFNULL(integrity_teacher,integrity_sogou)) ) AS integrity,
+		ROUND(AVG(IFNULL(overall_teacher,overall_sogou))*10,2) AS totalPercent
+		FROM lst_zuoye_student_answer lzsa
+		JOIN lst_question lq ON lq.id=lzsa.question_id
+		JOIN lst_question_type lqt ON lq.question_type=lqt.id
+		JOIN (SELECT* FROM dic_data WHERE dic_code='diff_level') d ON d.data_value=lq.difficulty
+		WHERE lzsa.class_code=#{class_code,jdbcType=VARCHAR} AND   lzsa.zuoye_id=#{zuoye_id,jdbcType=INTEGER}
+		GROUP BY lqt.name ,d.name
+  </select>
+  <select id="getQuestionCodes" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+  			SELECT lq.type ,zuoye_id,question_code FROM lst_zuoye_question lzq
+			LEFT JOIN lst_question  lq ON  lzq.question_id =lq.`id`
+		    WHERE  zuoye_id=#{zuoye_id,jdbcType=INTEGER} 
+<!-- 		    and class_code=#{class_code} -->
+		    GROUP BY  zuoye_id,question_code,xh,lq.type ORDER BY xh ASC
+  </select>
+  <select id="getQuestions" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+  			SELECT lq.id,lq.type,d.name,lqt.name AS questionTypeName
+   			,lq.zdmessage,lq.content,lq.topic,lq.parse_audio,lq.parse_text
+<!-- round(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))) as overall, --> 
+<!--   			round(AVG(IFNULL(lsz.accuracy_teacher,lsz.accuracy_sogou))) as accuracy, -->
+<!-- 			round(AVG(IFNULL(lsz.fluency_teacher,lsz.fluency_sogou))) as fluency, -->
+<!-- 			round(AVG(IFNULL(lsz.integrity_teacher,lsz.integrity_sogou))) as integrity  -->
+			FROM lst_question  lq 
+			JOIN lst_zuoye_question lzq ON lzq.question_id=lq.id
+			JOIN lst_zuoye_student_answer lsz ON lsz.zuoye_id=lzq.zuoye_id
+			JOIN (SELECT* FROM dic_data WHERE dic_code="diff_level" ) d ON d.data_value=lq.difficulty 
+			JOIN lst_question_type lqt ON lqt.id=lq.`question_type`
+			WHERE CODE =#{code,jdbcType=VARCHAR} and  lzq.zuoye_id=#{zuoye_id,jdbcType=INTEGER} 
+			GROUP BY lq.zdmessage,lq.content,lq.topic,lq.parse_audio,lq.parse_text,d.name,lqt.name,lq.type,lq.id
+  </select>
+  <select id="getScore"  resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  		SELECT lqt.name as questionName,d.name as difficulty, ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))*10,2) AS overallPercent ,
+			ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))) AS overall,ROUND(AVG(IFNULL(lsz.accuracy_teacher,lsz.accuracy_sogou))) AS 
+			accuracy, ROUND(AVG(IFNULL(lsz.fluency_teacher,lsz.fluency_sogou))) AS fluency, ROUND(AVG(IFNULL(lsz.integrity_teacher,lsz.integrity_sogou))) 
+			AS integrity FROM lst_zuoye_student_answer lsz 
+			JOIN lst_question lq ON lq.id=lsz.question_id
+			JOIN (SELECT *FROM dic_data WHERE dic_code ='diff_level') d ON d.data_value=lq.difficulty
+			JOIN lst_question_type lqt ON lq.question_type=lqt.id	
+			WHERE  zuoye_id=#{zuoye_id,jdbcType=INTEGER} AND question_id=#{id,jdbcType=INTEGER} AND class_code=#{class_code,jdbcType=VARCHAR}
+			GROUP BY d.name , lqt.name  
+  </select>
+  <select id="getScoreForStudent"  resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  		SELECT lsz.student_answer as student_answer	,lsz.answer_comment as answer_comment,lqt.name as questionName,d.name as difficulty, ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))*10,2) AS overallPercent ,
+			ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))) AS overall,ROUND(AVG(IFNULL(lsz.accuracy_teacher,lsz.accuracy_sogou))) AS 
+			accuracy, ROUND(AVG(IFNULL(lsz.fluency_teacher,lsz.fluency_sogou))) AS fluency, ROUND(AVG(IFNULL(lsz.integrity_teacher,lsz.integrity_sogou))) 
+			AS integrity FROM lst_zuoye_student_answer lsz 
+			JOIN lst_question lq ON lq.id=lsz.question_id
+			JOIN (SELECT *FROM dic_data WHERE dic_code ='diff_level') d ON d.data_value=lq.difficulty
+			JOIN lst_question_type lqt ON lq.question_type=lqt.id	
+			WHERE  zuoye_id=#{zuoye_id,jdbcType=INTEGER} AND question_id=#{id,jdbcType=INTEGER} AND class_code=#{class_code,jdbcType=VARCHAR} and student_id=#{student_id,jdbcType=INTEGER}
+			GROUP BY d.name , lqt.name  , lsz.student_answer	,lsz.answer_comment
+  </select>
+  <select id="getZuotiSitu" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+		SELECT COUNT(1) as num,CASE WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0)) <![CDATA[>=0]]> AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<2.5]]> THEN 'twoPoint'  
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=2.5]]> AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<5]]> THEN 'five'
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=5 ]]>AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<7.5 ]]>THEN 'sevenpointfive'
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=7.5 ]]>AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<=10 ]]>THEN 'seven'
+			ELSE '0'
+			END  AS stage FROM lst_zuoye_student_answer 
+WHERE zuoye_id=#{zuoye_id,jdbcType=INTEGER} AND class_code=#{class_code,jdbcType=VARCHAR} AND question_id=#{id,jdbcType=INTEGER}
+GROUP BY CASE WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=0]]> AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<2.5 ]]>THEN 'twoPoint'  
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=2.5]]> AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<5]]> THEN 'five'
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=5]]> AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<7.5]]> THEN 'sevenpointfive'
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=7.5 ]]>AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<=10]]> THEN 'seven'
+			ELSE '0'
+			END  
+  </select>
+  <select id="getzuoyeInfo" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  		SELECT lsz.zuoye_num AS count, lcz.name AS testName ,t.name AS teacherName,lsz.tj_status ,lsz.tj_tme FROM lst_student_zuoye lsz
+		JOIN lst_class_zuoye lcz ON lcz.id=lsz.zuoye_id
+		JOIN teacher_user t ON t.id=lcz.create_user 
+		WHERE lsz.zuoye_id=#{zuoye_id} AND lsz.class_code=#{class_code} AND lsz.student_id=#{student_id}
+  </select>
+  <select id="getStudentZuoyeByCode" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  		SELECT zuoye_num,ROUND(IFNULL(overall_teacher,overall_sogou)) AS zhdfl,ROUND(IFNULL(overall_teacher,overall_sogou)*10,2) AS dflPercent
+		,round(IFNULL(overall_teacher,overall_sogou)*dati_num) AS dfl,dati_num*10 AS totalScore,ROUND(IFNULL(accuracy_teacher,accuracy_sogou)*10,2) as accuracy,
+		ROUND(IFNULL(fluency_teacher,fluency_sogou)*10,2) as fluency,ROUND(IFNULL(integrity_teacher,integrity_sogou)*10,2) as integrity FROM lst_student_zuoye
+		WHERE student_id =#{student_id,jdbcType=INTEGER} AND zuoye_id =#{zuoye_id,jdbcType=INTEGER} AND class_code=#{class_code,jdbcType=INTEGER}
+  </select>
+  <select id="getStudentQuestion" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  			SELECT lqt.name AS questionName,d.name AS difficulty, ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))*10,2) AS overallPercent ,
+			ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))) AS overall,ROUND(AVG(IFNULL(lsz.accuracy_teacher,lsz.accuracy_sogou))) AS 
+			accuracy, ROUND(AVG(IFNULL(lsz.fluency_teacher,lsz.fluency_sogou))) AS fluency, ROUND(AVG(IFNULL(lsz.integrity_teacher,lsz.integrity_sogou))) 
+			AS integrity FROM lst_zuoye_student_answer lsz 
+			JOIN lst_question lq ON lq.id=lsz.question_id
+			JOIN (SELECT *FROM dic_data WHERE dic_code ='diff_level') d ON d.data_value=lq.difficulty
+			JOIN lst_question_type lqt ON lq.question_type=lqt.id	
+			WHERE  zuoye_id=#{zuoye_id,jdbcType=INTEGER} AND student_id=#{student_id,jdbcType=VARCHAR}
+			GROUP BY d.name , lqt.name  	
+  </select>
+  <select id="totalScoreList" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  			SELECT  ROUND(AVG(overallPercent),2) as overallPercent ,SUM(accuracy) AS accuracy,SUM(integrity) AS integrity,SUM(fluency) AS fluency,SUM(overall) AS overall FROM(	SELECT lqt.name AS questionName,d.name AS difficulty, ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))*10,2) AS overallPercent ,
+			ROUND(AVG(IFNULL(lsz.overall_teacher,lsz.overall_sogou))) AS overall,ROUND(AVG(IFNULL(lsz.accuracy_teacher,lsz.accuracy_sogou))) AS 
+			accuracy, ROUND(AVG(IFNULL(lsz.fluency_teacher,lsz.fluency_sogou))) AS fluency, ROUND(AVG(IFNULL(lsz.integrity_teacher,lsz.integrity_sogou))) 
+			AS integrity FROM lst_zuoye_student_answer lsz 
+			JOIN lst_question lq ON lq.id=lsz.question_id
+			JOIN (SELECT *FROM dic_data WHERE dic_code ='diff_level') d ON d.data_value=lq.difficulty
+			JOIN lst_question_type lqt ON lq.question_type=lqt.id	
+			WHERE   zuoye_id=#{zuoye_id,jdbcType=INTEGER} AND student_id=#{student_id,jdbcType=INTEGER}
+			GROUP BY d.name , lqt.name ) t
+  </select>
+  <select id="getGrowthData" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  			SELECT dati_num ,LEFT(lcz.release_time,19) AS release_time,IFNULL(overall_teacher,overall_sogou)*dati_num as totalScore,l.totalNum,ROUND(l.overall*10,2) as overall FROM lst_student_zuoye la
+			JOIN lst_class_zuoye lcz ON la.zuoye_id =lcz.id
+			INNER JOIN (SELECT SUM(dati_num) totalNum ,student_id ,AVG(IFNULL(overall_teacher,overall_sogou)) AS overall FROM lst_student_zuoye WHERE student_id=#{student_id,jdbcType=INTEGER} GROUP BY student_id ) l ON l.student_id=la.student_id
+			WHERE la.student_id=#{student_id,jdbcType=INTEGER}
+<!--   			SELECT dati_num,LEFT(lcz.release_time,10) as release_time ,t.overall,t.totalNum,ROUND(IFNULL(lsz.overall_teacher,lsz.overall_sogou)* dati_num) AS totalScore FROM 	lst_student_zuoye lsz -->
+<!-- 			JOIN lst_class_zuoye  lcz ON lsz.zuoye_id =lcz.id -->
+<!-- 			JOIN ( -->
+<!-- 			SELECT ROUND(AVG(IFNULL(overall_teacher,overall_sogou))*10,2) AS overall , -->
+<!-- 			SUM(dati_num) AS totalNum ,student_id FROM lst_student_zuoye WHERE student_id=#{student_id,jdbcType=INTEGER} GROUP BY student_id -->
+<!-- 			) t ON t.student_id =lsz.student_id  -->
+<!-- 			WHERE lsz.student_id=#{student_id,jdbcType=INTEGER}  ORDER BY lcz.release_time ASC -->
+  </select>
+  <select id="beat" resultType="java.lang.Integer" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  	SELECT COUNT(1) FROM lst_student_test 
+ 	WHERE IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<]]>(SELECT IFNULL(overall_teacher,IFNULL(overall_sogou,0)) 
+ 	FROM lst_student_zuoye WHERE zuoye_id=#{zuoye_id,jdbcType=INTEGER} AND student_id=#{student_id,jdbcType=INTEGER} ) 
+ 	<if test="class_code!=null">
+ 		AND class_code=#{class_code}
+ 	</if>
+  </select>
+  <select id="totalStudent" resultType="java.lang.Integer" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  	SELECT COUNT(1) FROM lst_student_zuoye WHERE 1=1 AND  zuoye_id=#{zuoye_id,jdbcType=INTEGER}
+  	<if test="class_code!=null">
+ 		AND class_code=#{class_code}
+ 	</if>
+  </select>
+  <select id="pgNum"  resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+		SELECT  COUNT(1) as count ,CASE WHEN pg_status=2 THEN 'pg' 
+		WHEN tj_status =1 THEN 'tj' 
+		ELSE 'else'
+		END  as pgNum
+		 FROM lst_student_zuoye where class_code=#{class_code,jdbcType=VARCHAR} and zuoye_id=#{zuoye_id,jdbcType=INTEGER} GROUP BY 
+		 CASE WHEN pg_status=2 THEN 'pg' 
+		WHEN tj_status =1 THEN 'tj' 
+		ELSE 'else'
+		END 
+  </select>
+  <select id="getavgScore" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  		SELECT ROUND(AVG(IFNULL(overall_teacher,overall_sogou))*10,2) as avgScore FROM lst_student_zuoye where  class_code=#{class_code,jdbcType=VARCHAR} and zuoye_id=#{zuoye_id,jdbcType=INTEGER}
+  </select>
+  <select id="getStudentLevel" resultType="java.util.HashMap" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye">
+  		SELECT s.name ,round(overall_teacher*10,2) as overall_teacher,student_id,CASE WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0)) <![CDATA[>=0]]> AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<2.5]]> THEN 'twoPoint'  
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=2.5]]> AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<5]]> THEN 'five'
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=5 ]]>AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<7.5 ]]>THEN 'sevenpointfive'
+			WHEN IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[>=7.5 ]]>AND IFNULL(overall_teacher,IFNULL(overall_sogou,0))<![CDATA[<=10 ]]>THEN 'seven'
+			ELSE '0'
+			END  AS stage FROM lst_student_zuoye lsz
+			LEFT JOIN student_user s ON s.id=lsz.`student_id` WHERE zuoye_id =#{zuoye_id,jdbcType=INTEGER} and class_code=#{class_code,jdbcType=VARCHAR}
+  </select>
+</mapper>

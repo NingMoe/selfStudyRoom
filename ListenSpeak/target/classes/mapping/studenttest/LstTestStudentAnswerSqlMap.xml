@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.studenttest.dao.LstTestStudentAnswerDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.studenttest.entity.LstTestStudentAnswer" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="INTEGER" />
+    <result column="test_id" property="test_id" jdbcType="INTEGER" />
+    <result column="class_code" property="class_code" jdbcType="VARCHAR" />
+    <result column="question_id" property="question_id" jdbcType="INTEGER" />
+    <result column="student_answer" property="student_answer" jdbcType="VARCHAR" />
+    <result column="accuracy_sogou" property="accuracy_sogou" jdbcType="DECIMAL" />
+    <result column="fluency_sogou" property="fluency_sogou" jdbcType="DECIMAL" />
+    <result column="integrity_sogou" property="integrity_sogou" jdbcType="DECIMAL" />
+    <result column="overall_sogou" property="overall_sogou" jdbcType="DECIMAL" />
+    <result column="accuracy_teacher" property="accuracy_teacher" jdbcType="DECIMAL" />
+    <result column="fluency_teacher" property="fluency_teacher" jdbcType="DECIMAL" />
+    <result column="integrity_teacher" property="integrity_teacher" jdbcType="DECIMAL" />
+    <result column="overall_teacher" property="overall_teacher" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, test_id, class_code, question_id, student_answer, accuracy_sogou, 
+    fluency_sogou, integrity_sogou, overall_sogou, accuracy_teacher, fluency_teacher, 
+    integrity_teacher, overall_teacher
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_test_student_answer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_test_student_answer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.studenttest.entity.LstTestStudentAnswer" >
+    insert into lst_test_student_answer (id, student_id, test_id, 
+      class_code, question_id, student_answer, 
+      accuracy_sogou, fluency_sogou, integrity_sogou, 
+      overall_sogou, accuracy_teacher, fluency_teacher, 
+      integrity_teacher, overall_teacher)
+    values (#{id,jdbcType=INTEGER}, #{student_id,jdbcType=INTEGER}, #{test_id,jdbcType=INTEGER}, 
+      #{class_code,jdbcType=VARCHAR}, #{question_id,jdbcType=INTEGER}, #{student_answer,jdbcType=VARCHAR}, 
+      #{accuracy_sogou,jdbcType=DECIMAL}, #{fluency_sogou,jdbcType=DECIMAL}, #{integrity_sogou,jdbcType=DECIMAL}, 
+      #{overall_sogou,jdbcType=DECIMAL}, #{accuracy_teacher,jdbcType=DECIMAL}, #{fluency_teacher,jdbcType=DECIMAL}, 
+      #{integrity_teacher,jdbcType=DECIMAL}, #{overall_teacher,jdbcType=DECIMAL})
+  </insert>
+  
+  
+  <insert id="updateByKsQuestion" parameterType="com.ls.spt.studentpc.student.entity.KsQuestion" >
+    update lst_test_student_answer set student_answer = #{student_answer,jdbcType=VARCHAR},accuracy_sogou= #{accuracy_sogou,jdbcType=DECIMAL},
+    fluency_sogou = #{fluency_sogou,jdbcType=DECIMAL},integrity_sogou=#{integrity_sogou,jdbcType=DECIMAL} ,overall_sogou=#{overall_sogou,jdbcType=DECIMAL} 
+    where student_id = #{studentId,jdbcType=INTEGER} and test_id = #{testId,jdbcType=INTEGER} and class_code = #{classCode,jdbcType=VARCHAR}
+    and  question_id =  #{questionId,jdbcType=INTEGER}
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.ls.spt.studenttest.entity.LstTestStudentAnswer" >
+    insert into lst_test_student_answer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="test_id != null" >
+        test_id,
+      </if>
+      <if test="class_code != null" >
+        class_code,
+      </if>
+      <if test="question_id != null" >
+        question_id,
+      </if>
+      <if test="student_answer != null" >
+        student_answer,
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou,
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou,
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou,
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou,
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher,
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher,
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher,
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="test_id != null" >
+        #{test_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="question_id != null" >
+        #{question_id,jdbcType=INTEGER},
+      </if>
+      <if test="student_answer != null" >
+        #{student_answer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracy_sogou != null" >
+        #{accuracy_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_sogou != null" >
+        #{fluency_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_sogou != null" >
+        #{integrity_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_sogou != null" >
+        #{overall_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="accuracy_teacher != null" >
+        #{accuracy_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_teacher != null" >
+        #{fluency_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_teacher != null" >
+        #{integrity_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_teacher != null" >
+        #{overall_teacher,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.studenttest.entity.LstTestStudentAnswer" >
+    update lst_test_student_answer
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="test_id != null" >
+        test_id = #{test_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="question_id != null" >
+        question_id = #{question_id,jdbcType=INTEGER},
+      </if>
+      <if test="student_answer != null" >
+        student_answer = #{student_answer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou = #{accuracy_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou = #{fluency_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou = #{integrity_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou = #{overall_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher = #{accuracy_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher = #{fluency_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher = #{integrity_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher = #{overall_teacher,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.studenttest.entity.LstTestStudentAnswer" >
+    update lst_test_student_answer
+    set student_id = #{student_id,jdbcType=INTEGER},
+      test_id = #{test_id,jdbcType=INTEGER},
+      class_code = #{class_code,jdbcType=VARCHAR},
+      question_id = #{question_id,jdbcType=INTEGER},
+      student_answer = #{student_answer,jdbcType=VARCHAR},
+      accuracy_sogou = #{accuracy_sogou,jdbcType=DECIMAL},
+      fluency_sogou = #{fluency_sogou,jdbcType=DECIMAL},
+      integrity_sogou = #{integrity_sogou,jdbcType=DECIMAL},
+      overall_sogou = #{overall_sogou,jdbcType=DECIMAL},
+      accuracy_teacher = #{accuracy_teacher,jdbcType=DECIMAL},
+      fluency_teacher = #{fluency_teacher,jdbcType=DECIMAL},
+      integrity_teacher = #{integrity_teacher,jdbcType=DECIMAL},
+      overall_teacher = #{overall_teacher,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

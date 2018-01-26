@@ -1,0 +1,473 @@
+package com.ls.spt.question.controller;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.aliyun.oss.OSSClient;
+import com.ls.spt.question.entity.QuestionParseResult;
+import com.ls.spt.question.entity.QuestionVoiceParam;
+import com.ls.spt.studentpc.student.entity.KsQuestion;
+import com.ls.spt.studentpc.student.service.StudentTestService;
+import com.ls.spt.utils.OSSUtil;
+import com.ls.spt.utils.sogou.VoiceSence;
+import com.sogou.speech.SpeexInterface;
+
+@Controller
+@RequestMapping("/studentpc/voice/")
+public class VoiceParseController {
+
+    private static final int REPLY_LENGTH = 2600;
+    private static int CONNECTION_TIME_OUT = 20000;
+    private static int READ_TIME_OUT = 8000;
+    private static int FINAL_READ_TIME_OUT = 20000;
+    //private static int MAX_ENCRYPT_STR_LEN = 1025;
+    //private static int API_VERSION = 6040; // sogou search translation , andriod-6040, ios-6140
+    //private static int ERROR_NETWORK_RESPONSE_STATUS_CODE_ERROR = -2004;
+    //private static int ERROR_EXCEPTION_DURING_HTTP_REQUEST = -2005;
+
+    private static final String httpAddr = "https://evaleng.speech.sogou.com/index.sa";
+
+    @Autowired
+    private OSSUtil ossUtil;
+    
+    @Autowired
+    StudentTestService testService;
+
+    @Value("${oss.bucket}")
+    private String bucketName;
+
+    @Value("${oss.lsStudentAnswerPath}")
+    private String lsStudentAnswerPath;
+
+    @Value("${oss.fileurl}")
+    private String fileurl;
+
+    public static byte[] jsonByteArray;
+
+    private final Logger logger = LogManager.getLogger(VoiceParseController.class);
+
+    @RequestMapping(value = "soGouParse")
+    @ResponseBody
+    public Map<String, Object> soGouParse(QuestionVoiceParam param,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
+        logger.info("语音上传进来了");
+        System.out.println(System.getProperty("java.library.path"));
+        Map<String, Object> result = new HashMap<String, Object>();
+        long currentTime = System.currentTimeMillis();
+        try {
+            JSONObject jo = getJson(param);
+            System.out.println(jo.toJSONString());
+            jsonByteArray = jo.toString().getBytes("utf-8");
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession(false).getServletContext());
+            if (resolver.isMultipart(request)) {
+                OSSClient ossClient = ossUtil.getClient();
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+                // 取得request中的所有文件名
+                Iterator<String> iter = multiRequest.getFileNames();
+                while (iter.hasNext()) {
+                    SpeexInterface s = new SpeexInterface();
+                    long p = s.createSpeex();
+                    String fileName = iter.next();
+                    // 取得上传文件
+                    MultipartFile multiFile = multiRequest.getFile(fileName);
+                    String originalName = multiFile.getOriginalFilename();
+                    if ("".equals(originalName) || originalName == null) {
+                        continue;
+                    }
+                    String newFileName = lsStudentAnswerPath + System.currentTimeMillis() + ".wav";
+                    ossUtil.asyncUploadFile(ossClient, bucketName, newFileName, multiFile);
+                    InputStream is = multiFile.getInputStream();
+                    //is.skip(44);
+                    byte[] bytes = new byte[6400];
+                    byte[] destArr = null;
+                    for (;;) {
+                        int read = is.read(bytes);
+                        if (read <= 0) {
+                            break;
+                        }
+                        short[] shorts = new short[read / 2];
+                        ByteBuffer.wrap(bytes).order(ByteOrder.nativeOrder()).asShortBuffer().get(shorts);
+                        s.processIn(p, shorts, read / 2);
+                        byte[] resultYp = s.processOut(p, true);
+                        //os.write(resultYp);
+                        if (destArr == null) {
+                            destArr = resultYp;
+                        }
+                        else {
+                            destArr = addByteArr(destArr, resultYp);
+                        }
+                    }
+
+                    System.out.println("压缩后大小" + destArr.length);
+                    List<byte[]> voiceArr = new ArrayList<byte[]>();
+                    voiceArr = getDestVoice(destArr, voiceArr);
+                    for (int i = 0; i < voiceArr.size(); i++) {
+                        /**
+                         * 调用接口
+                         */
+                        int seqNo = (i == voiceArr.size() - 1) ? (-1 * (i + 1)) : (i + 1);
+                        Map<String,Object> parseMap =sendMessage(voiceArr.get(i), currentTime, seqNo, voiceArr.size());
+                        if(i==voiceArr.size()-1){
+                            boolean isJxCg = (boolean) parseMap.get("flag");
+                            if(isJxCg){
+                                long currentTime1 = System.currentTimeMillis();
+                                System.out.println(currentTime1-currentTime);
+                                QuestionParseResult parseResult = (QuestionParseResult) parseMap.get("parseResult");
+                                parseResult.setFlePath(newFileName);
+                                KsQuestion question = new KsQuestion();
+                                BigDecimal accuracy_sogou = new BigDecimal(parseResult.getResult().getAccuracy()).divide(new BigDecimal(10));
+                                question.setAccuracy_sogou(accuracy_sogou);
+                                BigDecimal fluency_sogou = new BigDecimal(parseResult.getResult().getFluency()).divide(new BigDecimal(10));
+                                question.setFluency_sogou(fluency_sogou);
+                                BigDecimal integrity_sogou = new BigDecimal(parseResult.getResult().getIntegrity()).divide(new BigDecimal(10));
+                                question.setIntegrity_sogou(integrity_sogou);
+                                BigDecimal overall_sogou = new BigDecimal(parseResult.getResult().getOverall()).divide(new BigDecimal(10));
+                                question.setOverall_sogou(overall_sogou);
+                                
+                                question.setStudentTestId(param.getStudent_test_id());
+                                question.setClassCode(param.getClass_code());
+                                question.setTestId(param.getTest_id());
+                                question.setIsEnd(param.getIsEnd());
+                                question.setQuestionId(param.getQuestion_id());
+                                question.setStudentId(param.getStudent_id());
+                                question.setStudent_answer(parseResult.getFlePath());
+                                question.setIsQuestionEnd(param.getIsQuestionEnd());
+                                testService.setStudentAnswer(question);
+                                result.put("flag", true);
+                            }else{
+                                result.put("flag", false);
+                                result.put("message", "语音上传失败");
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            logger.info("语音上传上传结束");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            result.put("flag", false);
+            logger.info("语音上传失败");
+        }
+        return result;
+    }
+    
+    @RequestMapping(value = "tjParseResult")
+    @ResponseBody
+    public Map<String, Object> tjParseResult(KsQuestion ksQuestion,HttpServletRequest request) throws ServletException, IOException, FileUploadException {
+        Map<String, Object> result = new HashMap<String, Object>();
+        try{
+            testService.setStudentAnswer(ksQuestion);
+            OSSClient ossClient = ossUtil.getClient();
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession(false).getServletContext());
+            if (resolver.isMultipart(request)) {
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+                Iterator<String> iter = multiRequest.getFileNames();
+                while (iter.hasNext()) {
+                    String fileName = iter.next();
+                    // 取得上传文件
+                    MultipartFile multiFile = multiRequest.getFile(fileName);
+                    String originalName = multiFile.getOriginalFilename();
+                    if ("".equals(originalName) || originalName == null) {
+                        continue;
+                    }
+                    String newFileName = lsStudentAnswerPath + System.currentTimeMillis() + ".wav";
+                    System.out.println(fileurl+newFileName);
+                    ossUtil.asyncUploadFile(ossClient, bucketName, newFileName, multiFile);
+                }
+            }
+            result.put("flag", true);
+        }catch(Exception e){
+            e.printStackTrace();
+            result.put("flag", false);
+            result.put("message","系统错误，请联系系统管理员");
+        }
+        return result;
+    }
+    
+    
+    
+    @RequestMapping(value = "soGouSenceParse")
+    @ResponseBody
+    public Map<String, Object> soGouSenceParse(QuestionVoiceParam param,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
+        logger.info("语音上传进来了");
+        System.out.println(System.getProperty("java.library.path"));
+        Map<String, Object> result = new HashMap<String, Object>();
+        long currentTime = param.getCurrentTime();
+        Integer currentIndex =  param.getCurrentIndex();
+        Integer seqIndex = getSeqNo(Math.abs(currentIndex));
+        System.out.println(currentIndex);
+        try {
+            JSONObject jo = getJson(param);
+            System.out.println(jo.toJSONString());
+            jsonByteArray = jo.toString().getBytes("utf-8");
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession(false).getServletContext());
+            if (resolver.isMultipart(request)) {
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+                // 取得request中的所有文件名
+                Iterator<String> iter = multiRequest.getFileNames();
+                while (iter.hasNext()) {
+                    SpeexInterface s = new SpeexInterface();
+                    long p = s.createSpeex();
+                    String fileName = iter.next();
+                    MultipartFile multiFile = multiRequest.getFile(fileName);
+                    InputStream is = multiFile.getInputStream();
+                    is.skip(44);
+                    System.out.println("压缩前大小" + multiFile.getSize());
+                    byte[] bytes = new byte[6400];
+                    byte[] destArr = null;
+                    for (;;) {
+                        int read = is.read(bytes);
+                        if (read <= 0) {
+                            break;
+                        }
+                        short[] shorts = new short[read / 2];
+                        ByteBuffer.wrap(bytes).order(ByteOrder.nativeOrder()).asShortBuffer().get(shorts);
+                        s.processIn(p, shorts, read / 2);
+                        byte[] resultYp = s.processOut(p, true);
+                        if (destArr == null) {
+                            destArr = resultYp;
+                        }
+                        else {
+                            destArr = addByteArr(destArr, resultYp);
+                        }
+                    }
+
+                    System.out.println("压缩后大小" + destArr.length);
+                    List<byte[]> voiceArr = new ArrayList<byte[]>();
+                    voiceArr = getDestVoice(destArr, voiceArr);
+                    for (int i = 0; i < voiceArr.size(); i++) {
+                        Integer seqNo = 0;
+                        if(currentIndex>0){
+                            seqNo = seqIndex;
+                        }else{
+                            seqNo = -1 *seqIndex;
+                        }
+                        System.out.println(currentIndex);
+                        Map<String,Object> parseMap =sendMessage(voiceArr.get(i), currentTime, seqNo, voiceArr.size());
+                        if(seqNo<0){
+                            QuestionParseResult parseResult = (QuestionParseResult) parseMap.get("parseResult");
+                            result.put("data", parseResult.getResult());
+                        }
+                    }
+                }
+            }
+            logger.info("语音上传上传结束");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            result.put("flag", false);
+            logger.info("语音上传失败");
+        }
+        return result;
+    }
+
+    private Map<String,Object> sendMessage(byte[] voiceSentence, long currentTime, int seqNo, int voiceLength) {
+        System.out.println(seqNo+"...........");
+        Map<String,Object> result = new HashMap<String,Object>();
+        HttpURLConnection urlConn = null;
+        String replyContent = "";
+        try {
+            VoiceSence vs = new VoiceSence();
+            vs.setArea(0);
+            vs.setBase_no("");
+            vs.setCancel(0);
+            vs.setImei_no("A000005E97A95C");
+            vs.setResult_amount(voiceLength);
+            vs.setSequence_no(seqNo);
+            vs.setStart_time(currentTime);
+            vs.setType_no(16416);
+            vs.setV(1600);
+            vs.setVoice_content(voiceSentence);
+            vs.setVoice_length(voiceSentence.length);
+            String uriSuffix = formatQueryParam(vs);
+            String postURI = httpAddr + "?" + uriSuffix;
+
+            System.out.println("seqNo:" + seqNo + "请求地址:" + postURI);
+            urlConn = openConnection(new URL(postURI), vs.getSequence_no());
+            DataOutputStream tmpOut = new DataOutputStream(urlConn.getOutputStream());
+            byte[] data = vs.getVoice_content();
+            String contentPrefix = "voice_content=";
+            tmpOut.writeBytes(contentPrefix);
+            if (data != null && data.length > 0) {
+                tmpOut.write(data);
+            }
+            String contentHeader = "info_content=";
+            tmpOut.writeBytes(contentHeader);
+            if (jsonByteArray != null && jsonByteArray.length > 0) {
+                tmpOut.write(jsonByteArray);
+            }
+            tmpOut.flush();
+            tmpOut.close();
+            int responseStatus = urlConn.getResponseCode();
+            if (responseStatus == 200) {
+                InputStream tmpIn = urlConn.getInputStream();
+                replyContent = inputStream2String(tmpIn, "GBK");
+                logger.info("sequenceNo:" + seqNo + ",replycontent:" + replyContent);
+                if(seqNo<0){
+                    QuestionParseResult parseResult = JSON.parseObject(replyContent, QuestionParseResult.class);
+                    result.put("flag", true);
+                    result.put("parseResult", parseResult);
+                }
+                tmpIn.close();
+            }
+            else {
+                result.put("flag", false);
+                result.put("message", "SOGOU接口解析失敗");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            result.put("flag", false);
+            result.put("message", "SOGOU接口解析失敗");
+        }
+        finally {
+            if (urlConn != null) {
+                urlConn.disconnect();
+            }
+        }
+        return result;
+    }
+
+    private String inputStream2String(InputStream in, String encoding) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        InputStreamReader inRead = new InputStreamReader(in, encoding);
+        char[] buf = new char[REPLY_LENGTH];
+        int readLen = 0;
+        while ((readLen = inRead.read(buf)) > 0) {
+            sb.append(buf, 0, readLen);
+        }
+        inRead.close();
+        return sb.toString();
+    }
+
+    private HttpURLConnection openConnection(URL url, int sequenceNo) throws IOException {
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        urlConn.setDoOutput(true);
+        urlConn.setDoInput(true);
+        urlConn.setRequestMethod("POST");
+        urlConn.setConnectTimeout(CONNECTION_TIME_OUT);
+        if (sequenceNo < 0) {
+            urlConn.setReadTimeout(FINAL_READ_TIME_OUT);
+        }
+        else {
+            urlConn.setReadTimeout(READ_TIME_OUT);
+        }
+        urlConn.setUseCaches(false);
+        urlConn.setInstanceFollowRedirects(false);
+        urlConn.addRequestProperty("Accept-Charset", "GBK");
+        urlConn.setRequestProperty("Content-type", "application/x-java-serialized-object");
+        /* urlConn.addRequestProperty("S-COOKIE", getEncScookie()); */
+        urlConn.connect();
+        return urlConn;
+    }
+
+    private JSONObject getJson(QuestionVoiceParam param) {
+        JSONObject jsonObject = new JSONObject();
+        String jsonStr = "";
+        try {
+            if(("eng_wrd").equals(param.getScoreType())||("eng_snt").equals(param.getScoreType())||("eng_chp").equals(param.getScoreType())){
+                jsonStr = "{\"scoretype\":\""+param.getScoreType()+"\",\"jsonlabels\":{\"refText\": \""+param.getRefText()+"\"}}"; 
+            }
+            if(("eng_pqan").equals(param.getScoreType())){
+                jsonStr = "{\"scoretype\":\""+param.getScoreType()+"\",\"jsonlabels\":{\"lm\": [{\"text\":\""+param.getRefText()+"\"}],\"key\": [{\"text\":\""+param.getKey()+"\"}],\"quest_ans\":\""+param.getContent()+"\",\"para\":\""+param.getTopic()+"\"}}"; 
+            }
+            if(("eng_topic").equals(param.getScoreType())){
+                jsonStr = "{\"scoretype\":\""+param.getScoreType()+"\",\"jsonlabels\":{\"lm\": [{\"answer\":1,\"text\":\""+param.getRefText()+"\"}]}}"; 
+            }
+            jsonObject = JSON.parseObject(jsonStr);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+    private List<byte[]> getDestVoice(byte[] src, List<byte[]> result) {
+        if (src.length < 3000) {
+            result.add(src);
+        }
+        else {
+            byte[] newSrc = new byte[src.length - 3000];
+            byte[] tmp = new byte[3000];
+            System.arraycopy(src, 0, tmp, 0, 3000);
+            result.add(tmp);
+            System.arraycopy(src, 3000, newSrc, 0, src.length - 3000);
+            getDestVoice(newSrc, result);
+        }
+        return result;
+    }
+
+    private String formatQueryParam(VoiceSence voiceSence) throws UnsupportedEncodingException {
+        /**
+         * 固定base_no="", result_amount=5 , cancel=0, 删除net_type, f(fakeFlag)
+         */
+        final String baseNo = "";
+        /**
+         * 默认使用中文
+         */
+        String uriSuffix = String.format(
+                "imei_no=%s&type_no=%s&area=%d&base_no=%s" + "&start_time=%s&sequence_no=%d&voice_length=%d&result_amount=%d&cancel=%d&v=%d&net_type=wifi&partial=1&token=%d&info_length=%d",
+                voiceSence.getImei_no(), voiceSence.getType_no(), voiceSence.getArea(), baseNo, String.valueOf(voiceSence.getStart_time()), voiceSence.getSequence_no(), voiceSence.getVoice_length(),
+                voiceSence.getResult_amount(), voiceSence.getCancel(), voiceSence.getV(), 123, jsonByteArray.length);
+        return uriSuffix;
+    }
+
+    private byte[] addByteArr(byte[] src1, byte[] src2) {
+        byte[] dest = new byte[src1.length + src2.length];
+        System.arraycopy(src1, 0, dest, 0, src1.length);
+        System.arraycopy(src2, 0, dest, src1.length, src2.length);
+        return dest;
+    }
+    
+    
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<String>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        for(String s:list){
+            System.out.println(s);
+        }
+    }
+    
+    private Integer getSeqNo(Integer s){
+       if(s%47104==0){
+           return s/47104;
+       }else{
+           return s/47104 +1;
+       }
+    }
+}

@@ -1,0 +1,105 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<%@include file="/WEB-INF/view/common/taglib.jsp"%></head>
+</head>
+<body style="padding:10px;">
+	<form class="layui-form">
+		<div class="layui-form-item" style="margin-top: 25px;">
+			<label class="layui-form-label" style="width:12%;">年级</label>
+			<div class="layui-input-inline" style="width:28%;">
+				<select name="grade" id="grade" lay-verify="required">
+					<option value="">请选择</option>
+					<c:forEach items="${grades }" var="grade">
+						<option value="${grade.dataValue }">${grade.name }</option>
+					</c:forEach>
+				</select>
+			</div>
+			<label class="layui-form-label" style="width:12%;">科目</label>
+			<div class="layui-input-inline" style="width:28%;">
+				<input type="text" id="subjectDesc" name="subjectDesc" readonly="readonly" value="英语" class="layui-input"> 
+				<input type="hidden" id="subject" name="subject" readonly="readonly" value="1">
+			</div>
+			
+		</div>
+		<div class="layui-form-item" style="margin-top: 25px;">
+			<label class="layui-form-label" style="width:12%;">题型</label>
+			<div class="layui-input-inline" style="width:28%;">
+				<select name="questionType" id="questionType" lay-filter="tx" lay-verify="required">
+					<option value="">请选择</option>
+					<c:forEach var="qt" items="${questionTypes }">
+						<option value="${qt.id }-${qt.lType}">${qt.name }</option>
+					</c:forEach>
+				</select>
+			</div>
+			
+			<label class="layui-form-label" style="width:12%;">难度</label>
+			<div class="layui-input-inline" style="width:28%;">
+				<select name="difficulty" id="difficulty" lay-verify="required">
+					<option value="">请选择</option>
+					<option value="A">简单</option>
+					<option value="B">中等</option>
+					<option value="C">较难</option>
+				</select>
+			</div>
+		</div>
+		
+		
+		<div class="layui-form-item" style="margin-top: 25px; display: none;" id="yt">
+			<label class="layui-form-label" style="width:12%;">用途</label>
+			<div class="layui-input-inline" style="width:28%;">
+				<select name="yongtu" id="yongtu" lay-verify="required">
+					<option value="1" selected="selected">作业</option>
+					<option value="2">考试</option>
+				</select>
+			</div>
+		</div>
+		
+		<div class="layui-form-item" style="margin-bottom:10px;">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" id="qr" lay-filter="qr">确定</button>
+			</div>
+		</div>
+	</form>
+	<script type="text/javascript">
+	layui.use(['form'], function(){
+		var form = layui.form;
+		form.on('select(tx)', function(data){
+			var tx = data.value.substring(data.value.length-1); //得到被选中的值
+			console.log(tx);
+			if("2"==tx){
+				$("#yt").show();
+			}else{
+				$("#yt").hide();
+			}
+		}); 
+		
+		$("#qr").click(function(){
+			var grade=$("#grade").val();
+			var subject=$("#subject").val();
+			var questionType=$("#questionType").val();
+			questionType = questionType.substring(0,questionType.length-2);
+			var yongtu = $("#yongtu").val();
+			var difficulty =$("#difficulty").val();
+			var params = "grade="+grade+"&subject="+subject+"&questionType="+questionType
+			+"&difficulty="+difficulty+"&yongtu="+yongtu;
+			
+			console.log(params);
+			
+			$("#urlParams",parent.document).val(params);
+			$("#hiddenAddBtn",parent.document).click();
+		});
+	});
+	</script>
+</body>
+</html>

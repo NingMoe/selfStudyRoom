@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.manager.dao.RoleDao" >
+   <resultMap id="BaseResultMap" type="com.ls.spt.manager.entity.Role" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_desc" property="roleDesc" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="createUserName" property="createUserName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="updateUserName" property="updateUserName" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+ 
+ <!-- 分页查询 -->
+ <select id="query"  resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		SELECT r.`id`,r.`name`,r.`role_desc`,r.`status`,
+		r.`create_user`,u.`name` createUserName,
+		r.`create_time`,r.`update_user`,u1.`name` updateUserName,r.`update_time` 
+		FROM role r
+		LEFT JOIN teacher_user u ON r.`create_user`=u.`id`
+		LEFT JOIN teacher_user u1 ON r.`update_user`=u1.id
+		<trim prefix="WHERE"  prefixOverrides="AND | OR">
+			<if test="t.roleName != null and t.roleName != ''">
+				and r.name like CONCAT(CONCAT('%', #{t.roleName,jdbcType=VARCHAR}), '%')
+			</if>
+			<if test="t.createUser != null and t.createUser != ''" >
+        	 AND r.create_user=#{t.createUser,jdbcType=INTEGER}
+      		</if>
+			and r.status !=-1
+		</trim>
+ </select>
+ 
+ <sql id="Base_Column_List" >
+     id, name, role_desc, status, create_time, create_user,update_time,update_user 
+ </sql>
+ <!-- 更新角色状态 -->
+	<update id="updateStatusByIds" parameterType="java.util.HashMap">
+		update role set status=#{status,jdbcType=INTEGER},update_user=#{updateUser,jdbcType=INTEGER},update_time=now() where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+ 
+ <select id="queryRole" resultMap="BaseResultMap" parameterType="com.ls.spt.manager.entity.Role" >
+    select 
+    <include refid="Base_Column_List" />
+    from role
+    <trim prefix="WHERE"  prefixOverrides="AND | OR"> 
+     <if test="id != null" >
+    	and  id = #{id,jdbcType=INTEGER}
+     </if>
+      <if test="roleName != null and roleName !=''" >
+        and  name = #{roleName,jdbcType=VARCHAR}
+      </if>
+      	and status !=-1
+      <if test="roleDesc != null and roleDesc !=''" >
+        and role_desc = #{roleDesc,jdbcType=VARCHAR}
+      </if>
+      <if test="createUser != null" >
+        and create_user = #{createUser,jdbcType=INTEGER}
+      </if>
+      </trim>
+  </select>
+  
+  <insert id="insert" parameterType="com.ls.spt.manager.entity.Role" >
+    insert into role (name, role_desc, create_user)
+    values (#{roleName,jdbcType=VARCHAR},  #{roleDesc,jdbcType=VARCHAR},  #{createUser,jdbcType=INTEGER})
+  </insert>
+ 
+ 
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.manager.entity.Role" >
+    update role
+    set 
+      role_desc = #{roleDesc,jdbcType=VARCHAR},
+      update_user=#{updateUser,jdbcType=INTEGER},
+      update_time=now()
+    where id = #{id,jdbcType=INTEGER}  
+  </update>
+  
+  
+  <resultMap id="resMap" type="com.ls.spt.manager.entity.Resources">
+	<id column="ID" property="id" jdbcType="INTEGER" />
+	<result column="name" property="name" jdbcType="VARCHAR" />
+	<result column="parentId" property="parentId" jdbcType="INTEGER" />
+	<result column="parentName" property="parentName" jdbcType="VARCHAR" />
+	<result column="resKey" property="resKey" jdbcType="VARCHAR" />
+	<result column="type" property="type" jdbcType="INTEGER" />
+	<result column="resUrl" property="resUrl" jdbcType="VARCHAR" />
+	<result column="resc_desc" property="rescDesc" jdbcType="VARCHAR" />
+	<result column="status" property="status" jdbcType="INTEGER" />
+	<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="createUserId" property="createUserId" jdbcType="BIT" />
+	<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	<result column="update_user" property="updateUserId" jdbcType="BIT" />
+	<result column="sort" property="sort" jdbcType="INTEGER" />
+	<result column="icon" property="iconUrl" jdbcType="VARCHAR" />
+</resultMap>
+  
+  <!-- 	根据角色Id获取该角色的权限 -->
+	<select id="getRoleRes" parameterType="com.ls.spt.manager.entity.Role" resultMap="resMap">
+	SELECT
+		r.*
+		FROM resources r WHERE r.`status`!=-1 AND  r.`id` IN (
+		SELECT rr.resc_id FROM
+		resources_role rr WHERE rr.`role_id` = #{id,jdbcType=INTEGER} )
+	</select>
+	
+  <delete id="deleteRoleRes" parameterType="com.ls.spt.manager.entity.ResRole" >
+    delete from resources_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="saveRoleRes" parameterType="com.ls.spt.manager.entity.ResRole" >
+    insert into resources_role(resc_id,role_id) values(#{resId,jdbcType=INTEGER},#{roleId,jdbcType=INTEGER})
+  </insert>
+  
+</mapper>

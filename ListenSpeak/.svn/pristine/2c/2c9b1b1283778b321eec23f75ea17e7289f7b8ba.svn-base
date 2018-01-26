@@ -1,0 +1,292 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- load css -->
+<%@include file="/WEB-INF/view/common/taglib.jsp"%>
+</head>
+<body>
+	<div class="main-wrap">
+		<fieldset class="layui-elem-field" style="padding: 15px;"
+			id="serachFrom">
+			<legend data-toggle="collapse" data-parent="serachFrom"
+				href="#collapseOne" style="color: #1AA094;">
+				测试列表&nbsp;
+				<li class="fa fa-angle-double-down" id="ic"></li>
+			</legend>
+			<form class="layui-form">
+				<div class="layui-form-item collapse in" id="collapseOne">
+					<div class="layui-form-item" hidden="true">
+						<input type="text" id="search" hidden="true" class="layui-input"
+							value="search">
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label" style="width: 150px;">测试名称</label>
+						<div class="layui-input-inline">
+							<input type="text" id="name" name="name" autocomplete="off"
+								class="layui-input">
+						</div>
+						<label class="layui-form-label" style="width: 150px;">创建人</label>
+						<div class="layui-input-inline">
+							<input type="text" id="createName" name="createName"
+								autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-inline">
+							<button id="searchBtn" type="button" class="layui-btn">
+								<li class="fa fa-search"></li> &nbsp;搜索
+							</button>
+						</div>
+					</div>
+				</div>
+	</div>
+	</form>
+	</fieldset>
+	<div class="y-role" style="padding: 0px 15px 0px 15px;">
+		<!--工具栏-->
+		<div id="toolbar"
+			style="width: 98%; margin: 0 auto; margin-bottom: 10px;">
+			<button onClick="return add()" type="button" class="layui-btn">
+				<li class="fa fa-plus-square"></li> &nbsp;新增测试
+			</button>
+			<!-- 					<button onClick="return bath_del()" type="button" class="layui-btn layui-btn-danger"> -->
+			<!-- 						<li class="fa fa-remove"></li> &nbsp;批量删除 -->
+			<!-- 					</button> -->
+		</div>
+		<!--/工具栏-->
+		<!--文字列表-->
+		<table class="tableList" id="ccrTable" lay-filter="test">
+		</table>
+	</div>
+	</div>
+</body>
+<script type="text/html" id="testBar">
+		{{#  if(d.introduct_status == '1'){ }}
+			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-xs" lay-event="introduced">发布</a>
+			<a class="layui-btn layui-btn-xs" lay-event="del">删除</a>
+			<a class="layui-btn layui-btn-xs" lay-event="Configuration">配卷</a>
+		{{#  } }}
+			<a class="layui-btn layui-btn-xs" lay-event="paperView">试卷预览</a>
+</script>
+<script type="text/javascript">
+layui.use(['table','laypage'], function(){
+	var table = layui.table,laypage = layui.laypage;
+	var tableIns = table.render({
+		elem: '#ccrTable',
+		url: jsBasePath + '/lstClassTest/query.html',
+		page: {
+			layout : [ 'count', 'prev', 'page', 'next', 'skip', 'limit' ],
+			groups : 3, //只显示 1 个连续页码
+			first : false, //不显示首页
+			last : false
+		},
+		cols : [ [ {
+			field : 'name',
+			width : "16%",
+			title : '测试名称',
+			align : "center"
+		}, {
+			field : 'create_time',
+			width : "16%",
+			title : '创建时间',
+			align : "center"
+		}, {
+			field : 'end_time',
+			width : "16%",
+			title : '结束时间',
+			align : "center"
+		}, {
+			field : 'createName',
+			width : "16%",
+			title : '创建人',
+			align : "center"
+		}, {
+			fixed : 'right',
+			width : "36%",
+			title : '操作',
+			align : 'center',
+			toolbar : '#testBar'
+		} ] ]
+	});
+	
+	table.on('tool(test)', function(obj) {
+		var data = obj.data;
+		if (obj.event === 'edit') {
+			edit(data.id);
+		} else if (obj.event === 'del') {
+			del(data.id);
+		} else if (obj.event === 'Configuration') {
+			Configuration(data.id);
+		} else if (obj.event == 'introduced') {
+			introduced(data.id, data.end_time);
+		} else if (obj.event == 'paperView') {
+			paperView(data.paper_id);
+		}
+	});
+	$('#searchBtn').bind('click', function() {
+		reloadTable();
+	});
+
+	function reloadTable() {
+		var createName = $("#createName");
+		var name = $("#name");
+		tableIns.reload({
+			where : {
+				name : name.val(),
+				createName : createName.val(),
+			}
+		});
+	}
+
+	// 		编辑
+	function edit(id) {
+		var url = jsBasePath + "/lstClassTest/toEdit.html?id=" + id;
+		layer.open({
+			type : 2,
+			shade : [ 0.5, '#000' ],
+			title : "编辑数据", //
+			offset : [ '4%' ],
+			area : [ '600px', '400px' ],
+			content : url, //捕获的元素
+			cancel : function(index) {
+				layer.close(index);
+			},
+			end : function() {
+
+			}
+		});
+	}
+
+	//删除
+	function del(id) {
+		layer.confirm("确定删除该条数据么?删除后不可恢复!", {
+			btn : [ '是', '否' ],//按钮
+			offset : '10%',
+			btnAlign : 'c'
+		}, function(index) {
+			$.post(jsBasePath + "/lstClassTest/delete.html", {
+				ids : id
+			}, function(data, status) {
+				layer.close(index);
+				if (data != null) {
+					layer.msg(data.message);
+					if (data.flag == true) {
+						reloadTable();
+					}
+				}
+			}, "json");
+		}, function(index) {
+			layer.close(index);
+		});
+	}
+
+	//批量删除
+	function bath_del() {
+		var ids = getSelectId("ccrTable");
+		if (ids == "") {
+			layer.alert('您还未选择任何记录!', {
+				icon : 2,
+				offset : '10%'
+			});
+			return;
+		}
+		del(ids);
+	}
+	//配置试卷
+	function Configuration(id) {
+		var url = jsBasePath + "/lstClassTest/toConfiguration.html?id="
+				+ id;
+		layer.open({
+			type : 2,
+			shade : [ 0.5, '#000' ],
+			title : "配卷", //
+			offset : [ '4%' ],
+			area : [ '90%', '90%' ],
+			content : url, //捕获的元素
+			cancel : function(index) {
+				layer.close(index);
+			},
+			end : function() {
+
+			}
+		});
+	}
+	function introduced(id, end_time) {
+		layer.confirm("确定发布此测试吗?发布后测试数据不可修改!", {
+			btn : [ '是', '否' ],//按钮
+			offset : '10%',
+			btnAlign : 'c'
+		}, function(index) {
+			$.post(jsBasePath + "/lstClassTest/introduced.html", {
+				"id" : id,
+				"endTime" : end_time
+			}, function(data, status) {
+				layer.close(index);
+				if (data.flag == false) {
+					layer.alert(data.message, {
+						icon : 2
+					});
+				} else {
+					layer.alert(data.message, {
+						icon : 1
+					}, function() {
+						parent.location.reload();
+						closeFrame();
+					});
+				}
+			}, "json");
+		}, function(index) {
+			layer.close(index);
+		});
+	}
+});
+//	新增
+function add() {
+	var url = jsBasePath + "/lstClassTest/toAdd.html";
+	layer.open({
+		type : 2,
+		shade : [ 0.5, '#000' ],
+		title : "新增数据", //
+		offset : [ '4%' ],
+		area : [ '600px', '400px' ],
+		content : url, //捕获的元素
+		cancel : function(index) {
+			layer.close(index);
+		},
+		end : function() {
+
+		}
+	});
+}
+//配置试卷
+function paperView(paperId) {
+	if (paperId == null || paperId == '') {
+		layer.alert('您还未配置试卷', {
+			icon : 2,
+			offset : '10%'
+		});
+		return false;
+	}
+	var url = jsBasePath + "/lstQuestion/index.html?id=" + paperId;
+	layer.open({
+		type : 2,
+		shade : [ 0.5, '#000' ],
+		title : "试卷预览", //
+		offset : [ '4%' ],
+		area : [ '90%', '95%' ],
+		content : url, //捕获的元素
+		cancel : function(index) {
+			layer.close(index);
+		},
+		end : function() {
+
+		}
+	});
+}
+	</script>
+</html>

@@ -1,0 +1,296 @@
+var nextquestion = "-1";
+var zdSj = -1;
+var zdSj1 = -1;
+var qtype = 0;
+var topic_time = -1;
+var is_end = -1;
+var is_zidong = -1;
+var scoreType;
+var refText;
+var key;
+var content;
+var topic;
+var question_id;
+var th;
+
+var loadindex;//加载层
+
+$(function(){
+	getZuoyeQuestion();
+	btn_click();
+})
+
+//按钮初始化
+function btn_click(){
+	
+}
+
+//作业
+function getZuoyeQuestion(){
+	var zuoye_id = getQueryString("zuoye_id");
+	var class_code = getQueryString("class_code");
+	
+	$.ajax({
+		url : jsBasePath+"/studentpc/studentzuoye/getZuoyeQuestion.html",
+		dataType : "json",
+		type : "get",
+		data : {
+			class_code : class_code,
+			zuoye_id : zuoye_id,
+		},
+		success:function(data){
+			if(data.flag){
+				th = data.th;
+				var qlist = data.list;
+				var zth = 0;
+				if(qlist != null && qlist.length > 0){
+					for(var i = 0; i < qlist.length; i++){
+						if(qlist[i].answer_list != null && qlist[i].answer_list.length > 0){
+							for(var j = 0; j < qlist[i].answer_list.length; j++){
+								zth++;
+								if(zth == th){
+									scoreType = qlist[i].sogou_score_type;
+									if(scoreType == "eng_wrd" || scoreType == "eng_snt" || scoreType == "eng_chp"){
+										refText = qlist[i].answer_list[j].content;
+									}else if(scoreType == "eng_pqan" ){
+										refText = qlist[i].answer_list[j].parse_text;
+										key = qlist[i].answer_list[j].content_keys;
+										content = qlist[i].answer_list[j].content;
+										topic = qlist[i].topic;
+									}else if(scoreType == "eng_topic"){
+										refText = qlist[i].answer_list[j].parse_text;
+									}
+									question_id = qlist[i].answer_list[j].id;
+									
+									if(qlist[i].answer_list.length == 1){
+										$("#thisth").html("第"+(i + 1)+"大题"+qlist[i].tname);
+									}else if(qlist[i].answer_list.length > 1){
+										$("#thisth").html("第"+(i + 1)+"大题-第"+(j + 1)+"小题"+qlist[i].tname);
+									}
+									
+									if(scoreType == "eng_chp" || scoreType == "eng_pqan" || scoreType == "eng_topic"){
+										is_zidong = 1;
+									}
+									
+									$("#zdmessage").html(qlist[i].zdmessage);
+									$("#topic").html(qlist[i].topic);
+									$("#content").html(qlist[i].answer_list[j].content);
+									$("#zd_audio").attr("src",osspath + qlist[i].zd_audio);
+									if(qlist[i].topic_time != null){
+										topic_time = qlist[i].topic_time;
+									}
+									if(qlist[i].content_audio != null){
+										$("#content_audio").attr("src",osspath + qlist[i].content_audio);
+										var audio1 = $("#content_audio")[0];
+										audio1.addEventListener("canplay", function(){
+											zdSj1=parseInt(audio1.duration);
+										});
+										qtype = 1;
+									}
+									if(j == 0 && qlist[i].zd_audio != null){
+										var audio = $("#zd_audio")[0];
+										audio.addEventListener("canplay", function(){
+											zdSj=parseInt(audio.duration);
+										});
+										getSesound();
+									}else if(j != 0 && qlist[i].zd_audio != null){
+										getSesoundtwo();
+									}else{
+										canRecording();
+									}
+									if(i == (qlist.length - 1) && j == (qlist[i].answer_list.length - 1)){
+										is_end = 1;
+										nextquestion = "1";
+										$("#nextquestion").html("提交");
+									}else{
+										is_end =0;
+										nextquestion = "0";
+										$("#nextquestion").html("下一题");
+									}
+								}
+							}
+						}
+					}
+				}else{
+					alert("题目结束");
+				}
+			}else{
+				layer.alert(data.message,{icon:2});
+			}
+		}
+	});
+	
+}
+
+function getSesound(){
+	if(zdSj >= 0){
+		var sj = zdSj;
+		var audio = $("#zd_audio")[0];
+		audio.play();
+		activitycircleh(sj,"recordbtn");
+		if(qtype == 1){
+			setTimeout(getSesoundtwo, (sj + 2) * 1000);
+		}else{
+			setTimeout(canRecording, (sj + 2) * 1000);
+		}
+	}else{
+		setTimeout(getSesound, 50);
+	}
+}
+
+function getSesoundtwo(){
+	if(zdSj1 >= 0){
+		var audio = $("#content_audio")[0];
+		audio.play();
+		activitycircleh(zdSj1,"recordbtn");
+		if(qtype == 1){
+			setTimeout(getSesoundthree, (zdSj1 + 3) * 1000);
+		}
+	}else{
+		setTimeout(getSesoundtwo, 50);
+	}
+}
+
+function getSesoundthree(){
+	if(zdSj1 >= 0){
+		var audio = $("#content_audio")[0];
+		audio.play();
+		activitycircleh(zdSj1,"recordbtn");
+		setTimeout(getSesoundfour, (zdSj1 + 3) * 1000);
+	}else{
+		setTimeout(getSesoundthree, 50);
+	}
+}
+
+function getSesoundfour(){
+	if(topic_time >= 0){
+		cannotRecording();
+		activitycircleh(topic_time,"recordbtn");
+		setTimeout(canRecording, (topic_time+2) * 1000);
+	}else{
+		setTimeout(getSesoundfour, 50);
+	}
+}
+
+function canRecording(){
+	$("#recordimg").attr("src", jsBasePath + "/static/studentpc/images/15X_04_03.png");
+	$("#recordbtn").val("点击上方录音按钮，开始答题。");
+}
+
+function cannotRecording(){
+	$("#recordimg").attr("src", jsBasePath + "/static/studentpc/images/14X_03.png");
+	$("#recordbtn").val("学生阅读中，不录音......");
+}
+
+function isRecording(){
+	$("#recordimg").attr("src", jsBasePath + "/static/studentpc/images/15X_03.png");
+	$("#recordbtn").val("正在录音中......结束录音请再次点击上方按钮");
+}
+
+function recording(){
+	var imgsrc = $("#recordimg").attr("src");
+	if(imgsrc.indexOf("15X_04_03") != -1){
+		startRecording();
+		isRecording();
+	}else if(imgsrc.indexOf("15X_03") != -1){
+		stopRecording();
+		canRecording();
+	}else{
+		layer.msg("请先阅读题目。");
+	}
+}
+
+//下一题
+function tonextquestion(){
+	var zuoye_id = getQueryString("zuoye_id");
+	var class_code = getQueryString("class_code");
+	if(zuoye_id == null || zuoye_id == ''){
+		layer.msg("作业ID为空");
+		return false;
+	}
+	
+	if(class_code == null || class_code == ''){
+		layer.msg("班号为空");
+		return false;
+	}
+	
+	if(nextquestion == "-1"){
+		alert("稍等");
+		return false;
+	}
+	
+	var data = new FormData();
+	
+	data.append("studentAnswer",audioBlob);
+	data.append("scoreType",scoreType);
+	data.append("zuoye_id",zuoye_id);
+	data.append("class_code",class_code);
+	data.append("question_id",question_id);
+	data.append("refText",refText);
+	data.append("key",key);
+	data.append("content",content);
+	data.append("topic",topic);
+	data.append("isEnd",is_end);
+	loadindex = layer.load(2);
+	$.ajax({
+		url: jsBasePath+"/studentpc/studentzuoye/sogouParseZuoye.html",
+		type: 'POST',  
+		data: data,  
+		dataType: 'JSON',  
+		cache: false,  
+		processData: false,  
+		contentType: false  
+	}).done(function(res){  
+			//layer.close(index);
+			if(res.flag){  
+				//提交下一題
+				if(nextquestion == "0"){
+					window.location.href = jsBasePath + "/studentpc/studentzuoye/zuoyeview.html?zuoye_id=" + zuoye_id + "&class_code=" + class_code;
+				}else if(nextquestion == "1"){
+					window.location.href = jsBasePath + "/studentpc/studentzuoye/studentzuoyeview.html";
+				}
+			}else{  
+				layer.close(loadindex);
+				layer.alert(res.message,{icon:2});
+			}  
+  	}); 
+}
+
+//返回
+function goback(){
+	window.location.href = jsBasePath + "/studentpc/studentzuoye/studentzuoyeview.html";
+}
+
+//录音倒计时改变
+function activitycircleh(second,id){
+	var percent = 0;
+	var shuaxin = 50;
+	var text = $("#"+id).val();
+	$('.circleh').removeClass('clip-autoh');
+	$('.righth').addClass('wth0h');
+	var loading = setInterval(function() {
+		$('.lefth').css("-webkit-transform", "rotate(" + (parseFloat(18 / second)) * percent + "deg)");
+		if (percent >= ((1000 / shuaxin) * second)) {
+			clearInterval(loading);
+		}
+		if (percent > ((500 / shuaxin) * second)) {
+			$('.circleh').addClass('clip-autoh');
+			$('.righth').removeClass('wth0h');
+		}
+//		$('.numh>span').text(percent);
+		if(percent % 20 == 0){
+			$("#"+id).val(text+"("+(second - (percent / 20))+"s)");
+		}
+		if(percent >= ((1000 / shuaxin) * second)){
+			$("#"+id).val(text);
+		}
+		percent++;
+	}, shuaxin);
+}
+
+//JavaScript Document
+function getQueryString(key){
+  var reg = new RegExp("(^|&)"+key+"=([^&]*)(&|$)");
+  var result = window.location.search.substr(1).match(reg);
+  return result?decodeURIComponent(result[2]):null;
+}

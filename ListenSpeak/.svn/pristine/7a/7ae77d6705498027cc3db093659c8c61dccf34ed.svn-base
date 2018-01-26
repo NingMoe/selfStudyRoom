@@ -1,0 +1,137 @@
+package com.ls.spt.question.service.impl;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.ls.spt.basic.entity.PageView;
+import com.ls.spt.question.dao.LstQuestionDao;
+import com.ls.spt.question.entity.LstQuestion;
+import com.ls.spt.question.service.QuestionService;
+import com.ls.spt.utils.Common;
+@Service
+public class QuestionServiceImpl implements QuestionService{
+    
+    @Resource
+    private LstQuestionDao questionDao;
+    
+    @Override
+    public PageView query(PageView pageView, LstQuestion question) {
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        map.put("paging", pageView);
+        map.put("t", question);
+        List<LstQuestion> list = questionDao.query(map);
+        pageView.setData(list);
+        return pageView;
+    }
+    
+    @Override
+    public int updateByPrimaryKey(LstQuestion question) {
+        return questionDao.updateByPrimaryKey(question);
+    }
+    
+    @Override
+    public int updateByPrimaryKeySelective(LstQuestion question) {
+        return questionDao.updateByPrimaryKeySelective(question);
+    }
+    
+    @Override
+    public int insertSimpleQuestion(LstQuestion question) {
+        String code = getQuestionCode(question);
+        question.setCode(code);
+        question.setType("1");
+        question.setStatus("1");
+        Integer createUser = Common.getMyUser().getUserid().intValue();
+        question.setCreateUser(createUser);
+        question.setCreateTime(new Date());
+        return questionDao.insert(question);
+    }
+    
+    @Override
+    public int insertMultiQuestion(LstQuestion question) {
+        String code = getQuestionCode(question);
+        question.setCode(code);
+        question.setType("2");
+        question.setStatus("1");
+        Integer createUser = Common.getMyUser().getUserid().intValue();
+        question.setCreateUser(createUser);
+        question.setCreateTime(new Date());
+        List<LstQuestion> questionList = question.getQuestionList();
+        for(LstQuestion q:questionList){
+            question.setContent(q.getContent());
+            question.setAnswerTime(q.getAnswerTime());
+            question.setContentTime(q.getContentTime());
+            question.setParseText(q.getParseText());
+            question.setParseAudio(q.getParseAudio());
+            question.setContentAudio(q.getContentAudio());
+            question.setContentKeys(q.getContentKeys());
+            questionDao.insert(question);
+        }
+        return 0;
+    }
+    
+    @Override
+    public int editMultiQuestion(LstQuestion question) {
+        List<LstQuestion> questionList = question.getQuestionList();
+        for(LstQuestion q:questionList){
+            q.setTopic(question.getTopic());
+            q.setTopicTime(question.getTopicTime());
+            q.setZdmessage(question.getZdmessage());
+            questionDao.updateByPrimaryKeySelective(q);
+        }
+        return 0;
+    }
+    
+    @Override
+    public LstQuestion getMultiQuestion(String code) {
+        List<LstQuestion> questions = questionDao.selectMultiQuestionByCode(code);
+        String topic = questions.get(0).getTopic();
+        Integer topicTime = questions.get(0).getTopicTime();
+        String zdmessage = questions.get(0).getZdmessage();
+        LstQuestion question = new LstQuestion();
+        question.setTopic(topic);
+        question.setTopicTime(topicTime);
+        question.setQuestionList(questions);
+        question.setZdmessage(zdmessage);
+        return question;
+    }
+    
+    @Override
+    public LstQuestion getSimpleQuestion(String code) {
+        return questionDao.selectSimpleQuestionByCode(code);
+    }
+    
+    
+    private String getQuestionCode(LstQuestion question){
+        String codePre = "NB";
+        String kmCode = autoGenericCode(question.getSubject(),3);
+        String gradeCode = autoGenericCode(question.getGrade(),3);
+        codePre = codePre+kmCode+gradeCode;
+        String currentCode = questionDao.getMaxCodeByCodePre(codePre);
+        if(StringUtils.isEmpty(currentCode)){
+            currentCode = codePre +"0001";
+            return currentCode;
+        }
+        String xh = currentCode.substring(currentCode.length()-4);
+        String currentXh = (Integer.valueOf(1+""+xh)+1)+"";
+        currentXh = currentXh.substring(currentXh.length()-4);
+        return codePre+""+currentXh;
+    }
+    
+    /**
+     * 不够位数的在前面补0，保留num的长度位数字
+     * @param code
+     * @return
+     */
+    private String autoGenericCode(String code, int num) {
+        String result = "";
+        result = String.format("%0" + num + "d", Integer.parseInt(code));
+        return result;
+    }
+}

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.manager.dao.ResourceDao">
+	<resultMap id="BaseResultMap" type="com.ls.spt.manager.entity.Resources">
+	<id column="id" property="id" jdbcType="INTEGER" />
+	<result column="name" property="name" jdbcType="VARCHAR" />
+	<result column="parentId" property="parentId" jdbcType="INTEGER" />
+	<result column="parentName" property="parentName" jdbcType="VARCHAR" />
+	<result column="resKey" property="resKey" jdbcType="VARCHAR" />
+	<result column="type" property="type" jdbcType="INTEGER" />
+	<result column="resUrl" property="resUrl" jdbcType="VARCHAR" />
+	<result column="resc_desc" property="rescDesc" jdbcType="VARCHAR" />
+	<result column="status" property="status" jdbcType="INTEGER" />
+	<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="createUserId" property="createUserId" jdbcType="BIT" />
+	<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	<result column="update_user" property="updateUserId" jdbcType="BIT" />
+	<result column="sort" property="sort" jdbcType="INTEGER" />
+	<result column="icon" property="iconUrl" jdbcType="VARCHAR" />
+</resultMap>
+
+<resultMap id="menuResultMap"   type="com.ls.spt.manager.entity.MenuFirstList">
+	<id column="id" property="id" jdbcType="INTEGER" />
+	<result column="first_name" property="title" jdbcType="VARCHAR" />
+	<result column="first_href" property="href" jdbcType="VARCHAR" />
+	<result column="first_icon" property="icon" jdbcType="VARCHAR" />
+	<collection property="menu"  ofType="com.ls.spt.manager.entity.MenuSecondList">
+		<id property="id" column="sec_id" jdbcType="INTEGER" />
+		<result property="text" column="sec_name"  jdbcType="VARCHAR" />
+		<result property="href" column="sec_href"  jdbcType="VARCHAR" />
+		<result property="icon"  column="sec_icon"  jdbcType="VARCHAR" />
+	</collection>
+</resultMap>
+
+<!--查询菜单列表 -->
+<select id="selectMenuList" resultMap="menuResultMap" parameterType="java.lang.String">
+SELECT rr1.`id`,rr1.`name` first_name,rr1.`resUrl` first_href,rr1.`icon` first_icon,rr2.`id` sec_id,
+rr2.`name` sec_name,rr2.`resUrl` sec_href,rr2.`icon` sec_icon 
+FROM (
+   SELECT DISTINCT 
+      r.id,r.`name`,r.`resUrl`,r.`icon`,r.`sort`
+    FROM
+      resources r 
+      INNER JOIN resources_role rr 
+        ON r.`id` = rr.`resc_id` 
+      INNER JOIN user_role ur 
+        ON ur.`role_id` = rr.`role_id` 
+      INNER JOIN role r1 
+        ON r1.`id` = ur.`role_id` 
+      INNER JOIN teacher_user u 
+        ON u.`id` = ur.`user_id` 
+    WHERE u.`phone` = #{userName,jdbcType=VARCHAR}
+      AND u.`status` = 1 
+      AND r.`status` = 0 
+      AND r1.`status`=0
+      AND r.type=0      
+      ) rr1
+      JOIN (
+      SELECT DISTINCT 
+      r.id,r.`parentId`,r.`name`,r.`icon`,r.`resUrl`,r.`sort`
+    FROM
+      resources r 
+      INNER JOIN resources_role rr 
+        ON r.`id` = rr.`resc_id` 
+      INNER JOIN user_role ur 
+        ON ur.`role_id` = rr.`role_id` 
+      INNER JOIN role r1 
+        ON r1.`id` = ur.`role_id` 
+      INNER JOIN teacher_user u 
+        ON u.`id` = ur.`user_id` 
+      WHERE u.`phone` = #{userName,jdbcType=VARCHAR}
+	      AND u.`status` = 1 
+	      AND r.`status` = 0 
+	      AND r1.`status`=0
+	      AND r.type=1   
+      ) rr2 ON rr1.id=rr2.parentId
+      ORDER BY rr1.sort,rr1.id,rr2.sort,rr2.id
+</select>
+
+	<sql id="Base_Column_List">
+		id, name, parentId, resKey, type,
+		resUrl,resc_desc, status,createTime,
+		createUserId, update_time, update_user,sort,icon
+	</sql>
+
+
+  <!-- 查询所有菜单 -->
+   <select id="findAll" resultMap="BaseResultMap">
+		SELECT r.id,r.name,r.parentId,r.resKey,r.type,
+		r.resUrl,r.resc_desc,r.createTime,r.createUserId,
+		r.update_time,r.update_user,r.sort,r.icon,r1.name parentName 
+		FROM resources r 
+        LEFT JOIN resources r1 ON r1.id=r.parentId 
+        where r.status =0 ORDER BY sort,id
+   </select>
+	
+<!-- 根据用户名获取该用户的权限 -->
+	<select id="getResourcesByUserName" parameterType="String" resultMap="BaseResultMap">
+		SELECT r.* 
+		FROM resources r 
+		INNER JOIN resources_role rr ON rr.resc_id=r.id
+		INNER JOIN user_role ur ON ur.role_id=rr.role_id
+		INNER JOIN teacher_user u ON u.id=ur.user_id AND u.status=1
+		WHERE r.status =0 AND u.phone=#{username}
+	</select>
+	
+	<select id="selectByKey"  resultMap="BaseResultMap"  parameterType="com.ls.spt.manager.entity.Resources">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM resources WHERE 
+		 resKey = #{resKey,jdbcType=VARCHAR} and status=0
+	</select>
+	
+	<insert id="insert" parameterType="com.ls.spt.manager.entity.Resources">
+	insert into resources (name,
+	resKey, parentId, icon,type,
+	resUrl, resc_desc,createUserId,sort)
+	values (#{name,jdbcType=VARCHAR},
+	#{resKey,jdbcType=VARCHAR},
+	#{parentId,jdbcType=INTEGER},
+	#{iconUrl,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},#{resUrl,jdbcType=VARCHAR},
+	#{rescDesc,jdbcType=VARCHAR},
+	#{createUserId,jdbcType=INTEGER},#{sort,jdbcType=INTEGER})
+</insert>
+	
+	<select id="getById" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from resources
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.manager.entity.Resources">
+	update resources
+	set 
+	name = #{name,jdbcType=VARCHAR},
+	icon = #{iconUrl,jdbcType=VARCHAR},
+	resc_desc = #{rescDesc,jdbcType=VARCHAR},
+	resUrl = #{resUrl,jdbcType=VARCHAR},
+	sort= #{sort,jdbcType=INTEGER},
+	update_time=now(),
+	update_user=#{updateUserId,jdbcType=INTEGER}
+	where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+    <update id="updateToDelete" parameterType="com.ls.spt.manager.entity.Resources">
+		update resources set status=-1,update_time=now(),update_user=#{updateUserId,jdbcType=INTEGER} where id = #{id,jdbcType=INTEGER} 
+	</update>
+
+</mapper>

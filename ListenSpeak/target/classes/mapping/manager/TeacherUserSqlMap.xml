@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.manager.dao.TeacherUserDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.manager.entity.TeacherUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="subject" property="subject" jdbcType="VARCHAR" />
+    <result column="subjectName" property="subjectName" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="gradeName" property="gradeName" jdbcType="VARCHAR" />
+    <result column="school" property="school" jdbcType="VARCHAR" />
+    <result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, phone, name, password, type, sex, subject, grade, school, create_time, create_user, 
+    update_time, update_user, status
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+       SELECT u.id, u.name, u.type, u.sex, u.subject, u.grade, u.school,
+		d1.name AS subjectName, 
+		d2.name AS gradeName, 
+		u.create_time, 
+		u1.name AS create_user, 
+		u.status
+		FROM teacher_user u
+		LEFT JOIN dic_data d1 ON u.subject=d1.data_value
+		LEFT JOIN dic_data d2 ON u.grade=d2.data_value
+		LEFT JOIN teacher_user u1 ON u.create_user=u1.id
+        where u.id = #{id,jdbcType=INTEGER}
+        AND d1.dic_code='subject'
+		AND d2.dic_code='grade'
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from teacher_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.ls.spt.manager.entity.TeacherUser" >
+    insert into teacher_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="subject != null" >
+        subject,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="school != null" >
+        school,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="school != null" >
+        #{school,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.manager.entity.TeacherUser" >
+    update teacher_user
+    <set >
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        subject = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="school != null" >
+        school = #{school,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+ <!-- 查询教师用户 -->
+  <select id="queryUser" resultMap="BaseResultMap" parameterType="com.ls.spt.manager.entity.TeacherUser">
+		select
+		<include refid="Base_Column_List" />
+		from teacher_user  
+		where phone= #{phone,jdbcType=VARCHAR}
+		<if test="password != null" >
+           AND password= #{password,jdbcType=VARCHAR}
+        </if>		
+		AND status = #{status,jdbcType=VARCHAR}	
+  </select>
+  
+   <!-- 分页查询用户信息 -->
+    <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		SELECT 
+			k.id, k.phone, k.name, k.type, 
+			k.subjectName, 
+			k.gradeName, 
+			k.schoolName, 
+			k.create_time, 
+			k.create_user, 
+			k.status
+			FROM
+			(
+				SELECT u.id, u.phone, u.name, u.type, 
+				d1.name AS subjectName, 
+				d2.name AS gradeName, 
+				d3.name AS schoolName, 
+				u.create_time, 
+				u1.name AS create_user, 
+				u.status
+				FROM teacher_user u
+				LEFT JOIN dic_data d1 ON u.subject=d1.data_value
+				LEFT JOIN dic_data d2 ON u.grade=d2.data_value
+				LEFT JOIN dic_data d3 ON u.school=d3.data_value
+				LEFT JOIN teacher_user u1 ON u.create_user=u1.id
+				WHERE d1.dic_code='subject'
+				AND d2.dic_code='grade'
+				AND d3.dic_code='xdfSchool'
+				UNION ALL
+				SELECT u.id, u.phone, u.name, u.type, 
+				d1.name AS subjectName, 
+				d2.name AS gradeName, 
+				s.school_name AS schoolName, 
+				u.create_time, 
+				u1.name AS create_user, 
+				u.status
+				FROM teacher_user u
+				LEFT JOIN dic_data d1 ON u.subject=d1.data_value
+				LEFT JOIN dic_data d2 ON u.grade=d2.data_value
+				LEFT JOIN school s ON u.school=s.id
+				LEFT JOIN teacher_user u1 ON u.create_user=u1.id
+				WHERE d1.dic_code='subject'
+				AND d2.dic_code='grade'
+				AND s.school_name IS NOT NULL
+			)k
+		WHERE 1=1
+		<if test="t.phone!= null and t.phone !=''">
+			AND k.phone like CONCAT(CONCAT('%', #{t.phone,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="t.name != null and t.name != ''">
+			AND k.name  like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+		</if>
+		ORDER BY k.id DESC 
+	</select>
+  
+   <!-- 更新用户状态 -->
+	<update id="updateByIds" parameterType="java.util.HashMap">
+		update teacher_user set status=#{status,jdbcType=INTEGER}, 
+		update_user=#{updateUser,jdbcType=INTEGER} ,
+		update_time=now()
+		where id in
+		<foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+  
+  <!--查询用户角色  -->
+   <select id="getUserRole" resultType="com.ls.spt.manager.entity.UserRole" parameterType="com.ls.spt.manager.entity.UserRole">
+		select
+		 user_id userId,role_id roleId
+		 from user_role u
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		 <if test="userId!= null ">
+			AND user_id=#{userId,jdbcType=INTEGER}
+		</if>
+		<if test="roleId!= null ">
+			AND role_id=#{roleId,jdbcType=INTEGER}
+		</if>
+		 </trim>
+	</select>
+	
+   <!-- 删除用户角色 -->
+   <delete id="delUserRole" parameterType="com.ls.spt.manager.entity.UserRole">
+	   delete from user_role where
+	   <trim  prefixOverrides="AND | OR">
+			<if test="userId != null">
+				AND user_id=#{userId,jdbcType=INTEGER}
+			</if>
+			<if test="roleId != null">
+				AND role_id=#{roleId,jdbcType=INTEGER}
+			</if>
+		</trim>
+   </delete>
+   
+  <!-- 保存用户角色 -->
+  <insert id="saveUserRole" parameterType="com.ls.spt.manager.entity.UserRole" >
+    insert into user_role(user_id,role_id) values (#{userId,jdbcType=INTEGER},#{roleId,jdbcType=BIGINT})
+  </insert>
+</mapper>

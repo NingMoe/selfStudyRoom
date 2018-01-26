@@ -1,0 +1,164 @@
+var pageSize = 5;
+var paperId = $("#paperId").val();
+layui.use(['table', 'laypage','element' ],
+	function() {
+		var table = layui.table, laypage = layui.laypage, element = layui.element, laypage = layui.laypage;
+		/**
+		 * 初始化表格
+		 */
+		var paperId=$("#paperId").val();
+		 if(paperId==""||paperId==null){
+			  paperId=0;
+		  }
+		var table = layui.table,laypage = layui.laypage,layer = layui.layer;
+		var configPaper =table.render({
+			elem: '#configPaper',
+			url: jsBasePath + '/lstBasePaper/query.html',
+			where:{"isConfig":1,"paperId" :paperId},
+			page : {
+				layout : [ 'count', 'prev', 'page', 'next', 'skip', 'limit' ],
+				groups : 3, //只显示 1 个连续页码
+				first : false, //不显示首页
+				last : false
+			},
+			cols: [[{field:'name', width:"20%", title: '试卷名称',align:"center"},
+				    {field:'createTime', width:"15%", title: '创建时间',align:"center"},
+				    {field:'useTimes', width:"10%", title: '使用次数',align:"center"},
+				    {field:'testNumber', width:"10%", title: '题量',align:"center"},
+				    {field:'status',width:"15%", title: '状态',align:"center",templet:"#paperStatusTpl"},
+				    {fixed: 'right', width:"30%", title: '操作', align:'center', toolbar: '#paperBar'}]]
+		});
+		table.on('tool(ypPaper)', function(obj){
+		    var data = obj.data;
+		   if(obj.event === 'del'){
+		    	del(data.id);
+		    } 
+		   if(obj.event==='paperView'){
+			   paperView(data.id);
+		   }
+		 });
+		$('#searchBtn').bind('click', function(){
+			allPaperReloadTable();
+		  });
+		  
+		  var allPaper =table.render({
+				elem: '#allPaper',
+				url: jsBasePath + '/lstBasePaper/query.html',
+				cellMinWidth: 80,
+				where:{"isConfig":2,"paperId" :paperId},
+				page: { //详细参数可参考 laypage 组件文档
+					layout: ['count', 'prev', 'page', 'next', 'skip','limit'],
+					groups:3, //只显示 1 个连续页码
+				    first: false, //不显示首页
+				    last: false //不显示尾页
+				},
+				cols: [[{field:'name', width:"20%", title: '试卷名称',align:"center"},
+				    {field:'createTime', width:"15%", title: '创建时间',align:"center"},
+				    {field:'useTimes', width:"10%", title: '使用次数',align:"center"},
+				    {field:'testNumber', width:"10%", title: '题量',align:"center"},
+				    {field:'status',width:"15%", title: '状态',align:"center",templet:"#paperStatusTpl"},
+				    {fixed: 'right', width:"30%", title: '操作', align:'center', toolbar: '#allPaperBar'}]]
+			});
+			table.on('tool(allPaper)', function(obj){
+			    var data = obj.data;
+			    if(obj.event === 'paperView'){
+			    	paperView(data.id);
+			    } else if(obj.event === 'usePaper'){
+			    	usePaper(data.id);
+			    } 
+			 });
+//	 		试卷预览
+			function paperView(id) {
+				var page = 0;
+				var url = jsBasePath + "/lstQuestion/index.html?id=" + id ;
+				layer.open({
+					type : 2,
+					shade : [ 0.5, '#000' ],
+					title : "预览试卷", //
+					offset : [ '4%' ],
+					area : [ '1000px', '80%' ],
+					content : url, //捕获的元素
+					cancel : function(index) {
+						layer.close(index);
+					},
+					end : function() {
+
+					}
+				});
+			}
+
+			//使用试卷
+			function usePaper(id) {
+				var testId = $("#id").val();
+				var index = layer.load(3, {
+					shade : [ 0.3 ]
+				});
+				$.post(jsBasePath + "/lstClassTest/paperConfig.html", {
+					"paperId" : id,
+					"testId" : testId
+				}, function(data, status) {
+					layer.close(index);
+					if (data != null) {
+						layer.msg(data.message);
+						if (data.flag == true) {
+							$("#paperId").val(data.paperId)					
+							configReloadTable();
+							allPaperReloadTable();
+						}
+					}
+				}, "json");
+			}
+			//删除
+			function del(id){
+				var index = layer.load(3, {
+					shade : [ 0.3 ]
+				});
+				var testId = $("#id").val();
+				$.post(jsBasePath + "/lstClassTest/deletePaper.html", {
+					"paperId" : id,
+					"testId" : testId
+				}, function(data, status) {
+					layer.close(index);
+					if (data != null) {
+						layer.msg(data.message);
+						if (data.flag == true) {
+							$("#paperId").val(data.paperId);
+							configReloadTable();
+							allPaperReloadTable();
+						}
+					}
+				}, "json");
+			}
+			 function configReloadTable(){
+				  var isEnd = $("#isEnd");
+				  var name = $("#name");
+				  var paperId=$("#paperId").val();
+				  if(paperId==""||paperId==null){
+					  paperId=0;
+				  }
+				  configPaper.reload({
+					where: {
+						isConfig:1,
+						isEnd: isEnd.val(),
+						name : name.val(),
+						paperId:paperId
+					}
+				  });
+			  }	
+			 
+			 function allPaperReloadTable(){
+				 var paperId=$("#paperId").val();
+				 if(paperId==""||paperId==null){
+					  paperId=0;
+				  }
+				  allPaper.reload({
+					where: {
+						isConfig:2,
+						sourceType: $("#questionType").val(),
+						year:$("#year").val(),
+						paperId:paperId
+					}
+				  });
+			  }	
+			
+});

@@ -1,0 +1,54 @@
+.test{
+		margin: 5% 0 0 38%;
+		position: relative;
+    }
+    .wraph,.circleh,.percenth{ 
+        position: absolute; 
+        width: 200px; 
+        height: 200px; 
+        border-radius: 50%; 
+    }
+    .wraph{ 
+        top:0; 
+        left:0; 
+        background-color: #64dcdc; 
+        border: 1px solid #64dcdc;
+    } 
+    .circleh{ 
+        box-sizing: border-box; 
+        border:20px solid #64dcdc; 
+        clip:rect(0,200px,200px,100px); 
+    } 
+    .clip-autoh{ 
+        clip:rect(auto, auto, auto, auto); 
+    } 
+    .percenth{ 
+        box-sizing: border-box; 
+        top:-20px; 
+        left:-20px; 
+    } 
+    .lefth{ 
+        transition:transform ease; 
+        border:20px solid #fafafa; 
+        clip: rect(0,100px,200px,0); 
+    } 
+    .righth{ 
+        border:20px solid #fafafa; 
+        clip: rect(0,200px,200px,100px); 
+    } 
+    .wth0h{ 
+        width:0; 
+    } 
+     .mytest-main img { 
+        position: absolute; 
+        box-sizing: border-box; 
+        width: 160px!important; 
+        height: 160px; 
+        line-height: 160px; 
+        text-align: center; 
+        font-size: 40px; 
+        left: 20px; 
+        top: 20px; 
+        border-radius: 50%; 
+        z-index: 1; 
+    } 

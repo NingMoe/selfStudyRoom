@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.basic.dao.BaseDictionaryDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.basic.entity.BaseDictionary" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="DIC_KEY" property="key" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="is_value_unique" property="isValueUnique" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, DIC_KEY, NAME,TYPE,is_value_unique, STATUS
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_dictionary
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from base_dictionary
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.ls.spt.basic.entity.BaseDictionary" >
+    insert into base_dictionary (DIC_KEY, NAME,IS_VALUE_UNIQUE,TYPE,STATUS)
+    values (#{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{isValueUnique,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+      #{status,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.basic.entity.BaseDictionary" >
+    update base_dictionary
+    <set >
+      <if test="key != null" >
+        DIC_KEY = #{key,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        IS_VALUE_UNIQUE = #{isValueUnique,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.basic.entity.BaseDictionary" >
+    update base_dictionary
+    set DIC_KEY = #{key,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=VARCHAR},
+      IS_VALUE_UNIQUE = #{isValueUnique,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
+   SELECT o.ID,o.DIC_KEY,o.NAME,o.STATUS,o.TYPE,o.IS_VALUE_UNIQUE FROM base_dictionary o
+    where 1=1
+   	 	<if test="t.key != null and t.key !=''">
+			and o.DIC_KEY like CONCAT('%',#{t.key,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="t.name != null and t.name !=''">
+			and o.name like CONCAT('%',#{t.name,jdbcType=VARCHAR},'%')
+		</if>
+  </select>
+</mapper>

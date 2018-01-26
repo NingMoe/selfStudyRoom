@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.question.dao.LstQuestionDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.question.entity.LstQuestion" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <id column="IDS" property="ids" jdbcType="VARCHAR" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="CHAR" />
+    <result column="QUESTION_TYPE" property="questionType" jdbcType="INTEGER" />
+    <result column="QUESTION_TYPE_NAME" property="questionTypeName" jdbcType="VARCHAR" />
+    <result column="DIFFICULTY" property="difficulty" jdbcType="CHAR" />
+    <result column="GRADE" property="grade" jdbcType="VARCHAR" />
+    <result column="GRADE_NAME" property="gradeName" jdbcType="VARCHAR" />
+    
+    <result column="SUBJECT" property="subject" jdbcType="VARCHAR" />
+    <result column="SUBJECT_NAME" property="subejctName" jdbcType="VARCHAR" />
+    
+    <result column="ZDMESSAGE" property="zdmessage" jdbcType="VARCHAR" />
+    <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+    <result column="CONTENT_TIME" property="contentTime" jdbcType="INTEGER" />
+    <result column="TOPIC" property="topic" jdbcType="VARCHAR" />
+    <result column="TOPIC_TIME" property="topicTime" jdbcType="INTEGER" />
+    <result column="PARSE_AUDIO" property="parseAudio" jdbcType="VARCHAR" />
+    <result column="CONTENT_AUDIO" property="contentAudio" jdbcType="VARCHAR" />
+    <result column="PARSE_TEXT" property="parseText" jdbcType="VARCHAR" />
+    <result column="ANSWER_TIME" property="answerTime" jdbcType="INTEGER" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="INTEGER" />
+    <result column="CREATE_USER_NAME" property="createUserName" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="xh" property="xh" jdbcType="VARCHAR" />
+    <result column="content_keys" property="contentKeys" jdbcType="VARCHAR" />
+    <result column="sogou_score_type" property="scoreType" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, CODE, TYPE, QUESTION_TYPE, DIFFICULTY, GRADE,SUBJECT, ZDMESSAGE, CONTENT, CONTENT_TIME, 
+    TOPIC, TOPIC_TIME, PARSE_AUDIO,CONTENT_AUDIO, PARSE_TEXT, ANSWER_TIME, CREATE_TIME,CREATE_USER, STATUS,content_keys
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_question
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_question
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByCode" parameterType="java.lang.String" >
+    delete from lst_question
+    where CODE = #{code,jdbcType=VARCHAR}
+  </delete>
+  
+   <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT group_concat(l.id) ids,max(l.content) content,max(l.topic) topic,l.CODE,l.TYPE,l.question_type,l.difficulty,l.create_time,l.grade,l.create_user,u.name CREATE_USER_NAME,lp.name question_type_name,gra.name grade_name FROM lst_question l 
+    join teacher_user u on u.id = l.create_user 
+    join lst_question_type lp on lp.id = l.question_type
+    join (SELECT NAME,DATA_VALUE FROM dic_data WHERE DIC_CODE= 'grade') gra ON gra.DATA_VALUE = l.grade 
+	WHERE 1 = 1 
+    <if test="t.grade != null and t.grade !=''">
+	   AND l.grade =  #{t.grade,jdbcType=INTEGER}
+	</if>
+	<if test="t.difficulty != null and t.difficulty !=''">
+	   AND l.difficulty = #{t.difficulty,jdbcType=INTEGER}
+	</if>
+	<if test="t.questionType != null and t.questionType !=''">
+	   AND l.question_type = #{t.questionType,jdbcType=INTEGER}
+	</if>
+	<if test="t.zuoyeId != null and t.zuoyeId !=''">
+	   AND NOT EXISTS (SELECT 1 FROM lst_zuoye_question zq WHERE zq.question_id = l.id and zq.zuoye_id = #{t.zuoyeId,jdbcType=INTEGER})
+	</if>
+	GROUP BY l.CODE,l.TYPE,l.question_type,l.difficulty,l.grade,l.create_user,u.name,lp.name,gra.name,l.create_time  
+  </select>
+  
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.ls.spt.question.entity.LstQuestion" >
+    insert into lst_question (CODE, TYPE, 
+      QUESTION_TYPE, DIFFICULTY, GRADE,SUBJECT, 
+      ZDMESSAGE, CONTENT, CONTENT_TIME, CONTENT_AUDIO,content_keys,
+      TOPIC, TOPIC_TIME, PARSE_AUDIO,PARSE_TEXT, ANSWER_TIME, CREATE_TIME, CREATE_USER,STATUS)
+    values (#{code,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, 
+      #{questionType,jdbcType=INTEGER}, #{difficulty,jdbcType=CHAR}, #{grade,jdbcType=VARCHAR},#{subject,jdbcType=VARCHAR}, 
+      #{zdmessage,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{contentTime,jdbcType=INTEGER}, #{contentAudio,jdbcType=VARCHAR}, #{contentKeys,jdbcType=VARCHAR},
+      #{topic,jdbcType=VARCHAR}, #{topicTime,jdbcType=INTEGER}, #{parseAudio,jdbcType=VARCHAR}, 
+      #{parseText,jdbcType=VARCHAR}, #{answerTime,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR},#{status,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.question.entity.LstQuestion" >
+    insert into lst_question
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="code != null" >
+        CODE,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="questionType != null" >
+        QUESTION_TYPE,
+      </if>
+      <if test="difficulty != null" >
+        DIFFICULTY,
+      </if>
+      <if test="grade != null" >
+        GRADE,
+      </if>
+      <if test="subject != null" >
+        SUBJECT,
+      </if>
+      <if test="zdmessage != null" >
+        ZDMESSAGE,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+      <if test="contentTime != null" >
+        CONTENT_TIME,
+      </if>
+      <if test="topic != null" >
+        TOPIC,
+      </if>
+      <if test="topicTime != null" >
+        TOPIC_TIME,
+      </if>
+      <if test="parseAudio != null" >
+        PARSE_AUDIO,
+      </if>
+       <if test="contentAudio != null" >
+        CONTENT_AUDIO,
+      </if>
+      <if test="contentKeys != null" >
+        content_keys,
+      </if>
+      <if test="parseText != null" >
+        PARSE_TEXT,
+      </if>
+      <if test="answerTime != null" >
+        ANSWER_TIME,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="questionType != null" >
+        #{questionType,jdbcType=INTEGER},
+      </if>
+      <if test="difficulty != null" >
+        #{difficulty,jdbcType=CHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+       <if test="subject != null" >
+        #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="zdmessage != null" >
+        #{zdmessage,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="contentTime != null" >
+        #{contentTime,jdbcType=INTEGER},
+      </if>
+      <if test="topic != null" >
+        #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="topicTime != null" >
+        #{topicTime,jdbcType=INTEGER},
+      </if>
+      <if test="parseAudio != null" >
+        #{parseAudio,jdbcType=VARCHAR},
+      </if>
+      <if test="contentAudio != null" >
+        #{contentAudio,jdbcType=VARCHAR},
+      </if>
+      <if test="contentKeys != null" >
+        #{contentKeys,jdbcType=VARCHAR},
+      </if>
+      <if test="parseText != null" >
+        #{parseText,jdbcType=VARCHAR},
+      </if>
+      <if test="answerTime != null" >
+        #{answerTime,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.question.entity.LstQuestion" >
+    update lst_question
+    <set >
+      <if test="code != null" >
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=CHAR},
+      </if>
+      <if test="questionType != null" >
+        QUESTION_TYPE = #{questionType,jdbcType=INTEGER},
+      </if>
+      <if test="difficulty != null" >
+        DIFFICULTY = #{difficulty,jdbcType=CHAR},
+      </if>
+      <if test="grade != null" >
+        GRADE = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        SUBJECT = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="zdmessage != null" >
+        zdmessage = #{zdmessage,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="contentTime != null" >
+        CONTENT_TIME = #{contentTime,jdbcType=INTEGER},
+      </if>
+      <if test="topic != null" >
+        TOPIC = #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="topicTime != null" >
+        TOPIC_TIME = #{topicTime,jdbcType=INTEGER},
+      </if>
+      <if test="parseAudio != null" >
+        PARSE_AUDIO = #{parseAudio,jdbcType=VARCHAR},
+      </if>
+      <if test="contentAudio != null" >
+        CONTENT_AUDIO = #{contentAudio,jdbcType=VARCHAR},
+      </if>
+      <if test="contentKeys != null" >
+        content_keys = #{contentKeys,jdbcType=VARCHAR},
+      </if>
+      <if test="parseText != null" >
+        PARSE_TEXT = #{parseText,jdbcType=VARCHAR},
+      </if>
+      <if test="answerTime != null" >
+        ANSWER_TIME = #{answerTime,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.question.entity.LstQuestion" >
+    update lst_question
+    set CODE = #{code,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=CHAR},
+      QUESTION_TYPE = #{questionType,jdbcType=INTEGER},
+      DIFFICULTY = #{difficulty,jdbcType=CHAR},
+      GRADE = #{grade,jdbcType=VARCHAR},
+      SUBJECT = #{subject,jdbcType=VARCHAR},
+      zdmessage = #{zdmessage,jdbcType=VARCHAR},
+      CONTENT = #{content,jdbcType=VARCHAR},
+      CONTENT_TIME = #{contentTime,jdbcType=INTEGER},
+      TOPIC = #{topic,jdbcType=VARCHAR},
+      TOPIC_TIME = #{topicTime,jdbcType=INTEGER},
+      PARSE_AUDIO = #{parseAudio,jdbcType=VARCHAR},
+      CONTENT_AUDIO = #{contentAudio,jdbcType=VARCHAR},
+      CONTENT_KEYS = #{contentKeys,jdbcType=VARCHAR},
+      PARSE_TEXT = #{parseText,jdbcType=VARCHAR},
+      ANSWER_TIME = #{answerTime,jdbcType=INTEGER},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=CHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getMaxCodeByCodePre" resultType="java.lang.String" parameterType="java.lang.String" >
+    	select MAX(CODE) from lst_question where CODE like CONCAT(#{codePre,jdbcType=VARCHAR},'%')
+  </select>
+  
+  <select id="selectSimpleQuestionByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   		select * from lst_question where CODE = #{code,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectMultiQuestionByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   		select * from lst_question where CODE = #{code,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getZuoyeQuestionList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+   		SELECT zq.xh,zq.zuoye_id,qp.name question_type_name,gra.name grade_name,u.name CREATE_USER_NAME,group_concat(l.id) ids, 
+   		l.CODE,l.TYPE,l.question_type,l.difficulty,l.create_time,l.grade,l.create_user 
+   		FROM lst_question l
+   		JOIN lst_zuoye_question zq on zq.question_id = l.id and zq.zuoye_id = #{t.zuoyeId,jdbcType=INTEGER}
+   		JOIN lst_question_type qp ON qp.id = l.question_type
+   		JOIN (SELECT NAME,DATA_VALUE FROM dic_data  WHERE DIC_CODE = 'grade') gra ON gra.DATA_VALUE = l.grade 		
+   		JOIN teacher_user u ON u.id = l.create_user 
+   		where EXISTS (SELECT 1 FROM lst_zuoye_question zq WHERE zq.question_id = l.id and zq.zuoye_id = #{t.zuoyeId,jdbcType=INTEGER})
+   		group by zq.xh,zq.zuoye_id,qp.name,gra.name,u.name,l.CODE,l.TYPE,l.question_type,l.difficulty,l.create_time,l.grade,l.create_user 
+   		order by zq.xh
+  </select>
+  
+  <select id="getZuoyeQuestion" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+	SELECT DISTINCT zq.question_code code,zq.xh,q.type FROM lst_zuoye_question zq
+	JOIN lst_question q ON q.code = zq.`question_code`
+	WHERE zq.zuoye_id = #{t.zuoyeId,jdbcType=INTEGER} ORDER BY zq.xh 
+  </select>
+  <!-- 批改时 查询有多少个大题数  情景为1题-->
+  <select id="getTestQuestion" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	SELECT DISTINCT lpq.question_code CODE,lpq.xh,q.type FROM lst_paper_question lpq
+	JOIN lst_question q ON q.code = lpq.`question_code`
+	WHERE lpq.`paper_id` =#{paperId,jdbcType=INTEGER} ORDER BY lpq.xh 
+  </select>
+  
+  
+  <select id="getTestKsQuestion" resultType="com.ls.spt.studentpc.student.entity.KsQuestion" parameterType="java.lang.Integer" >
+	SELECT q.id questionId,q.type questionType,test.id testId,pq.`xh`,pq.`paper_id` paperId,q.`zdmessage`,q.parse_text parseText,q.content_keys contentKeys,
+	q.`topic`,q.`topic_time` topicTime,q.`content`,q.`content_time` contentTime,q.content_audio contentAudio,q.answer_time answerTime,tp.`zd_audio` zdAudio,tp.sogou_score_type scoreType 
+	FROM lst_question q
+	JOIN lst_paper_question pq ON pq.`question_id` = q.`id`
+	JOIN lst_question_type tp ON tp.`id` = q.`question_type` 
+	JOIN lst_class_test test ON test.`paper_id` = pq.`paper_id` AND test.`status` = 1 AND introduct_status =2 
+	WHERE test.id  = #{testId,jdbcType=INTEGER}
+	ORDER BY pq.`xh`
+  </select>
+</mapper>

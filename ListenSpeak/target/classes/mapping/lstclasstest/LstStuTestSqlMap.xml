@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.lstClassTest.dao.LstStuTestDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.lstClassTest.entity.LstStudentTest" > 
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="studentId" jdbcType="BIGINT" />
+    <result column="test_id" property="testId" jdbcType="INTEGER" />
+    <result column="paper_id" property="paperId" jdbcType="INTEGER" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="test_name" property="testName" jdbcType="VARCHAR" />
+    <result column="test_num" property="testNum" jdbcType="INTEGER" />
+    <result column="test_end_num" property="testEndNum" jdbcType="INTEGER" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="open_time" property="openTime" jdbcType="TIMESTAMP" />
+    <result column="submission_time" property="submissionTime" jdbcType="TIMESTAMP" />
+    <result column="continue_time" property="continueTime" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="creaate_time" property="creaateTime" jdbcType="TIMESTAMP" />
+    <result column="accuracy_sogou" property="accuracySogou" jdbcType="DOUBLE" />
+    <result column="fluency_sogou" property="fluencySogou" jdbcType="DOUBLE" />
+    <result column="integrity_sogou" property="integritySogou" jdbcType="DOUBLE" />
+    <result column="overall_sogou" property="overallSogou" jdbcType="DOUBLE" />
+    <result column="accuracy_teacher" property="accuracyTeacher" jdbcType="DOUBLE" />
+    <result column="fluency_teacher" property="fluencyTeacher" jdbcType="DOUBLE" />
+    <result column="integrity_teacher" property="integrityTeacher" jdbcType="DOUBLE" />
+    <result column="overall_teacher" property="overallTeacher" jdbcType="DOUBLE" />
+    <result column="dati_num" property="datiNum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, test_id, paper_id, class_code, class_name, test_name, test_num, test_end_num, 
+    end_time, open_time, submission_time, continue_time, create_user, creaate_time,
+    integrity_sogou, overall_sogou, accuracy_teacher, fluency_teacher, integrity_teacher, 
+    overall_teacher,accuracy_sogou, fluency_sogou,dati_num
+  </sql>
+  <select id="query" resultMap="BaseResultMap"  parameterType="java.util.HashMap">
+  	SELECT s.name AS NAME,lst.* FROM lst_student_test lst
+	LEFT JOIN  student_user s ON s.id =lst.student_id
+	  WHERE   class_code=#{t.classCode,jdbcType=VARCHAR} and test_id=#{t.testId,jdbcType=INTEGER}
+	  <if test="t.status !=null ">
+	  and lst.status =#{t.status,jdbcType=INTEGER}
+	  </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_student_test
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_student_test
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.lstClassTest.entity.LstStudentTest" >
+    insert into lst_student_test (id, student_id, test_id, 
+      paper_id, class_code, class_name, 
+      test_name, test_num, test_end_num, 
+      end_time, open_time, submission_time, 
+      continue_time, create_user, creaate_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=BIGINT}, #{testId,jdbcType=INTEGER}, 
+      #{paperId,jdbcType=INTEGER}, #{classCode,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, 
+      #{testName,jdbcType=VARCHAR}, #{testNum,jdbcType=INTEGER}, #{testEndNum,jdbcType=INTEGER}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{openTime,jdbcType=TIMESTAMP}, #{submissionTime,jdbcType=TIMESTAMP}, 
+      #{continueTime,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, #{creaateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.lstClassTest.entity.LstStudentTest" >
+    insert into lst_student_test
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="studentId != null" >
+        student_id,
+      </if>
+      <if test="testId != null" >
+        test_id,
+      </if>
+      <if test="paperId != null" >
+        paper_id,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="testName != null" >
+        test_name,
+      </if>
+      <if test="testNum != null" >
+        test_num,
+      </if>
+      <if test="testEndNum != null" >
+        test_end_num,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="openTime != null" >
+        open_time,
+      </if>
+      <if test="submissionTime != null" >
+        submission_time,
+      </if>
+      <if test="continueTime != null" >
+        continue_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="creaateTime != null" >
+        creaate_time,
+      </if>
+      <if test="datiNum != null" >
+        dati_num,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="studentId != null" >
+        #{studentId,jdbcType=BIGINT},
+      </if>
+      <if test="testId != null" >
+        #{testId,jdbcType=INTEGER},
+      </if>
+      <if test="paperId != null" >
+        #{paperId,jdbcType=INTEGER},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="testName != null" >
+        #{testName,jdbcType=VARCHAR},
+      </if>
+      <if test="testNum != null" >
+        #{testNum,jdbcType=INTEGER},
+      </if>
+      <if test="testEndNum != null" >
+        #{testEndNum,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openTime != null" >
+        #{openTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submissionTime != null" >
+        #{submissionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="continueTime != null" >
+        #{continueTime,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="creaateTime != null" >
+        #{creaateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="datiNum != null" >
+        #{datiNum,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.lstClassTest.entity.LstStudentTest" >
+    update lst_student_test
+    <set >
+      <if test="studentId != null" >
+        student_id = #{studentId,jdbcType=BIGINT},
+      </if>
+      <if test="testId != null" >
+        test_id = #{testId,jdbcType=INTEGER},
+      </if>
+      <if test="paperId != null" >
+        paper_id = #{paperId,jdbcType=INTEGER},
+      </if>
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="testName != null" >
+        test_name = #{testName,jdbcType=VARCHAR},
+      </if>
+      <if test="testNum != null" >
+        test_num = #{testNum,jdbcType=INTEGER},
+      </if>
+      <if test="testEndNum != null" >
+        test_end_num = #{testEndNum,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openTime != null" >
+        open_time = #{openTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submissionTime != null" >
+        submission_time = #{submissionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="continueTime != null" >
+        continue_time = #{continueTime,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="creaateTime != null" >
+        creaate_time = #{creaateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.lstClassTest.entity.LstStudentTest" >
+    update lst_student_test
+    set student_id = #{studentId,jdbcType=BIGINT},
+      test_id = #{testId,jdbcType=INTEGER},
+      paper_id = #{paperId,jdbcType=INTEGER},
+      class_code = #{classCode,jdbcType=VARCHAR},
+      class_name = #{className,jdbcType=VARCHAR},
+      test_name = #{testName,jdbcType=VARCHAR},
+      test_num = #{testNum,jdbcType=INTEGER},
+      test_end_num = #{testEndNum,jdbcType=INTEGER},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      open_time = #{openTime,jdbcType=TIMESTAMP},
+      submission_time = #{submissionTime,jdbcType=TIMESTAMP},
+      continue_time = #{continueTime,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      creaate_time = #{creaateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getStudentTestInfo" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  		SELECT sc.`student_id` AS studentId,lct.`id` AS testId ,lbp.`ID` AS paperId,lctc.`class_code` AS classCode ,lc.`class_name`AS className,lct.`name` AS testName FROM lst_class_test lct 
+ 		JOIN  lst_class_test_cl lctc  ON lct.`id`=lctc.`test_id` 
+ 		JOIN lst_base_paper lbp 
+		ON lbp.`ID`=lct.`paper_id`
+		JOIN lst_class lc ON lc.`class_code`=lctc.`class_code`
+		JOIN student_class sc ON sc.`class_code`=lctc.`class_code`
+		WHERE lct.`id`=#{id,jdbcType=INTEGER} AND sc.`status`=2
+  </select>
+  <select id="getAvgScoreInFlAc"  resultMap="BaseResultMap">
+  		 SELECT AVG(accuracy_teacher) as accuracyTeacher ,AVG(integrity_teacher) as integrityTeacher,AVG(fluency_teacher) as fluencyTeacher FROM lst_student_test where test_id=#{testId,jdbcType=INTEGER}
+  </select>
+  <select id="getTotal" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+  		select count(1) from lst_student_test where test_id=#{testId,jdbcType=INTEGER} and status in (2,3)
+  </select>
+  <select id="overNum" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  		SELECT COUNT(1) FROM lst_student_test WHERE overall_teacher <![CDATA[<]]>
+  		(SELECT overall_teacher FROM lst_student_test WHERE id=#{id,jdbcType=INTEGER}) 
+  		AND STATUS in (2,3) AND test_id=#{testId,jdbcType=INTEGER} 
+
+  </select>
+</mapper>

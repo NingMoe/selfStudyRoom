@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.zuoye.dao.LstZuoyeStudentAnswerDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="INTEGER" />
+    <result column="zuoye_id" property="zuoye_id" jdbcType="INTEGER" />
+    <result column="class_code" property="class_code" jdbcType="INTEGER" />
+    <result column="question_id" property="question_id" jdbcType="INTEGER" />
+    <result column="student_answer" property="student_answer" jdbcType="VARCHAR" />
+    <result column="accuracy_sogou" property="accuracy_sogou" jdbcType="DECIMAL" />
+    <result column="fluency_sogou" property="fluency_sogou" jdbcType="DECIMAL" />
+    <result column="integrity_sogou" property="integrity_sogou" jdbcType="DECIMAL" />
+    <result column="overall_sogou" property="overall_sogou" jdbcType="DECIMAL" />
+    <result column="accuracy_teacher" property="accuracy_teacher" jdbcType="DECIMAL" />
+    <result column="fluency_teacher" property="fluency_teacher" jdbcType="DECIMAL" />
+    <result column="integrity_teacher" property="integrity_teacher" jdbcType="DECIMAL" />
+    <result column="overall_teacher" property="overall_teacher" jdbcType="DECIMAL" />
+    <result column="answer_comment" property="answer_comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, zuoye_id,class_code, question_id, student_answer, accuracy_sogou, fluency_sogou, 
+    integrity_sogou, overall_sogou, accuracy_teacher, fluency_teacher, integrity_teacher, 
+    overall_teacher,answer_comment
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_zuoye_student_answer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_zuoye_student_answer
+    where student_id = #{student_id,jdbcType=INTEGER} and class_code = #{class_code,jdbcType=VARCHAR}
+    and zuoye_id = #{zuoye_id,jdbcType=INTEGER} and question_id =  #{question_id,jdbcType=INTEGER} 
+  </select>
+  
+    <!-- 通过学生id和作业id获取完成情况 -->
+  <select id="selectComplete" resultType="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" parameterType="java.util.HashMap">
+  	SELECT a.*,q.difficulty, t.name
+	FROM
+	(
+	SELECT q.question_code question_code, q.xh xh, SUM(a.accuracy_sogou)/COUNT(a.accuracy_sogou) accuracy_sogou,SUM(a.fluency_sogou)/COUNT(a.fluency_sogou) fluency_sogou,
+	SUM(a.integrity_sogou)/COUNT(a.integrity_sogou) integrity_sogou, SUM(a.overall_sogou)/COUNT(a.overall_sogou) overall_sogou, 
+	SUM(a.accuracy_teacher)/COUNT(a.accuracy_teacher) accuracy_teacher, SUM(a.fluency_teacher)/COUNT(a.fluency_teacher) fluency_teacher, 
+	SUM(a.integrity_teacher)/COUNT(a.integrity_teacher) integrity_teacher, SUM(a.overall_teacher)/COUNT(a.overall_teacher) overall_teacher
+	FROM lst_zuoye_question q
+	LEFT JOIN lst_zuoye_student_answer a
+	ON q.zuoye_id = a.zuoye_id AND q.question_id = a.question_id and a.class_code = #{class_code,jdbcType=VARCHAR}
+	WHERE q.zuoye_id = #{zuoye_id,jdbcType=INTEGER} AND a.student_id = #{student_id,jdbcType=BIGINT}
+	GROUP BY q.question_code, q.xh
+	) a
+	LEFT JOIN 
+	(
+	SELECT q.`code`, q.difficulty, q.question_type
+	FROM lst_question q 
+	GROUP BY q.`code`, q.difficulty, q.question_type
+	) q ON a.question_code = q.`code`
+	LEFT JOIN lst_question_type t
+	ON t.id = q.question_type
+	ORDER BY a.xh
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_zuoye_student_answer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" >
+    insert into lst_zuoye_student_answer (student_id, zuoye_id,class_code, 
+      question_id, student_answer, accuracy_sogou, 
+      fluency_sogou, integrity_sogou, overall_sogou, 
+      accuracy_teacher, fluency_teacher, integrity_teacher, 
+      overall_teacher)
+    values (#{student_id,jdbcType=INTEGER}, #{zuoye_id,jdbcType=INTEGER}, #{class_code,jdbcType=VARCHAR}, 
+      #{question_id,jdbcType=INTEGER}, #{student_answer,jdbcType=VARCHAR}, #{accuracy_sogou,jdbcType=DECIMAL}, 
+      #{fluency_sogou,jdbcType=DECIMAL}, #{integrity_sogou,jdbcType=DECIMAL}, #{overall_sogou,jdbcType=DECIMAL}, 
+      #{accuracy_teacher,jdbcType=DECIMAL}, #{fluency_teacher,jdbcType=DECIMAL}, #{integrity_teacher,jdbcType=DECIMAL}, 
+      #{overall_teacher,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" >
+    insert into lst_zuoye_student_answer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="zuoye_id != null" >
+        zuoye_id,
+      </if>
+      <if test="class_code != null" >
+        class_code,
+      </if>
+      <if test="question_id != null" >
+        question_id,
+      </if>
+      <if test="student_answer != null" >
+        student_answer,
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou,
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou,
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou,
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou,
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher,
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher,
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher,
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_id != null" >
+        #{zuoye_id,jdbcType=INTEGER},
+      </if>
+       <if test="class_code != null" >
+        #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="question_id != null" >
+        #{question_id,jdbcType=INTEGER},
+      </if>
+      <if test="student_answer != null" >
+        #{student_answer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracy_sogou != null" >
+        #{accuracy_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_sogou != null" >
+        #{fluency_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_sogou != null" >
+        #{integrity_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_sogou != null" >
+        #{overall_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="accuracy_teacher != null" >
+        #{accuracy_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_teacher != null" >
+        #{fluency_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_teacher != null" >
+        #{integrity_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_teacher != null" >
+        #{overall_teacher,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" >
+    update lst_zuoye_student_answer
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_id != null" >
+        zuoye_id = #{zuoye_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="question_id != null" >
+        question_id = #{question_id,jdbcType=INTEGER},
+      </if>
+      <if test="student_answer != null" >
+        student_answer = #{student_answer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou = #{accuracy_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou = #{fluency_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou = #{integrity_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou = #{overall_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher = #{accuracy_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher = #{fluency_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher = #{integrity_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher = #{overall_teacher,jdbcType=DECIMAL},
+      </if>
+       <if test="answer_comment != null" >
+        answer_comment = #{answer_comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" >
+    update lst_zuoye_student_answer
+    set student_id = #{student_id,jdbcType=INTEGER},
+      zuoye_id = #{zuoye_id,jdbcType=INTEGER},
+      class_code = #{class_code,jdbcType=INTEGER},
+      question_id = #{question_id,jdbcType=INTEGER},
+      student_answer = #{student_answer,jdbcType=VARCHAR},
+      accuracy_sogou = #{accuracy_sogou,jdbcType=DECIMAL},
+      fluency_sogou = #{fluency_sogou,jdbcType=DECIMAL},
+      integrity_sogou = #{integrity_sogou,jdbcType=DECIMAL},
+      overall_sogou = #{overall_sogou,jdbcType=DECIMAL},
+      accuracy_teacher = #{accuracy_teacher,jdbcType=DECIMAL},
+      fluency_teacher = #{fluency_teacher,jdbcType=DECIMAL},
+      integrity_teacher = #{integrity_teacher,jdbcType=DECIMAL},
+      overall_teacher = #{overall_teacher,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByStudentidClasscodeZuoyeidAndQuestionid" parameterType="com.ls.spt.zuoye.entity.LstZuoyeStudentAnswer" >
+    update lst_zuoye_student_answer
+    <set >
+      <if test="student_answer != null" >
+        student_answer = #{student_answer,jdbcType=VARCHAR},
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou = #{accuracy_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou = #{fluency_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou = #{integrity_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou = #{overall_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher = #{accuracy_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher = #{fluency_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher = #{integrity_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher = #{overall_teacher,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where student_id = #{student_id,jdbcType=INTEGER} and zuoye_id = #{zuoye_id,jdbcType=INTEGER} and class_code = #{class_code,jdbcType=VARCHAR} and question_id = #{question_id,jdbcType=INTEGER}
+  </update>
+</mapper>

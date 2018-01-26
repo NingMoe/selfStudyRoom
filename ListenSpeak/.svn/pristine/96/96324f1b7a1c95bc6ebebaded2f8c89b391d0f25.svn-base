@@ -1,0 +1,451 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html style="height: 100%;">
+<head>
+<meta charset="UTF-8">
+<title>我的测试(测试中)</title>
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta charset="UTF-8">
+<%@include file="/WEB-INF/view/common/taglib.jsp"%>
+<link rel="stylesheet" href="<%=basePath %>/static/studentpc/css/less.css">
+	    <style> 
+     .test{
+    	margin: 5% 0 0 38%;
+		position: relative;
+    }
+    .wraph,.circleh,.percenth{ 
+        position: absolute; 
+        width: 200px; 
+        height: 200px; 
+        border-radius: 50%; 
+    }
+
+    .wraph{ 
+        top:0; 
+        left:0; 
+        background-color: #64dcdc; 
+        border: 1px solid #64dcdc;
+    } 
+
+    .circleh{ 
+        box-sizing: border-box; 
+        border:20px solid #64dcdc; 
+        clip:rect(0,200px,200px,100px); 
+    } 
+    .clip-autoh{ 
+        clip:rect(auto, auto, auto, auto); 
+    } 
+    .percenth{ 
+        box-sizing: border-box; 
+        top:-20px; 
+        left:-20px; 
+    } 
+    .lefth{ 
+        transition:transform ease; 
+        border:20px solid #fafafa; 
+        clip: rect(0,100px,200px,0); 
+    } 
+    .righth{ 
+        border:20px solid #fafafa; 
+        clip: rect(0,200px,200px,100px); 
+    } 
+    .wth0h{ 
+        width:0; 
+    } 
+     .mytest-main img { 
+        position: absolute; 
+        box-sizing: border-box; 
+        width: 160px!important; 
+        height: 160px; 
+        line-height: 160px; 
+        text-align: center; 
+        font-size: 40px; 
+        left: 20px; 
+        top: 20px; 
+        border-radius: 50%; 
+        z-index: 1; 
+    } 
+    </style>
+</head>
+<body>
+<div class="public-mytest"> 
+<input type="hidden" id="student_id" name="student_id" value="${param.studentId }">
+<input type="hidden" id="class_code" name="class_code" value="${param.classCode }">
+<input type="hidden" id="test_id" name="test_id" value="${param.testId }">
+<input type="hidden" id="student_test_id" name="student_test_id" value="${param.studentTestId }">
+
+<input type="hidden" id="isEnd" name="isEnd" value="${isEnd }">
+<input type="hidden" id="tmNum" name="tmNum" value="${question.tmNum }">
+<input type="hidden" id="xh" name="xh" value="${question.xh }">
+<input type="hidden" id="bigXh" name="bigXh" value="${question.bigXh }">
+<input type="hidden" id="smallXh" name="smallXh" value="${question.smallXh }">
+
+<input type="hidden" id="question_id" name="question_id" value="${question.questionId }">
+<input type="hidden" id="scoreType" name="scoreType" value="${question.scoreType }">
+<input type="hidden" id="parseText" name="parseText" value="${question.parseText }">
+<input type="hidden" id="content" name="content" value="${question.content }">
+<input type="hidden" id="tgTime" name="tgTime" value="${question.contentTime }">
+<input type="hidden" id="answerTime" name="tgTime" value="${question.answerTime }">
+
+<div style="display: none;">
+<audio id="zdAudio" controls="controls" src="${fileurl }${question.zdAudio }"></audio>
+<audio id="contentAudio" controls="controls" src="${fileurl }${question.contentAudio }"></audio>
+</div>
+
+<div class="mytest-top">
+	<div class="testtop-left">
+		<img src="<%=basePath %>/static/studentpc/images/14X_03.jpg" alt="">
+		<p>第${question.bigXh }题</p>
+	</div>
+	<div class="testtop-right">
+		<!-- <p>下一题</p> -->
+		<img src="<%=basePath %>/static/studentpc/images/14X_06.jpg" alt="">
+	</div>
+	<div class="clearfix"></div>
+</div>
+<div class="mytest-main" style="padding-bottom:240px">
+	<p>${question.zdmessage }</p>
+	<p>${question.content }</p>
+	<div class="test">
+		<div class="wraph"> 
+		    <div id="circle" class="circleh"> 
+		        <div class="percenth lefth"></div> 
+		        <div class="percenth righth wth0h"></div> 
+		    </div> 
+		    <img class="numh" src="<%=basePath %>/static/studentpc/images/15X_04_03.png" alt="">
+		</div> 
+	</div>
+	</div>
+	<div class="mytesting-bottom">
+		<input id="tsmess" type="button" value="指导语时间">
+	</div>
+	<div id="answerDiv"></div>
+</div>
+
+<script type="text/javascript">
+var audio_context,recorder;
+try {
+	// webkit shimnavigator.mediaDevices
+	window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
+	|| navigator.mozGetUserMedia || navigator.msGetUserMedia||navigator.mediaDevices.getUserMedia;
+    window.URL = window.URL || window.webkitURL;
+    audio_context = new AudioContext;
+}catch (e) {
+	alert('你的浏览器不支持在线录音，请联系管理员!');
+}
+navigator.getUserMedia({audio: true}, startUserMedia, function(e) {});
+
+function startUserMedia(stream) {
+	var input = audio_context.createMediaStreamSource(stream);
+	recorder = initRecorder(input);
+}
+var index = 0;
+function initRecorder(input){
+	recorder = new Recorder(input);
+	if(!!recorder){
+		console.log(index);
+		return recorder;
+	}else{
+		index++;
+		setTimeout(function(){
+			initRecorder(input);
+		},50);
+	}
+}
+</script>
+<script type="text/javascript"> 
+/*勿删，用于rem样式*/
+var  deviceWidth = document.documentElement.clientWidth;
+if(deviceWidth >750) deviceWidth =750;
+document.documentElement.style.fontSize = deviceWidth /7.5+'px';
+/*用于圆环,实现百分比可以直接改下边percent*/
+</script> 
+<script  src="<%=basePath%>/static/HZRecorder.js"></script>
+<script type="text/javascript"> 
+var zdAudio = $("#zdAudio").get(0),contentAudio = $("#contentAudio").get(0);
+var zdSj,zd_status,audioBlob;
+var contentNum=0;
+var bufferdSendSize=0;
+var currentTime =0;
+var currentIndex = 0;
+var getBufferLoading;
+var currentSeqNo = 0;
+var isAjaxSuccess = false;
+var tgTime = $("#tgTime").val();
+var answerTime = $("#answerTime").val();
+var isHasTopic = $("#isHasTopic").val();
+zdAudio.addEventListener("canplay", function(){
+	zdSj=parseInt(zdAudio.duration);
+	bfZdy();
+});
+
+
+function bfZdy(){
+	if(!!zdSj){
+		zdAudio.play();  
+		zd_status = 1;
+		setGd(zdSj,tgOrTopicSx);
+	}else{
+		setTimeout(bfZdy,50);
+	}
+}
+
+function startRecording() {
+	currentTime = new Date().getTime();
+	recorder && recorder.record();
+	getBufferLoading = setInterval(function(){ 
+		recorder.getBuffer(function(blob){
+			if(blob[0].length-bufferdSendSize>47104){
+				var blob = blob[0].slice(bufferdSendSize,bufferdSendSize+47103);
+				bufferdSendSize += 47104; 
+				sogouParseData(bufferdSendSize,getWavData(blob));
+			}
+		});
+	},50); 
+}
+
+function getWavData(blob){
+	  var samples = compress(blob);
+      var dataview = encodeWAV(samples);
+      return new Blob([dataview], { type:'audio/wav' });
+}
+
+function stopRecording() {
+	currentIndex++;
+	recorder && recorder.stop();
+	clearInterval(getBufferLoading);
+	recorder.getBuffer(function(blob){
+		var alllength = blob[0].length;
+		if(blob[0].length>bufferdSendSize){
+			var blob = blob[0].slice(bufferdSendSize);
+			sogouParseData(-1*alllength,getWavData(blob),"1");
+		}
+	});
+}
+
+function sogouParseData(index,blob,isLast){
+	isAjaxSuccess = false;
+	var data = new FormData();
+	var scoreType = $("#scoreType").val();
+	var parseText = $("#parseText").val();
+	var content = $("#content").val();
+	
+	data.append("currentIndex",index);
+	data.append("currentSeqNo",currentSeqNo);
+	data.append("studentAnswer",blob);
+	data.append("currentTime",currentTime);
+	data.append("scoreType",scoreType);
+	if(scoreType=="eng_topic"){
+		data.append("refText",parseText);
+	}else{
+		data.append("refText",content);
+	}
+	$.ajax({  
+		url: jsBasePath+"/studentpc/voice/soGouSenceParse.html",
+		type: 'POST',  
+		data: data,  
+		dataType: 'JSON',  
+		cache: false,  
+		processData: false,  
+		contentType: false  
+	}).done(function(res){  
+		if(isLast=="1"){
+			createDownloadLink();
+			recorder.clear();
+		}
+	});  
+	return false;
+}
+
+function createDownloadLink() {
+    recorder && recorder.exportWAV(function(blob) {
+    	audioBlob = blob;
+    	var url = URL.createObjectURL(blob);
+    	var au = document.createElement('audio');
+    	au.controls = true;
+    	au.src = url;
+    	$("#answerDiv").html("").append(au);
+       
+    	var data = new FormData();
+    	var scoreType = $("#scoreType").val();
+    	var parseText = $("#parseText").val();
+    	var content = $("#content").val();
+    	var student_id = $("#student_id").val();
+    	var test_id = $("#test_id").val();
+    	var class_code = $("#class_code").val();
+    	var question_id = $("#question_id").val();
+   		var isEnd = $("#isEnd").val();
+   		var student_test_id = $("#student_test_id").val();
+   		
+   		var tmNum = $("#tmNum").val();
+   		var xh = $("#xh").val();
+   		var bigXh = $("#bigXh").val();
+    	
+    	data.append("studentAnswer",audioBlob);
+    	data.append("scoreType",scoreType);
+    	data.append("student_test_id",student_test_id);
+    	data.append("student_id",student_id);
+    	data.append("test_id",test_id);
+    	data.append("class_code",class_code);
+    	data.append("question_id",question_id);
+    	data.append("isQuestionEnd","1");
+    	isEnd=="1" && data.append("isEnd",isEnd);
+    	if(scoreType=="eng_topic"){
+    		data.append("refText",parseText);
+    	}else{
+    		data.append("refText",content);
+    	}
+    	var index = layer.load(3, {shade: [0.3]}); 
+    	
+    	setTimeout(function(){
+    		$.ajax({  
+        		url: jsBasePath+"/studentpc/voice/soGouParse.html",
+        		type: 'POST',  
+        		data: data,  
+        		dataType: 'JSON',  
+        		cache: false,  
+        		processData: false,  
+        		contentType: false  
+        	}).done(function(res){  
+      			layer.close(index);
+      			if(res.flag){  
+      				if(isEnd=="1"){
+      					location.href = jsBasePath+"/studentpc/studenttest/studenttestview.html";
+      				}else{
+      				//提交下一題
+      	  				location.href = jsBasePath+"/studentpc/studenttest/toStudentKs.html?studentId="+student_id
+      	  						+"&testId="+test_id+"&classCode="+class_code+"&questionId="+question_id
+      	  						+"&tmNum="+tmNum+"&xh="+xh+"&bigXh="+bigXh+"&studentTestId="+student_test_id;
+
+      				}
+      			}else{  
+      				layer.alert(res.message,{icon:2});
+      			}  
+          	});  
+    	},1000);
+    	
+    	
+  		return false; 
+  	});
+}		
+
+function tgOrTopicSx(){
+	zd_status = 2;
+	setGd(tgTime,playContent);
+}
+
+function playContent(){
+	startRecording();
+	zd_status = 3;
+	setGd(answerTime,stopRecording);
+}
+
+function setGd(sj,callback){
+	 $('.circleh').removeClass('clip-autoh'); 
+     $('.righth').addClass('wth0h'); 
+	var total = sj * 100/5;
+	var djsSj = sj;
+	var percent=0; 
+	var loading=setInterval(function(){ 
+		if(percent%20==0){
+			tjbuttonChange(djsSj);
+			djsSj--;
+		}
+        if(percent>=total){ 
+           clearInterval(loading);
+           typeof callback === "function" && callback();
+        }else if(percent>total/2){ 
+            $('.circleh').addClass('clip-autoh'); 
+            $('.righth').removeClass('wth0h'); 
+        } 
+        $('.lefth').css("-webkit-transform","rotate("+(18/sj)*percent+"deg)"); 
+        $('.numh>span').text(percent); 
+        percent++; 
+    },50); 
+}
+
+
+function tjbuttonChange(djsSj){
+	if(zd_status=="1"){
+		$("#tsmess").val("指导语导读中，不录音......."+djsSj+"s");
+	}
+	if(zd_status=="2"){
+		$("#tsmess").val("题目阅读中，不录音......."+djsSj+"s");
+	}
+	if(zd_status=="3"){
+		$("#tsmess").val("录音中，请作答......."+djsSj+"s");
+	}
+}
+
+
+function compress(samples){
+    var length = samples.length / 3;
+    var result = new Float32Array(length);
+    var index = 0, j = 0;
+    while (index < length) {
+        result[index] = samples[j];
+        j += 3;
+        index++;
+    }
+    return result;
+}
+
+
+function floatTo16BitPCM(output, offset, input) {
+    for (var i = 0; i < input.length; i++, offset += 2) {
+        var s = Math.max(-1, Math.min(1, input[i]));
+        output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    }
+}
+
+function writeString(view, offset, string) {
+    for (var i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+    }
+}
+
+function encodeWAV(samples) {
+	var dataLength = samples.length * 2;
+    var buffer = new ArrayBuffer(44 + dataLength);
+    var view = new DataView(buffer);
+
+    var sampleRateTmp = 16000;
+    var sampleBits = 16;
+    var channelCount = 1;
+    var offset = 0;
+    /* 资源交换文件标识符 */
+    writeString(view, offset, 'RIFF'); offset += 4;
+    /* 下个地址开始到文件尾总字节数,即文件大小-8 */
+    view.setUint32(offset, /*32这里地方栗子中的值错了,但是不知道为什么依然可以运行成功*/ 36 + dataLength, true); offset += 4;
+    /* WAV文件标志 */
+    writeString(view, offset, 'WAVE'); offset += 4;
+    /* 波形格式标志 */
+    writeString(view, offset, 'fmt '); offset += 4;
+    /* 过滤字节,一般为 0x10 = 16 */
+    view.setUint32(offset, 16, true); offset += 4;
+    /* 格式类别 (PCM形式采样数据) */
+    view.setUint16(offset, 1, true); offset += 2;
+    /* 通道数 */
+    view.setUint16(offset, channelCount, true); offset += 2;
+    /* 采样率,每秒样本数,表示每个通道的播放速度 */
+    view.setUint32(offset, sampleRateTmp, true); offset += 4;
+    /* 波形数据传输率 (每秒平均字节数) 通道数×每秒数据位数×每样本数据位/8 */
+    view.setUint32(offset, sampleRateTmp * channelCount * (sampleBits / 8), true); offset += 4;
+    /* 快数据调整数 采样一次占用字节数 通道数×每样本的数据位数/8 */
+    view.setUint16(offset, channelCount * (sampleBits / 8), true); offset += 2;
+    /* 每样本数据位数 */
+    view.setUint16(offset, sampleBits, true); offset += 2;
+    /* 数据标识符 */
+    writeString(view, offset, 'data'); offset += 4;
+    /* 采样数据总数,即数据总大小-44 */
+    view.setUint32(offset, dataLength, true); offset += 4;
+    /* 采样数据 */
+    floatTo16BitPCM(view, 44, samples);
+
+    return view;
+}
+</script> 
+</body>
+</html>

@@ -1,0 +1,224 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- load css -->
+<%@include file="/WEB-INF/view/common/taglib.jsp"%>
+</head>
+<body>
+<div class="main-wrap">
+<fieldset class="layui-elem-field" style="padding: 15px;" id="serachFrom">
+	<legend data-toggle="collapse" data-parent="serachFrom" href="#collapseOne" style="color: #1AA094;">作业列表&nbsp;
+	<li class="fa fa-angle-double-down" id="ic"></li>
+	</legend>
+	<div class="layui-form">
+		<div class="layui-form-item collapse in" id="collapseOne">
+			<div class="layui-form-item" hidden="true">
+				<input type="text" id="search" hidden="true" class="layui-input" value="search">
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width: 10%;">是否进行中</label>
+				<div class="layui-input-inline" style="width: 11%;">
+					<select name="isEnd" id="isEnd">
+						<option value="0" selected="selected">是</option>
+						<option value="1">否</option>
+					</select>
+				</div>
+				
+				<label class="layui-form-label" style="width: 10%;">作业名称</label>
+				<div class="layui-input-inline" style="width: 11%;">
+						<input type="text" id="name" name="name" class="layui-input">
+				</div>
+				<div class="layui-inline">
+					<button id="searchBtn" class="layui-btn">搜索</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</fieldset>
+<div class="y-role">
+	<div class="layui-btn-group" style="margin-top: 20px;">
+		<button class="layui-btn" id="addBtn">新增作业</button>
+	</div>
+	<table class="layui-table" id="zuoyeTable" lay-filter="zuoye"></table>
+</div>
+
+<script type="text/html" id="zuoyeStatusTpl">
+ {{ d.status == '1' ? '未发布' : (d.status == '2' ? '已发布' : '无效') }}
+</script>
+
+<script type="text/html" id="zybar">
+  {{#  if(d.status == '1'){ }}
+	<a class="layui-btn layui-btn-xs" lay-event="addQuestion">录入题目</a>
+  	<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="release">发布</a>
+  {{#  } }}
+  {{#  if(d.status == '2'){ }}
+	<a class="layui-btn layui-btn-xs" lay-event="yulan">预览</a>
+  {{#  } }}
+</script>
+               
+</div>
+</body>
+<script type="text/javascript">
+layui.use(['table','laypage'], function(){
+	var table = layui.table,laypage = layui.laypage,layer = layui.layer;
+	var tableIns =table.render({
+		elem: '#zuoyeTable',
+		url: jsBasePath + '/zuoye/query.html',
+		where :{"isEnd":0},		
+		cellMinWidth: 80,
+		page: { //详细参数可参考 laypage 组件文档
+			layout: ['count', 'prev', 'page', 'next', 'skip','limit'],
+			groups:3, //只显示 1 个连续页码
+		    first: false, //不显示首页
+		    last: false //不显示尾页
+		},
+		cols: [[{field:'name', width:"16%", title: '作业名称',align:"center"},
+		    {field:'createTime', width:"16%", title: '创建时间',sort: true,align:"center"},
+		    {field:'subTime', width:"16%", title: '提交时间',sort: true,align:"center"},
+		    {field:'status', width:"16%", title: '作业状态',align:"center",templet:"#zuoyeStatusTpl"},
+		    {field:'createUserName',width:"16%", title: '创建人',align:"center"},
+		    {fixed: 'right', width:"20%", title: '操作', align:'center', toolbar: '#zybar'}]]
+	});
+	
+	
+	table.on('tool(zuoye)', function(obj){
+	    var data = obj.data;
+	    if(obj.event === 'addQuestion'){
+	    	addQuestion(data);
+	    }else if(obj.event === 'release'){
+	    	layer.confirm('发布后的作业不能再编辑或者更改题目，确认发布吗', function(index){
+	    		layer.close(index);
+	    		release(data.id);
+	    	});
+	    }else if(obj.event === 'edit'){
+	    	editQuestion(data.id);
+	    }else if(obj.event === 'yulan'){
+	    	yulan(data);
+	    }
+	 });
+	
+	function yulan(data){
+		var zuoyeId= data.id;
+		var zuoyeName = data.name;
+		  var url = jsBasePath + "/zuoye/toYulan.html?zuoyeId="+zuoyeId+"&zuoyeName="+zuoyeName;
+		  layer.open({
+			  type : 2,
+			  shade : [ 0.5, '#000' ],
+			  title : '题目预览', //
+			  offset : ['4%'],
+			  area : ['85%','90%'],
+			  content : url, //捕获的元素
+			  cancel : function(index) {
+				  layer.close(index);
+			  },
+			  end : function() {
+				  //
+			  }
+		  });
+	}
+	
+	  $('#searchBtn').bind('click', function(){
+		  reloadTable();
+	  });
+	  
+	  function reloadTable(){
+		  tableIns.reload({
+			where: {
+				isEnd: $("#isEnd").val(),
+				name : $("#name").val()	
+			}
+		  });
+	  }
+	  
+	  $("#addBtn").bind("click",function(){
+		  var url = jsBasePath + "/zuoye/toAdd.html";
+		  layer.open({
+			  type : 2,
+			  shade : [ 0.5, '#000' ],
+			  title : "新增作业", //
+			  offset : ['4%'],
+			  area : ['600px','60%'],
+			  content : url, //捕获的元素
+			  cancel : function(index) {
+				  layer.close(index);
+			  },
+			  end : function() {
+				  reloadTable();
+			  }
+		  });
+		  return false;
+	  });
+	  
+	  function release(id){
+		  var index =layer.load(3, {shade: [0.3]});
+		  $.ajax({
+				url : jsBasePath + '/zuoye/release.html?id='+ id,
+				async : false,
+				dataType : "json",
+				success : function(data) {
+					 layer.close(index); 
+					  if(data.flag==false){
+						  layer.alert(data.message,{icon:2});
+					  }else{
+						  layer.alert(data.message,{icon:1},function(index1){
+							  layer.close(index1); 
+							  reloadTable();
+						  });
+					  }
+				},
+				error : function(jqXHR, textStatus, errorThrown) {
+
+				}
+			});
+	  }
+	  
+	  function addQuestion(data){
+		  var id = data.id;
+		  var name = data.name;
+		  var subTime = data.subTime;
+		  var url = jsBasePath + "/zuoye/toAddQuestion.html?id="+id+"&name="+name;
+		  layer.open({
+			  type : 2,
+			  shade : [ 0.5, '#000' ],
+			  title : name, //
+			  offset : ['4%'],
+			  area : ['85%','90%'],
+			  content : url, //捕获的元素
+			  cancel : function(index) {
+				  layer.close(index);
+			  },
+			  end : function() {
+				  reloadTable();
+			  }
+		  });
+	  }
+	  
+	  function editQuestion(id){
+		  var url = jsBasePath + "/zuoye/toEdit.html?id="+id;
+		  layer.open({
+			  type : 2,
+			  shade : [ 0.5, '#000' ],
+			  title : "编辑作业", //
+			  offset : ['4%'],
+			  area : ['600px','60%'],
+			  content : url, //捕获的元素
+			  cancel : function(index) {
+				  layer.close(index);
+			  },
+			  end : function() {
+				  reloadTable();
+			  }
+		  });
+		  return false;
+	  }
+});
+
+	</script>
+</html>

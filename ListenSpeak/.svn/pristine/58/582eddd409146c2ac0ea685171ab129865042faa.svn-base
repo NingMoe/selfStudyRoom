@@ -1,0 +1,7 @@
+oss.endpoint=oss-cn-hangzhou.aliyuncs.com
+oss.accessId=LTAIk9mEFGaIAtzk
+oss.accessKey=woG9uKRbCwCXoA3duCv0ZqKAdAKRUU
+oss.bucket=speakingtest
+oss.fileurl=http://speakingtest.oss-cn-hangzhou.aliyuncs.com/
+oss.lsAudioPath=lsAudio/
+oss.lsStudentAnswerPath=lsStudentAnswerPath/

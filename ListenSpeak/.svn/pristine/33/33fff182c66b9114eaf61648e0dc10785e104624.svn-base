@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.studenttest.dao.LstStudentTestDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.studenttest.entity.LstStudentTest" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="INTEGER" />
+    <result column="student_name" property="student_name" jdbcType="VARCHAR" />
+    <result column="test_id" property="test_id" jdbcType="INTEGER" />
+    <result column="paper_id" property="paper_id" jdbcType="INTEGER" />
+    <result column="class_code" property="class_code" jdbcType="VARCHAR" />
+    <result column="class_name" property="class_name" jdbcType="VARCHAR" />
+    <result column="test_name" property="test_name" jdbcType="VARCHAR" />
+    <result column="test_num" property="test_num" jdbcType="INTEGER" />
+    <result column="dati_num" property="dati_num" jdbcType="INTEGER" />
+    <result column="test_end_num" property="test_end_num" jdbcType="INTEGER" />
+    <result column="end_time" property="end_time" jdbcType="TIMESTAMP" />
+    <result column="open_time" property="open_time" jdbcType="TIMESTAMP" />
+    <result column="submission_time" property="submission_time" jdbcType="TIMESTAMP" />
+    <result column="continue_time" property="continue_time" jdbcType="INTEGER" />
+    <result column="create_user" property="create_user" jdbcType="VARCHAR" />
+    <result column="creaate_time" property="creaate_time" jdbcType="TIMESTAMP" />
+    <result column="accuracy_sogou" property="accuracy_sogou" jdbcType="DOUBLE" />
+    <result column="fluency_sogou" property="fluency_sogou" jdbcType="DOUBLE" />
+    <result column="integrity_sogou" property="integrity_sogou" jdbcType="DOUBLE" />
+    <result column="overall_sogou" property="overall_sogou" jdbcType="DOUBLE" />
+    <result column="accuracy_teacher" property="accuracy_teacher" jdbcType="DOUBLE" />
+    <result column="fluency_teacher" property="fluency_teacher" jdbcType="DOUBLE" />
+    <result column="integrity_teacher" property="integrity_teacher" jdbcType="DOUBLE" />
+    <result column="overall_teacher" property="overall_teacher" jdbcType="DOUBLE" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, test_id, paper_id, class_code, class_name, test_name, test_num, test_end_num, end_time, open_time, submission_time,dati_num, 
+    continue_time, create_user, creaate_time,status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_student_test
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 获取未完成考试数量 -->
+  <select id="selectStudentNotEndTestCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	select count(1)
+  	from lst_student_test
+  	where student_id = #{student_id,jdbcType=INTEGER} and status = 1
+  </select>
+  
+  <!-- 获取未完成考试 -->
+  <select id="selectStudentNotEndTest" resultType="com.ls.spt.studenttest.entity.LstStudentTest" parameterType="java.util.HashMap">
+  	select *
+  	from lst_student_test
+  	where student_id = #{student_id,jdbcType=INTEGER} and status = 1
+  	<if test="pageStart != null and pageSize != null">
+  	limit #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+  	</if>
+  </select>
+  
+  <!-- 获取已完成考试数量 -->
+  <select id="selectStudentEndTestCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	select count(1)
+  	from lst_student_test
+  	where student_id = #{student_id,jdbcType=INTEGER} and status IN (2,3)
+  </select>
+  
+  <!-- 获取已完成考试 -->
+  <select id="selectStudentEndTest" resultType="com.ls.spt.studenttest.entity.LstStudentTest" parameterType="java.util.HashMap">
+  	select *
+  	from lst_student_test
+  	where student_id = #{student_id,jdbcType=INTEGER} and status IN (2,3)
+  	<if test="pageStart != null and pageSize != null">
+  	limit #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+  	</if>
+  </select>
+  
+  <!-- 获取考试基础信息-->
+  <select id="selectByParams" resultType="com.ls.spt.studenttest.entity.LstStudentTest" parameterType="java.util.HashMap">
+ 	SELECT t.*, s.name student_name, u.name teacher_name
+  	FROM lst_student_test t
+  	LEFT JOIN student_user s
+  	ON t.student_id = s.id
+  	LEFT JOIN lst_class_test c
+  	ON c.id = t.test_id
+  	LEFT JOIN teacher_user u
+  	ON u.id = c.create_user
+  	where t.student_id = #{student_id,jdbcType=INTEGER} and t.test_id = #{test_id,jdbcType=INTEGER} AND t.class_code = #{class_code,jdbcType=VARCHAR} and c.status = 1 and c.introduct_status = 2
+  </select>
+  
+  <!-- 获取班级考试平均信息-->
+  <select id="selectClassByParams" resultType="com.ls.spt.studenttest.entity.LstStudentTest" parameterType="java.util.HashMap">
+	SELECT AVG(IFNULL(t.accuracy_teacher, IFNULL(t.accuracy_sogou, 0))) accuracy_teacher, 
+	AVG(IFNULL(t.fluency_teacher, IFNULL(t.fluency_sogou, 0))) fluency_teacher, 
+	AVG(IFNULL(t.integrity_teacher, IFNULL(t.integrity_sogou, 0))) integrity_teacher
+	FROM lst_student_test t
+	WHERE t.test_id = #{test_id,jdbcType=INTEGER} AND t.class_code = #{class_code,jdbcType=VARCHAR} AND t.submission_time IS NOT NULL
+  </select>
+  
+  <!-- 超过分数的百分比 -->
+  <select id="selectTranscendCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT IFNULL(TRUNCATE(
+	(
+  	SELECT COUNT(1)
+	FROM
+	(
+	SELECT t.student_id, IFNULL(t.overall_teacher, IFNULL(t.overall_sogou, 0)) sc
+	FROM lst_student_test t
+	WHERE t.class_code = #{class_code,jdbcType=VARCHAR} AND t.test_id = #{test_id,jdbcType=INTEGER} AND t.submission_time IS NOT NULL
+	) s
+	WHERE s.sc &lt;
+	(
+	SELECT IFNULL(t.overall_teacher, IFNULL(t.overall_sogou, 0)) sc
+	FROM lst_student_test t
+	WHERE t.class_code = #{class_code,jdbcType=VARCHAR} AND t.test_id = #{test_id,jdbcType=INTEGER} AND t.submission_time IS NOT NULL AND  t.student_id = #{student_id,jdbcType=INTEGER}
+	)
+	)
+	/
+	(
+	SELECT COUNT(1)
+	FROM student_class
+	WHERE class_code = #{class_code,jdbcType=VARCHAR} AND  `status` = 2 AND is_valid = 1
+	)
+	,2
+	),0)
+  </select>
+    
+  <!-- 比该学生总分高的人数 -->
+  <select id="selectClassCountThanStudent" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	SELECT COUNT(1)
+	FROM
+	(
+	SELECT t.student_id, IFNULL(t.overall_teacher, IFNULL(t.overall_sogou, 0)) sc
+	FROM lst_student_test t
+	WHERE t.class_code = #{class_code,jdbcType=VARCHAR} AND t.test_id = #{test_id,jdbcType=INTEGER} AND t.submission_time IS NOT NULL
+	) s
+	WHERE s.sc &gt;
+	(
+	SELECT IFNULL(t.overall_teacher, IFNULL(t.overall_sogou, 0)) sc
+	FROM lst_student_test t
+	WHERE t.class_code = #{class_code,jdbcType=VARCHAR} AND t.test_id = #{test_id,jdbcType=INTEGER} AND t.submission_time IS NOT NULL AND  t.student_id = #{student_id,jdbcType=INTEGER}
+	)
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_student_test
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.studenttest.entity.LstStudentTest" >
+    insert into lst_student_test (id, student_id, test_id, 
+      paper_id, class_code, class_name, test_name, test_num, 
+      test_end_num, end_time, open_time, submission_time, 
+      continue_time, create_user, creaate_time)
+    values (#{id,jdbcType=INTEGER}, #{student_id,jdbcType=INTEGER}, #{test_id,jdbcType=INTEGER}, 
+      #{paper_id,jdbcType=INTEGER}, #{class_code,jdbcType=VARCHAR}, #{class_name,jdbcType=VARCHAR}, #{test_name,jdbcType=VARCHAR}, #{test_num,jdbcType=INTEGER}, 
+      #{test_end_num,jdbcType=INTEGER}, #{end_time,jdbcType=TIMESTAMP}, #{open_time,jdbcType=TIMESTAMP}, #{submission_time,jdbcType=TIMESTAMP}, 
+      #{continue_time,jdbcType=INTEGER}, #{create_user,jdbcType=VARCHAR}, #{creaate_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.studenttest.entity.LstStudentTest" >
+    insert into lst_student_test
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="test_id != null" >
+        test_id,
+      </if>
+      <if test="paper_id != null" >
+        paper_id,
+      </if>
+      <if test="class_code != null" >
+        class_code,
+      </if>
+      <if test="class_name != null" >
+        class_name,
+      </if>
+      <if test="test_name != null" >
+        test_name,
+      </if>
+      <if test="test_num != null" >
+        test_num,
+      </if>
+      <if test="test_end_num != null" >
+        test_end_num,
+      </if>
+      <if test="end_time != null" >
+        end_time,
+      </if>
+      <if test="open_time != null" >
+        open_time,
+      </if>
+      <if test="submission_time != null" >
+        submission_time,
+      </if>
+      <if test="continue_time != null" >
+        continue_time,
+      </if>
+      <if test="create_user != null" >
+        create_user,
+      </if>
+      <if test="creaate_time != null" >
+        creaate_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="test_id != null" >
+        #{test_id,jdbcType=INTEGER},
+      </if>
+      <if test="paper_id != null" >
+        #{paper_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="test_name != null" >
+        #{test_name,jdbcType=VARCHAR},
+      </if>
+      <if test="test_num != null" >
+        #{test_num,jdbcType=INTEGER},
+      </if>
+      <if test="test_end_num != null" >
+        #{test_end_num,jdbcType=INTEGER},
+      </if>
+      <if test="end_time != null" >
+        #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="open_time != null" >
+        #{open_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submission_time != null" >
+        #{submission_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="continue_time != null" >
+        #{continue_time,jdbcType=INTEGER},
+      </if>
+      <if test="create_user != null" >
+        #{create_user,jdbcType=VARCHAR},
+      </if>
+      <if test="creaate_time != null" >
+        #{creaate_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.studenttest.entity.LstStudentTest" >
+    update lst_student_test
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=INTEGER},
+      </if>
+      <if test="test_id != null" >
+        test_id = #{test_id,jdbcType=INTEGER},
+      </if>
+      <if test="paper_id != null" >
+        paper_id = #{paper_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        class_name = #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="test_name != null" >
+        test_name = #{test_name,jdbcType=VARCHAR},
+      </if>
+      <if test="test_num != null" >
+        test_num = #{test_num,jdbcType=INTEGER},
+      </if>
+      <if test="test_end_num != null" >
+        test_end_num = #{test_end_num,jdbcType=INTEGER},
+      </if>
+      <if test="end_time != null" >
+        end_time = #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="open_time != null" >
+        open_time = #{open_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submission_time != null" >
+        submission_time = #{submission_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="continue_time != null" >
+        continue_time = #{continue_time,jdbcType=INTEGER},
+      </if>
+      <if test="create_user != null" >
+        create_user = #{create_user,jdbcType=VARCHAR},
+      </if>
+      <if test="creaate_time != null" >
+        creaate_time = #{creaate_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isEnd == '1'.toString() ">
+        test_end_num = dati_num,
+      </if>
+      <if test="isQuestionEnd == '1'.toString() ">
+        test_end_num = test_end_num+1,
+      </if>
+      <if test="accuracy_sogou != null" >
+        accuracy_sogou = #{accuracy_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou = #{fluency_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou = #{integrity_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou = #{overall_sogou,jdbcType=DECIMAL},
+      </if>
+      <if test="accuracy_teacher != null" >
+        accuracy_teacher = #{accuracy_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="fluency_teacher != null" >
+        fluency_teacher = #{fluency_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="integrity_teacher != null" >
+        integrity_teacher = #{integrity_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="overall_teacher != null" >
+        overall_teacher = #{overall_teacher,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.studenttest.entity.LstStudentTest" >
+    update lst_student_test
+    set student_id = #{student_id,jdbcType=INTEGER},
+      test_id = #{test_id,jdbcType=INTEGER},
+      paper_id = #{paper_id,jdbcType=INTEGER},
+      class_code = #{class_code,jdbcType=VARCHAR},
+      class_name = #{class_name,jdbcType=VARCHAR},
+      test_name = #{test_name,jdbcType=VARCHAR},
+      test_num = #{test_num,jdbcType=INTEGER},
+      test_end_num = #{test_end_num,jdbcType=INTEGER},
+      end_time = #{end_time,jdbcType=TIMESTAMP},
+      open_time = #{open_time,jdbcType=TIMESTAMP},
+      submission_time = #{submission_time,jdbcType=TIMESTAMP},
+      continue_time = #{continue_time,jdbcType=INTEGER},
+      create_user = #{create_user,jdbcType=VARCHAR},
+      creaate_time = #{creaate_time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getStudentCountedScore" resultType="com.ls.spt.studenttest.entity.LstStudentTest" parameterType="java.util.HashMap">
+	SELECT  FORMAT(SUM(s.accuracy_sogou),2) accuracy_sogou,FORMAT(SUM(s.fluency_sogou),2) fluency_sogou,
+	FORMAT(SUM(s.integrity_sogou),2) integrity_sogou,FORMAT(SUM(s.overall_sogou),2) overall_sogou FROM (
+	SELECT 
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.accuracy_sogou*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.accuracy_sogou*0.15  
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.accuracy_sogou*0.5 
+	END) accuracy_sogou,
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.fluency_sogou*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.fluency_sogou*0.15  
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.fluency_sogou*0.5 
+	END) fluency_sogou,
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.integrity_sogou*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.integrity_sogou*0.15 
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.integrity_sogou*0.5 
+	END) integrity_sogou,
+	(CASE 
+	WHEN qt.sogou_score_type ='eng_chp' THEN a.overall_sogou*0.2 
+	WHEN qt.sogou_score_type ='eng_pqan' THEN a.overall_sogou*0.15 
+	WHEN qt.sogou_score_type ='eng_topic' THEN a.overall_sogou*0.5 
+	END) overall_sogou 
+	FROM lst_test_student_answer a 
+	JOIN lst_question q ON a.`question_id`=q.id 
+	JOIN lst_question_type qt ON qt.`id` = q.`question_type` 
+	WHERE student_id = #{student_id,jdbcType=INTEGER} 
+	AND class_code = #{class_code,jdbcType=VARCHAR} AND test_id = #{test_id,jdbcType=INTEGER} 
+	)s 
+
+  </select>
+</mapper>

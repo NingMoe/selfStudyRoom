@@ -1,0 +1,178 @@
+package com.ls.spt.lstBasePaper.service.impl;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.aspectj.weaver.patterns.TypePatternQuestions.Question;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.ls.spt.basic.entity.PageView;
+import com.ls.spt.lstBasePaper.dao.LstBasePaperDao;
+import com.ls.spt.lstBasePaper.dao.LstQuesDao;
+import com.ls.spt.lstBasePaper.entity.LstBasePaper;
+import com.ls.spt.lstBasePaper.entity.LstQuestion;
+import com.ls.spt.lstBasePaper.service.LstBasePaperService;
+import com.ls.spt.lstBasePaper.service.LstQuestionService;
+
+
+@Service
+public class LstQuestionServiceImpl implements LstQuestionService {
+    
+    private final  Logger logger = LogManager.getLogger(LstQuestionServiceImpl.class);
+    
+    @Resource
+    private LstQuesDao lqDao;
+    
+    @Override
+    public LstQuestion getLstQuestion(String id,int page) {
+        Map<String, Object> map=new HashMap<>();
+        map.put("page", page);
+        map.put("id", Integer.valueOf(id));
+        // TODO Auto-generated method stub
+        return lqDao.getLstQuestion(map);
+    }
+    
+    @Override
+    public String getAreaName(Integer province) {
+        // TODO Auto-generated method stub
+        return lqDao.getAreaName(province);
+    }
+
+    @Override
+    public int getTotalNum(String id) {
+        // TODO Auto-generated method stub
+        return lqDao.getTotalNum(id);
+    }
+
+    @Override
+    public LstQuestion getQuestionType(String id, int page) {
+        // TODO Auto-generated method stub
+        Map<String, Object> map=new HashMap<>();
+        map.put("page", page);
+        map.put("id", Integer.valueOf(id));
+        return lqDao.getQuestionType(map);
+    }
+
+    @Override
+    public LstQuestion getQuestion(String id, String code) {
+        Map<String, Object> map=new HashMap<>();
+        map.put("code", code);
+        map.put("id", Integer.valueOf(id));
+        return lqDao.getQuestion(map);
+    }
+    
+    @Override
+    public List<LstQuestion> getAllQuestion(String id, String code) {
+        Map<String, Object> map=new HashMap<>();
+        map.put("code", code);
+        map.put("id", Integer.valueOf(id));
+        return lqDao.getAllQuestion(map);
+    }
+
+    @Override
+    public int insertToQuestion(String paperId, String questionId, String xh) {
+        Map<String, Object> map=new HashMap<>();
+        map.put("paperId", Integer.valueOf(paperId));
+        map.put("questionId", Integer.valueOf(questionId));
+        map.put("xh", Integer.valueOf(xh));
+        return lqDao.insertToQuestion(map);
+    }
+
+    @Override
+    public Map<String, Object> getPaperQuestionList(String paperId, String questionId, String xh) {
+        Map<String, Object> map=new HashMap<>();
+        map.put("paperId", Integer.valueOf(paperId));
+        map.put("questionId", Integer.valueOf(questionId));
+//        map.put("xh", xh);
+        return lqDao.getPaperQuestionList(map);
+    }
+
+    @Override
+    public PageView query(LstQuestion lst, PageView pageView) {
+        logger.info("------------分页查询开始---------------");
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        map.put("paging", pageView);
+        map.put("t", lst);
+        String[] grades=lst.getGrade().split(",");
+        map.put("grades", grades);
+        List<LstQuestion> list =lqDao.query(map);
+        pageView.setData(list);
+        return pageView;
+    }
+
+    @Override
+    public Map<String, Object> selectPrimaryBykey(String code) {
+        // TODO Auto-generated method stub
+        return lqDao.selectByKey(code);
+    }
+
+    @Override
+    public List<Map<String, Object>> getQuestionByCode(String code) {
+        // TODO Auto-generated method stub
+        return lqDao.getQuestionByCode(code);
+    }
+
+    @Override
+    public int selectQuestionCount(int questionType, Integer paperId) {
+        Map<String, Object> map=new HashMap<>();
+        map.put("questionType", questionType);
+        map.put("paperId", paperId);
+        // TODO Auto-generated method stub
+        return lqDao.selectQuestionCount(map);
+    }
+
+    @Override
+    public List<LstQuestion> getQuestionInfoByCode(LstQuestion lst) {
+        // TODO Auto-generated method stub
+        return lqDao.getQuestionInfoByCode(lst);
+    }
+
+    @Override
+    public List<String> getCodes(LstQuestion lst) {
+        // TODO Auto-generated method stub
+        return lqDao.getCodes(lst);
+    }
+
+    @Override
+    public List<LstQuestion> getSenceQuestion(LstQuestion lst) {
+        // TODO Auto-generated method stub
+        return lqDao.getSenceQuestion(lst);
+    }
+
+    @Override
+    public String selectQuestionTypeName(LstQuestion lst) {
+        // TODO Auto-generated method stub
+        return lqDao.selectQuestionTypeName(lst);
+    }
+
+    @Override
+    public int insert(LstQuestion lst) {
+        // TODO Auto-generated method stub
+        return lqDao.insertToPaperQuestion(lst);
+    }
+
+    @Override
+    public List<LstQuestion> selectInfoByCode(LstQuestion lst) {
+        // TODO Auto-generated method stub
+        return lqDao.selectInfoByCode(lst);
+    }
+
+    @Override
+    public List<Integer> getMaxXh(int paperId) {
+        // TODO Auto-generated method stub
+        return lqDao.getMaxXh(paperId);
+    }
+
+    @Override
+    public List<Map<String,Object>> used(String code) {
+        // TODO Auto-generated method stub
+        return lqDao.used(code);
+    }
+}

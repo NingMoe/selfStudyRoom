@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+	http://www.springframework.org/schema/security 
+	http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+
+    <!-- 开发环境可以放置 <debug /> 配置，会输出详细Security处理日志，正式环境建议屏蔽 <debug /> 配置 -->
+    <http pattern="/login.jsp" security="none" />
+    <http pattern="/manager/login.html" security="none" />
+    <http pattern="/manager/verCode.html" security="none" />
+    <http pattern="/static/**" security="none" />
+    <http pattern="/manager/loginCheck.html" security="none"/>
+    <http pattern="/s/**" security="none"/>
+    <http pattern="/wechat/binding/**" security="none"/>
+    <http pattern="/studentpc/**" security="none"/>
+ 
+	<!--
+		use-expressions="true" 的意思是开启表达式
+		access-denied-page的意思是，当验证权限失败后会跳转到的页面
+	-->
+	<http use-expressions="true" auto-config="false" entry-point-ref="myAuthenticationEntryPoint" >
+
+	<form-login/>
+	<logout/> 
+	<remember-me/>
+        <access-denied-handler ref="accessDeniedHandler"/>
+        <intercept-url pattern="/**" access="isAuthenticated()" />
+        <logout logout-success-url="/manager/login.html"  logout-url="/manager/login.html" invalidate-session="true" delete-cookies="JSESSIONID"/>
+        <!-- 会话管理 -->
+		<session-management invalid-session-url="/manager/login.html" >
+			<concurrency-control max-sessions="1"
+				error-if-maximum-exceeded="true" />
+		</session-management>
+        <custom-filter ref="mySecurityFilter" before="FILTER_SECURITY_INTERCEPTOR"/>
+	</http>
+	 <!-- 配置过滤器 -->  
+    <beans:bean id="mySecurityFilter"   class="com.ls.spt.security.MySecurityFilter">  
+        <!-- 用户拥有的权限 -->  
+        <beans:property name="authenticationManager" ref="myAuthenticationManager" />  
+        <!-- 用户是否拥有所请求资源的权限 -->  
+        <beans:property name="accessDecisionManager" ref="myAccessDecisionManager" />  
+        <!-- 资源与权限对应关系 -->  
+        <beans:property name="securityMetadataSource" ref="mySecurityMetadataSource" />  
+    </beans:bean>
+    <!-- 实现了UserDetailsService的Bean -->  
+    <authentication-manager alias="myAuthenticationManager">  
+        <authentication-provider user-service-ref="myUserDetailServiceImpl" />  
+    </authentication-manager>  
+    <beans:bean id="myAccessDecisionManager" class="com.ls.spt.security.MyAccessDecisionManager"></beans:bean>  
+    <beans:bean id="mySecurityMetadataSource" class="com.ls.spt.security.MySecurityMetadataSource">  
+    </beans:bean>  
+    <beans:bean id="myUserDetailServiceImpl" class="com.ls.spt.security.MyUserDetailServiceImpl">  
+    </beans:bean> 
+    <beans:bean id="accessDeniedHandler" class="com.ls.spt.security.MyAccessDeniedHandler">  
+    </beans:bean>  
+    <!-- 未登录的切入点 -->
+    <beans:bean id="myAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:constructor-arg value="/manager/login.html"/>
+    </beans:bean>
+    <!-- 实现了UserDetailsService的Bean 用户拥有的权限：登录后取得用户所保有的权限信息
+    	//认证管理器   
+    -->
+	<authentication-manager alias="myAuthenticationManager">
+		<authentication-provider user-service-ref="myUserDetailServiceImpl" />
+	</authentication-manager>
+	
+</beans:beans>

@@ -1,0 +1,180 @@
+package com.ls.spt.studentpc.student.controller;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.ls.spt.studentpc.student.entity.KsQuestion;
+import com.ls.spt.studentpc.student.service.StudentTestService;
+import com.ls.spt.studenttest.entity.LstStudentTest;
+
+@Controller
+@RequestMapping(value="/studentpc/studenttest")
+public class StudentTestController {
+    
+    @Resource
+    private StudentTestService studentTestService;
+
+    @Value("${oss.fileurl}")
+    private String fileurl;
+
+    /**
+     * 考试页面
+     * @return
+     */
+    @RequestMapping(value="/studenttestview")
+    public ModelAndView studenttestview(HttpServletRequest request, HttpServletResponse response){
+        ModelAndView mav = new ModelAndView("/studentpc/studenttest");
+        mav.addObject("not_end_test",studentTestService.getStudentNotEndTest(request, response));//未完成考试
+        mav.addObject("end_test",studentTestService.getStudentEndTest(request, response, 1, 10));//已完成考试
+        return mav;
+    }
+    
+    
+    /**
+     * 考试报告页面
+     * @return
+     */
+    @RequestMapping(value="/studenttestbaogaoview")
+    public ModelAndView studenttestbaogaoview(HttpServletRequest request, HttpServletResponse response, Integer test_id, String class_code){
+        ModelAndView mav = new ModelAndView("/studentpc/studenttestbaogao");
+        mav.addAllObjects(studentTestService.getStudentTestInfo(request, response, test_id, class_code));
+        return mav;
+    }
+    
+    /**
+     * 获取学生所有考试
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/getStudentAllTest")
+    public Map<String, Object> getStudentAllTest(HttpServletRequest request, HttpServletResponse response, Integer pageNow, Integer pageSize){
+        return studentTestService.getStudentAllTest(request, response, pageNow, pageSize);
+    }
+    
+    /**
+     * 获取学生已完成考试
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/getStudentEndTest")
+    public Map<String, Object> getStudentEndTest(HttpServletRequest request, HttpServletResponse response, Integer pageNow, Integer pageSize){
+        return studentTestService.getStudentEndTest(request, response, pageNow, pageSize);
+    }
+    
+    /**
+     * 获取学生未完成考试
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/getStudentNotEndTest")
+    public Map<String, Object> getStudentNotEndTest(HttpServletRequest request, HttpServletResponse response){
+        return studentTestService.getStudentNotEndTest(request, response);
+    }
+    
+    /**
+     * 考试页面(开始考试或者下一题)
+     * @return
+     */
+    @RequestMapping(value="/toStudentKs")
+    public ModelAndView toStartKs(KsQuestion ksQuestion){
+        ModelAndView mav = null;
+        List<KsQuestion> questions = studentTestService.getTestKsQuestion(ksQuestion.getTestId());
+       /* *//**
+         * 因异常重新进入考试的
+         *//*
+        if(ksQuestion.getTest_end_num()!=null){
+            KsQuestion question = null;
+            Integer xh = 0;
+            for(int i=0,j=1;i<questions.size();i++){
+                if(questions.get(i).getXh().intValue()!=xh.intValue()){
+                    xh = questions.get(i).getXh();
+                    if(j==ksQuestion.getTest_end_num().intValue()+1){
+                        question =  questions.get(i);
+                        question.setTmNum(i+1);
+                        question.setBigXh(j);
+                        if(StringUtils.isNotEmpty(question.getTopic())){
+                            question.setSmallXh(1);
+                            mav = new ModelAndView("/studentpc/multi_ks");
+                        }else{
+                            mav = new ModelAndView("/studentpc/simple_ks");
+                        }
+                    }
+                    j++;
+                }
+            }
+            mav.addObject("question", question);
+            mav.addObject("fileurl", fileurl);
+            return mav;
+        }*/
+        
+        //所有题目的序号
+        Integer tmNum = ksQuestion.getTmNum();
+        if(tmNum==null){
+            KsQuestion question = questions.get(0);
+            question.setTmNum(1);
+            question.setBigXh(1);
+            if(StringUtils.isNotEmpty(question.getTopic())){
+                question.setSmallXh(1);
+                mav = new ModelAndView("/studentpc/multi_ks");
+            }else{
+                mav = new ModelAndView("/studentpc/simple_ks");
+            }
+            if(questions.size()==1){
+                mav.addObject("isEnd", "1");
+            }
+            LstStudentTest test = new LstStudentTest();
+            test.setId(ksQuestion.getStudentTestId());
+            test.setOpen_time(new Date());
+            studentTestService.updateStudentTest(test);
+            mav.addObject("question", question);
+            mav.addObject("fileurl", fileurl);
+        }else{
+            KsQuestion question = questions.get(tmNum);
+            question.setTmNum(tmNum+1);
+            if(question.getXh().intValue()==ksQuestion.getXh().intValue()){
+                question.setBigXh(ksQuestion.getBigXh());
+                question.setSmallXh(ksQuestion.getSmallXh()+1);
+                mav = new ModelAndView("/studentpc/multi_ks");
+                if(questions.size()==tmNum+1){
+                    mav.addObject("isQjdhEnd", "1"); 
+                }else{
+                    if(questions.get(tmNum+1).getXh()!=question.getXh()){
+                        mav.addObject("isQjdhEnd", "1"); 
+                    }
+                }
+            }else{
+                question.setBigXh(ksQuestion.getBigXh()+1);
+                if(StringUtils.isNotEmpty(question.getTopic())){
+                    question.setSmallXh(1);
+                    mav = new ModelAndView("/studentpc/multi_ks");
+                }else{
+                    mav = new ModelAndView("/studentpc/simple_ks");
+                }
+            }
+            if(tmNum+1==questions.size()){
+                mav.addObject("isEnd", "1");
+            }
+            mav.addObject("question", question);
+            mav.addObject("fileurl", fileurl);
+        }
+        return mav;
+    }
+}

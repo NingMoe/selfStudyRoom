@@ -1,0 +1,211 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="renderer" content="webkit">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- load css -->
+<%@include file="/WEB-INF/view/common/taglib.jsp"%>
+<style>
+	.bt{
+	padding-left:40px;
+	margin:2% 0px;
+}
+.bt span{
+color: #319b5e;
+margin-right: 20px;
+font-size:16px;
+}
+</style>
+</head>
+<body>
+	<div class="main-wrap">
+		<input id="classCode" type="hidden" value="${classCode}"> 
+		<input id="testId" type="hidden" value="${testId}">
+		<input id="paperId" type="hidden" value="${lct.paperId}">  
+		<input id="type" type="hidden" value="${type}">
+			<div class="bt">
+			<span>作业名：${testName}</span><span>班级名：${className}</span>
+			</div>
+			<hr class="layui-bg-green">
+		<div class="y-role">
+			<!--工具栏-->
+			<div id="toolbar">
+				<c:if test="${ltsa.status eq 3 }">
+				<button  type="button" id="reportClassView" class="layui-btn">
+						<li class="fa fa-plus-square"></li> &nbsp;查看班级报告
+				</button>
+				</c:if>
+			</div>
+			<!--/工具栏-->
+			<!--文字列表-->
+			<table class="tableList" id="ccrTable" lay-filter="paper" >
+			</table>
+		</div>
+		<script type="text/html" id="paperBar">
+			<a class="layui-btn layui-btn-xs" lay-event="correctTest">批改试卷</a>
+			{{#  if(d.status == '3'){ }}
+			<a class="layui-btn layui-btn-xs" lay-event="report">查看报告</a>
+			{{#  } }}
+		</script>
+	</div>
+</body>
+<script type="text/javascript">
+		layui.use(['table','laypage'], function() {
+			var type=$("#type").val();
+			if(type=="2"){
+				$("#reportClassView").addClass("layui-btn-disabled reportClassView");
+			}
+			var table = layui.table,laypage = layui.laypage,layer = layui.layer;
+			var tableIns =table.render({
+				elem: '#ccrTable',
+				url: jsBasePath + '/lstTestStudentAnswer/query.html',
+				cellMinWidth: 80,
+				where:{
+					"classCode":$("#classCode").val(),
+					"testId" :$("#testId").val()
+				},
+				page: { //详细参数可参考 laypage 组件文档
+					layout: ['count', 'prev', 'page', 'next', 'skip','limit'],
+					groups:3, //只显示 1 个连续页码
+				    first: false, //不显示首页
+				    last: false //不显示尾页
+				},
+				cols : [ [ {
+					field : 'name',
+					width : "15%",
+					title : '姓名',
+					align : "center"
+				}, {
+					field : 'overallSogou',
+					width : "8%",
+					title : '总分(系统)',
+					align : "center"
+				}, {
+					field : 'accuracySogou',
+					width : "8%",
+					title : '准确(系统)',
+					align : "center"
+				}, {
+					field : 'fluencySogou',
+					width : "8%",
+					title : '流利(系统)',
+					align : "center"
+				}, {
+					field : 'integritySogou',
+					width : "8%",
+					title : '完整(系统)',
+					align : "center"
+				}, {
+					field : 'overallTeacher',
+					width : "8%",
+					title : '总分(人工)',
+					align : "center"
+				}, {
+					field : 'accuracyTeacher',
+					width : "8%",
+					title : '准确(人工)',
+					align : "center"
+				}, {
+					field : 'fluencyTeacher',
+					width : "8%",
+					title : '流利(人工)',
+					align : "center"
+				}, {
+					field : 'integrityTeacher',
+					width : "8%",
+					title : '完整(人工)',
+					align : "center"
+				}, {
+					fixed : 'right',
+					width : "21%",
+					title : '操作',
+					align : 'center',
+					toolbar: '#paperBar'
+				} ] ]
+			});
+			table.on('tool(paper)', function(obj){
+			    var data = obj.data;
+			    if (obj.event == 'correctTest') {
+			    	correctTest(data.classCode,data.testId,data.name,data.studentId);
+					} 
+			    if(obj.event=='report'){
+			    	studentReport(data.id,data.classCode,data.testId,data.name,data.studentId);
+			    }
+			 });
+			
+		 $('#searchBtn').bind('click', function(){
+			  reloadTable();
+		  });
+		 
+		 function reloadTable(){
+			  tableIns.reload({
+				where: {
+				}
+			  });
+		  }
+		});
+		function studentReport(id,classCode,testId,name,studentId){
+			var classCode=$("#classCode").val();
+			var paperId=$("#paperId").val();
+			var url = jsBasePath + "/lstTestStudentAnswer/studentReport.html?classCode="+classCode+"&testId="+testId+"&paperId="+paperId+"&testName="+name+"&studentId="+studentId+"&id="+id;
+			layer.open({
+				type : 2,
+				shade : [ 0.5, '#000' ],
+				title : "学生成绩报表", //
+				offset : [ '4%' ],
+				area : [  '90%', '95%' ],
+				content : url, //捕获的元素
+				cancel : function(index) {
+					layer.close(index);
+				},
+				end : function() {
+
+				}
+			});
+		}
+		function correctTest(classCode,testId,name,studentId){
+			var classCode=$("#classCode").val();
+			var paperId=$("#paperId").val();
+			var url = jsBasePath + "/lstTestStudentAnswer/correctTest.html?classCode="+classCode+"&testId="+testId+"&paperId="+paperId+"&testName="+name+"&studentId="+studentId;
+			layer.open({
+				type : 2,
+				shade : [ 0.5, '#000' ],
+				title : "批改试卷", //
+				offset : [ '4%' ],
+				area : [  '90%', '95%' ],
+				content : url, //捕获的元素
+				cancel : function(index) {
+					layer.close(index);
+				},
+				end : function() {
+
+				}
+			});
+		}
+		$("#reportClassView").click(function(){
+			var classCode=$("#classCode").val();
+			var testId =$("#testId").val();
+			var paperId=$("#paperId").val();
+			var url = jsBasePath + "/lstTestStudentAnswer/classReport.html?classCode="+classCode+"&testId="+testId+"&paperId="+paperId;
+			layer.open({
+				type : 2,
+				shade : [ 0.5, '#000' ],
+				title : "班级成绩报告", //
+				offset : [ '4%' ],
+				area : [  '80%', '90%' ],
+				content : url, //捕获的元素
+				cancel : function(index) {
+					layer.close(index);
+				},
+				end : function() {
+
+				}
+			});
+		})
+		
+	</script>
+</html>

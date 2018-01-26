@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.studentzuoye.dao.LstStudentZuoyeDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="student_id" jdbcType="BIGINT" />
+    <result column="student_name" property="student_name" jdbcType="VARCHAR" />
+    <result column="teacher_name" property="teacher_name" jdbcType="VARCHAR" />
+    <result column="zuoye_id" property="zuoye_id" jdbcType="INTEGER" />
+    <result column="zuoye_name" property="zuoye_name" jdbcType="VARCHAR" />
+    <result column="class_code" property="class_code" jdbcType="VARCHAR" />
+    <result column="class_name" property="class_name" jdbcType="VARCHAR" />
+    <result column="zuoye_num" property="zuoye_num" jdbcType="INTEGER" />
+    <result column="zuoye_end_num" property="zuoye_end_num" jdbcType="INTEGER" />
+    <result column="end_time" property="end_time" jdbcType="TIMESTAMP" />
+    <result column="tj_tme" property="tj_tme" jdbcType="TIMESTAMP" />
+    <result column="accuracy_sogou" property="accuracy_sogou" jdbcType="DOUBLE" />
+    <result column="fluency_sogou" property="fluency_sogou" jdbcType="DOUBLE" />
+    <result column="integrity_sogou" property="integrity_sogou" jdbcType="DOUBLE" />
+    <result column="overall_sogou" property="overall_sogou" jdbcType="DOUBLE" />
+    <result column="accuracy_teacher" property="accuracy_teacher" jdbcType="DOUBLE" />
+    <result column="fluency_teacher" property="fluency_teacher" jdbcType="DOUBLE" />
+    <result column="integrity_teacher" property="integrity_teacher" jdbcType="DOUBLE" />
+    <result column="overall_teacher" property="overall_teacher" jdbcType="DOUBLE" />
+    <result column="tj_status" property="tj_status" jdbcType="INTEGER" />
+    <result column="pg_status" property="pg_status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, zuoye_id, class_code, class_name, zuoye_num, zuoye_end_num, end_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_student_zuoye
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 获取学生未完成的作业 -->
+  <select id="selectStudentNotEndZuoye" resultType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" parameterType="java.util.HashMap">
+  	select * 
+  	from lst_student_zuoye
+  	where student_id = #{student_id,jdbcType=BIGINT} and tj_status = 1
+  </select>
+  
+  <!-- 获取学生已结束的作业数量 -->
+  <select id="selectStudentEndZuoyeCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  	select count(1) 
+  	from lst_student_zuoye
+  	where student_id = #{student_id,jdbcType=BIGINT} and tj_status in(2,3)
+  </select>
+  
+  <!-- 获取学生已结束的作业 -->
+  <select id="selectStudentEndZuoye" resultType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" parameterType="java.util.HashMap">
+  	select * 
+  	from lst_student_zuoye
+  	where student_id = #{student_id,jdbcType=BIGINT} and tj_status in(2,3)
+  	<if test="pageStart != null and pageSize != null">
+  	limit #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+  	</if>
+  </select>
+  
+  <!-- 获取作业基础信息 -->
+  <select id="selectByParams" resultType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" parameterType="java.util.HashMap">
+  	select z.*, s.name student_name, t.name teacher_name
+  	from lst_student_zuoye z
+  	left join student_user s
+  	on z.student_id = s.ID
+  	left join lst_class_zuoye c
+  	on c.ID = z.zuoye_id
+  	left join teacher_user t
+  	on t.id = c.CREATE_USER
+  	where student_id = #{student_id,jdbcType=BIGINT} and zuoye_id = #{zuoye_id,jdbcType=INTEGER} AND z.class_code = #{class_code,jdbcType=VARCHAR} AND c.status = 2
+  </select>
+  
+  <!-- 获取作业基础信息 -->
+  <select id="selectZuoyeinfo" resultType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" parameterType="java.util.HashMap">
+  	select *
+  	from lst_student_zuoye
+  	where student_id = #{student_id,jdbcType=BIGINT} and zuoye_id = #{zuoye_id,jdbcType=INTEGER} AND class_code = #{class_code,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 超过班级内多少百分比 -->
+  <select id="getTranscendCount" resultType="java.lang.Double" parameterType="java.util.HashMap">
+  	SELECT IFNULL(TRUNCATE(
+	(
+	SELECT COUNT(1)
+	FROM
+	(
+	SELECT z.student_id, IFNULL(z.overall_teacher, IFNULL(z.overall_sogou, 0)) sc
+	FROM lst_student_zuoye z
+	WHERE z.class_code = #{class_code,jdbcType=VARCHAR} AND z.zuoye_id =#{zuoye_id,jdbcType=INTEGER} AND z.tj_status IN (2,3)
+	) s
+	WHERE s.sc &lt; 
+	(
+	SELECT IFNULL(z.overall_teacher, IFNULL(z.overall_sogou, 0)) sc
+	FROM lst_student_zuoye z
+	WHERE z.class_code = #{class_code,jdbcType=VARCHAR} AND z.zuoye_id = #{zuoye_id,jdbcType=INTEGER} AND z.tj_status IN (2,3) AND  z.student_id = #{student_id,jdbcType=INTEGER}
+	)
+	)
+	/
+	(
+	SELECT COUNT(1)
+	FROM student_class
+	WHERE class_code = #{class_code,jdbcType=VARCHAR} AND  `status` = 2 AND is_valid = 1
+	)
+	,2
+	),0)
+  </select>
+  
+  <!-- 获取学生成长轨迹 -->
+  <select id="selectGrowthTrajectory" resultType="com.ls.spt.studentzuoye.entity.StudentGrowthTrajectory" parameterType="java.util.HashMap">
+  	SELECT  s.*, UNIX_TIMESTAMP(z.release_time) rtime, z.release_time
+	FROM
+	(
+	SELECT id, zuoye_id, class_code, zuoye_num, zuoye_end_num, IFNULL(overall_teacher,IFNULL(overall_sogou,0)) overall
+	FROM lst_student_zuoye
+	WHERE student_id = #{student_id,jdbcType=INTEGER} AND tj_status IN (2,3)
+	) s
+	LEFT JOIN lst_class_zuoye z ON s.zuoye_id = z.id and z.status = 2
+	ORDER BY s.id
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_student_zuoye
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    insert into lst_student_zuoye (id, student_id, zuoye_id, 
+      class_code, class_name, zuoye_num, 
+      zuoye_end_num, end_time)
+    values (#{id,jdbcType=INTEGER}, #{student_id,jdbcType=BIGINT}, #{zuoye_id,jdbcType=INTEGER}, 
+      #{class_code,jdbcType=VARCHAR}, #{class_name,jdbcType=VARCHAR}, #{zuoye_num,jdbcType=INTEGER}, 
+      #{zuoye_end_num,jdbcType=INTEGER}, #{end_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    insert into lst_student_zuoye
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="zuoye_id != null" >
+        zuoye_id,
+      </if>
+      <if test="class_code != null" >
+        class_code,
+      </if>
+      <if test="class_name != null" >
+        class_name,
+      </if>
+      <if test="zuoye_num != null" >
+        zuoye_num,
+      </if>
+      <if test="zuoye_end_num != null" >
+        zuoye_end_num,
+      </if>
+      <if test="end_time != null" >
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=BIGINT},
+      </if>
+      <if test="zuoye_id != null" >
+        #{zuoye_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="zuoye_num != null" >
+        #{zuoye_num,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_end_num != null" >
+        #{zuoye_end_num,jdbcType=INTEGER},
+      </if>
+      <if test="end_time != null" >
+        #{end_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    update lst_student_zuoye
+    <set >
+      <if test="student_id != null" >
+        student_id = #{student_id,jdbcType=BIGINT},
+      </if>
+      <if test="zuoye_id != null" >
+        zuoye_id = #{zuoye_id,jdbcType=INTEGER},
+      </if>
+      <if test="class_code != null" >
+        class_code = #{class_code,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        class_name = #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="zuoye_num != null" >
+        zuoye_num = #{zuoye_num,jdbcType=INTEGER},
+      </if>
+      <if test="zuoye_end_num != null" >
+        zuoye_end_num = #{zuoye_end_num,jdbcType=INTEGER},
+      </if>
+      <if test="end_time != null" >
+        end_time = #{end_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.studentzuoye.entity.LstStudentZuoye" >
+    update lst_student_zuoye
+    set student_id = #{student_id,jdbcType=INTEGER},
+      zuoye_id = #{zuoye_id,jdbcType=INTEGER},
+      class_code = #{class_code,jdbcType=VARCHAR},
+      class_name = #{class_name,jdbcType=VARCHAR},
+      zuoye_num = #{zuoye_num,jdbcType=INTEGER},
+      zuoye_end_num = #{zuoye_end_num,jdbcType=INTEGER},
+      end_time = #{end_time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByStudentidZuoyeidAndClassCode" parameterType="java.util.HashMap">
+  	update lst_student_zuoye
+  	<set>
+  	  <if test="zuoye_end_num != null" >
+        zuoye_end_num = #{zuoye_end_num,jdbcType=INTEGER},
+      </if>
+  	  <if test="accuracy_sogou != null" >
+        accuracy_sogou = #{accuracy_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="fluency_sogou != null" >
+        fluency_sogou = #{fluency_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="integrity_sogou != null" >
+        integrity_sogou = #{integrity_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="overall_sogou != null" >
+        overall_sogou = #{overall_sogou,jdbcType=DOUBLE},
+      </if>
+      <if test="tj_status != null">
+      	tj_status = #{tj_status,jdbcType=INTEGER},
+      </if>
+      <if test="tj_tme != null">
+      	tj_tme = #{tj_tme,jdbcType=TIMESTAMP},
+      </if>
+  	</set>
+  	where student_id = #{student_id,jdbcType=INTEGER} and zuoye_id = #{zuoye_id,jdbcType=INTEGER} and class_code = #{class_code,jdbcType=VARCHAR}
+  </update>
+</mapper>

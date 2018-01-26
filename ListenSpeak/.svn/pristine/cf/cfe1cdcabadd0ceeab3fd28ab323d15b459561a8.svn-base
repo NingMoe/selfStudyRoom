@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.manager.dao.OpLogDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.manager.entity.OplogEntity" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="op_user" property="opUser" jdbcType="VARCHAR" />
+    <result column="op_time" property="opTime" jdbcType="TIMESTAMP" />
+    <result column="op_type" property="opType" jdbcType="INTEGER" />
+    <result column="op_ip" property="opIp" jdbcType="VARCHAR" />
+    <result column="op_desc" property="opDesc" jdbcType="VARCHAR" />
+    <result column="name" property="opUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="query" resultMap="BaseResultMap"  parameterType="java.util.HashMap"  >
+  SELECT ol.`id`,ol.`op_user`,mu.`name`,ol.`op_type`,ol.`op_ip`,ol.`op_desc`,ol.`op_time` 
+  FROM op_log ol
+  LEFT JOIN teacher_user  mu ON ol.`op_user`=mu.`phone`
+<trim prefix="WHERE"  prefixOverrides="AND | OR"> 
+  		<if test="t.opType != null and t.opType != ''">
+			and ol.`op_type` = #{t.opType,jdbcType=INTEGER}
+		</if>
+		<if test="t.opUser != null and t.opUser != ''">
+			and ol.`op_user` = #{t.opUser,jdbcType=VARCHAR} 
+		</if>
+		<if test="t.opDesc != null and t.opDesc != ''">
+			and ol.`op_desc` like CONCAT(#{t.opDesc,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="t.startTime != null and t.startTime !=''">
+			and ol.`op_time` &gt;= #{t.startTime,jdbcType=VARCHAR}
+		</if>
+		<if test="t.endTime != null and t.endTime !=''">
+			 and ol.`op_time` &lt;=#{t.endTime,jdbcType=VARCHAR}
+		</if>
+		</trim>
+		 ORDER BY ol.op_time DESC
+  </select>
+  
+  <insert id="insert" parameterType="com.ls.spt.manager.entity.OplogEntity" >
+    insert into op_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="opUser != null" >
+        op_user,
+      </if>
+      <if test="opTime != null" >
+        op_time,
+      </if>
+      <if test="opType != null" >
+        op_type,
+      </if>
+      <if test="opIp != null" >
+        op_ip,
+      </if>
+      <if test="opDesc != null" >
+        op_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="opUser != null" >
+        #{opUser,jdbcType=VARCHAR},
+      </if>
+      <if test="opTime != null" >
+        #{opTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="opType != null" >
+        #{opType,jdbcType=INTEGER},
+      </if>
+      <if test="opIp != null" >
+        #{opIp,jdbcType=VARCHAR},
+      </if>
+      <if test="opDesc != null" >
+        #{opDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

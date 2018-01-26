@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.StudentClass.dao.StudentClassDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.StudentClass.entity.StudentClass" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="student_id" property="studentId" jdbcType="BIGINT" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, class_id, status, is_valid
+  </sql>
+  
+  <!-- 分页查询 -->
+  <select id="query" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+	select sc.class_code as classCode ,sc.student_id as studentId,sc.status as status,sc.is_valid  as isValid,su.xdf_number as xdfNumber,
+	sc.id as id , su.name as `name` ,su.phone as phone from student_class sc
+	left join student_user su on sc.student_id=su.`ID` 
+    where sc.class_code=#{t.classCode,jdbcType=VARCHAR} and is_valid='1'
+    <if test="t.phone != null and t.phone !=''">
+	   AND su.phone like CONCAT(CONCAT('%', #{t.phone,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.name != null and t.name !=''">
+	   AND su.name like CONCAT(CONCAT('%', #{t.name,jdbcType=VARCHAR}), '%') 
+	</if>
+	<if test="t.status != null and t.status !=''">
+	   AND sc.status = #{t.status,jdbcType=INTEGER}
+	</if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from student_class
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 通过申请码和手机号获取申请状态 -->
+  <select id="selectByClasscodeAndStudentid" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	SELECT *
+	FROM student_class
+	WHERE student_id = #{student_id,jdbcType=BIGINT} AND class_code = #{class_code,jdbcType=VARCHAR} AND status &lt;&gt; 3
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from student_class
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ls.spt.StudentClass.entity.StudentClass" >
+    insert into student_class (id, student_id, class_id, 
+      status, is_valid)
+    values (#{id,jdbcType=BIGINT}, #{studentId,jdbcType=BIGINT}, #{classCode,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{isValid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.StudentClass.entity.StudentClass" >
+    insert into student_class
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="studentId != null" >
+        student_id,
+      </if>
+      <if test="classCode != null" >
+        class_code,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="studentId != null" >
+        #{studentId,jdbcType=BIGINT},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.StudentClass.entity.StudentClass" >
+    update student_class
+    <set >
+      <if test="studentId != null" >
+        student_id = #{studentId,jdbcType=BIGINT},
+      </if>
+      <if test="classCode != null" >
+        class_code = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.StudentClass.entity.StudentClass" >
+    update student_class
+    set student_id = #{studentId,jdbcType=BIGINT},
+      class_code = #{classCode,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    delete from student_class
+    where id in
+    <foreach collection="ids" item="id" index="index"
+			open="(" separator="," close=")">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+  </delete>
+</mapper>

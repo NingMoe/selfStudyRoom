@@ -1,0 +1,43 @@
+package com.ls.spt.question.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.ls.spt.question.entity.LstQuestion;
+import com.ls.spt.studentpc.student.entity.KsQuestion;
+@Repository
+public interface LstQuestionDao {
+    
+    List<LstQuestion> query(Map<Object, Object> map);
+    
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(LstQuestion record);
+
+    int insertSelective(LstQuestion record);
+
+    LstQuestion selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(LstQuestion record);
+
+    int updateByPrimaryKey(LstQuestion record);
+    
+    String getMaxCodeByCodePre(String preCode);
+    
+    LstQuestion selectSimpleQuestionByCode(String code);
+    
+    List<LstQuestion> selectMultiQuestionByCode(String code);
+    
+    List<LstQuestion> getZuoyeQuestionList(Integer zuoyeId);
+    
+    List<LstQuestion> getZuoyeQuestion(Integer zuoyeId);
+
+    List<LstQuestion> getTestQuestion(int paperId);
+    
+    List<KsQuestion> getTestKsQuestion(Integer testId);
+    
+    List<KsQuestion> getZuoyeKsQuestion(Integer zuoyeId);
+    
+}

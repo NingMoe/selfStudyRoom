@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.basic.dao.SchoolDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.basic.entity.School" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+    <result column="school_province" property="schoolProvince" jdbcType="INTEGER" />
+    <result column="school_province_name" property="schoolProvinceName" jdbcType="VARCHAR" />
+    <result column="school_city" property="schoolCity" jdbcType="INTEGER" />
+    <result column="school_city_name" property="schoolCityName" jdbcType="VARCHAR" />
+    <result column="school_area" property="schoolArea" jdbcType="INTEGER" />
+    <result column="school_area_name" property="schoolAreaName" jdbcType="VARCHAR" />
+    <result column="school_type" property="schoolType" jdbcType="VARCHAR" />
+    <result column="school_addr" property="schoolAddr" jdbcType="VARCHAR" />
+    <result column="school_property" property="schoolProperty" jdbcType="VARCHAR" />
+    <result column="school_tel" property="schoolTel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, school_name, school_province, school_city, school_area, school_type, school_addr, 
+    school_property, school_tel, create_time, create_user, update_time, update_user, 
+    is_valid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT s.id, s.school_name, s.school_province,a1.area_name AS school_province_name, 
+	s.school_city,a2.area_name AS school_city_name, s.school_area,a3.area_name AS school_area_name, s.school_type,s.is_valid 
+	FROM school s 
+	LEFT JOIN  area_info a1 ON s.school_province=a1.id AND a1.area_level=1 
+	LEFT JOIN  area_info a2 ON s.school_city=a2.id AND a2.area_level=2
+	LEFT JOIN  area_info a3 ON s.school_area=a3.id AND a3.area_level=3
+    WHERE s.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="getSchoolByParam" resultMap="BaseResultMap" parameterType="com.ls.spt.basic.entity.School" >
+    SELECT id, school_name
+	FROM school 
+	WHERE is_valid=1
+	  <if test="schoolProvince != null" >
+        AND  school_province = #{schoolProvince,jdbcType=INTEGER}
+      </if>
+      <if test="schoolCity != null" >
+        AND  school_city = #{schoolCity,jdbcType=INTEGER}
+      </if>
+      <if test="schoolArea != null" >
+        AND  school_area = #{schoolArea,jdbcType=INTEGER}
+      </if>
+      <if test="schoolType != null" >
+        AND  school_type = #{schoolType,jdbcType=VARCHAR}
+      </if>
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from school
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量插入公立学校数据 -->
+  <insert id="insertSchoolByBatch" parameterType="java.util.List" >
+    insert into school (school_name, school_province, school_city, school_area, school_type, create_time,create_user)
+    values
+    <foreach collection="list" item="item" index="index" separator=","> 
+    (#{item.schoolName,jdbcType=VARCHAR}, #{item.schoolProvince,jdbcType=INTEGER}, 
+      #{item.schoolCity,jdbcType=INTEGER}, #{item.schoolArea,jdbcType=INTEGER}, #{item.schoolType,jdbcType=VARCHAR}, 
+      #{item.createTime,jdbcType=TIMESTAMP},#{item.createUser,jdbcType=VARCHAR})
+    </foreach>  
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.ls.spt.basic.entity.School" >
+    insert into school
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="schoolName != null" >
+        school_name,
+      </if>
+      <if test="schoolProvince != null" >
+        school_province,
+      </if>
+      <if test="schoolCity != null" >
+        school_city,
+      </if>
+      <if test="schoolArea != null" >
+        school_area,
+      </if>
+      <if test="schoolType != null" >
+        school_type,
+      </if>
+      <if test="schoolAddr != null" >
+        school_addr,
+      </if>
+      <if test="schoolProperty != null" >
+        school_property,
+      </if>
+      <if test="schoolTel != null" >
+        school_tel,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="schoolName != null" >
+        #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProvince != null" >
+        #{schoolProvince,jdbcType=INTEGER},
+      </if>
+      <if test="schoolCity != null" >
+        #{schoolCity,jdbcType=INTEGER},
+      </if>
+      <if test="schoolArea != null" >
+        #{schoolArea,jdbcType=INTEGER},
+      </if>
+      <if test="schoolType != null" >
+        #{schoolType,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolAddr != null" >
+        #{schoolAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProperty != null" >
+        #{schoolProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolTel != null" >
+        #{schoolTel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.basic.entity.School" >
+    update school
+    <set >
+      <if test="schoolName != null" >
+        school_name = #{schoolName,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProvince != null" >
+        school_province = #{schoolProvince,jdbcType=INTEGER},
+      </if>
+      <if test="schoolCity != null" >
+        school_city = #{schoolCity,jdbcType=INTEGER},
+      </if>
+      <if test="schoolArea != null" >
+        school_area = #{schoolArea,jdbcType=INTEGER},
+      </if>
+      <if test="schoolType != null" >
+        school_type = #{schoolType,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolAddr != null" >
+        school_addr = #{schoolAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolProperty != null" >
+        school_property = #{schoolProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolTel != null" >
+        school_tel = #{schoolTel,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT s.id, s.school_name, a1.area_name AS school_province_name, 
+	a2.area_name AS school_city_name, a3.area_name AS school_area_name, s.school_type,s.is_valid 
+	FROM school s 
+	LEFT JOIN  area_info a1 ON s.school_province=a1.id AND a1.area_level=1 
+	LEFT JOIN  area_info a2 ON s.school_city=a2.id AND a2.area_level=2
+	LEFT JOIN  area_info a3 ON s.school_area=a3.id AND a3.area_level=3
+	WHERE a1.is_valid=0 AND a2.is_valid=0 AND a3.is_valid=0
+	<if test="t.schoolProvince != null and t.schoolProvince !=''">
+			and s.school_province = #{t.schoolProvince,jdbcType=INTEGER}
+	</if>
+	<if test="t.schoolCity != null and t.schoolCity !=''">
+			and s.school_city = #{t.schoolCity,jdbcType=INTEGER}
+	</if>
+	<if test="t.schoolArea != null and t.schoolArea !=''">
+			and s.school_area = #{t.schoolArea,jdbcType=INTEGER}
+	</if>
+	<if test="t.schoolType != null and t.schoolType !=''">
+			and s.school_type = #{t.schoolType,jdbcType=VARCHAR}
+	</if>
+	<if test="t.schoolName!= null and t.schoolName !=''">
+			and s.school_name like CONCAT('%',#{t.schoolName,jdbcType=VARCHAR},'%')
+	</if>	
+  </select>
+
+  <!--禁用/启用 -->
+  <delete id="deleteByIds" parameterType="java.util.HashMap" >
+    update school set is_valid=#{status,jdbcType=INTEGER},update_time =now(),update_user=#{updateUser,jdbcType=INTEGER}
+    where id in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+		#{id,jdbcType=INTEGER}
+	</foreach>        
+  </delete>
+  
+</mapper>

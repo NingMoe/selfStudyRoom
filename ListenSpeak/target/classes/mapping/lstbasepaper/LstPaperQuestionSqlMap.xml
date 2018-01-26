@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.lstBasePaper.dao.LstPaperQuestionDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.lstBasePaper.entity.LstPaperQuestion" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="paper_id" property="paperId" jdbcType="INTEGER" />
+    <result column="question_id" property="questionId" jdbcType="INTEGER" />
+    <result column="xh" property="xh" jdbcType="INTEGER" />
+    <result column="question_code" property="questionCode" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="StudentQuestMap" type="com.ls.spt.studenttest.entity.LstPaperQuestion" >
+    <id column="question_code" property="question_code" jdbcType="VARCHAR" />
+    <result column="test_id" property="test_id" jdbcType="INTEGER" />
+    <result column="question_id" property="question_id" jdbcType="INTEGER" />
+    <result column="xh" property="xh" jdbcType="INTEGER" />
+    <result column="tid" property="tid" jdbcType="INTEGER" />
+    <result column="tname" property="tname" jdbcType="VARCHAR" />
+    <result column="difficulty" property="difficulty" jdbcType="VARCHAR" />
+    <result column="topic" property="topic" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <collection property="answer_list" ofType="com.ls.spt.studenttest.entity.LstTestStudentAnswer">
+    	<id column="qid" property="id" jdbcType="INTEGER" />
+    	<result column="content" property="content" jdbcType="VARCHAR" />
+    	<result column="parse_audio" property="parse_audio" jdbcType="VARCHAR" />
+    	<result column="student_answer" property="student_answer" jdbcType="VARCHAR" />
+    	<result column="answer_comment" property="answer_comment" jdbcType="VARCHAR" />
+	    <result column="accuracy_sogou" property="accuracy_sogou" jdbcType="DECIMAL" />
+	    <result column="fluency_sogou" property="fluency_sogou" jdbcType="DECIMAL" />
+	    <result column="integrity_sogou" property="integrity_sogou" jdbcType="DECIMAL" />
+	    <result column="overall_sogou" property="overall_sogou" jdbcType="DECIMAL" />
+	    <result column="accuracy_teacher" property="accuracy_teacher" jdbcType="DECIMAL" />
+	    <result column="fluency_teacher" property="fluency_teacher" jdbcType="DECIMAL" />
+	    <result column="integrity_teacher" property="integrity_teacher" jdbcType="DECIMAL" />
+	    <result column="overall_teacher" property="overall_teacher" jdbcType="DECIMAL" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, paper_id, question_id, xh, question_code
+  </sql>
+  <select id="query" resultType="java.util.HashMap" parameterType="com.ls.spt.lstBasePaper.entity.LstPaperQuestion">
+  	 SELECT DISTINCT l.`TYPE` AS TYPE,l.`CODE` AS CODE  ,lqt.name AS NAME,lpq.`xh` as xh,l.`QUESTION_TYPE` AS questionType , g.name AS gradeName,
+ 	d.name AS difficultyName ,t.name AS userName FROM lst_question l LEFT JOIN lst_question_type lqt ON lqt.`ID`=l.`QUESTION_TYPE` 
+	 LEFT JOIN teacher_user t ON l.create_user =t.`id` JOIN (SELECT* FROM dic_data WHERE dic_code='grade') g ON l.`GRADE` =g.data_value 
+ 	JOIN (SELECT * FROM dic_data WHERE dic_code='diff_level') d ON d.data_value=l.difficulty 
+ 	JOIN lst_paper_question lpq ON  lpq.question_code=l.`CODE`
+ 	WHERE 1=1 AND lqt.l_type='2' AND l.`CODE` IN 
+	 (SELECT question_code FROM lst_paper_question WHERE paper_id =#{t.paperId,jdbcType=INTEGER})  AND  lpq.`paper_id`=#{t.paperId,jdbcType=INTEGER}
+ 	GROUP BY l.id ,l.`CODE` ,l.`QUESTION_TYPE`,d.name ,t.name ,g.name,l.`QUESTION_TYPE`,l.`TYPE`,lpq.`xh` ORDER BY lpq.xh ASC
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_paper_question
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 获取试卷题目详情 -->
+  <select id="selectStudentQuestion" resultMap="StudentQuestMap" parameterType="java.util.HashMap">
+  	SELECT ct.id, q.paper_id, q.question_code, q.xh, t.id tid, t.name tname, lq.type, lq.topic, lq.difficulty, lq.id qid, 
+  	a.class_code, a.id aid, a.student_answer, a.accuracy_sogou, a.fluency_sogou, a.integrity_sogou, a.overall_sogou,
+  	a.accuracy_teacher, a.fluency_teacher, a.integrity_teacher, a.overall_teacher, lq.parse_audio,  lq.content
+	FROM lst_class_test ct
+	LEFT JOIN lst_paper_question q ON ct.paper_id = q.paper_id
+	LEFT JOIN lst_test_student_answer a ON a.test_id = ct.id AND a.QUESTION_ID = q.question_id AND a.student_id= #{student_id,jdbcType=INTEGER} AND a.class_code = #{class_code,jdbcType=VARCHAR}
+	LEFT JOIN lst_question lq ON q.question_id = lq.id
+	LEFT JOIN lst_question_type t ON lq.question_type = t.id
+	WHERE ct.id = #{test_id,jdbcType=INTEGER} and ct.status = 1 and ct.introduct_status = 2
+	ORDER BY q.xh, q.question_id
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_paper_question
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id"  parameterType="com.ls.spt.lstBasePaper.entity.LstPaperQuestion" >
+    insert into lst_paper_question (id, paper_id, question_id, 
+      xh, question_code)
+    values (#{id,jdbcType=INTEGER}, #{paperId,jdbcType=INTEGER}, #{questionId,jdbcType=INTEGER}, 
+      #{xh,jdbcType=INTEGER}, #{questionCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.lstBasePaper.entity.LstPaperQuestion" >
+    insert into lst_paper_question
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="paperId != null" >
+        paper_id,
+      </if>
+      <if test="questionId != null" >
+        question_id,
+      </if>
+      <if test="xh != null" >
+        xh,
+      </if>
+      <if test="questionCode != null" >
+        question_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="paperId != null" >
+        #{paperId,jdbcType=INTEGER},
+      </if>
+      <if test="questionId != null" >
+        #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="xh != null" >
+        #{xh,jdbcType=INTEGER},
+      </if>
+      <if test="questionCode != null" >
+        #{questionCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.lstBasePaper.entity.LstPaperQuestion" >
+    update lst_paper_question
+    <set >
+      <if test="paperId != null" >
+        paper_id = #{paperId,jdbcType=INTEGER},
+      </if>
+      <if test="questionId != null" >
+        question_id = #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="xh != null" >
+        xh = #{xh,jdbcType=INTEGER},
+      </if>
+      <if test="questionCode != null" >
+        question_code = #{questionCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.lstBasePaper.entity.LstPaperQuestion" >
+    update lst_paper_question
+    set paper_id = #{paperId,jdbcType=INTEGER},
+      question_id = #{questionId,jdbcType=INTEGER},
+      xh = #{xh,jdbcType=INTEGER},
+      question_code = #{questionCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <delete id="deleteByCode"  parameterType="com.ls.spt.lstBasePaper.entity.LstPaperQuestion">
+  		DELETE FROM  lst_paper_question
+		 WHERE paper_id =#{paperId,jdbcType=INTEGER} AND question_code in 
+		 <foreach collection="codes" item="questionCode" index="index" open="(" separator="," close=")">
+		 	#{questionCode,jdbcType=VARCHAR}
+		 </foreach>
+  </delete>
+  <select id="getPaperQuestionInfo" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+  	select * from lst_paper_question
+  	 where paper_id=#{paperId,jdbcType=INTEGER} and xh=#{xh,jdbcType=INTEGER}
+  </select>
+</mapper>

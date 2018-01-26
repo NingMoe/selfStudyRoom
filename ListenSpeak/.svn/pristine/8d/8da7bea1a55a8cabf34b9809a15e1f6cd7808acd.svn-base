@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.zuoye.dao.LstZuoyeDao" >
+  <resultMap id="BaseResultMap" type="com.ls.spt.zuoye.entity.LstZuoye" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="SUB_TIME" property="subTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="INTEGER" />
+    <result column="CREATE_USER_NAME" property="createUserName" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="classStr" property="classStr" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ZuoyeMap" type="com.ls.spt.zuoye.entity.LstClassZuoyeDto" >
+    <result column="zuoye_id" property="zuoyeId" jdbcType="INTEGER" />
+    <result column="zuoye_name" property="zuoyeName" jdbcType="VARCHAR" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="release_time" property="releaseTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="total_student_num" property="totalStudentNum" jdbcType="INTEGER" />
+    <result column="zhunshi_student_num" property="zhunshiStudentNum" jdbcType="INTEGER" />
+    <result column="alltj_student_num" property="alltjStudentNum" jdbcType="INTEGER" />
+    <result column="pg_zhunshi_num" property="pgZhunshiNum" jdbcType="INTEGER" />
+    <result column="pg_all_num" property="pgAllNum" jdbcType="INTEGER" />
+    <result column="total_dfl" property="overallDfl" jdbcType="DOUBLE" />
+    <result column="accuracy_dfl" property="accuracyDfl" jdbcType="DOUBLE" />
+    <result column="fluency_dfl" property="fluencyDfl" jdbcType="DOUBLE" />
+    <result column="integrity_dfl" property="integrityDfl" jdbcType="DOUBLE" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, NAME, SUB_TIME, CREATE_USER, CREATE_TIME, STATUS
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lst_class_zuoye
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectZuoyeById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select t.*,group_concat(zc.class_code) classStr 
+    from lst_class_zuoye t join lst_class_zuoye_cl zc on zc.ZUOYE_ID = t.id 
+    where t.ID = #{id,jdbcType=INTEGER}
+  </select>
+   
+   <!-- 分页查询 -->
+  <select id="query" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    SELECT z.id,z.name,z.sub_time,z.create_user,z.create_time,z.status,u.name CREATE_USER_NAME 
+    from lst_class_zuoye z
+    join teacher_user u on u.id = z.create_user 
+	WHERE exists (select 1 from lst_class c,lst_class_zuoye_cl zc where zc.ZUOYE_ID = z.id and zc.class_code = c.class_code and c.teacher = #{t.createUser,jdbcType=INTEGER} 
+    <if test="t.searchClassCode != null and t.searchClassCode !=''">
+	   AND zc.CLASS_CODE =  #{t.searchClassCode,jdbcType=VARCHAR}
+	</if>
+	)
+	<if test="t.name != null and t.name !=''">
+	   AND z.name like CONCAT('%',#{t.name,jdbcType=VARCHAR},'%')
+	</if>
+	<if test="t.isEnd == '1'.toString() ">
+	   AND z.SUB_TIME &lt; now()
+	</if>
+	<if test="t.isEnd == '0'.toString() ">
+	   AND z.SUB_TIME > now()
+	</if>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lst_class_zuoye
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.ls.spt.zuoye.entity.LstZuoye" >
+    insert into lst_class_zuoye (ID, NAME, SUB_TIME, 
+      CREATE_USER, CREATE_TIME, STATUS
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{subTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ls.spt.zuoye.entity.LstZuoye" >
+    insert into lst_class_zuoye
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="subTime != null" >
+        SUB_TIME,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="subTime != null" >
+        #{subTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ls.spt.zuoye.entity.LstZuoye" >
+    update lst_class_zuoye
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="subTime != null" >
+        SUB_TIME = #{subTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ls.spt.zuoye.entity.LstZuoye" >
+    update lst_class_zuoye
+    set NAME = #{name,jdbcType=VARCHAR},
+      SUB_TIME = #{subTime,jdbcType=TIMESTAMP},
+      CREATE_USER = #{createUser,jdbcType=INTEGER},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insertZuoyeClassList" parameterType="java.util.List">
+        insert into lst_class_zuoye_cl(ZUOYE_ID,CLASS_CODE) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.zuoyeId},#{item.classCode})
+        </foreach>
+  </insert>
+  
+   <delete id="delZuoyeQuestion" parameterType="com.ls.spt.question.entity.LstQuestion" >
+    delete from lst_zuoye_question 
+    where zuoye_id = #{zuoyeId,jdbcType=INTEGER} and question_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="delZuoyeQuestionList" parameterType="java.lang.Integer" >
+    delete from lst_zuoye_question where zuoye_id = #{zuoyeId,jdbcType=INTEGER}
+  </delete>
+  
+  <update id="updateQuestionXh" parameterType="com.ls.spt.question.entity.LstQuestion" >
+    update lst_zuoye_question
+    set xh = #{xh,jdbcType=INTEGER} 
+    where QUESTION_ID = #{id,jdbcType=INTEGER} and zuoye_id = #{zuoyeId,jdbcType=INTEGER} 
+  </update>
+  
+   <insert id="addZuoyeQuestion" parameterType="com.ls.spt.question.entity.LstQuestion" >
+    insert into lst_zuoye_question (zuoye_id, question_id,question_code,xh)
+    values (#{zuoyeId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER},#{code,jdbcType=VARCHAR}, #{xh,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="getZuoyeMaxXh" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select max(xh) from lst_zuoye_question where ZUOYE_ID = #{zuoyeId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="delZuoyeClassList" parameterType="java.lang.Integer" >
+    delete from lst_class_zuoye_cl where zuoye_id = #{zuoyeId,jdbcType=INTEGER} 
+  </delete>
+  
+  <insert id="initStudentZuoye" parameterType="java.lang.Integer" >
+    insert into lst_student_zuoye (student_id,zuoye_id,class_code,class_name,zuoye_name,zuoye_num,dati_num,end_time)
+    SELECT sc.`student_id`,zcl.`ZUOYE_ID`,lc.`class_code`,lc.`class_name`,zy.name,
+    (SELECT COUNT(1) FROM lst_zuoye_question lq WHERE lq.zuoye_id = #{zuoyeId,jdbcType=INTEGER} ) zuoye_num,
+    (SELECT COUNT(distinct lq.question_code) FROM lst_zuoye_question lq WHERE lq.zuoye_id = #{zuoyeId,jdbcType=INTEGER} ) dati_num,
+    zy.sub_time  
+	FROM student_class sc
+ 	JOIN lst_class lc ON lc.`class_code` = sc.class_code
+ 	JOIN lst_class_zuoye_cl zcl ON zcl.`CLASS_CODE` = lc.`class_code` AND zcl.`ZUOYE_ID` = #{zuoyeId,jdbcType=INTEGER} 
+ 	JOIN lst_class_zuoye zy ON zy.id = zcl.`zuoye_id`
+  </insert>
+  
+   <insert id="initStudentZuoyeQuestion" parameterType="java.lang.Integer" >
+    insert into lst_zuoye_student_answer (student_id,zuoye_id,question_id,class_code)
+   	 SELECT sc.student_id,zq.zuoye_id,zq.question_id,sc.`class_code` FROM lst_zuoye_question zq 
+	 JOIN lst_class_zuoye_cl zcl ON zcl.`zuoye_id` = zq.`zuoye_id`
+	 LEFT JOIN student_class sc ON sc.`class_code` = zcl.`CLASS_CODE`
+	 WHERE zq.zuoye_id = #{zuoyeId,jdbcType=INTEGER} 
+  </insert>
+  
+  <select id="getNoCompleteZuoye" resultMap="ZuoyeMap" parameterType="java.lang.Integer" >
+    SELECT zuoye_id,release_time,zuoye_name,end_time,class_code,class_name,total_student_num,zhunshi_student_num,alltj_student_num,
+pg_zhunshi_num,pg_all_num,FORMAT(total_dfl,2) total_dfl,FORMAT(accuracy_dfl,2) accuracy_dfl,FORMAT(fluency_dfl,2) fluency_dfl,FORMAT(integrity_dfl,2) integrity_dfl FROM v_student_zy v 
+	WHERE v.pg_zhunshi_num &lt; v.zhunshi_student_num and EXISTS (
+	SELECT 1 FROM lst_class WHERE teacher = #{teacher,jdbcType=INTEGER}  and class_code = v.class_code
+	)
+  </select>
+  
+  <select id="getCompleteZuoye" resultMap="ZuoyeMap" parameterType="java.util.HashMap">
+    SELECT zuoye_id,release_time,zuoye_name,end_time,class_code,class_name,total_student_num,zhunshi_student_num,alltj_student_num,
+pg_zhunshi_num,pg_all_num,FORMAT(total_dfl*10,2) total_dfl,FORMAT(accuracy_dfl,2) accuracy_dfl,FORMAT(fluency_dfl,2) fluency_dfl,FORMAT(integrity_dfl,2) integrity_dfl FROM v_student_zy v 
+	WHERE v.pg_zhunshi_num = v.zhunshi_student_num and EXISTS (
+	SELECT 1 FROM lst_class WHERE teacher = #{t,jdbcType=INTEGER}  and class_code = v.class_code
+	)
+  </select>
+</mapper>

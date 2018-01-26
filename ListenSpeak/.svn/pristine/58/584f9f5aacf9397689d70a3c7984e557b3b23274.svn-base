@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ls.spt.basic.dao.SmsTempDao">
+
+	<sql id="Base_Column_List">
+		st.`id`,st.`tem_type`,st.`tem_name`,st.`tem_company`,hc.`company_name` ,st.`tem_dept`,ho.`NAME` dept_name,st.tem_desc,st.state
+	</sql>
+
+	
+	<select id="queryMsgRecord" resultType="com.ls.spt.basic.entity.SmsRecord" parameterType="java.util.HashMap">
+	SELECT hc.`company_name` sendCompany,ho.`NAME` sendDept,sr.`send_name` sendName,sr.`send_tel` sendTel,sr.`send_time` sendTime,sr.`state`,sr.`send_comment`sendComment,sr.`state_desc` stateDesc FROM sms_record sr 
+LEFT JOIN hr_company hc ON hc.`company_id`=sr.`company`
+LEFT JOIN hr_organization ho ON ho.`ID`=sr.`dept_id`
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="t.company !=null and t.company !=''">
+				AND sr.`company`=#{t.company,jdbcType=VARCHAR}
+		</if>
+		<if test="t.sendTel!=null and t.sendTel!=''">
+				AND sr.`send_tel` = #{t.sendTel,jdbcType=VARCHAR}
+		</if>
+		<if test="t.state!=null">
+				<if test="t.state == 1">
+				AND sr.`state` = #{t.state,jdbcType=INTEGER}
+				</if>
+				<if test="t.state != 1">
+					AND sr.`state` != 1
+				</if>
+		</if>
+		<if test="t.deptIds !=null  and t.deptIds.length>0">
+				AND sr.`dept_id` in 
+				<foreach collection="t.deptIds" item="deptId" index="index"
+			open="(" separator="," close=")">
+			#{deptId,jdbcType=VARCHAR}
+		</foreach>
+		</if>
+		<if test="t.sendUser!=null">
+				AND sr.`company` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.sendUser,jdbcType=BIGINT}) AND sr.`dept_id` IN (SELECT ud.`deptId` FROM user_dept ud WHERE ud.`userId`=#{t.sendUser,jdbcType=BIGINT})
+		</if>
+		</trim>
+		order By sr.id desc
+	</select>
+	
+	
+	<select id="queryMsgRecordNoPage" resultType="com.ls.spt.basic.entity.SmsRecord"
+	parameterType="com.ls.spt.basic.entity.SmsRecord">
+	SELECT
+	sr.`send_name` sendName,sr.`send_time` sendTime,sr.`send_comment`
+	sendComment,sr.`state`,sr.`state_desc` stateDesc,sr.`send_tel` sendTel
+	FROM sms_record sr
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="seekerId ==null and resumeId == null">
+			<!-- <if test="sendTel!=null and sendTel!=''"> -->
+				AND sr.`send_tel` = #{sendTel,jdbcType=VARCHAR}
+			<!-- </if> -->
+		</if>
+		<if test="seekerId!=null">
+			AND sr.seeker_id = #{seekerId,jdbcType=BIGINT}
+		</if>
+		<if test="resumeId!=null">
+			AND sr.resume_id = #{resumeId,jdbcType=BIGINT}
+		</if>
+	</trim>
+	order By sr.id desc
+	</select>
+	
+	<insert id="insertSmsRecord" parameterType="com.ls.spt.basic.entity.SmsRecord">
+	INSERT INTO
+	sms_record
+	(company,dept_id,send_user,send_name,send_tel,send_comment,state,state_desc,sms_type,code)
+	VALUES(#{company,jdbcType=VARCHAR},#{deptId,jdbcType=VARCHAR},#{sendUser,jdbcType=BIGINT},#{sendName,jdbcType=VARCHAR},#{sendTel,jdbcType=VARCHAR},#{sendComment,jdbcType=VARCHAR},#{state,jdbcType=INTEGER},#{stateDesc,jdbcType=VARCHAR},#{smsType,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR})
+	</insert>
+
+   <!-- 获取前台短信修改手机号验证码 -->
+   <select id="getMsg" resultType="com.ls.spt.basic.entity.SmsRecord" parameterType="java.lang.String" >
+	 	SELECT
+	 	*
+	 	FROM sms_record
+	 	WHERE send_tel= #{phone,jdbcType=VARCHAR}
+	 	AND send_time > #{time,jdbcType=VARCHAR}
+	 	AND sms_type = '1' AND state=1
+	 	ORDER BY send_time DESC LIMIT 1
+  </select>
+
+</mapper>
