@@ -25,7 +25,7 @@ public class WebLogAspect {
 	private final Logger log = LogManager.getLogger(WebLogAspect.class);
 	
 
-    @Pointcut("execution(public * cn.xdf.selfStudyRoom..*.*(..))")
+    @Pointcut("execution(public * cn.xdf.selfStudyRoom.web..*.*(..))")
     public void webLog(){}
 
     @Before("webLog()")

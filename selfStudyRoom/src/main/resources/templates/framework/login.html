@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>登录</title>
+    <link type="text/css" rel="stylesheet" href="common/layui/css/layui.css"/>
+    <!-- 图标库 -->
+    <link type="text/css" rel="stylesheet" href="common/font-awesome-4.7.0/css/font-awesome.css"/>  
+    <link type="text/css" rel="stylesheet" href="common/framework/css/less.css"/>    
+</head>
+<body class="login" style="background-image: url(common/framework/images/bg.jpg);">
+	<div class="login-top" style="margin-top:1.9rem !important;">
+		<p class="logo">SPT</p>
+		<p class="login-ttiltle">英语口语测评系统</p>
+		<div class="clearfix"></div>
+	</div>
+	<div class="login-main">
+		<div class="login-user">
+			<img src="common/framework/images/1_03.jpg" alt=""/><input id="username" type="text" placeholder="请输入您的账号..."/>
+		</div>
+		<div class="login-password">
+			<img src="common/framework/images/1_06.png" alt=""/><input id="password" type="password" placeholder="请输入您的密码..."/>
+		</div>
+		<div class="login-button">
+			<input type="button" class="submit_btn" value="登录"/>
+			<input type="button" id="xsdl" value="学生账号登录"/>
+			<p onclick="changePassWrod();">忘记密码？</p>
+		</div>
+	</div>
+	<div class="login-bottom" style="position:relative;margin-top:380px;">
+		<p>北京新东方教育科技（集团）有限公司</p>
+		<p>经营许可证编号：北京ICP05067667|京ICP060601号|京公网安备1101084985</p>
+		<p>Copyright 2016-2017 Neworiental Corporation,   All Right Reserved</p>
+		<p>©2011-2012 新东方 版权所有</p>
+	</div>
+	
+    
+    <script type="text/javascript" src="common/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="common/layer/layer.js"></script>
+    <script type="text/javascript" src="common/layui/layui.js"></script>
+<!--     <script type="text/javascript" src="framework/js/login.js"></script> -->
+    <script type="text/javascript" src="common/jquery/jquery.particleground.min.js"></script>   
+</body>
+</html>
