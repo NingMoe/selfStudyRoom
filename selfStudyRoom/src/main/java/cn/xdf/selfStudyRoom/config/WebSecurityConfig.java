@@ -45,11 +45,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * @throws Exception
      */
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(mySecurityFilter,  FilterSecurityInterceptor.class)
             .authorizeRequests()
-                .antMatchers("/").permitAll()
+                .antMatchers("/loginCheck").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -69,9 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-       //指定密码加密所使用的加密器为passwordEncoder()  
-       //需要将密码加密后写入数据库
-       auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
+       auth.userDetailsService(customUserDetailsService);
        //不删除凭据，以便记住用户  
        auth.eraseCredentials(false); 
     }
@@ -89,6 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/common/**");
+        web.ignoring().antMatchers("/loginCheck**");
     }
     
     

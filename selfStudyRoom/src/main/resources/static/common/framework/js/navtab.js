@@ -44,7 +44,6 @@ layui.define(['element'], function(exports){
 		     var $container;
 		     if(typeof(_config.elem) === 'string') {
 			     $container = $('' + _config.elem + '');
-			     //console.log($container);
 		     }
 		     if(typeof(_config.elem) === 'object') {
 			     $container = _config.elem;
@@ -95,8 +94,7 @@ layui.define(['element'], function(exports){
 			    if(data.icon !== undefined){
                     if(data.icon.indexOf('fa-') !== -1) {
 					    title += '<i class="fa ' + data.icon + '"></i>';
-				    } else {
-				    	//title += '<i class="layui-icon ">' + data.icon + '</i>';
+				    } else {				    	
 				    	title += '<i class="layui-icon ">' + '</i>';
 				    }
 			    }
@@ -119,9 +117,6 @@ layui.define(['element'], function(exports){
 				    ELEM.titleBox.find('li').children('i.layui-tab-close[data-id=' + globalTabIdIndex + ']').on('click', function() {
 				    	var did = $(this).attr("data-id");
 				    	var titile=$(this).parent().find("em").text();
-				    	if(titile=="应聘者查找"){
-				    		 $("#mainSerach_btn").parent().parent().show();
-				    	}
 				    	element.tabDelete(ELEM.tabFilter, did).init();
 				    });
 			    };

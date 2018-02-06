@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.xdf.selfStudyRoom.domain.dao.ResourcesDao">
+  
+<resultMap id="menuResultMap"  type="cn.xdf.selfStudyRoom.domain.entity.MenuFirstList">
+	<id column="id" property="id" jdbcType="BIGINT" />
+	<result column="first_name" property="title" jdbcType="VARCHAR" />
+	<result column="first_href" property="href" jdbcType="VARCHAR" />
+	<result column="first_icon" property="icon" jdbcType="VARCHAR" />
+	<collection property="menu"  ofType="cn.xdf.selfStudyRoom.domain.entity.MenuSecondList">
+		<id property="id" column="sec_id" jdbcType="BIGINT" />
+		<result property="text" column="sec_name"  jdbcType="VARCHAR" />
+		<result property="href" column="sec_href"  jdbcType="VARCHAR" />
+		<result property="icon"  column="sec_icon"  jdbcType="VARCHAR" />
+	</collection>
+</resultMap>
+
+
+</mapper>

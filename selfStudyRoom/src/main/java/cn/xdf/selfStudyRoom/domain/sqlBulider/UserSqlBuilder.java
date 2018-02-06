@@ -95,7 +95,7 @@ public class UserSqlBuilder {
 	
 	public String findByLoginName(final User user){
 		return new SQL(){{
-			SELECT("id, name,login_name,password,phone"); 
+			SELECT("id, name,login_name AS loginName,password,phone"); 
 			FROM("user"); 
 			if(user.getLoginName()!=null){
 				WHERE("login_name=#{loginName,jdbcType=VARCHAR}"); 

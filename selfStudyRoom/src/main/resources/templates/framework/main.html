@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="renderer" content="webkit"/>	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>	
+	<meta name="apple-mobile-web-app-capable" content="yes"/>	
+	<meta name="format-detection" content="telephone=no"/>
+    <title>共享平台</title>
+    <link type="text/css" rel="stylesheet" href="common/layui/css/layui.css"/>
+    <link type="text/css" rel="stylesheet" href="common/font-awesome-4.7.0/css/font-awesome.css"/>  
+    <link type="text/css" rel="stylesheet" href="common/framework/css/global.css" media="all"/>
+	<link type="text/css" rel="stylesheet" href="common/framework/css/adminstyle.css" media="all"/> 
+	<script type="text/javascript" src="common/jquery/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="common/layer/layer.js"></script>
+	<script type="text/javascript" src="common/layui/layui.js"></script>   
+</head>
+<body>
+<div class="layui-layout layui-layout-admin" id="layui_layout">
+	<!-- 顶部区域 -->
+	<div class="layui-header header header-demo">
+		<div class="layui-main">
+		    <!-- logo区域 -->
+			<div class="admin-logo-box">
+				<a class="logo" href="http://hf.xdf.cn" title="logo" style="left:-5px"><p style="height:30px; line-height: 30px; border: 2px solid #64dcdc;  border-radius:5px; color: #64dcdc;font-size:25px;width: 50px;text-align: center;box-sizing: border-box;display:inline-block" >SPT</p><span style="font-size: 15px;color: #444;vertical-align:text-bottom;margin-left:7px;">共享平台系统</span></a>
+				<div class="larry-side-menu">
+					<i class="fa fa-exchange" aria-hidden="true"></i>
+				</div>
+			</div>
+            <!-- 右侧导航 -->
+            <ul class="layui-nav larry-header-item">
+					<li class="layui-nav-item first">
+						<a href="javascript:;">
+							<img src="common/framework/images/userimg.jpg" class="userimg"/>			
+							<cite th:text="${user.name }"></cite>
+							<span class="layui-nav-more"></span>
+						</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a href="javascript:modifyPassword();"><i class="iconfont icon-iconfuzhi01" aria-hidden="true"></i>修改密码</a>
+								</dd>
+								<dd>
+									<a href="/login"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a>
+								</dd>
+							</dl>
+					</li>
+            </ul>
+		</div>
+	</div>
+	<!-- 左侧侧边导航开始 -->
+	<div class="layui-side layui-side-bg layui-larry-side" id="larry-side">
+        <div class="layui-side-scroll" id="larry-nav-side" lay-filter="side">		 
+		<!-- 左侧菜单 -->
+		<ul class="layui-nav layui-nav-tree" th:if="${not #lists.isEmpty(menus)}">					
+		    <li th:each="men:${menus}" class="layui-nav-item"  > 
+						<a th:if="${not #strings.isEmpty(men.href)}" href="javascript:;" th:attrappend="data-url=${'' +men.href }"> 											
+						<a th:if="${#strings.isEmpty(men.href)}"  href="javascript:;"  > 													
+						<i th:if="${not #strings.isEmpty(men.icon) }" class="fa" th:attrappend="class=${' ' +men.icon }"  th:attrprepend="data-icon=${'' +men.icon }"   ></i> 														
+						<i th:if="${#strings.isEmpty(men.icon)}" class="fa  fa-th-list" data-icon='fa-th-list'></i> 							
+						<span th:text="${men.title}"></span>
+						</a>
+						<dl th:if="${not #lists.isEmpty(men.menu)}" class="layui-nav-child">						
+							<dd th:each="secMenu:${men.menu}">
+							<a th:if="${not #strings.isEmpty(secMenu.href)}" href="javascript:;" th:attrappend="data-url=${'' +secMenu.href }"> 											
+						    <a th:if="${#strings.isEmpty(secMenu.href)}"  href="javascript:;"  > 													
+						    <i th:if="${not #strings.isEmpty(secMenu.icon) }" class="fa" th:attrappend="class=${' ' +secMenu.icon }"  th:attrprepend="data-icon=${'' +secMenu.icon }"   ></i> 														
+						    <i th:if="${#strings.isEmpty(secMenu.icon)}" class="fa  fa-sticky-note-o" data-icon='fa-sticky-note-o'></i> 							
+						    <span th:text="${secMenu.text}"></span>
+						    </a>					
+                           </dd>				
+						</dl>						
+			</li>								
+		</ul>
+	    </div>
+	</div>
+	<!-- 左侧侧边导航结束 -->
+	<!-- 右侧主体内容 -->
+	<div class="layui-body" id="larry-body" style="bottom: 0;border-left: solid 2px #1AA094;">
+		<div class="layui-tab layui-tab-card larry-tab-box" id="larry-tab" lay-filter="demo" lay-allowclose="true">
+			<ul class="layui-tab-title">
+				<li class="layui-this admin-home" lay-id="0"><i data-id='0'  class="fa fa-home layui-icon"></i><em>我的班级</em></li>
+			</ul>
+			<div class="layui-tab-content" style="min-height: 150px; ">
+				<div class="layui-tab-item layui-show">
+					<iframe class="larry-iframe" src=""></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 底部区域 -->
+	<div class="layui-footer layui-larry-foot" id="larry-footer">
+		<div class="layui-mian">
+		    <div class="larry-footer-left">
+		    	合肥新东方学校_信息管理部 微信群：
+		    	<a href=""><img border="0" src="common/framework/images/group.png" title="信息管理部官方交流群"/></a>
+		    	 查看:<a href="" title="">作者信息</a>
+		    </div>
+		    <p class="p-admin">
+		    </p>
+		</div>
+	</div>
+</div>
+</body>
+	<script type="text/javascript" src="common/framework/js/larry.js"></script>
+	<script type="text/javascript" src="common/framework/js/main.js"></script>
+</html>

@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -28,8 +30,16 @@ public interface UserDao {
 	@UpdateProvider(type=UserSqlBuilder.class,method="updateByPrimaryKeySelective") 
     int updateByPrimaryKeySelective(final User user);
 	
+	@Results({
+	  @Result(property = "id", column = "id"),
+	  @Result(property = "name", column = "name"),
+	  @Result(property = "loginName", column = "login_name"),
+	  @Result(property = "password", column = "password"),
+	  @Result(property = "phone", column = "phone")
+    })
 	@SelectProvider(type=UserSqlBuilder.class, method="query")
 	List<User> query(final User user);
+
 
 	@SelectProvider(type=UserSqlBuilder.class, method="findByLoginName")
 	User findByLoginName(final User user);

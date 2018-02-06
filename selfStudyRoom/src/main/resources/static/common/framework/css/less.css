@@ -96,12 +96,9 @@
   font-size: 0.18rem;
 }
 .login-button :nth-child(1) {
-  width: 36% !important;
+  width: 100% !important;
 }
-.login-button :nth-child(2) {
-  margin-left: 3%;
-  width: 60% !important;
-}
+
 .login-button p {
   color: #ffffff;
   margin-top: 0.1rem;
