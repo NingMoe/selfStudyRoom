@@ -2,19 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="renderer" content="webkit"/>	
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>	
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>	
-	<meta name="apple-mobile-web-app-capable" content="yes"/>	
-	<meta name="format-detection" content="telephone=no"/>
-    <title>登录</title>
-    <link type="text/css" rel="stylesheet" href="common/layui/css/layui.css"/>
-    <link type="text/css" rel="stylesheet" href="common/font-awesome-4.7.0/css/font-awesome.css"/>  
-    <link type="text/css" rel="stylesheet" href="common/framework/css/less.css"/>    
+
+<head th:include="/framework/layout :: commonHead ('登录')">   
 </head>
+<link type="text/css" rel="stylesheet" href="common/framework/css/less.css"/> 
+<link type="text/css" rel="stylesheet" href="common/framework/css/animate.css"/>
 <body class="login" style="background-image: url(common/framework/images/bg.jpg);">
 	<div class="login-top" style="margin-top:1.9rem !important;">
 		<p class="logo">SSR</p>
@@ -28,8 +20,18 @@
 		<div class="login-password">
 			<img src="common/framework/images/1_06.png" alt=""/><input id="password" type="password" placeholder="请输入您的密码..."/>
 		</div>
+		<div class="form-group text-left">
+           <div id="verify_box">
+               <div id="verify_xbox">
+                    <div id="btn">
+                          <img src="common/framework/images/1_07.png"/>
+                     </div>
+                </div>
+                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;按住滑块，拖动到最右边            
+            </div>         
+        </div>
 		<div class="login-button">
-			<input type="button" class="submit_btn" value="登录"/>
+			<input type="button" class="submit_btn" value="登录" disabled="disabled" id="loginSuccess"/>
 			<p onclick="changePassWrod();">忘记密码？</p>
 		</div>
 	</div>
@@ -51,10 +53,9 @@
 		    top.location.href=location.href;  
 		}  
     </script>
-    <script type="text/javascript" src="common/jquery/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="common/layer/layer.js"></script>
-    <script type="text/javascript" src="common/layui/layui.js"></script>
     <script type="text/javascript" src="common/framework/js/login.js"></script>
-    <script type="text/javascript" src="common/jquery/jquery.particleground.min.js"></script>   
+    <script type="text/javascript" src="common/jquery/jquery.particleground.min.js"></script> 
+    <!-- 图片验证 -->
+    <script type="text/javascript" src="common/framework/js/slide.js"></script>  
 </body>
 </html>

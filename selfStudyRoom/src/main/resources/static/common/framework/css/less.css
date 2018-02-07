@@ -1072,3 +1072,54 @@
   color: #333333!important;
   font-size: 0.2rem!important;
 }
+
+.form-group {
+    margin-bottom: 15px;
+}
+.text-left {
+    text-align: left;
+}
+#verify_box{
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+    color:#fff;
+    background-color: rgba(212, 212, 212, 1);
+    top:-40px;
+    right:-49px;
+}
+#verify_xbox{
+    width: 54px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+    color:#fff;
+    position: absolute;
+    background: #7BBB55;
+}
+#btn{
+    cursor: pointer;
+    width: 54px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 1);
+    border: solid 1px rgba(212, 212, 212, 1);
+    float: right;
+}
+.continue{
+    width: 120px;
+    height: 40px;
+    background-color: rgba(212, 212, 212, 1);
+    margin: 0 70px;
+    border: none;
+    color: #302f41;
+    font-size: 16px;
+}
+.continue:hover{
+    background-color: rgba(235, 54, 38, 1);
+    color: #ffffff;
+}
+img {
+    max-width: 100%;
+}
+

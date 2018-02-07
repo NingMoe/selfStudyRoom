@@ -31,7 +31,7 @@ public interface UserDao {
     int updateByPrimaryKeySelective(final User user);
 	
 	@Results({
-	  @Result(property = "id", column = "id"),
+	  @Result(property = "id", column = "id",id = true),
 	  @Result(property = "name", column = "name"),
 	  @Result(property = "loginName", column = "login_name"),
 	  @Result(property = "password", column = "password"),
