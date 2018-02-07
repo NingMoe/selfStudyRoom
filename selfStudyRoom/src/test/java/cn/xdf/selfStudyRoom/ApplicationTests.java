@@ -13,6 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 import cn.xdf.selfStudyRoom.domain.dao.UserDao;
 import cn.xdf.selfStudyRoom.domain.entity.User;
+import cn.xdf.selfStudyRoom.rabbitMq.Receiver;
+import cn.xdf.selfStudyRoom.rabbitMq.Sender;
 import cn.xdf.selfStudyRoom.utils.RedisTemplateUtil;
 
 
@@ -26,6 +28,12 @@ public class ApplicationTests {
 	
 	@Autowired
 	private RedisTemplateUtil redisTemplateUtil;
+	
+	@Autowired
+    private Sender sender;
+	
+	@Autowired
+	private Receiver receiver;
 
 	@Test
 	public void testInsert() throws Exception {
@@ -92,10 +100,14 @@ public class ApplicationTests {
 			System.out.println("name=="+list1.get(0).getName());
 		}else{
 			redisTemplateUtil.setList("userList", list, 120L);
-		}
-		
-		
-		
+		}	
 	}
+	
+	@Test
+    public void testRabbitMq() throws Exception {
+        sender.send();
+        System.out.println("发送成功!");
+        receiver.process("hello");
+    }
 
 }
