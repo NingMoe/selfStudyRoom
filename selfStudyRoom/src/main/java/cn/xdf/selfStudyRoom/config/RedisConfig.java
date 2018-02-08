@@ -1,12 +1,16 @@
 package cn.xdf.selfStudyRoom.config;
 
 import java.lang.reflect.Method;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -17,19 +21,73 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import redis.clients.jedis.JedisPoolConfig;
 
 
 
 
 
 @Configuration
+@PropertySource("classpath:redis.properties")
 @EnableCaching
 public class RedisConfig extends CachingConfigurerSupport{
 
+	private final Logger logger = LogManager.getLogger(RedisConfig.class);
+	
+	@Value("${redis.hostName}")
+	private String hostName;
+	 
+	@Value("${redis.password}")
+	private String password;
+		
+	@Value("${redis.port}")
+	private int port;
+	
+	@Value("${redis.maxActive}")
+	private int maxTotal ;
+
+	@Value("${redis.maxIdle}")
+    private int maxIdle ;
+
+	@Value("${redis.minIdle}")
+    private int minIdle ;
+		
+	@Value("${redis.timeout}")
+	private int timeout;
+	
+	@Value("${redis.maxWait}")
+	private long maxWaitMillis;
+	
+	@Value("${redis.testOnBorrow}")
+	private boolean testOnBorrow;
+	
+	@Value("${redis.testOnReturn}")
+	private boolean testOnReturn;
+	
+	
+	@Bean	
+	public JedisPoolConfig getRedisConfig() {
+		JedisPoolConfig config = new JedisPoolConfig();
+		config.setMaxIdle(maxIdle);
+		config.setMaxTotal(maxTotal);
+		config.setMaxWaitMillis(maxWaitMillis);
+		config.setMinIdle(minIdle);	
+		config.setTestOnBorrow(testOnBorrow);
+		config.setTestOnReturn(testOnReturn);
+		return config;
+	}
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        return new JedisConnectionFactory();
+    	JedisConnectionFactory factory = new JedisConnectionFactory();  
+        JedisPoolConfig config = getRedisConfig();  
+        factory.setPoolConfig(config);  
+        factory.setHostName(hostName);
+        factory.setPassword(password);
+        factory.setPort(port); 
+        factory.setTimeout(timeout);
+        logger.info("JedisConnectionFactory bean init success.");  
+        return factory; 
     }
 
     @Bean
