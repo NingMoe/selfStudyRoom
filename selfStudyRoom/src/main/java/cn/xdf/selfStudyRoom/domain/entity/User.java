@@ -112,4 +112,11 @@ public class User implements Serializable{
     public void setStatus(String status) {
         this.status = status == null ? null : status.trim();
     }
+
+	@Override
+	public String toString() {
+		return "User [name=" + name + ", loginName=" + loginName + ", phone=" + phone + "]";
+	}
+    
+    
 }

@@ -4,6 +4,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import cn.xdf.selfStudyRoom.domain.entity.User;
+
 
 /**
  * 
@@ -11,12 +13,16 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@RabbitListener(queues = "hello")
+@RabbitListener(queues ="hello")
 public class Receiver {
 
     @RabbitHandler
-    public void process(String hello) {
-        System.out.println("========================Receiver : " + hello);
+    public void process(String msg) {
+        System.out.println("Receiver String: " + msg);
     }
-
+    
+    @RabbitHandler
+    public void process(User user) {
+        System.out.println("Receiver object : " + user);
+    }
 }

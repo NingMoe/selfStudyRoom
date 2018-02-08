@@ -4,6 +4,7 @@ package cn.xdf.selfStudyRoom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
+
+import cn.xdf.selfStudyRoom.constant.MQConstant;
 import cn.xdf.selfStudyRoom.domain.dao.UserDao;
 import cn.xdf.selfStudyRoom.domain.entity.User;
-import cn.xdf.selfStudyRoom.rabbitMq.Receiver;
+import cn.xdf.selfStudyRoom.exception.MyException;
+import cn.xdf.selfStudyRoom.rabbitMq.CallBackSender;
 import cn.xdf.selfStudyRoom.rabbitMq.Sender;
+import cn.xdf.selfStudyRoom.service.MessageQueueService;
 import cn.xdf.selfStudyRoom.utils.RedisTemplateUtil;
 
 
@@ -33,7 +38,11 @@ public class ApplicationTests {
     private Sender sender;
 	
 	@Autowired
-	private Receiver receiver;
+	private MessageQueueService messageQueueService;
+	
+	@Autowired
+    private CallBackSender callBackSender;
+	
 
 	@Test
 	public void testInsert() throws Exception {
@@ -103,11 +112,42 @@ public class ApplicationTests {
 		}	
 	}
 	
+	/**
+	 * 测试RabbitMQ的普通队列
+	 * @throws Exception
+	 */
 	@Test
     public void testRabbitMq() throws Exception {
-        sender.send();
-        System.out.println("发送成功!");
-        receiver.process("hello");
+		
+        sender.send("hello,rabbitMq!");
+        System.out.println("发送字符串成功!");
+                
+        User user =new User();
+		user.setName("刘威");
+		user.setLoginName("liuwei");
+		user.setPhone("15178558263");
+		sender.send(user);
+		System.out.println("发送对象成功!");
+	   		
+	    sender.sendQueue1("hello,liuwei");
+	    sender.sendQueue2("hello,xiamei");
     }
+	
+	/**
+	 * 测试RabbitMQ的带回调的队列
+	 */
+	@Test
+	public void testCallBackRabbitMq(){
+		callBackSender.send("hello,world!");
+	}
+	
+	/**
+	 * 测试RabbitMQ的延迟队列
+	 * @throws MyException 
+	 */
+	@Test
+	public void testDLXRabbitMq() throws MyException{
+		messageQueueService.send(MQConstant.DEFAULT_QUEUE_NAME,"测试延迟发送消息",6000);
+	}
 
 }
