@@ -1,10 +1,15 @@
 package cn.xdf.selfStudyRoom.web.manager;
 
+
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import cn.xdf.selfStudyRoom.domain.entity.User;
@@ -12,7 +17,7 @@ import cn.xdf.selfStudyRoom.service.UserService;
 import cn.xdf.selfStudyRoom.utils.PageView;
 
 /**
- * 员工管理类
+ * 用户管理类
  * @author liuwei63
  *
  */
@@ -47,6 +52,89 @@ public class UserController {
 		logger.info("分页查询员工数据");			
 		return userService.queryUser(user, pageView);		
 	}
+	
+	/**
+     * 跳转新增界面
+     * @param model
+     * @return
+     */
+    @RequestMapping("toAdd")
+    public String toAdd() {
+        return "/view/manager/user/add";
+    }
+    
+    /**
+     * 保存数据
+     * @param model
+     * @param videoType
+     * @return
+     */
+    @PostMapping("add")
+    @ResponseBody
+    public Map<String, Object> add(User user) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            map=userService.add(user);
+        }catch (Exception e) {
+            logger.error(e);
+            map.put("flag", false);
+            map.put("message", "添加失败，请稍后重试!");
+        }
+        return map;
+    }
+    
+    
+    /**
+     * 进入编辑界面
+     * @param model
+     * @param videoTypeIds
+     * @return
+     */
+    @RequestMapping("toEdit")
+    public String toEdit(Long id,Model model) {
+        User user=userService.selectByPrimaryKey(id);
+        model.addAttribute("user", user);
+        return "/view/manager/user/edit";
+    }
+    
+	/**
+     * 修改用户信息
+     * @param user
+     * @param userRoles
+     * @return
+     */
+    @PostMapping("update")
+    @ResponseBody
+    public Map<String,Object> update(User user) {
+        Map<String,Object> map=new HashMap<String,Object>();
+        try{
+            map=userService.update(user);
+        }catch(Exception e){
+            logger.error(e);
+            map.put("flag", false);
+            map.put("message", "修改失败");
+        }
+        return map;
+    }
+    
+    /**
+     * 更新用户状态
+     * @param videoTypeId
+     * @return
+     */
+    @PostMapping("updateStatus")
+    @ResponseBody
+    public Map<String, Object> updateStatus(String deleteIds,Integer status) {
+    	Map<String,Object> map=new HashMap<String,Object>();
+        try{
+            map=userService.updateStatus(deleteIds,status);
+        }catch(Exception e){
+            logger.error(e);
+            map.put("flag", false);
+            map.put("message", "更新用户状态失败");
+        }
+        return map;  
+    }
     
     
 }

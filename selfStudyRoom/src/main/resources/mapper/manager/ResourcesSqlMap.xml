@@ -1,19 +1,86 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.xdf.selfStudyRoom.domain.dao.ResourcesDao">
+	<resultMap id="BaseResultMap" type="cn.xdf.selfStudyRoom.domain.entity.Resources">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="parentId" property="parentId" jdbcType="INTEGER" />
+		<result column="parentName" property="parentName" jdbcType="VARCHAR" />
+		<result column="resKey" property="resKey" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="resUrl" property="resUrl" jdbcType="VARCHAR" />
+		<result column="resc_desc" property="rescDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="createUserId" property="createUserId" jdbcType="BIT" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUserId" jdbcType="BIT" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="icon" property="iconUrl" jdbcType="VARCHAR" />
+	</resultMap>  
+	
+	<resultMap id="menuResultMap"  type="cn.xdf.selfStudyRoom.domain.entity.MenuFirstList">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="first_name" property="title" jdbcType="VARCHAR" />
+		<result column="first_href" property="href" jdbcType="VARCHAR" />
+		<result column="first_icon" property="icon" jdbcType="VARCHAR" />
+		<collection property="menu"  ofType="cn.xdf.selfStudyRoom.domain.entity.MenuSecondList">
+			<id property="id" column="sec_id" jdbcType="BIGINT" />
+			<result property="text" column="sec_name"  jdbcType="VARCHAR" />
+			<result property="href" column="sec_href"  jdbcType="VARCHAR" />
+			<result property="icon"  column="sec_icon"  jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+
+   <sql id="Base_Column_List">
+		id, name, parentId, resKey, type,
+		resUrl,resc_desc, status,createTime,
+		createUserId, update_time, update_user,sort,icon
+	</sql>
+	
+  <select id="selectByKey"  resultMap="BaseResultMap"  parameterType="cn.xdf.selfStudyRoom.domain.entity.Resources">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM resources WHERE 
+		 resKey = #{resKey,jdbcType=VARCHAR} and status=0
+  </select>
   
-<resultMap id="menuResultMap"  type="cn.xdf.selfStudyRoom.domain.entity.MenuFirstList">
-	<id column="id" property="id" jdbcType="BIGINT" />
-	<result column="first_name" property="title" jdbcType="VARCHAR" />
-	<result column="first_href" property="href" jdbcType="VARCHAR" />
-	<result column="first_icon" property="icon" jdbcType="VARCHAR" />
-	<collection property="menu"  ofType="cn.xdf.selfStudyRoom.domain.entity.MenuSecondList">
-		<id property="id" column="sec_id" jdbcType="BIGINT" />
-		<result property="text" column="sec_name"  jdbcType="VARCHAR" />
-		<result property="href" column="sec_href"  jdbcType="VARCHAR" />
-		<result property="icon"  column="sec_icon"  jdbcType="VARCHAR" />
-	</collection>
-</resultMap>
-
-
+  
+   <insert id="insert" parameterType="cn.xdf.selfStudyRoom.domain.entity.Resources">
+		insert into resources (name,
+		resKey, parentId, icon,type,
+		resUrl, resc_desc,createUserId,sort)
+		values (#{name,jdbcType=VARCHAR},
+		#{resKey,jdbcType=VARCHAR},
+		#{parentId,jdbcType=INTEGER},
+		#{iconUrl,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},#{resUrl,jdbcType=VARCHAR},
+		#{rescDesc,jdbcType=VARCHAR},
+		#{createUserId,jdbcType=INTEGER},#{sort,jdbcType=INTEGER})
+   </insert>
+	
+	<select id="getById" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from resources
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+  <update id="updateByPrimaryKey" parameterType="cn.xdf.selfStudyRoom.domain.entity.Resources">
+	update resources
+	set 
+	name = #{name,jdbcType=VARCHAR},
+	icon = #{iconUrl,jdbcType=VARCHAR},
+	resc_desc = #{rescDesc,jdbcType=VARCHAR},
+	resUrl = #{resUrl,jdbcType=VARCHAR},
+	sort= #{sort,jdbcType=INTEGER},
+	update_time=now(),
+	update_user=#{updateUserId,jdbcType=INTEGER}
+	where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+   <update id="updateToDelete" parameterType="cn.xdf.selfStudyRoom.domain.entity.Resources">
+		update resources set status=-1,update_time=now(),update_user=#{updateUserId,jdbcType=INTEGER} where id = #{id,jdbcType=INTEGER} 
+  </update>
+  
 </mapper>

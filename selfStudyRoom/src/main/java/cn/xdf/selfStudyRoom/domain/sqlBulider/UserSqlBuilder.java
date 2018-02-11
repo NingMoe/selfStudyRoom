@@ -23,6 +23,9 @@ public class UserSqlBuilder {
 			if(user.getPhone()!=null){
 				VALUES("phone", "#{phone,jdbcType=VARCHAR}");
 			}
+			if(user.getSex()!=null){
+				VALUES("sex", "#{sex,jdbcType=VARCHAR}");
+			}
 			if(user.getCreateTime()!=null){
 				VALUES("create_time", "#{createTime,jdbcType=TIMESTAMP}");
 			}
@@ -59,6 +62,9 @@ public class UserSqlBuilder {
 			}
 			if(user.getPhone()!=null){
 				SET("phone=#{phone,jdbcType=VARCHAR}");
+			}
+			if(user.getSex()!=null){
+				SET("sex=#{sex,jdbcType=VARCHAR}");			
 			}
 			if(user.getCreateTime()!=null){
 				SET("create_time=#{createTime,jdbcType=TIMESTAMP}");

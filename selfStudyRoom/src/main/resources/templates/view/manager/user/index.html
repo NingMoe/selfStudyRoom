@@ -11,6 +11,8 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>	
 	<meta name="apple-mobile-web-app-capable" content="yes"/>	
 	<meta name="format-detection" content="telephone=no"/> 
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 	<title></title> 
 	<!-- Common styles and scripts -->
     <link type="text/css" rel="stylesheet"  th:href="@{/common/layui/css/layui.css}"/>
@@ -18,6 +20,7 @@
     <script type="text/javascript"  th:src="@{/common/jquery/jquery-1.11.1.min.js}"></script>
     <script type="text/javascript"  th:src="@{/common/layer/layer.js}"></script>
     <script type="text/javascript"  th:src="@{/common/layui/layui.js}"></script>
+    <script type="text/javascript"  th:src="@{/common/taglib/common.js}"></script>
 </head>
 <body>
 <div class="main-wrap">
@@ -87,7 +90,7 @@
 				},
 				cols: [[
 				        {field:'name', title: '姓名', width:"20%", align:"center", fixed: 'left'},	
-				        {field:'phone', title: '手机号', width:"20%", align:"center", fixed: 'left'},
+				        {field:'phone', title: '手机号', width:"20%", align:"center", fixed: 'left'},				        
 				        {field:'createTime', title: '创建时间', width:"10%", align:"center"},
 				        {field:'createUser', title: '创建人', width:"10%", align:"center"},
 				        {field:'status', title: '状态', width:"20%", align:"center", templet:"#diffTpl"},

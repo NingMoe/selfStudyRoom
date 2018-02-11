@@ -26,4 +26,35 @@ public class ResourcesServiceImpl implements ResourcesService {
 		return resourcesDao.selectMenuList(username);
 	}
 
+	@Override
+	public List<Resources> findAll() {		
+		return resourcesDao.findAll();
+	}
+
+	@Override
+	public List<Resources> selectByKey(Resources resource) {		
+		 return resourcesDao.selectByKey(resource);
+	}
+
+	@Override
+	public void add(Resources resources) {
+		resourcesDao.insert(resources);		
+	}
+
+	@Override
+	public Resources getById(Long id) {
+		return resourcesDao.getById(id);
+	}
+
+	@Override
+	public void modify(Resources resource) {
+		resourcesDao.updateByPrimaryKey(resource);
+		
+	}
+
+	@Override
+	public void delete(Resources resource) {
+		resourcesDao.updateToDelete(resource);		
+	}
+
 }

@@ -17,4 +17,42 @@ public interface ResourcesService {
 	 * @return
 	 */
 	List<MenuFirstList> selectMenuList(String username);
+	
+	/**
+	 * 查询所有菜单树
+	 * @return
+	 */
+	List<Resources> findAll();
+	
+	/**
+	 * 根据条件获取资源信息
+	 * @param resource
+	 * @return
+	 */
+	List<Resources> selectByKey(Resources resource);
+	
+	/**
+	 * 增加资源
+	 * @param resources
+	 */
+    void add(Resources resources);
+    
+    /**
+     * 根据Id查询
+     * @param id
+     * @return
+     */
+    Resources getById(Long id);
+    
+    /**
+     * 修改资源
+     * @param resource
+     */
+    void modify(Resources resource);
+    
+    /**
+     * 删除资源
+     * @param resource
+     */
+    void delete(Resources resource);
 }

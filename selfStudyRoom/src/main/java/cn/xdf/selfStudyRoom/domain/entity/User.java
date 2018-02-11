@@ -2,8 +2,7 @@ package cn.xdf.selfStudyRoom.domain.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class User implements Serializable{
 	/**
@@ -21,17 +20,19 @@ public class User implements Serializable{
 
     private String phone;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     private String createUser;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     private String updateUser;
 
     private String status;
+    
+    private String sex;
 
     public Long getId() {
         return id;
@@ -112,6 +113,15 @@ public class User implements Serializable{
     public void setStatus(String status) {
         this.status = status == null ? null : status.trim();
     }
+
+    
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
 
 	@Override
 	public String toString() {

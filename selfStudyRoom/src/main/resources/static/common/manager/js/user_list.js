@@ -1,9 +1,8 @@
-﻿
-/**
+﻿/**
  * 新增用户
  */
 function userAdd(){
-	 var url = "/manager/user/toAdd.html";
+	 var url = "/manager/user/toAdd";
 	  layer.open({
         type: 2,
         shade : [ 0.5, '#000' ],
@@ -25,7 +24,7 @@ function userAdd(){
  * 编辑用户
  */
 function userEdit(id){
-	 var url = "/manager/user/toEdit.html?id="+id;
+	 var url = "/manager/user/toEdit?id="+id;
 	 layer.open({
 	        type: 2,
 	        shade : [ 0.5, '#000' ],
@@ -67,45 +66,7 @@ function userDisable(id,status){
 				if(data!=null){
 					layer.msg(data.message);
 					if(data.flag==true){
-						    $("#userTable").bootstrapTable('refresh');
-					}
-				}
-			},"json");
-		}, function(index){
-			layer.close(index);
-		});
-}
-
-/**
- * 禁用、删除用户(批量)
- */
-function bath_userDisable(status){
-	var ids=getSelectId("userTable");
-	if(ids==""){
-		layer.alert('您还未选择任何记录!', {icon: 2,offset:'10%'});
-		return;
-	}
-	var m="";
-	if(status==-1){
-		m="确认要删除所选用户?";
-	}
-	if(status==2){
-		m="确认要禁用所选用户?";
-	}
-	if(status==1){
-		m="确认要启用所选用户?";
-	}
-	layer.confirm(m, {
-		  btn: ['是','否'] ,//按钮
-		  offset: '10%',
-		  btnAlign:'c'
-		}, function(index){
-			$.post("/manager/user/updateStatus.html",{deleteIds:ids,status:status},function(data,status){
-				layer.close(index);
-				if(data!=null){
-					layer.msg(data.message);
-					if(data.flag==true){
-						    $("#userTable").bootstrapTable('refresh');
+						window.location.reload();
 					}
 				}
 			},"json");
@@ -116,7 +77,7 @@ function bath_userDisable(status){
 
 //配置用户角色
 function toCfgUserRole(id){
-	var url = "/manager/user/toCfgUserRole.html?userId="+id;
+	var url = "/manager/user/toCfgUserRole?userId="+id;
 	  layer.open({
 	     type: 2,
 	     shade : [ 0.5, '#000' ],

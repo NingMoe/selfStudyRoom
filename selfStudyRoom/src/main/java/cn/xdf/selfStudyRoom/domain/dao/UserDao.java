@@ -1,6 +1,7 @@
 package cn.xdf.selfStudyRoom.domain.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -24,7 +25,7 @@ public interface UserDao {
 	@SelectKey(keyProperty="id", before=false, resultType=Long.class, statement = {"select LAST_INSERT_ID()"})
     int insertSelective(final User user);
 
-	@Select("SELECT * FROM user WHERE id = #{id}")
+	@Select("SELECT id, name, login_name AS loginName, phone, sex FROM user WHERE id = #{id}")
     User selectByPrimaryKey(Long id);
 
 	@UpdateProvider(type=UserSqlBuilder.class,method="updateByPrimaryKeySelective") 
@@ -50,4 +51,12 @@ public interface UserDao {
 	 * @return
 	 */
 	List<User> queryPageUser(User user);
+	
+	
+	/**
+     * 根据用户ID更新用户状态
+     * @param paraMap
+     * @return
+     */
+    int updateByIds(Map<String, Object> paraMap);
 }

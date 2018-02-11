@@ -80,4 +80,41 @@ public interface ResourcesDao {
 			+"  ORDER BY rr1.sort,rr1.id,rr2.sort,rr2.id")
 	@ResultMap("cn.xdf.selfStudyRoom.domain.dao.ResourcesDao.menuResultMap")
 	List<MenuFirstList> selectMenuList(String userName);
+	
+	/**
+	 * 根据条件获取资源信息
+	 * @param resource
+	 * @return
+	 */
+	List<Resources> selectByKey(Resources resource);
+	
+	
+	/**
+     * 新增资源
+     * @param resources
+     * @return
+     */
+    int insert(Resources resources);
+
+    /**
+     * 根据ID查询权限信息
+     * @param id
+     * @return
+     */
+    Resources getById(Long id);
+
+    /**
+     * 编辑资源
+     * @param resources
+     * @return
+     */
+    int updateByPrimaryKey(Resources resource);
+    
+    /**
+     * 删除资源
+     * @param resourceIds
+     * @return
+     */
+    int updateToDelete(Resources resource);
+    
 }

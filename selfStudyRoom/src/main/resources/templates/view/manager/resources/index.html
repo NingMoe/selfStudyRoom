@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+     
+<head>
+    <meta charset="utf-8"/>
+    <meta name="renderer" content="webkit"/>	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>	
+	<meta name="apple-mobile-web-app-capable" content="yes"/>	
+	<meta name="format-detection" content="telephone=no"/> 
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<title></title> 
+	<!-- Common styles and scripts -->
+    <link type="text/css" rel="stylesheet"  th:href="@{/common/layui/css/layui.css}"/>
+    <link type="text/css" rel="stylesheet"  th:href="@{/common/font-awesome-4.7.0/css/font-awesome.css}"/>  
+    <script type="text/javascript"  th:src="@{/common/jquery/jquery-1.11.1.min.js}"></script>
+    <script type="text/javascript"  th:src="@{/common/layer/layer.js}"></script>
+    <script type="text/javascript"  th:src="@{/common/layui/layui.js}"></script>
+    <script type="text/javascript"  th:src="@{/common/taglib/common.js}"></script>
+    <!-- Per styles and scripts -->
+    <link href="/common/zTree/css/zTreeStyle.css" rel="stylesheet" type="text/css" />
+    <link href="/common/manager/css/resource_index.css" rel="stylesheet" type="text/css" />
+    <script src="/common/zTree/js/jquery.ztree.core-3.5.min.js" type="text/javascript"></script>
+    <script src="/common/zTree/js/jquery.ztree.exedit-3.5.min.js" type="text/javascript"></script>    
+</head>
+<body>
+   <div style="height:500px;" class="alertFrom" >
+		<div style="width:49%;height:500px; text-align:left; border:1px solid #1AA094; overflow:auto; float: left;margin-left: 5px; ">
+			<ul id="tree" class="ztree"></ul>
+		</div>
+		<div style="width:49%;height:500px; text-align:left; border:1px solid #1AA094; overflow:auto; float: left;margin-left: 5px;">
+			<table id="resourceDescTable">
+				<tr>
+					<td>上级资源编码</td>
+					<td><label  id="Pid"></label></td>
+				</tr>
+				<tr>
+					<td>上级资源名称</td>
+					<td><label  id="Pname"></label></td>
+				</tr>
+				<tr>
+					<td>资源编码</td>
+					<td><label  id="rid"></label></td>
+				</tr>
+				<tr>
+					<td>资源名称</td>
+					<td><label id="rname"></label></td>
+				</tr>
+				<tr>
+					<td>资源KEY</td>
+					<td><label id="key"></label></td>
+				</tr>
+				<tr>
+					<td>资源URL</td>
+					<td><label id="url"></label></td>
+				</tr>
+				<tr>
+					<td>排序</td>
+					<td><label id="sort"></label></td>
+				</tr>
+				<tr>
+					<td>图标</td>
+					<td id="iconUrl"></td>
+				</tr>
+				<tr>
+					<td>资源类型</td>
+					<td><label id="type"></label></td>
+				</tr>
+				<tr>
+					<td>资源描述</td>
+					<td><label  id="desc"></label></td>
+				</tr>
+			</table>
+			</div>
+		</div>
+</body>
+  <script src="/common/manager/js/resource_index.js" type="text/javascript"></script>
+</html>
