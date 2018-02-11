@@ -43,4 +43,11 @@ public interface UserDao {
 
 	@SelectProvider(type=UserSqlBuilder.class, method="findByLoginName")
 	User findByLoginName(final User user);
+	
+	/**
+	 * 分页查询
+	 * @param user
+	 * @return
+	 */
+	List<User> queryPageUser(User user);
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.xdf.selfStudyRoom.domain.dao.UserDao">
+  <resultMap id="BaseResultMap" type="cn.xdf.selfStudyRoom.domain.entity.User" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, login_name, password, phone, create_time, create_user, update_time, update_user, 
+    status
+  </sql>
+
+   <!-- 分页查询用户信息 -->
+    <select id="queryPageUser" resultMap="BaseResultMap" parameterType="cn.xdf.selfStudyRoom.domain.entity.User">
+		SELECT u.id,u.phone,u.name,u.create_time,u1.name AS create_user,u.status 
+        FROM user u 
+        LEFT JOIN user u1 ON u.create_user = u1.id 
+        WHERE 1=1
+		<if test="phone!= null and phone !=''">
+			AND u.phone like CONCAT(CONCAT('%', #{phone,jdbcType=VARCHAR}), '%') 
+		</if>
+		<if test="name != null and name != ''">
+			AND u.name  like CONCAT(CONCAT('%', #{name,jdbcType=VARCHAR}), '%') 
+		</if>
+		AND  u.status=1 
+		ORDER BY u.id DESC 
+	</select>
+
+
+</mapper>

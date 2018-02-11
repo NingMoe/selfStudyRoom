@@ -57,6 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .successHandler(loginSuccessHandler())
                 .and()
+                .headers().frameOptions().sameOrigin()
+                .and()
             .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login") //成功退出后跳转到登录页
