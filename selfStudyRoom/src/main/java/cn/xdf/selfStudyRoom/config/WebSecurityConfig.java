@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .addFilterBefore(mySecurityFilter,  FilterSecurityInterceptor.class)
             .authorizeRequests()
-                .antMatchers("/loginCheck").permitAll()
+                .antMatchers("/loginCheck","/s/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()

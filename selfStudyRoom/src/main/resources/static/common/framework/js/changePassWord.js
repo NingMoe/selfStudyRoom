@@ -33,10 +33,10 @@ layui.use('form', function(){
 	  			phone : phone,
 	  			msg : msg,
 	  			password : password	  			 
-		  };  	  
+		};  	  
 	    var index = layer.load(3, {shade: [0.3]});
 		$.ajax({
-			url : jsBasePath+"/s/changPasswordForMsg.html",
+			url : "/s/changPasswordForMsg",
 			data : data,
 			async:false,
 			dataType : "json",
@@ -47,7 +47,7 @@ layui.use('form', function(){
 					layer.alert(res.message,{icon:2});
 				}else{
 					layer.alert(res.message,{icon:1},function(){						
-						location.href = jsBasePath+"/manager/login.html";
+						location.href = "/login";
 					});
 				}
 			}
@@ -102,7 +102,7 @@ function getMsg(phone){
 	$.ajax({
 		type : "POST",
 		dataType : "JSON",
-		url : jsBasePath+"/s/sendChangePasswordMsg.html",
+		url : "/s/sendChangePasswordMsg",
 		data : {
 			telNumber:phone
 		},

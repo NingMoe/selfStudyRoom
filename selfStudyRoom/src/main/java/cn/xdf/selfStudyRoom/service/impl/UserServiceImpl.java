@@ -169,6 +169,13 @@ public class UserServiceImpl implements UserService {
 		}
 		return map;
 	}
+
+
+	@Override
+	@Transactional(rollbackFor=Exception.class)
+	public int updateByPrimaryKeySelective(User user) {
+		return userDao.updateByPrimaryKeySelective(user);
+	}
 	
 	
 

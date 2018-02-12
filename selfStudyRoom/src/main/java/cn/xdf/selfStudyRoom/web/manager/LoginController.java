@@ -1,5 +1,6 @@
 package cn.xdf.selfStudyRoom.web.manager;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import cn.xdf.selfStudyRoom.domain.entity.MenuFirstList;
 import cn.xdf.selfStudyRoom.domain.entity.User;
 import cn.xdf.selfStudyRoom.security.SecurityUser;
@@ -110,5 +114,52 @@ public class LoginController {
 	    map.addAttribute("user", user);
 	    map.addAttribute("menus",menus);
 		return "/framework/main";
+	}
+	
+	/**
+	 * 修改密码页面
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/toModifyPwd")
+	public ModelAndView toModifyPwd(HttpServletRequest request) {
+	   return new ModelAndView("/framework/modifyPassword");
+	}
+	
+	/**
+	 * 修改密码时校验MD5密码
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/modifyPwd")
+	@ResponseBody
+	@Transactional(rollbackFor=Exception.class)
+	public Map<String,Object> modifyPwd(String passWord,String oldPassword) {
+	    Map<String, Object> map = new HashMap<String, Object>();
+	    try{	        
+	        User tu=new User();
+            tu.setLoginName(CommonUtil.getMyUser().getUsername()); 
+            tu.setId(CommonUtil.getMyUser().getUserId());
+            tu.setStatus("1");
+            tu.setPassword(Md5Tool.getMd5(oldPassword));
+            // 验证用户原密码是否正确
+            User user= userService.findByLoginName(tu);
+            if (user==null) {
+                map.put("flag", false);
+                map.put("message", "原密码不正确，请重新输入!");
+            }else{
+                tu.setPassword(Md5Tool.getMd5(passWord));
+                tu.setUpdateTime(new Date());
+                tu.setUpdateUser(String.valueOf(CommonUtil.getMyUser().getUserId()));
+                userService.updateByPrimaryKeySelective(tu);
+	            map.put("flag", true);
+	            map.put("message", "密码修改成功！下次登陆时生效！");
+	        }
+	    }catch(Exception e){
+	        logger.error("modifyPwd error !",e);
+	        map.put("flag", false);
+            map.put("message", "修改失败，请稍后重试!");
+	    }
+		return map;
 	}
 }

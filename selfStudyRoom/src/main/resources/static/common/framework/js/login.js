@@ -42,6 +42,10 @@ $(function(){
     if(e.keyCode == 13){
     	login();
     }  
-  }
-    
+  }    
 });
+
+//忘记密码
+function changePassWrod(){
+	window.location.href="/s/changePassWrod";
+}

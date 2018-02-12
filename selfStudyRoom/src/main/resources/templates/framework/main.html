@@ -66,32 +66,12 @@
 						<span th:text="${men.title}"></span>
 						</a>
 						<dl th:if="${not #lists.isEmpty(men.menu)}" class="layui-nav-child">						
-<!-- 							<dd th:each="secMenu:${men.menu}"> -->
-<!-- 							<a th:if="${not #strings.isEmpty(secMenu.href)}" href="javascript:;" th:attrappend="data-url=${'' +secMenu.href }"> 											 -->
-<!-- 						    <a th:if="${#strings.isEmpty(secMenu.href)}"  href="javascript:;"  > 													 -->
-<!-- 						    <i th:if="${not #strings.isEmpty(secMenu.icon) }" class="fa" th:attrappend="class=${' ' +secMenu.icon }"  th:attrprepend="data-icon=${'' +secMenu.icon }"   ></i> 														 -->
-<!-- 						    <i th:if="${#strings.isEmpty(secMenu.icon)}" class="fa  fa-sticky-note-o" data-icon='fa-sticky-note-o'></i> 							 -->
-<!-- 						    <span th:text="${secMenu.text}"></span> -->
-<!-- 						    </a>					 -->
-<!--                            </dd>				 -->
-                                <dd>
-                                   <a href="javascript:;" data-url="/manager/role/index">
-                                      <i class="fa"></i>
-                                      <span>角色设置</span>
-                                   </a>
-                                </dd>
-                                <dd>
-                                   <a href="javascript:;" data-url="/manager/resource/index">
-                                      <i class="fa"></i>
-                                      <span>资源管理</span>
-                                   </a>
-                                </dd>
-                                <dd>
-                                   <a href="javascript:;" data-url="/manager/user/index">
-                                      <i class="fa"></i>
-                                      <span>用户管理</span>
-                                   </a>
-                                </dd>
+							<dd th:each="secMenu:${men.menu}">
+								<a  href="javascript:;"  th:attrappend="data-url=${'' +secMenu.href}"> 								
+								<i class="fa  fa-sticky-note-o" data-icon='fa-sticky-note-o'></i>							
+							      <span th:text="${secMenu.text}"></span>
+							    </a>					
+                            </dd>
 						</dl>						
 			</li>								
 		</ul>

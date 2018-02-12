@@ -1,3 +1,8 @@
+$(function(){
+	setTimeout(function() {
+		$("input[name='oldPassword']").val("");
+	},100);	
+});
 layui.use('form', function(){
   var form = layui.form;
   form.verify({
@@ -12,7 +17,7 @@ layui.use('form', function(){
   //监听提交
   form.on('submit(demo1)', function(data){
 	  var index = layer.load(3, {shade: [0.3]});
-		$.post(jsBasePath+"/manager/modifyPwd.html",$("#editForm").serializeArray(),function(data,status){
+		$.post("/modifyPwd",$("#editForm").serializeArray(),function(data,status){
 			layer.close(index); 
 			if(data.flag==false){
 				layer.alert(data.message,{icon:2});

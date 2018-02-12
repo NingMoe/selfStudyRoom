@@ -69,4 +69,10 @@ public interface UserService {
      * @return
      */
     Map<String,Object> saveUserRole(UserRole userRole,String roleIds);
+    
+    /**
+     * 更新用户信息
+     * @param user
+     */
+    int updateByPrimaryKeySelective(User user);
 }

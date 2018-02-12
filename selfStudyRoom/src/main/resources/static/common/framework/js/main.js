@@ -45,7 +45,7 @@ $('.larry-side-menu').click(function() {
 
 //进入修改密码页
 function modifyPassword() {
-	var url = "/toModifyPwd.html";
+	var url = "/toModifyPwd";
 	layer.open({
 		type : 2,
 		shade : [ 0.5, '#000' ],
