@@ -1,14 +1,15 @@
 package cn.xdf.selfStudyRoom.web.manager;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -69,7 +70,7 @@ public class ResourcesController {
      * @param role
      * @return
      */
-    @RequestMapping(value = "add")
+    @PostMapping(value = "add")
     @ResponseBody
     public Map<String, Object> add(Resources resources) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -113,7 +114,7 @@ public class ResourcesController {
      * @param resources
      * @return
      */
-    @RequestMapping(value="update")
+    @PostMapping(value="update")
     @ResponseBody
     public Map<String, Object> updateResources(Resources resource){
         Map<String, Object> map = new HashMap<String, Object>();
@@ -136,7 +137,7 @@ public class ResourcesController {
      * @param videoTypeId
      * @return
      */
-    @RequestMapping("delete")
+    @PostMapping("delete")
     @ResponseBody
     public Map<String, Object> deleteById(Resources resource) {
         Map<String, Object> map = new HashMap<String, Object>();

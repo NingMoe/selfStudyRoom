@@ -1,5 +1,9 @@
 package cn.xdf.selfStudyRoom.utils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
@@ -100,4 +104,22 @@ public class CommonUtil {
 		}
 	}
 	
+	/**
+	 * 用来去掉List中空值和相同项的。
+	 * @param list
+	 * @return
+	 */
+	public static List<String> removeSameItem(List<String> list) {
+		List<String> nullArr = new ArrayList<String>();  
+	    nullArr.add(null);  
+	    nullArr.add("");
+	    //去除空和空字符串
+	    list.removeAll(nullArr);
+		Set<String> difList = new HashSet<String>();
+		//放进SET去重
+		difList.addAll(list);
+		List<String> newList=new ArrayList<String>();
+		newList.addAll(difList);
+		return newList;
+	}
 }

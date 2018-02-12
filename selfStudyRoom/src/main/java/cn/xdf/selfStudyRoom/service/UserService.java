@@ -1,9 +1,10 @@
 package cn.xdf.selfStudyRoom.service;
 
 
+import java.util.List;
 import java.util.Map;
-
 import cn.xdf.selfStudyRoom.domain.entity.User;
+import cn.xdf.selfStudyRoom.domain.entity.UserRole;
 import cn.xdf.selfStudyRoom.utils.PageView;
 /**
  * 用户服务层
@@ -53,4 +54,19 @@ public interface UserService {
 	 * @return
 	 */
 	Map<String, Object> updateStatus(String deleteIds,Integer status);
+	
+	/**
+     * 查询用户具有的角色
+     * @param userId
+     * @return
+     */
+    List<UserRole> getUserRole(Long userId);
+    
+    /**
+     * 保存用户角色
+     * @param userRole
+     * @param roleIds
+     * @return
+     */
+    Map<String,Object> saveUserRole(UserRole userRole,String roleIds);
 }

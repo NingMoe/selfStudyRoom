@@ -45,6 +45,38 @@
 			#{id,jdbcType=INTEGER}
 		</foreach>
 	</update>
-     
+    
+      <!--查询用户角色  -->
+   <select id="getUserRole" resultType="cn.xdf.selfStudyRoom.domain.entity.UserRole" parameterType="cn.xdf.selfStudyRoom.domain.entity.UserRole">
+		select
+		 user_id userId,role_id roleId
+		 from user_role u
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+		 <if test="userId!= null ">
+			AND user_id=#{userId,jdbcType=INTEGER}
+		</if>
+		<if test="roleId!= null ">
+			AND role_id=#{roleId,jdbcType=INTEGER}
+		</if>
+		 </trim>
+	</select>
+	
+   <!-- 删除用户角色 -->
+   <delete id="delUserRole" parameterType="cn.xdf.selfStudyRoom.domain.entity.UserRole">
+	   delete from user_role where
+	   <trim  prefixOverrides="AND | OR">
+			<if test="userId != null">
+				AND user_id=#{userId,jdbcType=INTEGER}
+			</if>
+			<if test="roleId != null">
+				AND role_id=#{roleId,jdbcType=INTEGER}
+			</if>
+		</trim>
+   </delete>
+   
+  <!-- 保存用户角色 -->
+  <insert id="saveUserRole" parameterType="cn.xdf.selfStudyRoom.domain.entity.UserRole" >
+    insert into user_role(user_id,role_id) values (#{userId,jdbcType=INTEGER},#{roleId,jdbcType=BIGINT})
+  </insert>
 
 </mapper>

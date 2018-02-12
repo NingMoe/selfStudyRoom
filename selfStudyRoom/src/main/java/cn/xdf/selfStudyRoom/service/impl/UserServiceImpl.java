@@ -1,5 +1,7 @@
 package cn.xdf.selfStudyRoom.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +15,14 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import cn.xdf.selfStudyRoom.domain.dao.UserDao;
 import cn.xdf.selfStudyRoom.domain.entity.User;
+import cn.xdf.selfStudyRoom.domain.entity.UserRole;
 import cn.xdf.selfStudyRoom.security.SecurityUser;
 import cn.xdf.selfStudyRoom.service.UserService;
 import cn.xdf.selfStudyRoom.utils.CommonUtil;
 import cn.xdf.selfStudyRoom.utils.Md5Tool;
 import cn.xdf.selfStudyRoom.utils.PageView;
 
-@Transactional
+@Transactional(rollbackFor=Exception.class)
 @Service
 public class UserServiceImpl implements UserService {
 	
@@ -132,6 +135,39 @@ public class UserServiceImpl implements UserService {
 	            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 	        }
 	        return map;
+	}
+
+
+	@Override
+	public List<UserRole> getUserRole(Long userId) {
+		 UserRole ur=new UserRole();
+	     ur.setUserId(userId);
+	     return userDao.getUserRole(ur);
+	}
+
+
+	@Override
+	public Map<String, Object> saveUserRole(UserRole userRole, String roleIds) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			userDao.delUserRole(userRole);
+			List<String> list = new ArrayList<String>();
+			if (roleIds.length() > 0) {
+				list = CommonUtil.removeSameItem(Arrays.asList(roleIds.split(",")));
+			}
+			for (String roleId : list) {
+				userRole.setRoleId(Long.valueOf(roleId));
+				userDao.saveUserRole(userRole);
+			}
+			map.put("flag", true);
+			map.put("message", "配置用户角色成功!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("flag", false);
+			map.put("message", "配置用户角色失败，请稍后重试!");
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		return map;
 	}
 	
 	

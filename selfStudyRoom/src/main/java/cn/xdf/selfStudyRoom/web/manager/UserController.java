@@ -1,7 +1,9 @@
 package cn.xdf.selfStudyRoom.web.manager;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import cn.xdf.selfStudyRoom.domain.entity.User;
+import cn.xdf.selfStudyRoom.domain.entity.UserRole;
 import cn.xdf.selfStudyRoom.service.UserService;
 import cn.xdf.selfStudyRoom.utils.PageView;
 
@@ -136,5 +140,39 @@ public class UserController {
         return map;  
     }
     
+    /**
+     * 给用户分配角色界面
+     * @return
+     */
+    @RequestMapping("toCfgUserRole")
+    public ModelAndView toCfgUserRole(Long userId){
+        ModelAndView mav=new ModelAndView("/view/manager/user/cfgUserRole");
+        List<UserRole> roles = userService.getUserRole(userId);
+        mav.addObject("userId", userId);
+        List<String> u=new ArrayList<String>();
+        for(UserRole ur:roles){
+            u.add(String.valueOf(ur.getRoleId()));
+        }
+        mav.addObject("roles", u);
+        return mav;
+    }
     
+    
+    /**
+     * 保存用户分配角色
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("cfgUserRole")
+    public Map<String,Object> cfgUserRole(UserRole userRole,String roleIds){
+        Map<String,Object> map=new HashMap<String,Object>();
+        try{
+            map=userService.saveUserRole(userRole,roleIds);
+        }catch (Exception e) {
+            logger.error("save user role is error !",e);
+            map.put("flag", true);
+            map.put("message", "配置失败，请稍候重试!");
+        }
+        return map;
+    }
 }

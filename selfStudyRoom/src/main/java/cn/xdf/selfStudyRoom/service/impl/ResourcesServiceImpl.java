@@ -9,7 +9,7 @@ import cn.xdf.selfStudyRoom.domain.entity.MenuFirstList;
 import cn.xdf.selfStudyRoom.domain.entity.Resources;
 import cn.xdf.selfStudyRoom.service.ResourcesService;
 
-@Transactional
+@Transactional(rollbackFor=Exception.class)
 @Service
 public class ResourcesServiceImpl implements ResourcesService {
 

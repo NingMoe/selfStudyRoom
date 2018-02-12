@@ -2,7 +2,6 @@ package cn.xdf.selfStudyRoom.domain.dao;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,6 +12,7 @@ import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import cn.xdf.selfStudyRoom.domain.entity.User;
+import cn.xdf.selfStudyRoom.domain.entity.UserRole;
 import cn.xdf.selfStudyRoom.domain.sqlBulider.UserSqlBuilder;
 
 @Mapper
@@ -59,4 +59,27 @@ public interface UserDao {
      * @return
      */
     int updateByIds(Map<String, Object> paraMap);
+    
+    
+    /**
+     * 根据用户ID获取角色列表
+     * @param userId
+     * @return
+     */
+    List<UserRole> getUserRole(UserRole ur);
+    
+    
+    /**
+     * 删除用户角色
+     * @param userId
+     * @return
+     */
+    int delUserRole(UserRole userRole);
+
+    /**
+     * 保存用户角色对应关系
+     * @param ur
+     * @return
+     */
+    int saveUserRole(UserRole ur);
 }
