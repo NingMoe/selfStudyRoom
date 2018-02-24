@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import cn.xdf.selfStudyRoom.security.Appctx;
 
+
 @SpringBootApplication
 @MapperScan("cn.xdf.selfStudyRoom.domain.dao")
 @EnableCaching
