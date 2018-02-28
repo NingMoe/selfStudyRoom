@@ -1,5 +1,6 @@
 package cn.xdf.selfStudyRoom.web.manager;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,17 +19,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.alibaba.druid.util.StringUtils;
+
 import cn.xdf.selfStudyRoom.domain.entity.MenuFirstList;
 import cn.xdf.selfStudyRoom.domain.entity.User;
 import cn.xdf.selfStudyRoom.security.SecurityUser;
 import cn.xdf.selfStudyRoom.service.ResourcesService;
 import cn.xdf.selfStudyRoom.service.UserService;
 import cn.xdf.selfStudyRoom.utils.CommonUtil;
+import cn.xdf.selfStudyRoom.utils.GlobalSessionUtil;
 import cn.xdf.selfStudyRoom.utils.Md5Tool;
 
 
@@ -41,7 +47,7 @@ import cn.xdf.selfStudyRoom.utils.Md5Tool;
 public class LoginController {
 
 	private final  Logger logger = LogManager.getLogger(LoginController.class);
-	
+			
 	@Resource
 	private UserService userService;
 	
@@ -50,15 +56,24 @@ public class LoginController {
 	
 	@Resource
 	private AuthenticationManager myAuthenticationManager;
-	
+		
 	
 	@GetMapping("/login")
     public String login(HttpServletRequest request){
-		// 重新登录时销毁该用户的Session
-		Object o = request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-		if (null != o) {
-			request.getSession().removeAttribute("SPRING_SECURITY_CONTEXT");
-		}		
+		//重新登录时销毁该用户的Session
+		String username = CommonUtil.getAuthenticatedUsername();
+		if((!"anonymousUser".equals(username)) && (!StringUtils.isEmpty(username))){
+			List<String> list=GlobalSessionUtil.usernameAndSessionIdListMap.get(username);
+	        if(!CollectionUtils.isEmpty(list)){
+	        	for(String str:list){
+	        		HttpSession session=GlobalSessionUtil.SessionIdAndSessionMap.get(str);
+	        		if(session!=null){
+	        			session.invalidate();
+	        		}
+	        	}
+	        }
+	        
+		}
         return "/framework/login";
     }
 	
@@ -94,7 +109,12 @@ public class LoginController {
 			SecurityContext securityContext = SecurityContextHolder.getContext();
 			securityContext.setAuthentication(authentication);
 			HttpSession session = request.getSession(true);
-			session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+			List<String>list=new ArrayList<String>();
+			list.add(session.getId());
+			GlobalSessionUtil.usernameAndSessionIdListMap.put(userName,list);
+			GlobalSessionUtil.SessionIdAndSessionMap.put(session.getId(), session);			
+			session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);	
+			session.setAttribute("SPRING_SECURITY_CONTEXT_USERNAME", userName);
 		} catch (AuthenticationException e) {
 			logger.error("login error !", e);
 			map.put("flag", false);
@@ -162,4 +182,5 @@ public class LoginController {
 	    }
 		return map;
 	}
+	
 }

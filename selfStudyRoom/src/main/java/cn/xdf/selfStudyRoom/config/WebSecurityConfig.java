@@ -1,6 +1,9 @@
 package cn.xdf.selfStudyRoom.config;
 
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpSessionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +16,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-
+import org.springframework.session.web.http.SessionEventHttpSessionListenerAdapter;
+import cn.xdf.selfStudyRoom.listener.MySessionListener;
 import cn.xdf.selfStudyRoom.security.LoginSuccessHandler;
 import cn.xdf.selfStudyRoom.security.MySecurityFilterInterceptor;
 import cn.xdf.selfStudyRoom.security.MySecurityUserDetailServiceImpl;
@@ -68,14 +72,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .successHandler(loginSuccessHandler())
                 .and()
+                .rememberMe()//登录后记住用户，下次自动登录,数据库中必须存在名为persistent_logins的表  
+                .tokenValiditySeconds(1209600)
+                .and()
             .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login") //成功退出后跳转到登录页
                 .permitAll()
                 .invalidateHttpSession(true)
-                .and()
-                .rememberMe()//登录后记住用户，下次自动登录,数据库中必须存在名为persistent_logins的表  
-                .tokenValiditySeconds(1209600);  
+                .deleteCookies("SESSION");                    
     }
 
     @Autowired
@@ -95,6 +100,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new LoginSuccessHandler();  
     }  
     
+    
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/common/**");
@@ -102,7 +108,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/druid/*");
     }
     
-    
+	@Bean
+    public SessionEventHttpSessionListenerAdapter servletListenerRegistrationBean(){
+		List<HttpSessionListener> list=new ArrayList<HttpSessionListener>();
+		list.add(new MySessionListener());
+		SessionEventHttpSessionListenerAdapter servletListenerRegistrationBean = new SessionEventHttpSessionListenerAdapter(list);		
+		return servletListenerRegistrationBean;
+ 
+    }
     
 
 }
