@@ -12,7 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 import cn.xdf.selfStudyRoom.constant.MQConstant;
+import cn.xdf.selfStudyRoom.domain.dao.CustomerDao;
 import cn.xdf.selfStudyRoom.domain.dao.UserDao;
+import cn.xdf.selfStudyRoom.domain.entity.Customer;
 import cn.xdf.selfStudyRoom.domain.entity.User;
 import cn.xdf.selfStudyRoom.exception.MyException;
 import cn.xdf.selfStudyRoom.rabbitMq.CallBackSender;
@@ -40,6 +42,9 @@ public class ApplicationTests {
 	
 	@Autowired
     private CallBackSender callBackSender;
+	
+	@Autowired
+	private CustomerDao customerDao;
 	
 
 	@Test
@@ -147,5 +152,13 @@ public class ApplicationTests {
 	public void testDLXRabbitMq() throws MyException{
 		messageQueueService.send(MQConstant.DEFAULT_QUEUE_NAME,"测试延迟发送消息",6000);
 	}
+	
+	@Test
+	public void testElasticSerach(){
+		String queryString="LIU";//搜索关键字
+		Customer cu= customerDao.findByFirstName(queryString);
+		System.out.println(cu);
+	}
+	
 
 }
