@@ -4,9 +4,11 @@ import java.lang.reflect.Method;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -138,4 +140,40 @@ public class RedisConfig extends CachingConfigurerSupport{
          redisTemplate.afterPropertiesSet();
          return redisTemplate;
      }
+
+    
+    /**
+     * 自定义CacheErrorHandler来替代默认的SimpleCacheErrorHandler
+     */
+    @Bean
+	@Override
+	public CacheErrorHandler errorHandler() {
+		CacheErrorHandler cacheErrorHandler=new CacheErrorHandler(){
+
+			@Override
+			public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
+				logger.error(exception.getMessage());				
+			}
+
+			@Override
+			public void handleCachePutError(RuntimeException exception, Cache cache, Object key, Object value) {
+				logger.error(exception.getMessage());				
+			}
+
+			@Override
+			public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
+				logger.error(exception.getMessage());				
+			}
+
+			@Override
+			public void handleCacheClearError(RuntimeException exception, Cache cache) {
+				logger.error(exception.getMessage());				
+			}};
+			
+		return cacheErrorHandler;
+	}
+    
+    
+    
+    
 }
