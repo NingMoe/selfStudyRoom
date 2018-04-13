@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.xdf.pay.dao.PayMerchantDao" >
+  <resultMap id="BaseResultMap" type="cn.xdf.pay.domain.PayMerchant" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+    <result column="app_secret" property="appSecret" jdbcType="VARCHAR" />
+    <result column="mch_id" property="mchId" jdbcType="VARCHAR" />
+    <result column="mch_secret" property="mchSecret" jdbcType="VARCHAR" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+    <result column="call_system_id" property="callSystemId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, app_id, app_secret, mch_id, mch_secret, path, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from pay_merchant
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pay_merchant
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="cn.xdf.pay.domain.PayMerchant" >
+    insert into pay_merchant
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+      <if test="appSecret != null" >
+        app_secret,
+      </if>
+      <if test="mchId != null" >
+        mch_id,
+      </if>
+      <if test="mchSecret != null" >
+        mch_secret,
+      </if>
+      <if test="path != null" >
+        path,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="appSecret != null" >
+        #{appSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="mchId != null" >
+        #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="mchSecret != null" >
+        #{mchSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.xdf.pay.domain.PayMerchant" >
+    update pay_merchant
+    <set >
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="appSecret != null" >
+        app_secret = #{appSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="mchId != null" >
+        mch_id = #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="mchSecret != null" >
+        mch_secret = #{mchSecret,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        path = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查询系统所有支付商户 -->
+  <select id="selectAllPayMerchant" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from pay_merchant
+  </select>
+  
+   <!-- 查询调用系统配置的微信支付商户 -->
+  <select id="selectByCallSystem" resultMap="BaseResultMap" parameterType="cn.xdf.pay.domain.CallSystem">
+    SELECT 
+    p.id, p.app_id, p.app_secret, p.mch_id, p.mch_secret, p.path, p.is_valid,s.call_system_id
+	FROM pay_merchant p 
+	LEFT JOIN system_pay s ON p.id=s.pay_Id AND s.is_valid=1
+	LEFT JOIN call_system c ON s.call_system_id=c.id AND c.is_valid=1
+	WHERE c.app_id= #{appId,jdbcType=VARCHAR}
+	AND c.app_key= #{appKey,jdbcType=VARCHAR}
+	AND p.is_valid=1
+  </select>
+  
+   <!-- 通过订单号查询微信支付商户 -->
+  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT p.id, p.app_id, p.app_secret, p.mch_id, p.mch_secret, p.path, p.is_valid
+	FROM pay_merchant p 
+	LEFT JOIN system_order s ON p.id=s.pay_merchant_id 
+	LEFT JOIN order_info o ON s.order_id=o.id
+	WHERE o.order_no= #{orderNo,jdbcType=VARCHAR}
+	AND p.is_valid=1
+  </select>
+  
+</mapper>

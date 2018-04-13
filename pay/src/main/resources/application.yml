@@ -1,0 +1,57 @@
+logging:
+  config: classpath:logback-spring.xml
+  path: E:/logs
+server:
+  port: 80
+  session-timeout: 60
+
+
+mybatis:
+     mapperLocations: classpath:/cn/xdf/pay/dao/*.xml
+     typeAliasesPackage: cn.xdf.pay.domain
+     mapperScanPackage: cn.xdf.pay.dao
+     configLocation: classpath:/mybatis-config.xml
+
+mysql:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        mapperLocations: classpath:/cn/xdf/pay/dao/*.xml
+        configLocation: classpath:/mybatis-config.xml
+        write:
+           url: jdbc:mysql://192.168.185.18:3306/pay?useUnicode=true&characterEncoding=utf-8&useSSL=false
+           username: payAdmin
+           password: 123qazWSX!
+           driver-class-name: com.mysql.jdbc.Driver
+           minIdle: 5
+           maxActive: 100
+           initialSize: 10
+           maxWait: 60000
+           timeBetweenEvictionRunsMillis: 60000
+           minEvictableIdleTimeMillis: 300000
+           validationQuery: select 'x'
+           testWhileIdle: true
+           testOnBorrow: false
+           testOnReturn: false
+           poolPreparedStatements: true
+           maxPoolPreparedStatementPerConnectionSize: 50
+           removeAbandoned: true
+           filters: stat
+        read:
+           url: jdbc:mysql://192.168.185.18:3306/pay_test?useUnicode=true&characterEncoding=utf-8&useSSL=false
+           username: payAdmin
+           password: 123qazWSX!
+           driver-class-name: com.mysql.jdbc.Driver
+           minIdle: 5
+           maxActive: 100
+           initialSize: 10
+           maxWait: 60000
+           timeBetweenEvictionRunsMillis: 60000
+           minEvictableIdleTimeMillis: 300000
+           validationQuery: select 'x'
+           testWhileIdle: true
+           testOnBorrow: false
+           testOnReturn: false
+           poolPreparedStatements: true
+           maxPoolPreparedStatementPerConnectionSize: 50
+           removeAbandoned: true
+           filters: stat 
