@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import cn.xdf.pay.constant.CommonStatus;
 import cn.xdf.pay.domain.OrderInfo;
-import cn.xdf.pay.domain.WechatPayParams;
 import cn.xdf.pay.service.OrderInfoService;
 import cn.xdf.pay.util.ResponseInfo;
 import io.swagger.annotations.Api;
@@ -166,53 +165,6 @@ public class OrderInfoController {
 			logger.error("---------微信支付关闭订单异常----------", e.getMessage());
 			responseInfo.setRtnCode(CommonStatus.EXCEPTION);
 			responseInfo.setRtnMsg("微信支付关闭订单接口异常,异常原因:"+e.getMessage());
-		}		
-		return responseInfo;
-	}
-	
-	
-	/**
-	 * 获取微信支付参数接口
-	 * 用于微信公众号支付及小程序支付
-	 * @param appId
-	 * @param appKey
-	 * @param orderJson
-	 * @return
-	 */
-	@ApiOperation(value="获取微信支付参数接口", notes="用于微信公众号支付及小程序支付")
-	@ApiResponses({ 
-		@ApiResponse(code = CommonStatus.OK, message = "操作成功"),
-        @ApiResponse(code = CommonStatus.EXCEPTION, message = "服务器内部异常"),
-        @ApiResponse(code = CommonStatus.UNAUTHORIZED, message = "调用系统权限不足"), 
-		@ApiResponse(code = CommonStatus.FORBIDDEN, message = "参数验证不通过")
-	})
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "appId", value = "调用系统appId", required = true, dataType = "String", paramType="query"),
-		@ApiImplicitParam(name = "appKey", value = "调用系统appKey", required = true, dataType = "String", paramType="query"),
-		@ApiImplicitParam(name = "orderNo", value = "订单号", required = true, dataType = "String", paramType="query")
-	})
-	@RequestMapping(value="/getWeChatPayParams",method=RequestMethod.POST)
-	public ResponseInfo<WechatPayParams> getWeChatPayParams(@RequestParam(name="appId",required =true)String appId,
-			                                 @RequestParam(name="appKey",required =true)String appKey,
-			                                 @RequestParam(name="orderNo",required =true)String orderNo,
-			                                 HttpServletRequest request, HttpServletResponse response){
-		logger.info("---------获取微信支付参数开始----------");
-		ResponseInfo<WechatPayParams> responseInfo=new ResponseInfo<WechatPayParams>();
-		try{
-			Map<String,Object> map=this.orderInfoService.getWeChatPayParams(appId,appKey,orderNo,request,response);
-			if((Boolean) map.get("flag")){
-				responseInfo.setRtnCode(CommonStatus.OK);
-				responseInfo.setRtnMsg("获取微信支付参数成功");
-				responseInfo.setData((WechatPayParams)map.get("wechatPayParams"));
-			}else{
-				responseInfo.setRtnCode(Integer.valueOf(map.get("code").toString()));
-				responseInfo.setRtnMsg(map.get("message").toString());
-			}			
-		}catch(Exception e){
-			e.printStackTrace();
-			logger.error("---------获取微信支付参数异常----------", e.getMessage());
-			responseInfo.setRtnCode(CommonStatus.EXCEPTION);
-			responseInfo.setRtnMsg("获取微信支付参数异常,异常原因:"+e.getMessage());
 		}		
 		return responseInfo;
 	}

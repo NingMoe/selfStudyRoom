@@ -1,5 +1,7 @@
 package cn.xdf.pay.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.alibaba.fastjson.JSONObject;
 import cn.xdf.pay.annotation.ReadDataSource;
 import cn.xdf.pay.annotation.WriteDataSource;
@@ -126,6 +129,13 @@ public class OrderInfoService {
 		String codeUrl="";
 		String mwebUrl="";
 		try{
+			if(StringUtils.isEmpty(orderJson)){
+				map.put("flag", false);
+				map.put("code", CommonStatus.FORBIDDEN);
+				map.put("message", "订单参数必传！");
+                return map;
+			}
+			OrderInfo orderInfo=JSONObject.parseObject(orderJson, OrderInfo.class);
             //校验调用系统
 			CallSystemService callSystemService=SpringContextUtil.getBean(CallSystemService.class);
 			map=callSystemService.checkCallSystem(appId, appKey);
@@ -144,13 +154,6 @@ public class OrderInfoService {
 				map.put("message", "调用系统未配置微信支付商户！");
                 return map;
 			}
-			if(StringUtils.isEmpty(orderJson)){
-				map.put("flag", false);
-				map.put("code", CommonStatus.FORBIDDEN);
-				map.put("message", "订单参数必传！");
-                return map;
-			}
-			OrderInfo orderInfo=JSONObject.parseObject(orderJson, OrderInfo.class);
 			//校验订单必填参数是否填写
 			if(StringUtils.isEmpty(orderInfo.getOrderName())){
 				map.put("flag", false);
@@ -227,10 +230,30 @@ public class OrderInfoService {
                         	systemOrderService.saveSystemOrder(systemOrder);
                         }
                 	}
-                 }else{
-                	map.put("flag", false);
+                 }else if("SUCCESS".equals(return_code) && "FAIL".equals(result_code)){
+                	Object object=msgMap.get("err_code");
+                    if(object!=null){
+                        String err_code=(String) object;
+                        logger.info("------err_code------"+err_code);
+                    }   
+                    object=msgMap.get("err_code_des");
+                    if(object!=null){
+                        String err_code_des=(String) object;
+                        logger.info("-------err_code_des------"+err_code_des);
+                    }
+                    map.put("flag", false);
                 	map.put("code", CommonStatus.EXCEPTION);
      				map.put("message", "调用微信统一下单接口业务错误！");
+                    return map;
+                }else{
+                	Object object=msgMap.get("return_msg");
+                    if(object!=null){
+                        String return_msg =(String) object;
+                        logger.info("------return_msg ------"+return_msg);
+                    } 
+                	map.put("flag", false);
+                	map.put("code", CommonStatus.EXCEPTION);
+     				map.put("message", "调用微信统一下单接口通信错误！");
                     return map;	
                  }	                          
             }else{
@@ -316,10 +339,30 @@ public class OrderInfoService {
     		 				map.put("message", "订单未成功支付！");
     		                return map;	
     					}
-	                }else{
+	                }else if("SUCCESS".equals(return_code) && "FAIL".equals(result_code)){
+	                	Object object=msgMap.get("err_code");
+	                    if(object!=null){
+	                        String err_code=(String) object;
+	                        logger.info("------err_code------"+err_code);
+	                    }   
+	                    object=msgMap.get("err_code_des");
+	                    if(object!=null){
+	                        String err_code_des=(String) object;
+	                        logger.info("-------err_code_des------"+err_code_des);
+	                    }
+	                    map.put("flag", false);
+	                	map.put("code", CommonStatus.EXCEPTION);
+	     				map.put("message", "调用微信查询订单接口业务错误！");
+	                    return map;
+	               }else{
+	            	    Object object=msgMap.get("return_msg");
+	                    if(object!=null){
+	                        String return_msg =(String) object;
+	                        logger.info("------return_msg ------"+return_msg);
+	                    } 
 						map.put("flag", false);
 		            	map.put("code", CommonStatus.EXCEPTION);
-		 				map.put("message", "微信查询订单接口返回业务错误！");
+		 				map.put("message", "调用微信查询订单接口通信错误！");
 		                return map;	
 					}
 				}else{
@@ -387,10 +430,30 @@ public class OrderInfoService {
             				map.put("orderInfo", orderInfo);
             				return map;	
                         }	                    
-	                }else{
+	                }else if("SUCCESS".equals(return_code) && "FAIL".equals(result_code)){
+	                	Object object=msgMap.get("err_code");
+	                    if(object!=null){
+	                        String err_code=(String) object;
+	                        logger.info("------err_code------"+err_code);
+	                    }   
+	                    object=msgMap.get("err_code_des");
+	                    if(object!=null){
+	                        String err_code_des=(String) object;
+	                        logger.info("-------err_code_des------"+err_code_des);
+	                    }
+	                    map.put("flag", false);
+	                	map.put("code", CommonStatus.EXCEPTION);
+	     				map.put("message", "调用微信关闭订单接口业务错误！");
+	                    return map;
+	               }else{
+	            	    Object object=msgMap.get("return_msg");
+	                    if(object!=null){
+	                        String return_msg =(String) object;
+	                        logger.info("------return_msg ------"+return_msg);
+	                    } 
 						map.put("flag", false);
 		            	map.put("code", CommonStatus.EXCEPTION);
-		 				map.put("message", "微信关闭订单接口返回业务错误！");
+		 				map.put("message", "调用微信关闭订单接口通信错误！");
 		                return map;	
 					}
 				}else{
@@ -484,4 +547,75 @@ public class OrderInfoService {
 		return map;
 	}
 	
+	
+	/**
+	 * 微信支付通知回调
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public String weChatNotify(HttpServletRequest request, HttpServletResponse response) {
+		StringBuffer sb = new StringBuffer();
+		String params = "<xml>" + "\r\n";
+		try {
+			request.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("text/xml;charset=UTF-8");
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			InputStream in = request.getInputStream();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int len = 0;
+			while ((len = in.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			String msgXml = new String(out.toByteArray(), "utf-8");// xml数据
+			out.close();
+			in.close();
+			logger.info("------微信支付通知回调返回的xml数据------" + msgXml);
+			if (StringUtils.isNotEmpty(msgXml)) {
+				Map msgMap = XMLUtil.parseXmlToMap(msgXml);
+				String return_code = (String) msgMap.get("return_code");
+				String result_code = (String) msgMap.get("result_code");
+				if ("SUCCESS".equals(return_code) && "SUCCESS".equals(result_code)){
+					String bank_type = (String) msgMap.get("bank_type");// 付款银行
+					String transaction_id = (String) msgMap.get("transaction_id");// 微信支付订单号
+					String time_end = (String) msgMap.get("time_end");// 支付完成时间
+					String trade_type = (String) msgMap.get("trade_type");// 交易类型
+					String openid = (String) msgMap.get("openid");// 用户标识
+					String orderNo = (String) msgMap.get("out_trade_no");// 商户订单号
+					// 通过订单号查询订单
+                    OrderInfo orderInfo = getService().selectOrderInfoByOrderNo(orderNo);
+                    int orderState = orderInfo.getOrderState();
+                    if (orderState == 0) {// 未处理业务逻辑
+                    	// 更新业务订单信息
+                        orderInfo.setTransactionId(transaction_id);
+                        orderInfo.setOrderState(1);
+                        orderInfo.setPayTime(TimeUtil.getTimestamp2(time_end));
+                        orderInfo.setBankType(bank_type);
+                        orderInfo.setResultCode(result_code);
+                        orderInfo.setOpenId(openid);
+                        orderInfo.setTradeType(trade_type);
+                        getService().updateOrderInfo(orderInfo);
+                    }
+                    sb.append("<return_code><![CDATA[SUCCESS]]></return_code>" + "\r\n");
+                    sb.append("<return_msg><![CDATA[OK]]></return_msg>" + "\r\n");
+				}else if ("SUCCESS".equals(return_code) && "FAIL".equals(result_code)) {
+                    sb.append("<return_code><![CDATA[FAIL]]></return_code>" + "\r\n");
+                    logger.error("------微信支付结果通知回调业务结果失败------");
+                } else if ("FAIL".equals(return_code)) {
+                    sb.append("<return_code><![CDATA[FAIL]]></return_code>" + "\r\n");
+                    logger.error("------微信支付结果通知回调通信失败------");
+                }
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			sb.append("<return_code><![CDATA[FAIL]]></return_code>" + "\r\n");
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		params += sb.toString();
+		params += "</xml>";
+		return params;		
+	}
 }

@@ -188,4 +188,37 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  
+  <!-- 查询某订单号对应的退款总金额 -->
+  <select id="selectTotalRefundByOrderNo" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+	SELECT IFNULL(SUM(refund_cost),0.00) AS totalRefundCost
+	FROM order_refund_info
+	WHERE order_no= #{orderNo,jdbcType=VARCHAR}
+	AND order_refund_state IN (0,1,2)  
+  </select>
+  
+  <!-- 查询某订单号对应的退款单-->
+  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_refund_info
+    where order_no= #{orderNo,jdbcType=VARCHAR}
+  </select>
+  
+   <!--查询所有处于退款中的退款单 -->
+   <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_refund_info
+    where order_refund_state=1
+  </select>
+  
+  <!-- 通过商户退款单号查询退款信息 -->
+   <select id="selectByOrderRefundNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_refund_info
+    where order_refund_no = #{orderRefundNo,jdbcType=VARCHAR}
+  </select>
 </mapper>

@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import cn.xdf.pay.annotation.WriteDataSource;
 import cn.xdf.pay.dao.OrderBillDao;
 import cn.xdf.pay.domain.OrderBill;
+import cn.xdf.pay.domain.OrderRefundInfo;
 import cn.xdf.pay.domain.PayMerchant;
 import cn.xdf.pay.util.SpringContextUtil;
 import cn.xdf.pay.util.TimeUtil;
@@ -51,7 +52,7 @@ public class OrderBillService {
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			logger.error("下载微信每日对账单异常！", e.getMessage());
+			logger.error("------下载微信每日对账单异常------", e.getMessage());
 		}		
 	}
 	
@@ -67,21 +68,21 @@ public class OrderBillService {
 		String bill_type="SUCCESS";//账单类型		
 		try {
 			String msgxml=WechatPayInterfaceUtil.getWxMsgxml(request, response,bill_type,payMerchant);			 
-			logger.info("调用微信对账单接口获取支付成功订单返回数据------"+msgxml);
+			logger.info("------调用微信对账单接口获取支付成功订单返回数据------"+msgxml);
 			if(msgxml.startsWith("<xml>")){
 				Map msgMap = XMLUtil.parseXmlToMap(msgxml);
 				String return_msg =(String) msgMap.get("return_msg");
 				if("No Bill Exist".equals(return_msg)){
-					logger.info("无支付成功订单");
+					logger.info("------无支付成功订单------");
 				}else{
-					logger.info("微信调用对账单接口获取支付成功订单失败！");
+					logger.info("------调用微信对账单接口获取支付成功订单失败------");
 				}
 			}else{
 				//读取文本文件
 				String[]t=msgxml.split("\n");
 				List<String> list = new ArrayList<String>(Arrays.asList(t));
 				list=list.subList(1, list.size()-2);
-				logger.info("已支付成功订单数："+list.size());
+				logger.info("------已支付成功订单数------"+list.size());
 				for(String s:list){
 					String[] t1=s.replaceAll("`", "").split(",");
 					getService().insertSucessesOrderBill(t1);					
@@ -89,21 +90,21 @@ public class OrderBillService {
 			}
 			bill_type="REFUND";
 			msgxml=WechatPayInterfaceUtil.getWxMsgxml(request, response, bill_type,payMerchant);
-			logger.info("调用微信对账单接口获取退款订单返回数据------"+msgxml);
+			logger.info("------调用微信对账单接口获取退款订单返回数据------"+msgxml);
 			if(msgxml.startsWith("<xml>")){
 				Map msgMap = XMLUtil.parseXmlToMap(msgxml);
 				String return_msg =(String) msgMap.get("return_msg");
 				if("No Bill Exist".equals(return_msg)){
-					logger.info("无退款订单");
+					logger.info("------无退款订单------");
 				}else{
-					logger.info("微信调用对账单接口获取退款订单失败！");
+					logger.info("------调用微信对账单接口获取退款订单失败------");
 				}
 			}else{
 				//读取文本文件
 				String[]t=msgxml.split("\n");
 				List<String> list = new ArrayList<String>(Arrays.asList(t));
 				list=list.subList(1, list.size()-2);
-				logger.info("退款订单数："+list.size());
+				logger.info("------退款订单数------"+list.size());
 				for(String s:list){
 					String[] t1=s.replaceAll("`", "").split(",");
 					getService().insertRefundOrderBill(t1);					
@@ -111,7 +112,7 @@ public class OrderBillService {
 			}	
 		} catch(Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("------下载微信每日对账单异常------",e.getMessage());
 		}	
 	}
 	
@@ -133,14 +134,14 @@ public class OrderBillService {
 	        orderBill.setFee(money);//手续费
 	        orderBill.setRate(list.get(17));//费率
 	        orderBill.setBillType(0);
-	        logger.info("对账表中插入支付成功的对账单开始！");
+	        logger.info("------对账表中插入支付成功的对账单开始------");
 	        int i=this.orderBillDao.insertSelective(orderBill);
 	        if(i==1){
-	            logger.info("对账表中插入支付成功的对账单成功结束！");
+	            logger.info("------对账表中插入支付成功的对账单成功结束------");
 	        }  
 	    }catch(Exception e){
 	        e.printStackTrace();
-	        logger.info("对账表中插入支付成功的对账单失败！",e.getMessage());
+	        logger.info("------对账表中插入支付成功的对账单失败------",e.getMessage());
 	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 	    }		
 	}
@@ -172,14 +173,37 @@ public class OrderBillService {
 	        orderBill.setFee(money);//手续费
 	        orderBill.setRate(list.get(25));//费率
 	        orderBill.setBillType(1);
-	        logger.info("对账表中插入退款的对账单开始！");
+	        logger.info("------对账表中插入退款的对账单开始------");
 	        int i=this.orderBillDao.insertSelective(orderBill);
 	        if(i==1){	 
-	            logger.info("对账表中插入退款的对账单成功结束！");
+	            logger.info("------对账表中插入退款的对账单成功结束------");
+	            //更新退款表
+	            OrderRefundService orderRefundService=SpringContextUtil.getBean(OrderRefundService.class);
+	            OrderRefundInfo orderRefundInfo=orderRefundService.selectByOrderRefundNo(list.get(17));
+	            if(orderRefundInfo!=null){
+	                orderRefundInfo.setSucessesTime(TimeUtil.getTimestamp(list.get(15)));//退款成功时间
+	                orderRefundInfo.setRefundChannel(list.get(20));//退款渠道
+	                orderRefundInfo.setRefundCount(1);//退款笔数
+	                Integer order_refund_state=1;
+	                if("SUCCESS".equals(list.get(21))){//退款成功 
+	                    order_refund_state=2;  
+	                }else if("FAIL".equals(list.get(21))){//退款失败
+	                    order_refund_state=3;
+	                }else if("PROCESSING".equals(list.get(21))){//退款中 
+	                    order_refund_state=1;
+	                }else if("CHANGE".equals(list.get(21))){//转入代发
+	                    order_refund_state=4;
+	                }
+	                orderRefundInfo.setOrderRefundState(order_refund_state);
+	                i=orderRefundService.updateOrderRefundInfo(orderRefundInfo);
+	                if(i==1){
+	                    logger.info("------更新退款表成功------");
+	                }  
+	            }  
 	        }	        
 	    }catch(Exception e){
 	        e.printStackTrace();
-	        logger.info("对账表中插入退款的对账单失败！",e.getMessage());
+	        logger.info("------对账表中插入退款的对账单失败------",e.getMessage());
 	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 	    }
 

@@ -8,22 +8,23 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import cn.xdf.pay.annotation.WriteDataSource;
-import cn.xdf.pay.dao.SystemOrderDao;
-import cn.xdf.pay.domain.SystemOrder;
+import cn.xdf.pay.dao.SystemCompanyOrderDao;
+import cn.xdf.pay.domain.SystemCompanyOrder;
+
 
 @Service
-public class SystemOrderService {
+public class SystemCompanyOrderService {
 	
-	private static Logger logger = LoggerFactory.getLogger(SystemOrderService.class);
+	private static Logger logger = LoggerFactory.getLogger(SystemCompanyOrderService.class);
 	
 	@Autowired
-	private SystemOrderDao systemOrderDao;
+	private SystemCompanyOrderDao systemCompanyOrderDao;
 	
 	@WriteDataSource
 	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.DEFAULT,readOnly=false,rollbackFor=Exception.class)
-	public int saveSystemOrder(SystemOrder systemOrder){
-		logger.info("------保存调用系统支付订单------");
-		return this.systemOrderDao.insertSelective(systemOrder);		
+	public int saveSystemCompanyOrder(SystemCompanyOrder systemCompanyOrder){
+		logger.info("------保存调用系统-企业付款零钱订单------");
+		return this.systemCompanyOrderDao.insertSelective(systemCompanyOrder);		
 	}
 	
 }

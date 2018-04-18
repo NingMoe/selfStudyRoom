@@ -37,5 +37,12 @@ public interface PayMerchantDao {
      * @return
      */
     PayMerchant selectByOrderNo(String orderNo);
+    
+    /**
+     * 通过企业付款商户订单号查询微信支付商户
+     * @param partnerTradeNo
+     * @return
+     */
+    PayMerchant selectByPartnerTradeNo(String partnerTradeNo);
 
 }

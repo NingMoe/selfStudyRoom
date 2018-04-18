@@ -32,7 +32,7 @@ public class CallSystemService {
 	 */
 	@ReadDataSource
 	public CallSystem selectByCallSystem(CallSystem callSystem){
-		logger.info("------查询全部微信支付商户------");
+		logger.info("------查询调用系统------");
 		return this.callSystemDao.selectByCallSystem(callSystem);
 	}
 	

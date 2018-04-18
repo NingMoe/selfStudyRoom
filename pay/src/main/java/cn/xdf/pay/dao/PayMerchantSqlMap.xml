@@ -127,4 +127,14 @@
 	AND p.is_valid=1
   </select>
   
+  <!-- 通过企业付款商户订单号查询微信支付商户 -->
+  <select id="selectByPartnerTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT p.id, p.app_id, p.app_secret, p.mch_id, p.mch_secret, p.path, p.is_valid
+	FROM pay_merchant p 
+	LEFT JOIN system_company_order s ON p.id=s.pay_merchant_id 
+	LEFT JOIN company_order_info o ON s.company_order_id=o.id
+	WHERE o.partner_trade_no= #{partnerTradeNo,jdbcType=VARCHAR}
+	AND p.is_valid=1
+  </select>
+  
 </mapper>

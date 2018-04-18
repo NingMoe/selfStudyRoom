@@ -32,7 +32,13 @@ public class PayMerchantService {
 	
 	@ReadDataSource
 	public PayMerchant selectByOrderNo(String orderNo){
-		logger.info("------查询订单的微信支付商户------");
+		logger.info("------查询支付订单的微信支付商户------");
 		return  this.payMerchantDao.selectByOrderNo(orderNo);	
+	}
+	
+	@ReadDataSource
+	public PayMerchant selectByPartnerTradeNo(String partnerTradeNo){
+		logger.info("------查询企业付款订单的微信支付商户------");
+		return  this.payMerchantDao.selectByPartnerTradeNo(partnerTradeNo);	
 	}
 }

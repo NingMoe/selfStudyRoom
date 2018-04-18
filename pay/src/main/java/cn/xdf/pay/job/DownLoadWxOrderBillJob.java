@@ -11,7 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 
 
-
+/**
+ * 下载微信对账单定时任务
+ * @author liuwei63
+ *
+ */
 @Component
 public class DownLoadWxOrderBillJob {
 	
@@ -32,7 +36,7 @@ public class DownLoadWxOrderBillJob {
 			logger.info("------下载微信每日对账单完成------");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.info("下载微信每日对账单错误");
+			logger.info("------下载微信每日对账单异常------",e.getMessage());
 		}
     }  
     

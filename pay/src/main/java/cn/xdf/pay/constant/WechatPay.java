@@ -29,5 +29,9 @@ public class WechatPay {
 	
 	public  static final String DOWNLOAD_FUND_URL ="https://api.mch.weixin.qq.com/pay/downloadfundflow";// 资金账单接口
 	
-	public  static final String NOTIFY_URL ="";// 支付结果通过回调地址
+	public  static final String NOTIFY_URL ="https://hfhd.xdf.cn/pay/weChatPay/notify";// 支付结果通过回调地址
+	
+	public  static final String COMPANY_PAY_URL ="https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";// 企业付款到零钱接口
+	
+	public  static final String CHECK_COMPANY_PAY_URL="https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo";// 企业付款到零钱查询接口
 }
